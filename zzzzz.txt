@@ -1,0 +1,17 @@
+﻿
+        private void UpdateUIFromBackgroundThread(Object source, ElapsedEventArgs e)
+        {
+            if (this.InvokeRequired)
+            {
+                this.Invoke(new MethodInvoker(UpdateUIThreadSafe));
+            }
+            else
+            {
+                UpdateUIThreadSafe();
+            }
+        }
+
+        private void UpdateUIThreadSafe()
+        {
+            this.Activate();
+        }
