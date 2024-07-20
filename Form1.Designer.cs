@@ -53,7 +53,6 @@
             Text = "幻";
             TopMost = true;
             Load += Form1_Load;
-            Paint += huan_Paint;
             ResumeLayout(false);
             PerformLayout();
         }
