@@ -34,11 +34,9 @@
             // 
             AutoScaleDimensions = new SizeF(9F, 20F);
             AutoScaleMode = AutoScaleMode.Font;
-            ClientSize = new Size(267, 21);
+            ClientSize = new Size(903, 688);
             Name = "Form1";
-            Opacity = 0.1D;
             Text = "Form1";
-            TopMost = true;
             Load += Form1_Load;
             ResumeLayout(false);
         }

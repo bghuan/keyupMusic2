@@ -8,4 +8,10 @@
     <ImplicitUsings>enable</ImplicitUsings>
   </PropertyGroup>
 
+  <ItemGroup>
+    <PackageReference Include="org.k2fsa.sherpa.ncnn" Version="2.1.6" />
+    <PackageReference Include="pinyin4net" Version="1.0.0" />
+    <PackageReference Include="PortAudioSharp2" Version="1.0.3" />
+  </ItemGroup>
+
 </Project>

@@ -4,29 +4,147 @@ using System.Timers;
 using Timer = System.Timers.Timer;
 using KeyboardHooksd____;
 using System.Text;
+using PortAudioSharp;
+using Pinyin4net.Format;
+using Pinyin4net;
+using System;
 
 namespace keyupMusic2
 {
     public partial class Form1 : Form
     {
-        static int int1 = 100;
-        static int int2 = 100;
         public Form1()
         {
             InitializeComponent();
-            startListen();
+            //startListen();
         }
 
         private void Form1_Load(object sender, EventArgs e)
         {
-            OnTimedEvent2();
-            //this.WindowState = FormWindowState.Minimized;
-            //SetVisibleCore(false);
-            string asd = File.ReadAllText("point.txt");
-            if (asd == "") asd = "0,0";
-            int x = int.Parse(asd.Split(',')[0]);
-            int y = int.Parse(asd.Split(',')[1]);
-            points[0] = new Point(x, y);
+            //OnTimedEvent2();
+            ////this.WindowState = FormWindowState.Minimized;
+            ////SetVisibleCore(false);
+            //load_point();
+
+            aaaaa(new string[] { });
+        }
+
+        private void sound(string lastText, int segmentIndex)
+        {
+            log($"\r{segmentIndex}: {lastText}");
+            if (lastText.Length > 2&&lastText.Substring(0,2)=="打开")
+            {
+                coding2("windows");
+                var pinyin = ConvertChineseToPinyin(lastText.Substring( 2));
+                press(pinyin);
+                coding2("enter");
+            }
+            //this.Invoke(new MethodInvoker(() => { Clipboard.SetDataObject(lastText); }));
+            //press(Keys.Control, Keys.C);
+
+
+        }
+
+        static Dictionary<char, Keys> charToKeyMap = new Dictionary<char, Keys>
+        {
+            { 'a',Keys.A},
+ {'b',Keys.B},
+ {'c',Keys.C},
+ {'d',Keys.D},
+ {'e',Keys.E},
+ {'f',Keys.F},
+ {'g',Keys.G},
+ {'h',Keys.H},
+ {'i',Keys.I},
+ {'j',Keys.J},
+ {'k',Keys.K},
+ {'l',Keys.L},
+ {'m',Keys.M},
+ {'n',Keys.N},
+ {'o',Keys.O},
+ {'p',Keys.P},
+ {'q',Keys.Q},
+ {'r',Keys.R},
+ {'s',Keys.S},
+ {'t',Keys.T},
+ {'u',Keys.U},
+ {'v',Keys.V},
+ {'w',Keys.W},
+ {'x',Keys.X},
+ {'y',Keys.Y},
+ {'z',Keys.Z},
+        };
+
+        static string ConvertChineseToPinyin(string chineseText)
+        {
+            var hanyuPinyinOutputFormat = new HanyuPinyinOutputFormat
+            {
+                ToneType = HanyuPinyinToneType.WITHOUT_TONE, // 可以选择其他音调风格，如TONE2, NORMAL等  
+                CaseType = HanyuPinyinCaseType.LOWERCASE, // 拼音的大小写  
+                                                          //VCharType = HanyuPinyinVCharType.WITH_U_UNICODE, // 是否带声调  
+                                                          // 其他设置...  
+            };
+
+            var pinyinBuilder = new StringBuilder();
+            foreach (var c in chineseText)
+            {
+                //if (char.IsLetterOrDigit(c)) // 如果已经是字母或数字，则直接添加  
+                //{
+                //    pinyinBuilder.Append(c);
+                //}
+                //else
+                try
+                {
+                    var asd = PinyinHelper.ToHanyuPinyinStringArray(c, hanyuPinyinOutputFormat);
+                    pinyinBuilder.Append(asd[0]);
+                }
+                catch (Exception sad)
+                {
+                    pinyinBuilder.Append(c); // 这里选择添加原字符
+                }
+            }
+
+            return pinyinBuilder.ToString();
+        }
+
+        // keycode 键码 https://blog.csdn.net/zqian1994/article/details/109486445
+        static void coding2(string codes)
+        {
+            var array = codes.Split(' ');
+            foreach (var item in array)
+            {
+                if (item.ToLower() == "windows")
+                    press(91, 200);
+                else if (item.ToLower() == "enter")
+                    press(13, 200);
+                else if (item.ToLower() == "f6")
+                    press(117, 200);
+                else if (item.ToLower() == "1000")
+                    press_tick(1000);
+                else if (item.ToLower() == "800")
+                    press_tick(800);
+                else if (item.ToLower() == "2000")
+                    press_tick(2000);
+                else if (item.ToLower() == "3000")
+                    press_tick(3000);
+                else if (item.ToLower() == "10000")
+                    press_tick(10000);
+                else if (item.ToLower() == "shift")
+                    press(16, 200, 500);
+                else if (item.ToLower() == "space")
+                    press(32, 200);
+                else if (item.ToLower() == "left")
+                    press(37, 200);
+                else if (item.ToLower() == "right")
+                    press(39, 200);
+                else if (item.ToLower() == "capslock")
+                    press(20, 200);
+                else
+                    foreach (var key in Encoding.ASCII.GetBytes(item.ToUpper()))
+                        press(key, 10);
+                //Console.WriteLine(key);
+                press_tick(500);
+            }
         }
 
         private void hook_KeyDown(object? sender, KeyEventArgs e)
@@ -35,7 +153,6 @@ namespace keyupMusic2
             {
                 FocusProcess("scrcpy");
                 mouse_move(points[0].X, points[0].Y);
-                mouse_click();
                 mouse_click();
             }
             else if (e.KeyCode.Equals(Keys.PageUp))
@@ -111,7 +228,7 @@ namespace keyupMusic2
         public static void log(string message)
         {
             //log(GetWindowText(GetForegroundWindow()));
-            File.WriteAllText("log.txt", DateTime.Now.ToString("") + "：" + message + "\n");
+            File.AppendAllText("log.txt", DateTime.Now.ToString("") + "：" + message + "\n");
         }
         private static void OnTimedEvent(Object? source, ElapsedEventArgs e)
         {
@@ -126,6 +243,8 @@ namespace keyupMusic2
             k_hook.KeyDownEvent += myKeyEventHandeler_down;
             k_hook.Start();
         }
+        static int int1 = 100;
+        static int int2 = 100;
         public void stopListen()
         {
             if (myKeyEventHandeler_down != null)
@@ -214,5 +333,259 @@ namespace keyupMusic2
 
             SetVisibleCore((i++) % 5 == 0);
         }
+        private void load_point()
+        {
+            string point = File.ReadAllText("point.txt");
+            if (point == "") point = "0,0";
+            int x = int.Parse(point.Split(',')[0]);
+            int y = int.Parse(point.Split(',')[1]);
+            points[0] = new Point(x, y);
+        }
+
+
+
+        public static void press(string str, int tick = 10)
+        {
+            var pinyinBuilder = new StringBuilder();
+            foreach (var c in str)
+            {
+                charToKeyMap.TryGetValue(c, out Keys key);
+
+                keybd_event((byte)key, 0, 0, 0);
+                keybd_event((byte)key, 0, 2, 0);
+            }
+            Thread.Sleep(tick);
+        }
+
+
+        public static void press(byte num, int tick = 0)
+        {
+            Thread.Sleep(tick);
+            keybd_event(num, 0, 0, 0);
+            keybd_event(num, 0, 2, 0);
+            Console.WriteLine(DateTime.Now.ToString() + "." + DateTime.Now.Millisecond.ToString("#000") + " " + num);
+            Thread.Sleep(tick);
+        }
+
+        public static void press(Keys num, int tick = 0)
+        {
+            Thread.Sleep(tick);
+            keybd_event((byte)num, 0, 0, 0);
+            keybd_event((byte)num, 0, 2, 0);
+            Console.WriteLine(DateTime.Now.ToString() + "." + DateTime.Now.Millisecond.ToString("#000") + " " + num);
+            Thread.Sleep(tick);
+        }
+        public static void press(Keys num, Keys num2, int tick = 10)
+        {
+            Thread.Sleep(tick);
+            keybd_event((byte)num, 0, 0, 0);
+            keybd_event((byte)num2, 0, 0, 0);
+            keybd_event((byte)num2, 0, 2, 0);
+            keybd_event((byte)num, 0, 2, 0);
+            Console.WriteLine(DateTime.Now.ToString() + "." + DateTime.Now.Millisecond.ToString("#000") + " " + num);
+            Thread.Sleep(tick);
+        }
+        public static void press(byte num, int tick = 0, int tick2 = 0)
+        {
+            keybd_event(num, 0, 0, 0);
+            Thread.Sleep(tick2);
+            keybd_event(num, 0, 2, 0);
+            Console.WriteLine(DateTime.Now.ToString() + "." + DateTime.Now.Millisecond.ToString("#000") + " " + num);
+            Thread.Sleep(tick);
+        }
+        public static void press(byte num)
+        {
+            keybd_event(num, 0, 0, 0);
+            keybd_event(num, 0, 2, 0);
+        }
+        public static void press(byte[] num)
+        {
+            foreach (var item in num)
+            {
+                keybd_event(item, 0, 0, 0);
+            }
+            foreach (var item in num)
+            {
+                keybd_event(item, 0, 2, 0);
+            }
+        }
+        public static void press_tick(int tick = 200)
+        {
+            Thread.Sleep(tick);
+        }
+
+        public void aaaaa(String[] args)
+        {
+            args = new string[] {
+            "tokens.txt",
+            "encoder.ncnn.param" ,
+            "encoder.ncnn.bin",
+            "decoder.ncnn.param" ,
+            "decoder.ncnn.bin",
+            "joiner.ncnn.param",
+            "joiner.ncnn.bin" };
+            String usage = @"
+      ./microphone.exe \
+         /path/to/tokens.txt \
+         /path/to/encoder.ncnn.param \
+         /path/to/encoder.ncnn.bin \
+         /path/to/decoder.ncnn.param \
+         /path/to/decoder.ncnn.bin \
+         /path/to/joiner.ncnn.param \
+         /path/to/joiner.ncnn.bin \
+         [<num_threads> [decode_method]]
+
+      num_threads: Default to 1
+      decoding_method: greedy_search (default), or modified_beam_search
+
+      Please refer to
+      https://k2-fsa.github.io/sherpa/ncnn/pretrained_models/index.html
+      for a list of pre-trained models to download.
+      ";
+            if (args.Length < 7 || args.Length > 9)
+            {
+                Console.WriteLine(usage);
+                return;
+            }
+
+            SherpaNcnn.OnlineRecognizerConfig config = new SherpaNcnn.OnlineRecognizerConfig();
+            config.FeatConfig.SampleRate = 16000;
+            config.FeatConfig.FeatureDim = 80;
+            config.ModelConfig.Tokens = args[0];
+            config.ModelConfig.EncoderParam = args[1];
+            config.ModelConfig.EncoderBin = args[2];
+
+            config.ModelConfig.DecoderParam = args[3];
+            config.ModelConfig.DecoderBin = args[4];
+
+            config.ModelConfig.JoinerParam = args[5];
+            config.ModelConfig.JoinerBin = args[6];
+
+            config.ModelConfig.UseVulkanCompute = 0;
+            config.ModelConfig.NumThreads = 1;
+            if (args.Length >= 8)
+            {
+                config.ModelConfig.NumThreads = Int32.Parse(args[7]);
+                if (config.ModelConfig.NumThreads > 1)
+                {
+                    Console.WriteLine($"Use num_threads: {config.ModelConfig.NumThreads}");
+                }
+            }
+
+            config.DecoderConfig.DecodingMethod = "greedy_search";
+            if (args.Length == 9 && args[8] != "greedy_search")
+            {
+                Console.WriteLine($"Use decoding_method {args[8]}");
+                config.DecoderConfig.DecodingMethod = args[8];
+            }
+
+            config.DecoderConfig.NumActivePaths = 4;
+            config.EnableEndpoint = 1;
+            config.Rule1MinTrailingSilence = 2.4F;
+            config.Rule2MinTrailingSilence = 1.2F;
+            config.Rule3MinUtteranceLength = 20.0F;
+
+
+            SherpaNcnn.OnlineRecognizer recognizer = new SherpaNcnn.OnlineRecognizer(config);
+
+            SherpaNcnn.OnlineStream s = recognizer.CreateStream();
+
+            Console.WriteLine(PortAudio.VersionInfo.versionText);
+            PortAudio.Initialize();
+
+            Console.WriteLine($"Number of devices: {PortAudio.DeviceCount}");
+            for (int i = 0; i != PortAudio.DeviceCount; ++i)
+            {
+                Console.WriteLine($" Device {i}");
+                DeviceInfo deviceInfo = PortAudio.GetDeviceInfo(i);
+                Console.WriteLine($"   Name: {deviceInfo.name}");
+                Console.WriteLine($"   Max input channels: {deviceInfo.maxInputChannels}");
+                Console.WriteLine($"   Default sample rate: {deviceInfo.defaultSampleRate}");
+            }
+            int deviceIndex = PortAudio.DefaultInputDevice;
+            if (deviceIndex == PortAudio.NoDevice)
+            {
+                Console.WriteLine("No default input device found");
+                Environment.Exit(1);
+            }
+
+            DeviceInfo info = PortAudio.GetDeviceInfo(deviceIndex);
+
+            Console.WriteLine();
+            Console.WriteLine($"Use default device {deviceIndex} ({info.name})");
+
+            StreamParameters param = new StreamParameters();
+            param.device = deviceIndex;
+            param.channelCount = 1;
+            param.sampleFormat = SampleFormat.Float32;
+            param.suggestedLatency = info.defaultLowInputLatency;
+            param.hostApiSpecificStreamInfo = IntPtr.Zero;
+
+            PortAudioSharp.Stream.Callback callback = (IntPtr input, IntPtr output,
+                UInt32 frameCount,
+                ref StreamCallbackTimeInfo timeInfo,
+                StreamCallbackFlags statusFlags,
+                IntPtr userData
+                ) =>
+            {
+                float[] samples = new float[frameCount];
+                Marshal.Copy(input, samples, 0, (Int32)frameCount);
+
+                s.AcceptWaveform(16000, samples);
+
+                return StreamCallbackResult.Continue;
+            };
+
+            PortAudioSharp.Stream stream = new PortAudioSharp.Stream(inParams: param, outParams: null, sampleRate: 16000,
+                framesPerBuffer: 0,
+                streamFlags: StreamFlags.ClipOff,
+                callback: callback,
+                userData: IntPtr.Zero
+                );
+
+            Console.WriteLine(param);
+            Console.WriteLine("Started! Please speak\n\n");
+
+            stream.Start();
+
+            String lastText = "";
+            int segmentIndex = 0;
+
+            while (true)
+            {
+                while (recognizer.IsReady(s))
+                {
+                    recognizer.Decode(s);
+                }
+
+                var text = recognizer.GetResult(s).Text;
+                bool isEndpoint = recognizer.IsEndpoint(s);
+                if (!string.IsNullOrWhiteSpace(text) && lastText != text)
+                {
+                    lastText = text;
+                    Console.Write($"\r{segmentIndex}: {lastText}");
+
+
+                    sound(lastText, segmentIndex);
+
+
+                }
+
+                if (isEndpoint)
+                {
+                    if (!string.IsNullOrWhiteSpace(text))
+                    {
+                        ++segmentIndex;
+                        Console.WriteLine();
+                    }
+                    recognizer.Reset(s);
+                }
+
+                Thread.Sleep(200); // ms
+            }
+
+            PortAudio.Terminate();
+        }
+
     }
 }
