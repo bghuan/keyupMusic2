@@ -8,12 +8,13 @@ using PortAudioSharp;
 using Pinyin4net.Format;
 using Pinyin4net;
 using System;
+using System.Windows.Forms;
 
 namespace keyupMusic2
 {
-    public partial class Form1 : Form
+    public partial class Huan : Form
     {
-        public Form1()
+        public Huan()
         {
             InitializeComponent();
             //startListen();
@@ -26,25 +27,68 @@ namespace keyupMusic2
             ////SetVisibleCore(false);
             //load_point();
 
-            aaaaa(new string[] { });
+            //aaaaa(new string[] { });
+            Task.Run(() => listen_word(new string[] { }));
         }
 
-        private void sound(string lastText, int segmentIndex)
+        private void handle_word(string lastText, int segmentIndex)
         {
-            log($"\r{segmentIndex}: {lastText}");
-            if (lastText.Length > 2&&lastText.Substring(0,2)=="打开")
+            this.Invoke(new MethodInvoker(() => { label1.Text = lastText; }));
+            if (KeyMap.TryGetValue(lastText, out Keys[] keys))
             {
-                coding2("windows");
-                var pinyin = ConvertChineseToPinyin(lastText.Substring( 2));
-                press(pinyin);
-                coding2("enter");
+                press(keys);
             }
-            //this.Invoke(new MethodInvoker(() => { Clipboard.SetDataObject(lastText); }));
-            //press(Keys.Control, Keys.C);
+            else if (lastText.Length > 2 && lastText.Substring(0, 2) == "打开")
+            {
+                if (segmentIndex != last_index)
+                    press(Keys.LWin, 200);
+                var pinyin = ConvertChineseToPinyin(lastText.Substring(2));
+                press(pinyin, 100);
+                press(Keys.Enter);
+            }
+            else if (lastText == "显示")
+            {
+                FocusProcess(Process.GetCurrentProcess().ProcessName);
+                this.Invoke(new MethodInvoker(() => { SetVisibleCore(true); }));
+            }
+            else if (lastText == "隐藏")
+            {
+                this.Invoke(new MethodInvoker(() => { SetVisibleCore(false); }));
+            }
+            else if (lastText == "边框")
+            {
+                this.Invoke(new MethodInvoker(() =>
+                {
+                    FormBorderStyle =
+                    FormBorderStyle == FormBorderStyle.None
+                    ? FormBorderStyle.Sizable : FormBorderStyle.None;
+                }));
+            }
 
-
+            last_index = segmentIndex;
         }
 
+        static Dictionary<string, Keys[]> KeyMap = new Dictionary<string, Keys[]>
+        {
+            { "打开",     [Keys.LWin]},
+            { "桌面",     [Keys.LWin,                  Keys.D]},
+            { "关闭",     [Keys.LMenu,                 Keys.F4]},
+            { "切换",     [Keys.LMenu,                 Keys.Tab]},
+            { "复制",     [Keys.ControlKey,            Keys.C]},
+            { "退出",     [Keys.Escape]},
+
+            { "下一首",   [Keys.MediaNextTrack]},
+            { "暂停",     [Keys.MediaStop]},
+            { "播放",     [Keys.MediaPlayPause]},
+            { "音乐",     [Keys.MediaPlayPause]},
+
+            { "大",       [Keys.VolumeUp,Keys.VolumeUp,Keys.VolumeUp,Keys.VolumeUp]},
+            { "小",       [Keys.VolumeDown,Keys.VolumeDown,Keys.VolumeDown,Keys.VolumeDown]},
+            { "音量20",   [Keys.MediaPlayPause]},
+        };
+
+
+        static int last_index;
         static Dictionary<char, Keys> charToKeyMap = new Dictionary<char, Keys>
         {
             { 'a',Keys.A},
@@ -363,26 +407,41 @@ namespace keyupMusic2
             Thread.Sleep(tick);
             keybd_event(num, 0, 0, 0);
             keybd_event(num, 0, 2, 0);
-            Console.WriteLine(DateTime.Now.ToString() + "." + DateTime.Now.Millisecond.ToString("#000") + " " + num);
             Thread.Sleep(tick);
         }
 
         public static void press(Keys num, int tick = 0)
         {
-            Thread.Sleep(tick);
-            keybd_event((byte)num, 0, 0, 0);
-            keybd_event((byte)num, 0, 2, 0);
-            Console.WriteLine(DateTime.Now.ToString() + "." + DateTime.Now.Millisecond.ToString("#000") + " " + num);
-            Thread.Sleep(tick);
+            press([num], tick);
+            return;
         }
-        public static void press(Keys num, Keys num2, int tick = 10)
+        public static void _press(Keys keys)
         {
-            Thread.Sleep(tick);
-            keybd_event((byte)num, 0, 0, 0);
-            keybd_event((byte)num2, 0, 0, 0);
-            keybd_event((byte)num2, 0, 2, 0);
-            keybd_event((byte)num, 0, 2, 0);
-            Console.WriteLine(DateTime.Now.ToString() + "." + DateTime.Now.Millisecond.ToString("#000") + " " + num);
+            keybd_event((byte)keys, 0, 0, 0);
+            keybd_event((byte)keys, 0, 2, 0);
+        }
+        public static void press(Keys[] keys, int tick = 10)
+        {
+            if (keys == null || keys.Length == 0 || keys.Length > 100)
+                return;
+            if (keys.Length == 1)
+            {
+                _press(keys[0]);
+            }
+            else if (keys.Length > 1 && keys[0] == keys[1])
+            {
+                foreach (var key in keys)
+                {
+                    _press(key);
+                };
+            }
+            else
+            {
+                foreach (var item in keys)
+                    keybd_event((byte)item, 0, 0, 0);
+                foreach (var item in keys)
+                    keybd_event((byte)item, 0, 2, 0);
+            }
             Thread.Sleep(tick);
         }
         public static void press(byte num, int tick = 0, int tick2 = 0)
@@ -414,7 +473,7 @@ namespace keyupMusic2
             Thread.Sleep(tick);
         }
 
-        public void aaaaa(String[] args)
+        public void listen_word(String[] args)
         {
             args = new string[] {
             "tokens.txt",
@@ -545,6 +604,7 @@ namespace keyupMusic2
 
             Console.WriteLine(param);
             Console.WriteLine("Started! Please speak\n\n");
+            this.Invoke(new MethodInvoker(() => { label1.Text = "Started! Please speak\n\n"; }));
 
             stream.Start();
 
@@ -565,10 +625,8 @@ namespace keyupMusic2
                     lastText = text;
                     Console.Write($"\r{segmentIndex}: {lastText}");
 
-
-                    sound(lastText, segmentIndex);
-
-
+                    log($"\r{segmentIndex}: {lastText}");
+                    handle_word(lastText, segmentIndex);
                 }
 
                 if (isEndpoint)
@@ -587,5 +645,17 @@ namespace keyupMusic2
             PortAudio.Terminate();
         }
 
+        private void huan_Paint(object sender, PaintEventArgs e)
+        {
+            using (Brush brush = new SolidBrush(Color.FromArgb(0, 0, 0, 0))) // 示例：半透明红色  
+            {
+                e.Graphics.FillRectangle(brush, this.ClientRectangle);
+            }
+        }
+
+        private void label1_Click(object sender, EventArgs e)
+        {
+            Clipboard.SetText((sender as Label).Text);
+        }
     }
 }

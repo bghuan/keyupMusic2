@@ -1,6 +1,6 @@
 ﻿namespace keyupMusic2
 {
-    partial class Form1
+    partial class Huan
     {
         /// <summary>
         ///  Required designer variable.
@@ -28,19 +28,38 @@
         /// </summary>
         private void InitializeComponent()
         {
+            label1 = new Label();
             SuspendLayout();
             // 
-            // Form1
+            // label1
+            // 
+            label1.AutoSize = true;
+            label1.Location = new Point(12, 9);
+            label1.Name = "label1";
+            label1.Size = new Size(53, 20);
+            label1.TabIndex = 1;
+            label1.Text = "label1";
+            label1.Click += label1_Click;
+            // 
+            // Huan
             // 
             AutoScaleDimensions = new SizeF(9F, 20F);
             AutoScaleMode = AutoScaleMode.Font;
-            ClientSize = new Size(903, 688);
-            Name = "Form1";
-            Text = "Form1";
+            ClientSize = new Size(275, 42);
+            Controls.Add(label1);
+            Location = new Point(2270, 100);
+            Name = "Huan";
+            StartPosition = FormStartPosition.Manual;
+            Text = "幻";
+            TopMost = true;
             Load += Form1_Load;
+            Paint += huan_Paint;
             ResumeLayout(false);
+            PerformLayout();
         }
 
         #endregion
+
+        private Label label1;
     }
 }
