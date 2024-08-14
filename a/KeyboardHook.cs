@@ -4,6 +4,9 @@ using System.Text;
 using System.Runtime.InteropServices;
 using System.Windows.Forms;
 using System.Reflection;
+using Microsoft.VisualBasic.ApplicationServices;
+using System.Diagnostics;
+using WGestures.Common.OsSpecific.Windows;
 
 namespace KeyboardHooksd____
 {
@@ -121,5 +124,40 @@ namespace KeyboardHooksd____
         {
             Stop();
         }
+
+
+        //private IntPtr _hookId;
+        //private IntPtr _kbdHookId;
+        //public event MouseEventHandler MouseHookEvent;
+        //public MouseEventArgs MouseEventArgs;
+        //protected virtual IntPtr MouseHookProc(int nCode, IntPtr wParam, IntPtr lParam)
+        //{
+        //    if (nCode < 0)
+        //    {
+        //        Debug.WriteLine("nCode < 0 ??");
+        //        return Native.CallNextHookEx(_hookId, nCode, wParam, lParam);
+        //    }
+
+        //    //注意：用这个API来过的鼠标位置，不会出现在迅雷上坐标值变为一半的问题。
+        //    Native.POINT curPos;
+        //    Native.GetCursorPos(out curPos);
+        //    //Debug.WriteLine(wParam);
+        //    var args = new MouseEventArgs(null, curPos.x, curPos.y);
+
+        //    try
+        //    {
+        //        if (MouseHookEvent != null)
+        //        {
+        //            MouseHookEvent(this, args);
+        //        }
+        //    }
+        //    catch (Exception e)
+        //    {
+        //        Debug.WriteLine("MouseHookEvent中发生了未处理的异常，并且冒泡到了MouseHookProc。这是不应该出现的。" + e);
+        //    }
+
+        //    return Native.CallNextHookEx(_hookId, nCode, wParam, lParam);
+        //}
+
     }
 }

@@ -37,9 +37,10 @@
             // label1
             // 
             label1.AutoSize = true;
-            label1.Location = new Point(6, -4);
+            label1.Location = new Point(7, -5);
+            label1.Margin = new Padding(4, 0, 4, 0);
             label1.Name = "label1";
-            label1.Size = new Size(53, 20);
+            label1.Size = new Size(63, 24);
             label1.TabIndex = 1;
             label1.Text = "label1";
             label1.Click += label1_Click;
@@ -50,14 +51,16 @@
             notifyIcon1.Text = "幻";
             notifyIcon1.Visible = true;
             notifyIcon1.Click += notifyIcon1_Click;
+            notifyIcon1.DoubleClick += notifyIcon1_DoubleClick;
             // 
             // Huan
             // 
-            AutoScaleDimensions = new SizeF(9F, 20F);
+            AutoScaleDimensions = new SizeF(11F, 24F);
             AutoScaleMode = AutoScaleMode.Font;
-            ClientSize = new Size(269, 22);
+            ClientSize = new Size(329, 26);
             Controls.Add(label1);
-            Location = new Point(2270, 100);
+            Location = new Point(2170, 100);
+            Margin = new Padding(4, 4, 4, 4);
             Name = "Huan";
             ShowInTaskbar = false;
             StartPosition = FormStartPosition.Manual;

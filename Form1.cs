@@ -10,7 +10,11 @@ using Pinyin4net;
 using System;
 using System.Windows.Forms;
 using System.Drawing.Drawing2D;
-
+using System.Media;
+using System.Numerics;
+using WGestures.Core.Impl.Windows;
+using static Win32.User32;
+using Point = System.Drawing.Point;
 namespace keyupMusic2
 {
     public partial class Huan : Form
@@ -18,14 +22,20 @@ namespace keyupMusic2
         public Huan()
         {
             InitializeComponent();
-            Task.Run(() => listen_word(new string[] { }));
             startListen();
-        }
 
+            this.Resize += (s, e) =>
+            {
+                if (this.WindowState == FormWindowState.Minimized)
+                {
+                    this.WindowState = FormWindowState.Normal;
+                    SetVisibleCore(false);
+                }
+            };
+
+        }
         private void Form1_Load(object sender, EventArgs e)
         {
-            //FormBorderStyle = FormBorderStyle.None;
-            //Region = new Region(GetRoundedRect(this.ClientRectangle, 3));
         }
         private void hook_KeyDown(object? sender, KeyEventArgs e)
         {
@@ -33,25 +43,106 @@ namespace keyupMusic2
             {
                 ctrl_l = DateTime.Now;
             }
-            else if (ctrl_l.AddSeconds(1) >= DateTime.Now)
+            if (e.KeyCode.Equals(Keys.LShiftKey) || e.KeyCode.Equals(Keys.RShiftKey))
             {
-                if (e.KeyCode.Equals(Keys.F2))
+                shift_l = DateTime.Now;
+            }
+            if (ctrl_l.AddSeconds(1) < DateTime.Now || shift_l.AddSeconds(1) < DateTime.Now)
+            {
+                if (start_record) commnd_record += e.KeyCode + ";";
+                return;
+            }
+
+            if (e.KeyCode.Equals(Keys.Q))
+            {
+                handle_word("连接", 0, false);
+            }
+            else if (e.KeyCode.Equals(Keys.W))
+            {
+                is_listen = !is_listen;
+                Invoke(() => SetVisibleCore(is_listen));
+                if (is_listen) Task.Run(() => listen_word(new string[] { }));
+            }
+            else if (e.KeyCode.Equals(Keys.E))
+            {
+                winBinWallpaper.changeImg();
+            }
+            else if (e.KeyCode.Equals(Keys.R))
+            {
+                key_sound = !key_sound;
+                if (!key_sound) player.Stop();
+            }
+            else if (key_sound && keys.Contains(e.KeyCode))
+            {
+                string wav = e.KeyCode.ToString().Replace("D", "") + ".wav";
+                if (!File.Exists(wav)) return;
+
+                player = new SoundPlayer(wav);
+                player.Play();
+            }
+            else if (e.KeyCode.Equals(Keys.T))
+            {
+                start_record = !start_record;
+                if (start_record)
                 {
-                    handle_word("连接", 0, false);
+                    _mouseKbdHook = new MouseKeyboardHook();
+                    _mouseKbdHook.MouseHookEvent += MouseHookProc;
+                    _mouseKbdHook.Install();
                 }
-                else if (e.KeyCode.Equals(Keys.L))
+                else
                 {
-                    is_listen = !is_listen;
-                    Invoke(() => SetVisibleCore(is_listen));
-                    if (is_listen) Task.Run(() => listen_word(new string[] { }));
+                    log(commnd_record);
+                    commnd_record = "";
+                    _mouseKbdHook.Uninstall();
                 }
-                else if (e.KeyCode.Equals(Keys.P))
+            }
+            else if (e.KeyCode.Equals(Keys.Y))
+            {
+                ProcessStartInfo startInfo = new ProcessStartInfo
                 {
-                    winBinWallpaper.changeImg();
+                    FileName = "cmd.exe",
+                    Arguments = $"/c start ms-settings:taskbar",
+                    UseShellExecute = false,
+                    CreateNoWindow = true,
+                    RedirectStandardOutput = true
+                };
+
+                using (Process process = Process.Start(startInfo))
+                {
+                    string asd = "200;978,1042;907,1227;2500,32;";
+                    press(asd);
+                }
+            }
+            else if (e.KeyCode.Equals(Keys.U))
+            {
+                ProcessStartInfo startInfo = new ProcessStartInfo
+                {
+                    FileName = "cmd.exe",
+                    Arguments = $"/c start ms-settings:personalization",
+                    UseShellExecute = false,
+                    CreateNoWindow = true,
+                    RedirectStandardOutput = true
+                };
+
+                using (Process process = Process.Start(startInfo))
+                {
+                    string asd = "200;1056,588;2118,530;2031,585;2516,8;";
+                    press(asd);
                 }
             }
         }
+        bool start_record = false;
+        string commnd_record = "";
+
+        private static void OnTimedEvent(Object source, ElapsedEventArgs e)
+        {
+            pagedown_edge.yo(source, new KeyEventArgs(Keys.A));
+        }
+        Keys[] keys = { Keys.D0, Keys.D1, Keys.D2, Keys.D3, Keys.D4, Keys.D5, Keys.D6, Keys.D7, Keys.D8, Keys.D9 };
+        bool key_sound = true;
+        SoundPlayer player = new SoundPlayer();
         DateTime ctrl_l = DateTime.Now;
+        DateTime shift_l = DateTime.Now;
 
         static string lastText = "";
         static int last_index = 0;
@@ -119,13 +210,15 @@ namespace keyupMusic2
             }
             else if (c == "连接")
             {
-                mouse_move(2303, 1400);
-                mouse_click(50);
-                mouse_move(1100, 463);
-                mouse_click(50);
-                mouse_move(1514, 279);
-                mouse_click(50);
+                //mouse_move(2244, 1400);
+                //mouse_click(50);
+                //mouse_move(1056, 411);
+                //mouse_click(50);
+                //mouse_move(1563, 191);
+                //mouse_click(50);
                 //handle_word("关闭", 0, false);
+
+                Task.Run(() => press("LWin;OPEN;Enter;500;1056, 411;1563, 191",100));
             }
             else if (c == "隐藏")
             {
@@ -203,101 +296,24 @@ namespace keyupMusic2
 {'z',Keys.Z},
        };
 
-        static string ConvertChineseToPinyin(string chineseText)
-        {
-            var hanyuPinyinOutputFormat = new HanyuPinyinOutputFormat
-            {
-                ToneType = HanyuPinyinToneType.WITHOUT_TONE,// 是否带声调   // 可以选择其他音调风格，如TONE2, NORMAL等  
-                CaseType = HanyuPinyinCaseType.LOWERCASE, // 拼音的大小写  
-                                                          //VCharType = HanyuPinyinVCharType.WITH_U_UNICODE, 
-            };
 
-            var pinyinBuilder = new StringBuilder();
-            foreach (var c in chineseText)
-            {
-                //if (char.IsLetterOrDigit(c)) // 如果已经是字母或数字，则直接添加  
-                //{
-                //    pinyinBuilder.Append(c);
-                //}
-                //else
-                try
-                {
-                    var asd = PinyinHelper.ToHanyuPinyinStringArray(c, hanyuPinyinOutputFormat);
-                    if (asd != null && asd.Length > 0)
-                        pinyinBuilder.Append(asd[0]);
-                }
-                catch (Exception sad)
-                {
-                    pinyinBuilder.Append(c); // 这里选择添加原字符
-                }
-            }
-
-            return pinyinBuilder.ToString();
-        }
-
-
-        //public static void Record()
-        //{
-        //    aTimer = new Timer(int1); // 设置计时器间隔为 3000 毫秒  
-        //    aTimer.Elapsed += OnTimedEvent22; // 订阅Elapsed事件  
-        //    aTimer.AutoReset = true; // 设置计时器是重复还是单次  
-        //    aTimer.Enabled = true; // 启动计时器  
-        //}
-
-        private void OnTimedEvent2()
-        {
-            aTimer = new Timer(int1); // 设置计时器间隔为 3000 毫秒  
-            aTimer.Elapsed += OnTimedEvent22; // 订阅Elapsed事件  
-            aTimer.AutoReset = true; // 设置计时器是重复还是单次  
-            aTimer.Enabled = true; // 启动计时器  
-        }
         static bool is_changeing = false;
-        private void OnTimedEvent22(Object? source, ElapsedEventArgs e)
-        {
-            string current = GetWindowText(GetForegroundWindow());
-            log(is_changeing + "" + current + "");
-            if (is_changeing) { }
-            else if (current == null) { }
-            else if (current.IndexOf(Process.GetCurrentProcess().ProcessName) == 0) { }
-            else if (GetWindowText(GetForegroundWindow()) == "ACPhoenix")
-            {
-                is_changeing = true;
-                aTimer = new Timer(int2); // 设置计时器间隔为 3000 毫秒  
-                aTimer.Elapsed += OnTimedEvent; // 订阅Elapsed事件  
-                aTimer.Enabled = true; // 启动计时器  
-                aTimer.AutoReset = false; // 设置计时器是重复还是单次  
-            }
-            //UpdateUIFromBackgroundThread();
-
-        }
-        [DllImport("user32.dll", SetLastError = true)]
-        static extern uint GetWindowThreadProcessId(IntPtr hWnd, out uint lpdwProcessId);
-
-        // 导入user32.dll中的GetForegroundWindow函数
-        [DllImport("user32.dll")]
-        private static extern IntPtr GetForegroundWindow();
-
         // 导入user32.dll中的GetWindowText函数
         [DllImport("user32.dll", SetLastError = true, CharSet = CharSet.Auto)]
         private static extern int GetWindowText(IntPtr hWnd, StringBuilder lpString, int nMaxCount);
 
-        // 获取窗口标题的辅助方法
-        private static string GetWindowText(IntPtr hWnd)
-        {
-            const int nChars = 256;
-            StringBuilder Buff = new StringBuilder(nChars);
-            if (GetWindowText(hWnd, Buff, nChars) > 0)
-            {
-                return Buff.ToString();
-            }
-            return null;
-        }
-        private static void OnTimedEvent(Object? source, ElapsedEventArgs e)
-        {
-            FocusProcess(Process.GetCurrentProcess().ProcessName);
-            is_changeing = false;
-        }
         Point[] points = new Point[10];
+        private void MouseHookProc(MouseKeyboardHook.MouseHookEventArgs e)
+        {
+            if (e.Msg == MouseMsg.WM_LBUTTONDOWN)
+            {
+                //log(e.X + "" + e.Y);
+                //Task.Run(() => log(e.X + "" + e.Y));
+                if (start_record) commnd_record += e.X + "," + e.Y + ";";
+            }
+        }
+        private MouseKeyboardHook _mouseKbdHook;
+
 
         public void startListen()
         {
@@ -313,6 +329,10 @@ namespace keyupMusic2
             {
                 k_hook.KeyDownEvent -= myKeyEventHandeler_down;
                 k_hook.Stop();
+            }
+            if (_mouseKbdHook != null)
+            {
+                _mouseKbdHook.Dispose();
             }
         }
         protected override void Dispose(bool disposing)
@@ -391,6 +411,39 @@ namespace keyupMusic2
         {
             press([num], tick);
             return;
+        }
+        public static void press(string str, int tick = 800)
+        {
+            var list = str.Split(";");
+            if (list.Length == 0) return;
+            foreach (var item in list)
+            {
+                if (string.IsNullOrEmpty(item)) continue;
+                if (item.IndexOf(',') >= 0)
+                {
+                    mouse_move(Int32.Parse(item.Split(",")[0]), Int32.Parse(item.Split(",")[1]));
+                    mouse_click();
+                }
+                else if ((int.TryParse(item, out int number)))
+                {
+                    Thread.Sleep(number);
+                }
+                else
+                {
+                    //press((Keys)Enum.Parse(typeof(Keys), item));
+                    if (Enum.TryParse(typeof(Keys), item, out object asd))
+                    {
+                        press((Keys)asd);
+                    }
+                    else
+                    {
+                        press(item.Substring(0, 1), 0);
+                        if (item.Length > 1)
+                            press(item.Substring(1, item.Length - 1), 0);
+                    }
+                }
+                Thread.Sleep(tick);
+            }
         }
         public static void _press(Keys keys)
         {
@@ -596,6 +649,19 @@ for a list of pre-trained models to download.
                 //
                 Thread.Sleep(200); // ms
             }
+            // 停止音频流  
+            if (stream != null && stream.IsActive)
+            {
+                stream.Stop();
+                stream.Dispose(); // 如果PortAudioSharp.Stream实现了IDisposable接口  
+            }
+
+            // 清理识别器及其流  
+            if (recognizer != null)
+            {
+                recognizer.Dispose(); // 假设OnlineRecognizer实现了IDisposable接口  
+                s.Dispose();          // 如果OnlineStream也有清理资源的必要，也可以在这里处理  
+            }
 
             PortAudio.Terminate();
         }
@@ -636,6 +702,11 @@ for a list of pre-trained models to download.
         private void Huan_ResizeEnd(object sender, EventArgs e)
         {
             SetVisibleCore(false);
+        }
+
+        private void notifyIcon1_DoubleClick(object sender, EventArgs e)
+        {
+            Dispose();
         }
     }
 }
