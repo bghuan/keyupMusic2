@@ -87,37 +87,40 @@ namespace KeyboardHooksd____
 
         private int KeyboardHookProc(int nCode, Int32 wParam, IntPtr lParam)
         {
-            if ((nCode >= 0) && (KeyDownEvent != null || KeyUpEvent != null || KeyPressEvent != null))
+            Task.Run(() =>
             {
-                KeyboardHookStruct MyKeyboardHookStruct = (KeyboardHookStruct)Marshal.PtrToStructure(lParam, typeof(KeyboardHookStruct));
-                if (KeyDownEvent != null && (wParam == WM_KEYDOWN || wParam == WM_SYSKEYDOWN))
+                if ((nCode >= 0) && (KeyDownEvent != null || KeyUpEvent != null || KeyPressEvent != null))
                 {
-                    Keys keyData = (Keys)MyKeyboardHookStruct.vkCode;
-                    KeyEventArgs e = new KeyEventArgs(keyData);
-                    KeyDownEvent(this, e);
-                    Console.WriteLine("KeyDownEvent" + e.KeyValue);
-                }
-                if (KeyPressEvent != null && wParam == WM_KEYDOWN)
-                {
-                    byte[] keyState = new byte[256];
-                    GetKeyboardState(keyState);
-
-                    byte[] inBuffer = new byte[2];
-                    if (ToAscii(MyKeyboardHookStruct.vkCode, MyKeyboardHookStruct.scanCode, keyState, inBuffer, MyKeyboardHookStruct.flags) == 1)
+                    KeyboardHookStruct MyKeyboardHookStruct = (KeyboardHookStruct)Marshal.PtrToStructure(lParam, typeof(KeyboardHookStruct));
+                    if (KeyDownEvent != null && (wParam == WM_KEYDOWN || wParam == WM_SYSKEYDOWN))
                     {
-                        KeyPressEventArgs e = new KeyPressEventArgs((char)inBuffer[0]);
-                        KeyPressEvent(this, e);
+                        Keys keyData = (Keys)MyKeyboardHookStruct.vkCode;
+                        KeyEventArgs e = new KeyEventArgs(keyData);
+                        KeyDownEvent(this, e);
+                        Console.WriteLine("KeyDownEvent" + e.KeyValue);
+                    }
+                    if (KeyPressEvent != null && wParam == WM_KEYDOWN)
+                    {
+                        byte[] keyState = new byte[256];
+                        GetKeyboardState(keyState);
+
+                        byte[] inBuffer = new byte[2];
+                        if (ToAscii(MyKeyboardHookStruct.vkCode, MyKeyboardHookStruct.scanCode, keyState, inBuffer, MyKeyboardHookStruct.flags) == 1)
+                        {
+                            KeyPressEventArgs e = new KeyPressEventArgs((char)inBuffer[0]);
+                            KeyPressEvent(this, e);
+                        }
+                    }
+                    if (KeyUpEvent != null && (wParam == WM_KEYUP || wParam == WM_SYSKEYUP))
+                    {
+                        Keys keyData = (Keys)MyKeyboardHookStruct.vkCode;
+                        KeyEventArgs e = new KeyEventArgs(keyData);
+                        KeyUpEvent(this, e);
+                        Console.WriteLine("KeyUpEvent" + e.KeyValue);
                     }
                 }
-                if (KeyUpEvent != null && (wParam == WM_KEYUP || wParam == WM_SYSKEYUP))
-                {
-                    Keys keyData = (Keys)MyKeyboardHookStruct.vkCode;
-                    KeyEventArgs e = new KeyEventArgs(keyData);
-                    KeyUpEvent(this, e);
-                    Console.WriteLine("KeyUpEvent" + e.KeyValue);
-                }
+            });
 
-            }
             return CallNextHookEx(hKeyboardHook, nCode, wParam, lParam);
         }
         ~KeyboardHook()

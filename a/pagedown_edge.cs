@@ -6,19 +6,8 @@ namespace keyupMusic2;
 
 public static class pagedown_edge
 {
-    public static void yo(object sender, KeyEventArgs e)
+    public static string yo()
     {
-        Keys[] keys = { Keys.PageDown, Keys.PageUp };
-
-        if (keys[0].Equals(e.KeyCode))
-        {
-
-        }
-        else if (keys[1].Equals(e.KeyCode))
-        {
-
-        }
-
         IntPtr hwnd = GetForegroundWindow(); // 获取当前活动窗口的句柄
 
         string windowTitle = GetWindowText(hwnd);
@@ -26,6 +15,8 @@ public static class pagedown_edge
 
         var filePath = "a.txt";
         var fildsadsePath = "err";
+        var module_name = "err";
+        var module_nasme = "err";
 
         try
         {
@@ -34,6 +25,8 @@ public static class pagedown_edge
             using (Process process = Process.GetProcessById((int)processId))
             {
                 fildsadsePath = process.MainModule.FileName;
+                module_name = process.MainModule.ModuleName;
+                module_nasme = process.ProcessName;
             }
         }
         catch (System.Exception ex)
@@ -41,7 +34,8 @@ public static class pagedown_edge
             fildsadsePath = ex.Message;
         }
 
-        log(DateTime.Now.ToString("") + " " + windowTitle + " " + fildsadsePath + "\n");
+        log(DateTime.Now.ToString("") + " " + windowTitle + " " + fildsadsePath + module_nasme + "\n");
+        return module_nasme;
     }
 
 

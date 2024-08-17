@@ -15,7 +15,7 @@ namespace keyupMusic2
 
         public static void changeImg()
         {
-            string savePath = Directory.GetCurrentDirectory() + "\\" + DateTime.Now.ToString("yyyyMMdd") + ".jpg";
+            string savePath = Directory.GetCurrentDirectory() + "\\image\\" + DateTime.Now.ToString("yyyyMMdd") + ".jpg";
             //if (File.Exists(savePath)) return;
             if (changing) return;
 

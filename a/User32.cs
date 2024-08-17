@@ -1123,7 +1123,7 @@ namespace Win32
             SW_SHOWNA = 8,
             SW_SHOWMAXIMIZED = 11,
             SW_MAXIMIZE = 12,
-            SW_RESTORE = 13
+            SW_RESTORE = 13     
         }
         #endregion
         //

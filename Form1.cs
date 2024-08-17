@@ -15,6 +15,9 @@ using System.Numerics;
 using WGestures.Core.Impl.Windows;
 using static Win32.User32;
 using Point = System.Drawing.Point;
+using WGestures.Common.OsSpecific.Windows;
+
+
 namespace keyupMusic2
 {
     public partial class Huan : Form
@@ -36,23 +39,64 @@ namespace keyupMusic2
         }
         private void Form1_Load(object sender, EventArgs e)
         {
+            //aTimer = new Timer(3000); // 设置计时器间隔为 3000 毫秒  
+            //aTimer.Elapsed += OnTimedEvent22; // 订阅Elapsed事件  
+            //aTimer.AutoReset = true; // 设置计时器是重复还是单次  
+            //aTimer.Enabled = true; // 启动计时器  
+        }
+
+        public void OnTimedEvent22(object sender, EventArgs e)
+        {
+            //press(Keys.M);
+        }
+        private void MouseHookProc(MouseKeyboardHook.MouseHookEventArgs e)
+        {
+            Task.Run(() =>
+            {
+                if (e.X == 0 && e.Y == 1439)
+                {
+                    Process[] objProcesses = Process.GetProcessesByName("chrome");
+                    if (objProcesses.Length > 0)
+                    {
+                        IntPtr hWnd = objProcesses[0].MainWindowHandle;
+                        ShowWindow(hWnd, SW.SW_MINIMIZE);
+                    }
+                }
+                if (e.Msg == MouseMsg.WM_LBUTTONDOWN)
+                {
+                    if (start_record) commnd_record += e.X + "," + e.Y + ";";
+                }
+                if (e.Msg == MouseMsg.WM_LBUTTONUP && e.Y > 1300)
+                {
+                    if (pagedown_edge.yo() == "msedge")
+                        press(Keys.PageDown);
+                    if (pagedown_edge.yo() == "douyin")
+                        press(Keys.Down);
+                }
+            });
+        }
+        private MouseKeyboardHook _mouseKbdHook;
+        bool chrome_hide = false;
+
+        private void contextMenuStrip1_ItemClicked(object sender, ToolStripItemClickedEventArgs e)
+        {
+            if (Enum.TryParse(typeof(Keys), e.ClickedItem.Text, out object asd)) ;
+            {
+                KeyEventArgs ee = new KeyEventArgs((Keys)asd);
+                //ee.SuppressKeyPress = true;
+                hook_KeyDown(sender, new KeyEventArgs((Keys)Keys.LControlKey));
+                hook_KeyDown(sender, new KeyEventArgs((Keys)Keys.LShiftKey));
+                hook_KeyDown(sender, ee);
+            }
         }
         private void hook_KeyDown(object? sender, KeyEventArgs e)
         {
-            if (e.KeyCode.Equals(Keys.LControlKey) || e.KeyCode.Equals(Keys.RControlKey))
+            if (Native.GetAsyncKeyState(Keys.ShiftKey) >= 0 && Native.GetAsyncKeyState(Keys.ControlKey) >= 0)
             {
-                ctrl_l = DateTime.Now;
-            }
-            if (e.KeyCode.Equals(Keys.LShiftKey) || e.KeyCode.Equals(Keys.RShiftKey))
-            {
-                shift_l = DateTime.Now;
-            }
-            if (ctrl_l.AddSeconds(1) < DateTime.Now || shift_l.AddSeconds(1) < DateTime.Now)
-            {
-                if (start_record) commnd_record += e.KeyCode + ";";
                 return;
             }
 
+            Thread.Sleep(400);
             if (e.KeyCode.Equals(Keys.Q))
             {
                 handle_word("连接", 0, false);
@@ -74,7 +118,7 @@ namespace keyupMusic2
             }
             else if (key_sound && keys.Contains(e.KeyCode))
             {
-                string wav = e.KeyCode.ToString().Replace("D", "") + ".wav";
+                string wav = "wav\\"+e.KeyCode.ToString().Replace("D", "") + ".wav";
                 if (!File.Exists(wav)) return;
 
                 player = new SoundPlayer(wav);
@@ -130,13 +174,35 @@ namespace keyupMusic2
                     press(asd);
                 }
             }
+            else if (e.KeyCode.Equals(Keys.I))
+            {
+                Dispose();
+            }
+            else if (e.KeyCode.Equals(Keys.O))
+            {
+                press(Keys.M);
+            }
+            else
+            {
+                //Process[] objProcesses = Process.GetProcessesByName("chrome");
+                //if (objProcesses.Length > 0)
+                //{
+                //    IntPtr hWnd = objProcesses[0].MainWindowHandle;
+                //    ShowWindow(hWnd, SW.SW_MINIMIZE);
+                //}
+
+                return;
+            }
+            shift_l = DateTime.Today;
+            ctrl_l = DateTime.Today;
         }
+        int SIMULATED_EVENT_TAG = 19900620;
         bool start_record = false;
         string commnd_record = "";
 
         private static void OnTimedEvent(Object source, ElapsedEventArgs e)
         {
-            pagedown_edge.yo(source, new KeyEventArgs(Keys.A));
+            pagedown_edge.yo();
         }
         Keys[] keys = { Keys.D0, Keys.D1, Keys.D2, Keys.D3, Keys.D4, Keys.D5, Keys.D6, Keys.D7, Keys.D8, Keys.D9 };
         bool key_sound = true;
@@ -218,7 +284,16 @@ namespace keyupMusic2
                 //mouse_click(50);
                 //handle_word("关闭", 0, false);
 
-                Task.Run(() => press("LWin;OPEN;Enter;500;1056, 411;1563, 191",100));
+                Task.Run(() => press("LWin;OPEN;Enter;500;1056, 411;1563, 191", 100));
+
+                //Process[] objProcesses = Process.GetProcessesByName("OpenVPNConnect");
+                //if (objProcesses.Length > 0)
+                //{
+                //    IntPtr hWnd = objProcesses[0].MainWindowHandle;
+                //    //ShowWindowAsync(new HandleRef(null, hWnd), SW_RESTORE);
+                //    //SetForegroundWindow(objProcesses[0].MainWindowHandle);
+                //    ShowWindow(hWnd, SW.SW_SHOW);
+                //}
             }
             else if (c == "隐藏")
             {
@@ -266,53 +341,8 @@ namespace keyupMusic2
         {
             Clipboard.SetText((sender as Label).Text);
         }
-        static Dictionary<char, Keys> charToKeyMap = new Dictionary<char, Keys>
-       {
-           { 'a',Keys.A},
-{'b',Keys.B},
-{'c',Keys.C},
-{'d',Keys.D},
-{'e',Keys.E},
-{'f',Keys.F},
-{'g',Keys.G},
-{'h',Keys.H},
-{'i',Keys.I},
-{'j',Keys.J},
-{'k',Keys.K},
-{'l',Keys.L},
-{'m',Keys.M},
-{'n',Keys.N},
-{'o',Keys.O},
-{'p',Keys.P},
-{'q',Keys.Q},
-{'r',Keys.R},
-{'s',Keys.S},
-{'t',Keys.T},
-{'u',Keys.U},
-{'v',Keys.V},
-{'w',Keys.W},
-{'x',Keys.X},
-{'y',Keys.Y},
-{'z',Keys.Z},
-       };
-
-
-        static bool is_changeing = false;
-        // 导入user32.dll中的GetWindowText函数
-        [DllImport("user32.dll", SetLastError = true, CharSet = CharSet.Auto)]
-        private static extern int GetWindowText(IntPtr hWnd, StringBuilder lpString, int nMaxCount);
 
         Point[] points = new Point[10];
-        private void MouseHookProc(MouseKeyboardHook.MouseHookEventArgs e)
-        {
-            if (e.Msg == MouseMsg.WM_LBUTTONDOWN)
-            {
-                //log(e.X + "" + e.Y);
-                //Task.Run(() => log(e.X + "" + e.Y));
-                if (start_record) commnd_record += e.X + "," + e.Y + ";";
-            }
-        }
-        private MouseKeyboardHook _mouseKbdHook;
 
 
         public void startListen()
@@ -435,7 +465,7 @@ namespace keyupMusic2
                     {
                         press((Keys)asd);
                     }
-                    else
+                    else if (item.Length > 1)
                     {
                         press(item.Substring(0, 1), 0);
                         if (item.Length > 1)
@@ -707,6 +737,21 @@ for a list of pre-trained models to download.
         private void notifyIcon1_DoubleClick(object sender, EventArgs e)
         {
             Dispose();
+        }
+
+        private void Huan_MouseHover(object sender, EventArgs e)
+        {
+            //Opacity = 1;
+        }
+
+        private void Huan_MouseLeave(object sender, EventArgs e)
+        {
+            //Opacity = 0.5;
+        }
+
+        private void toolStripMenuItem2_Click(object sender, EventArgs e)
+        {
+
         }
     }
 }
