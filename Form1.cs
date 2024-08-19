@@ -16,16 +16,29 @@ using WGestures.Core.Impl.Windows;
 using static Win32.User32;
 using Point = System.Drawing.Point;
 using WGestures.Common.OsSpecific.Windows;
+using System.Drawing.Imaging;
+using static WGestures.Common.OsSpecific.Windows.Native;
+using System.ComponentModel;
+using Win32;
+using C = keyupMusic2.Common;
+using static System.Net.Mime.MediaTypeNames;
+using System.DirectoryServices.ActiveDirectory;
 
 
 namespace keyupMusic2
 {
     public partial class Huan : Form
     {
+        ACPhoenix aCPhoenix;
+        devenv Devenv;
+        douyin Douyin;
         public Huan()
         {
             InitializeComponent();
             startListen();
+            aCPhoenix = new ACPhoenix();
+            Devenv = new devenv();
+            Douyin = new douyin();
 
             this.Resize += (s, e) =>
             {
@@ -39,163 +52,245 @@ namespace keyupMusic2
         }
         private void Form1_Load(object sender, EventArgs e)
         {
-            //aTimer = new Timer(3000); // ÉèÖÃ¼ÆÊ±Æ÷¼ä¸ôÎª 3000 ºÁÃë  
-            //aTimer.Elapsed += OnTimedEvent22; // ¶©ÔÄElapsedÊÂ¼ş  
-            //aTimer.AutoReset = true; // ÉèÖÃ¼ÆÊ±Æ÷ÊÇÖØ¸´»¹ÊÇµ¥´Î  
-            //aTimer.Enabled = true; // Æô¶¯¼ÆÊ±Æ÷  
-        }
+            //aTimer = new Timer(3000); // è®¾ç½®è®¡æ—¶å™¨é—´éš”ä¸º 3000 æ¯«ç§’  
+            //aTimer.Elapsed += OnTimedEvent22; // è®¢é˜…Elapsedäº‹ä»¶  
+            //aTimer.AutoReset = true; // è®¾ç½®è®¡æ—¶å™¨æ˜¯é‡å¤è¿˜æ˜¯å•æ¬¡  
+            //aTimer.Enabled = true; // å¯åŠ¨è®¡æ—¶å™¨  
+            //Task.Run(() => { Thread.Sleep(3000); Invoke(() => SetVisibleCore(false)); });
+            Common.FocusProcess(Common.ACPhoenix);
 
-        public void OnTimedEvent22(object sender, EventArgs e)
-        {
-            //press(Keys.M);
+            int currentProcessId = Process.GetCurrentProcess().Id;
+            Process[] processes = Process.GetProcessesByName(Common.keyupMusic2);
+            if (Debugger.IsAttached)
+            {
+                foreach (Process process in processes)
+                    if (process.Id != currentProcessId)
+                        process.Kill();
+            }
+            else if (processes.Length > 1)
+            {
+                Dispose();
+            }
+
+            Activate();
         }
+        bool ACPhoenix_mouse_down = false;
         private void MouseHookProc(MouseKeyboardHook.MouseHookEventArgs e)
         {
             Task.Run(() =>
             {
                 if (e.X == 0 && e.Y == 1439)
                 {
-                    Process[] objProcesses = Process.GetProcessesByName("chrome");
-                    if (objProcesses.Length > 0)
-                    {
-                        IntPtr hWnd = objProcesses[0].MainWindowHandle;
-                        ShowWindow(hWnd, SW.SW_MINIMIZE);
-                    }
+                    C.HideProcess("chrome");
                 }
                 if (e.Msg == MouseMsg.WM_LBUTTONDOWN)
                 {
+                    if (ACPhoenix_mouse_down) ACPhoenix_mouse_down = false;
                     if (start_record) commnd_record += e.X + "," + e.Y + ";";
                 }
-                if (e.Msg == MouseMsg.WM_LBUTTONUP && e.Y > 1300)
+                if (e.Msg == MouseMsg.WM_RBUTTONDOWN)
                 {
-                    if (pagedown_edge.yo() == "msedge")
-                        press(Keys.PageDown);
-                    if (pagedown_edge.yo() == "douyin")
-                        press(Keys.Down);
+                    if (pagedown_edge.yo() == Common.ACPhoenix)
+                    {
+                        if (ACPhoenix_mouse_down == false)
+                        {
+                            Common.mouse_down();
+                            ACPhoenix_mouse_down = true;
+                        }
+                        else
+                        {
+                            Common.mouse_up();
+                            ACPhoenix_mouse_down = false;
+                        }
+                    }
                 }
+                //if (e.Msg == MouseMsg.WM_LBUTTONUP && e.Y > 1300)
+                //{
+                //    if (pagedown_edge.yo() == "msedge")
+                //        Common.press(Keys.PageDown);
+                //    if (pagedown_edge.yo() == "douyin")
+                //        Common.press(Keys.Down);
+                //}
             });
         }
-        private MouseKeyboardHook _mouseKbdHook;
-        bool chrome_hide = false;
 
-        private void contextMenuStrip1_ItemClicked(object sender, ToolStripItemClickedEventArgs e)
+        private MouseKeyboardHook _mouseKbdHook;
+        private void hook_KeyDown_keyupMusic2(object? sender, KeyEventArgs e)
         {
-            if (Enum.TryParse(typeof(Keys), e.ClickedItem.Text, out object asd)) ;
+            if (pagedown_edge.yo() != Common.keyupMusic2) return;
+            Common.hooked = true;
+
+            bool catched = true;
+            string label_backup = label1.Text;
+            Invoke((() => { label1.Text = e.KeyCode.ToString(); }));
+
+            switch (e.KeyCode)
             {
-                KeyEventArgs ee = new KeyEventArgs((Keys)asd);
-                //ee.SuppressKeyPress = true;
-                hook_KeyDown(sender, new KeyEventArgs((Keys)Keys.LControlKey));
-                hook_KeyDown(sender, new KeyEventArgs((Keys)Keys.LShiftKey));
-                hook_KeyDown(sender, ee);
+                case Keys.Q:
+                    handle_word("è¿æ¥", 0, false);
+                    break;
+                case Keys.W:
+                    is_listen = !is_listen;
+                    Invoke(() => SetVisibleCore(is_listen));
+                    if (is_listen) Task.Run(() => listen_word(new string[] { }));
+                    break;
+                case Keys.E:
+                    winBinWallpaper.changeImg();
+                    break;
+                case Keys.D0:
+                case Keys.D1:
+                case Keys.D2:
+                case Keys.D3:
+                case Keys.D4:
+                case Keys.D5:
+                case Keys.D6:
+                case Keys.D7:
+                case Keys.D8:
+                case Keys.D9:
+                    if (key_sound && keys.Contains(e.KeyCode))
+                    {
+                        string wav = "wav\\" + e.KeyCode.ToString().Replace("D", "") + ".wav";
+                        if (!File.Exists(wav)) return;
+
+                        player = new SoundPlayer(wav);
+                        player.Play();
+                    }
+                    break;
+                case Keys.R:
+                    if (key_sound) player.Stop();
+                    key_sound = !key_sound;
+                    break;
+                case Keys.T:
+                    start_record = !start_record;
+                    if (start_record)
+                    {
+                        //_mouseKbdHook = new MouseKeyboardHook();
+                        //_mouseKbdHook.MouseHookEvent += MouseHookProc;
+                        //_mouseKbdHook.Install();
+                    }
+                    else
+                    {
+                        Common.log(commnd_record);
+                        Invoke(() => Clipboard.SetText(commnd_record));
+                        commnd_record = "";
+                        //_mouseKbdHook.Uninstall();
+                    }
+                    break;
+                case Keys.Y:
+                    Common.cmd($"/c start ms-settings:taskbar");
+                    Common.press("200;978,1042;907,1227;2500,32;", 801);
+                    break;
+                case Keys.U:
+                    Common.cmd($"/c start ms-settings:personalization");
+                    Common.press("200;1056,588;2118,530;2031,585;2516,8;", 801);
+                    break;
+                case Keys.I:
+                    Dispose();
+                    break;
+                case Keys.O:
+                    Common.press(Keys.M);
+                    break;
+                case Keys.P:
+                    Screen secondaryScreen = Screen.AllScreens.FirstOrDefault(scr => !scr.Primary);
+                    if (secondaryScreen != null)
+                    {
+                        Bitmap bmpScreenshot = new Bitmap(1920, 1080, PixelFormat.Format32bppArgb);
+                        Graphics gfxScreenshot = Graphics.FromImage(bmpScreenshot);
+                        gfxScreenshot.CopyFromScreen(new Point(2560, 0), Point.Empty, secondaryScreen.Bounds.Size);
+                        gfxScreenshot.Dispose();
+                        bmpScreenshot.Save("image\\encode\\" + DateTime.Now.ToString("yyyyMMddHHmmss") + ".png" + "g", ImageFormat.Png);
+                    }
+                    break;
+                case Keys.A:
+                    if (Common.FocusProcess(Common.ACPhoenix)) break;
+                    Common.FocusProcess(Common.DragonestGameLauncher);
+                    Common.press("10;2280,1314;LWin;", 100);
+                    Thread.Sleep(5000);
+                    Common.FocusProcess(Common.ACPhoenix);
+                    choose_module_name = pagedown_edge.yo();
+                    break;
+                case Keys.D:
+                    C.press([Keys.LMenu, Keys.Tab]);
+                    Sleep(100);
+                    choose_module_name = pagedown_edge.yo();
+                    C.log("choose_module_name = " + choose_module_name);
+                    Invoke(() => Clipboard.SetText(choose_module_name));
+                    break;
+
+                case Keys.F:
+                    Common.FocusProcess(Common.WeChat);
+                    Thread.Sleep(100);
+                    if (pagedown_edge.yo() == Common.WeChat) break;
+                    Common.press("LWin;WEI;Enter;", 50);
+                    break;
+                case Keys.G:
+                    Point mousePosition = Cursor.Position;
+                    C.log($"Mouse Position: X={mousePosition.X}, Y={mousePosition.Y}");
+                    break;
+                case Keys.H:
+                    Common.press("LWin;VISUAL;Apps;Enter;", 100);
+                    int asdd = 5000;
+                    while (asdd > 0)
+                    {
+                        asdd -= 100;
+                        if (pagedown_edge.yo() == Common.devenv) asdd = 0;
+                    }
+                    Thread.Sleep(1500);
+                    Common.press("Tab;Down;Enter;", 100);
+                    break;
+                case Keys.F2:
+                    Invoke(() => Opacity = Opacity == 0 ? 1 : 0);
+                    break;
+                case Keys.Up:
+                    Invoke(() => Opacity = Opacity >= 1 ? 1 : Opacity + 0.1);
+                    break;
+                case Keys.Down:
+                    Invoke(() => Opacity = Opacity <= 0 ? 0 : Opacity - 0.1);
+                    break;
+                default:
+                    catched = false;
+                    break;
             }
+            if (!catched)
+                Invoke((() => { label1.Text = label_backup; }));
+            Common.hooked = false;
+        }
+        public void Sleep(int tick)
+        {
+            Thread.Sleep(tick);
         }
         private void hook_KeyDown(object? sender, KeyEventArgs e)
         {
-            if (Native.GetAsyncKeyState(Keys.ShiftKey) >= 0 && Native.GetAsyncKeyState(Keys.ControlKey) >= 0)
+            if (e.KeyCode == Keys.F1 && pagedown_edge.yo() == Common.keyupMusic2) Common.hooked = !Common.hooked;
+            if (Common.hooked) return;
+
+            hook_KeyDown_keyupMusic2(sender, e);
+            Devenv.hook_KeyDown_ddzzq(sender, e);
+            aCPhoenix.hook_KeyDown_ddzzq(sender, e);
+            Douyin.hook_KeyDown_ddzzq(sender, e);
+
+
+            if (Common.ACPhoenix_mouse_hook && pagedown_edge.yo() == Common.ACPhoenix && (_mouseKbdHook == null || !_mouseKbdHook.is_install))
             {
-                return;
+                _mouseKbdHook = new MouseKeyboardHook();
+                _mouseKbdHook.MouseHookEvent += MouseHookProc;
+                _mouseKbdHook.Install();
+            }
+            if (_mouseKbdHook != null && _mouseKbdHook.is_install && pagedown_edge.yo() != Common.ACPhoenix)
+            {
+                _mouseKbdHook.Uninstall();
+                _mouseKbdHook.Dispose();
+                Common.ACPhoenix_mouse_hook = false;
             }
 
-            Thread.Sleep(400);
-            if (e.KeyCode.Equals(Keys.Q))
-            {
-                handle_word("Á¬½Ó", 0, false);
-            }
-            else if (e.KeyCode.Equals(Keys.W))
-            {
-                is_listen = !is_listen;
-                Invoke(() => SetVisibleCore(is_listen));
-                if (is_listen) Task.Run(() => listen_word(new string[] { }));
-            }
-            else if (e.KeyCode.Equals(Keys.E))
-            {
-                winBinWallpaper.changeImg();
-            }
-            else if (e.KeyCode.Equals(Keys.R))
-            {
-                key_sound = !key_sound;
-                if (!key_sound) player.Stop();
-            }
-            else if (key_sound && keys.Contains(e.KeyCode))
-            {
-                string wav = "wav\\"+e.KeyCode.ToString().Replace("D", "") + ".wav";
-                if (!File.Exists(wav)) return;
+            if (e.KeyCode != Keys.LControlKey && e.KeyCode != Keys.RControlKey && e.KeyCode != Keys.LShiftKey && e.KeyCode != Keys.RShiftKey) return;
+            if ((!C.is_ctrl() || !C.is_shift())) return;
 
-                player = new SoundPlayer(wav);
-                player.Play();
-            }
-            else if (e.KeyCode.Equals(Keys.T))
-            {
-                start_record = !start_record;
-                if (start_record)
-                {
-                    _mouseKbdHook = new MouseKeyboardHook();
-                    _mouseKbdHook.MouseHookEvent += MouseHookProc;
-                    _mouseKbdHook.Install();
-                }
-                else
-                {
-                    log(commnd_record);
-                    commnd_record = "";
-                    _mouseKbdHook.Uninstall();
-                }
-            }
-            else if (e.KeyCode.Equals(Keys.Y))
-            {
-                ProcessStartInfo startInfo = new ProcessStartInfo
-                {
-                    FileName = "cmd.exe",
-                    Arguments = $"/c start ms-settings:taskbar",
-                    UseShellExecute = false,
-                    CreateNoWindow = true,
-                    RedirectStandardOutput = true
-                };
-
-                using (Process process = Process.Start(startInfo))
-                {
-                    string asd = "200;978,1042;907,1227;2500,32;";
-                    press(asd);
-                }
-            }
-            else if (e.KeyCode.Equals(Keys.U))
-            {
-                ProcessStartInfo startInfo = new ProcessStartInfo
-                {
-                    FileName = "cmd.exe",
-                    Arguments = $"/c start ms-settings:personalization",
-                    UseShellExecute = false,
-                    CreateNoWindow = true,
-                    RedirectStandardOutput = true
-                };
-
-                using (Process process = Process.Start(startInfo))
-                {
-                    string asd = "200;1056,588;2118,530;2031,585;2516,8;";
-                    press(asd);
-                }
-            }
-            else if (e.KeyCode.Equals(Keys.I))
-            {
-                Dispose();
-            }
-            else if (e.KeyCode.Equals(Keys.O))
-            {
-                press(Keys.M);
-            }
-            else
-            {
-                //Process[] objProcesses = Process.GetProcessesByName("chrome");
-                //if (objProcesses.Length > 0)
-                //{
-                //    IntPtr hWnd = objProcesses[0].MainWindowHandle;
-                //    ShowWindow(hWnd, SW.SW_MINIMIZE);
-                //}
-
-                return;
-            }
-            shift_l = DateTime.Today;
-            ctrl_l = DateTime.Today;
+            Invoke(() => SetVisibleCore(true));
+            Invoke(() => Activate());
         }
+        string choose_module_name = "err";
+        public const int SW_RESTORE = 9;
         int SIMULATED_EVENT_TAG = 19900620;
         bool start_record = false;
         string commnd_record = "";
@@ -207,8 +302,6 @@ namespace keyupMusic2
         Keys[] keys = { Keys.D0, Keys.D1, Keys.D2, Keys.D3, Keys.D4, Keys.D5, Keys.D6, Keys.D7, Keys.D8, Keys.D9 };
         bool key_sound = true;
         SoundPlayer player = new SoundPlayer();
-        DateTime ctrl_l = DateTime.Now;
-        DateTime shift_l = DateTime.Now;
 
         static string lastText = "";
         static int last_index = 0;
@@ -235,108 +328,59 @@ namespace keyupMusic2
 
             if (KeyMap.TryGetValue(b, out Keys[] keys))
             {
-                press(keys, 100);
+                Common.press(keys, 100);
             }
             else if (KeyMap.TryGetValue(b1, out Keys[] keysb1))
             {
-                press(keysb1, 100);
+                Common.press(keysb1, 100);
             }
             else if (KeyMap.TryGetValue(b2, out Keys[] keysb2))
             {
-                press(keysb2, 100);
+                Common.press(keysb2, 100);
             }
             else if (KeyMap.TryGetValue(b3, out Keys[] keysb3))
             {
-                press(keysb3, 100);
+                Common.press(keysb3, 100);
             }
             else if (KeyMap.TryGetValue(b4, out Keys[] keysb4))
             {
-                press(keysb4, 100);
+                Common.press(keysb4, 100);
             }
-            else if (c.Length > 2 && c.IndexOf("´ò¿ª") >= 0 && !string.IsNullOrEmpty(b))
+            else if (c.Length > 2 && c.IndexOf("æ‰“å¼€") >= 0 && !string.IsNullOrEmpty(b))
             {
                 Invoke(() => Clipboard.SetText(b1));
-                press([Keys.ControlKey, Keys.V]);
+                Common.press([Keys.ControlKey, Keys.V]);
 
                 //press(Keys.Enter);
             }
-            else if (c.Length > 2 && c.IndexOf("ÊäÈë") >= 0 && !string.IsNullOrEmpty(b))
+            else if (c.Length > 2 && c.IndexOf("è¾“å…¥") >= 0 && !string.IsNullOrEmpty(b))
             {
                 Invoke(() => Clipboard.SetText(b1));
-                press([Keys.ControlKey, Keys.V]);
+                Common.press([Keys.ControlKey, Keys.V]);
             }
             else if (KeyMap.TryGetValue(c, out Keys[] keys3))
             {
-                press(keys3, 100);
+                Common.press(keys3, 100);
             }
-            else if (c == "ÏÔÊ¾")
+            else if (c == "æ˜¾ç¤º")
             {
-                FocusProcess(Process.GetCurrentProcess().ProcessName);
+                Common.FocusProcess(Process.GetCurrentProcess().ProcessName);
                 Invoke(() => SetVisibleCore(true));
             }
-            else if (c == "Á¬½Ó")
+            else if (c == "è¿æ¥")
             {
-                //mouse_move(2244, 1400);
-                //mouse_click(50);
-                //mouse_move(1056, 411);
-                //mouse_click(50);
-                //mouse_move(1563, 191);
-                //mouse_click(50);
-                //handle_word("¹Ø±Õ", 0, false);
-
-                Task.Run(() => press("LWin;OPEN;Enter;500;1056, 411;1563, 191", 100));
-
-                //Process[] objProcesses = Process.GetProcessesByName("OpenVPNConnect");
-                //if (objProcesses.Length > 0)
-                //{
-                //    IntPtr hWnd = objProcesses[0].MainWindowHandle;
-                //    //ShowWindowAsync(new HandleRef(null, hWnd), SW_RESTORE);
-                //    //SetForegroundWindow(objProcesses[0].MainWindowHandle);
-                //    ShowWindow(hWnd, SW.SW_SHOW);
-                //}
+                Task.Run(() => Common.press("LWin;OPEN;Enter;500;1056, 411;1563, 191", 100));
             }
-            else if (c == "Òş²Ø")
+            else if (c == "éšè—")
             {
                 Invoke(() => SetVisibleCore(false));
             }
-            else if (c == "±ß¿ò")
+            else if (c == "è¾¹æ¡†")
             {
                 Invoke(() => FormBorderStyle = FormBorderStyle == FormBorderStyle.None ? FormBorderStyle.Sizable : FormBorderStyle.None);
             }
         }
-
-        static Dictionary<string, Keys[]> KeyMap = new Dictionary<string, Keys[]>
-        {
-            { "´ò¿ª",     [Keys.LWin]},
-            { "WINDOWS",     [Keys.LWin]},
-            { "×ÀÃæ",     [Keys.LWin,                  Keys.D]},
-            { "¹Ø±Õ",     [Keys.LMenu,                 Keys.F4]},
-            { "ÇĞ»»",     [Keys.LMenu,                 Keys.Tab]},
-            { "¸´ÖÆ",     [Keys.ControlKey,            Keys.C]},
-            { "ÍË³ö",     [Keys.Escape]},
-            { "È·¶¨",     [Keys.Enter]},
-            { "»Ø³µ",     [Keys.Enter]},
-
-            { "ÏÂÒ»Ê×",   [Keys.MediaNextTrack]},
-            { "ÔİÍ£",     [Keys.MediaStop]},
-            { "²¥·Å",     [Keys.MediaPlayPause]},
-            { "ÒôÀÖ",     [Keys.MediaPlayPause]},
-
-            { "´ó",       [Keys.VolumeUp,Keys.VolumeUp,Keys.VolumeUp,Keys.VolumeUp]},
-            { "Ğ¡",       [Keys.VolumeDown,Keys.VolumeDown,Keys.VolumeDown,Keys.VolumeDown]},
-            { "ÒôÁ¿20",   [Keys.MediaPlayPause]},
-
-            { "ÉÏ",   [Keys.Up]},
-            { "ÏÂ",   [Keys.Down]},
-            { "×ó",   [Keys.Left]},
-            { "ÓÒ",   [Keys.Right]},
-
-            { "H",   [Keys.H]},
-            { "X",   [Keys.X]},
-            { "S",   [Keys.S]},
-
-        };
-
+        public static Dictionary<string, Keys[]> KeyMap = Listen.KeyMap;
         private void label1_Click(object sender, EventArgs e)
         {
             Clipboard.SetText((sender as Label).Text);
@@ -344,12 +388,18 @@ namespace keyupMusic2
 
         Point[] points = new Point[10];
 
+        public static Timer aTimer = new Timer(100);
+        KeyEventHandler myKeyEventHandeler_down;
+        KeyboardHook k_hook = new KeyboardHook();
 
         public void startListen()
         {
             myKeyEventHandeler_down = new KeyEventHandler(hook_KeyDown);
             k_hook.KeyDownEvent += myKeyEventHandeler_down;
             k_hook.Start();
+            //_mouseKbdHook = new MouseKeyboardHook();
+            //_mouseKbdHook.MouseHookEvent += MouseHookProc;
+            //_mouseKbdHook.Install();
         }
         static int int1 = 100;
         static int int2 = 100;
@@ -362,6 +412,7 @@ namespace keyupMusic2
             }
             if (_mouseKbdHook != null)
             {
+                _mouseKbdHook.Uninstall();
                 _mouseKbdHook.Dispose();
             }
         }
@@ -375,136 +426,47 @@ namespace keyupMusic2
             }
             base.Dispose(disposing);
         }
-        public static void mouse_move(int x, int y)
-        {
-            Console.WriteLine(DateTime.Now.ToString() + "." + DateTime.Now.Millisecond.ToString("#000") + " mouse_move" + x + "," + y);
-            mouse_event(MOUSEEVENTF_ABSOLUTE | MOUSEEVENTF_MOVE, x * 65536 / screenWidth, y * 65536 / screenHeight, 0, 0);
-        }
-        public static void mouse_click(int tick = 0)
-        {
-            Console.WriteLine(DateTime.Now.ToString() + "." + DateTime.Now.Millisecond.ToString("#000") + " mouse_click");
-            mouse_event(MOUSEEVENTF_LEFTDOWN | MOUSEEVENTF_LEFTUP, 0, 0, 0, 0);
-            Thread.Sleep(tick);
-        }
-        public static void mouse_click2()
-        {
-            Console.WriteLine(DateTime.Now.ToString() + "." + DateTime.Now.Millisecond.ToString("#000") + " mouse_click");
-            mouse_event(MOUSEEVENTF_RIGHTDOWN | MOUSEEVENTF_RIGHTUP, 0, 0, 0, 0);
-        }
-        static int screenWidth = Screen.PrimaryScreen.Bounds.Width;
-        static int screenHeight = Screen.PrimaryScreen.Bounds.Height;
 
-        [DllImport("user32.dll", EntryPoint = "keybd_event", SetLastError = true)]
-        public static extern void keybd_event(byte bVk, byte bScan, uint dwFlags, uint dwExtraInfo);
-
-        [System.Runtime.InteropServices.DllImport("user32")]
-        private static extern int mouse_event(int dwFlags, int dx, int dy, int cButtons, int dwExtraInfo);
-
-        const int MOUSEEVENTF_MOVE = 0x0001;
-        const int MOUSEEVENTF_LEFTDOWN = 0x0002;
-        const int MOUSEEVENTF_LEFTUP = 0x0004;
-        const int MOUSEEVENTF_RIGHTDOWN = 0x0008;
-        const int MOUSEEVENTF_RIGHTUP = 0x0010;
-        const int MOUSEEVENTF_MIDDLEDOWN = 0x0020;
-        const int MOUSEEVENTF_MIDDLEUP = 0x0040;
-        const int MOUSEEVENTF_ABSOLUTE = 0x8000;
-        private static void FocusProcess(string procName)
+        private void Huan_ResizeEnd(object sender, EventArgs e)
         {
-            Process[] objProcesses = Process.GetProcessesByName(procName);
-            if (objProcesses.Length > 0)
-            {
-                IntPtr hWnd = IntPtr.Zero;
-                hWnd = objProcesses[0].MainWindowHandle;
-                ShowWindowAsync(new HandleRef(null, hWnd), SW_RESTORE);
-                SetForegroundWindow(objProcesses[0].MainWindowHandle);
-            }
-        }
-        [DllImport("user32.dll")]
-        public static extern bool ShowWindowAsync(HandleRef hWnd, int nCmdShow);
-        [DllImport("user32.dll")]
-        public static extern bool SetForegroundWindow(IntPtr WindowHandle);
-        public const int SW_RESTORE = 9;
-        private static Timer aTimer = new Timer(100);
-        KeyEventHandler myKeyEventHandeler_down;
-        KeyboardHook k_hook = new KeyboardHook();
-
-        private void load_point()
-        {
-            string point = File.ReadAllText("point.txt");
-            if (point == "") point = "0,0";
-            int x = int.Parse(point.Split(',')[0]);
-            int y = int.Parse(point.Split(',')[1]);
-            points[0] = new Point(x, y);
+            SetVisibleCore(false);
         }
 
-        public static void press(Keys num, int tick = 0)
+        private void notifyIcon1_DoubleClick(object sender, EventArgs e)
         {
-            press([num], tick);
-            return;
+            Dispose();
         }
-        public static void press(string str, int tick = 800)
+
+        private void Huan_MouseHover(object sender, EventArgs e)
         {
-            var list = str.Split(";");
-            if (list.Length == 0) return;
-            foreach (var item in list)
+            //Opacity = 1;
+        }
+
+        private void Huan_MouseLeave(object sender, EventArgs e)
+        {
+            //Opacity = 0.5;
+        }
+
+        private void toolStripMenuItem2_Click(object sender, EventArgs e)
+        {
+
+        }
+        private void contextMenuStrip1_ItemClicked(object sender, ToolStripItemClickedEventArgs e)
+        {
+            if (Enum.TryParse(typeof(Keys), e.ClickedItem.Text, out object asd)) ;
             {
-                if (string.IsNullOrEmpty(item)) continue;
-                if (item.IndexOf(',') >= 0)
-                {
-                    mouse_move(Int32.Parse(item.Split(",")[0]), Int32.Parse(item.Split(",")[1]));
-                    mouse_click();
-                }
-                else if ((int.TryParse(item, out int number)))
-                {
-                    Thread.Sleep(number);
-                }
-                else
-                {
-                    //press((Keys)Enum.Parse(typeof(Keys), item));
-                    if (Enum.TryParse(typeof(Keys), item, out object asd))
-                    {
-                        press((Keys)asd);
-                    }
-                    else if (item.Length > 1)
-                    {
-                        press(item.Substring(0, 1), 0);
-                        if (item.Length > 1)
-                            press(item.Substring(1, item.Length - 1), 0);
-                    }
-                }
-                Thread.Sleep(tick);
+                hook_KeyDown(sender, new KeyEventArgs((Keys)asd));
+            }
+            if (e.ClickedItem.Text == "L")
+            {
+                Dispose();
             }
         }
-        public static void _press(Keys keys)
-        {
-            keybd_event((byte)keys, 0, 0, 0);
-            keybd_event((byte)keys, 0, 2, 0);
-        }
-        public static void press(Keys[] keys, int tick = 10)
-        {
-            if (keys == null || keys.Length == 0 || keys.Length > 100)
-                return;
-            if (keys.Length == 1)
-            {
-                _press(keys[0]);
-            }
-            else if (keys.Length > 1 && keys[0] == keys[1])
-            {
-                foreach (var key in keys)
-                {
-                    _press(key);
-                };
-            }
-            else
-            {
-                foreach (var item in keys)
-                    keybd_event((byte)item, 0, 0, 0);
-                foreach (var item in keys)
-                    keybd_event((byte)item, 0, 2, 0);
-            }
-            Thread.Sleep(tick);
-        }
-        bool is_listen = true;
+
+
+
+        public static bool is_listen = false;
+        public static DateTime time_last = DateTime.Now;
         public void listen_word(String[] args)
         {
             args = new string[] {
@@ -515,24 +477,7 @@ namespace keyupMusic2
       "decoder.ncnn.bin",
       "joiner.ncnn.param",
       "joiner.ncnn.bin" };
-            String usage = @"
-./microphone.exe \
-   /path/to/tokens.txt \
-   /path/to/encoder.ncnn.param \
-   /path/to/encoder.ncnn.bin \
-   /path/to/decoder.ncnn.param \
-   /path/to/decoder.ncnn.bin \
-   /path/to/joiner.ncnn.param \
-   /path/to/joiner.ncnn.bin \
-   [<num_threads> [decode_method]]
-
-num_threads: Default to 1
-decoding_method: greedy_search (default), or modified_beam_search
-
-Please refer to
-https://k2-fsa.github.io/sherpa/ncnn/pretrained_models/index.html
-for a list of pre-trained models to download.
-";
+            String usage = @"1111";
             if (args.Length < 7 || args.Length > 9)
             {
                 Console.WriteLine(usage);
@@ -636,7 +581,7 @@ for a list of pre-trained models to download.
 
             Console.WriteLine(param);
             Console.WriteLine("Started! Please speak\n\n");
-            this.Invoke(new MethodInvoker(() => { label1.Text = "Started! Please speak\n\n"; }));
+            //this.Invoke(new MethodInvoker(() => { label1.Text = "Started! Please speak\n\n"; }));
 
             stream.Start();
 
@@ -660,7 +605,7 @@ for a list of pre-trained models to download.
                     lastText = text;
                     Console.Write($"\r{segmentIndex}: {lastText}");
 
-                    log($"{segmentIndex}-{lastText}" + "--------" + time_last.ToString("yyyy-MM-dd HH:mm:ss.fff") + "--------" + time_last.AddMilliseconds(2000).ToString("yyyy-MM-dd HH:mm:ss.fff") + "-----" + DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss.fff"));
+                    Common.log($"{segmentIndex}-{lastText}" + "--------" + time_last.ToString("yyyy-MM-dd HH:mm:ss.fff") + "--------" + time_last.AddMilliseconds(2000).ToString("yyyy-MM-dd HH:mm:ss.fff") + "-----" + DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss.fff"));
                     handle_word(lastText, segmentIndex);
 
                     time_last = DateTime.Now;
@@ -679,79 +624,29 @@ for a list of pre-trained models to download.
                 //
                 Thread.Sleep(200); // ms
             }
-            // Í£Ö¹ÒôÆµÁ÷  
+            // åœæ­¢éŸ³é¢‘æµ  
             if (stream != null && stream.IsActive)
             {
                 stream.Stop();
-                stream.Dispose(); // Èç¹ûPortAudioSharp.StreamÊµÏÖÁËIDisposable½Ó¿Ú  
+                stream.Dispose(); // å¦‚æœPortAudioSharp.Streamå®ç°äº†IDisposableæ¥å£  
             }
 
-            // ÇåÀíÊ¶±ğÆ÷¼°ÆäÁ÷  
+            // æ¸…ç†è¯†åˆ«å™¨åŠå…¶æµ  
             if (recognizer != null)
             {
-                recognizer.Dispose(); // ¼ÙÉèOnlineRecognizerÊµÏÖÁËIDisposable½Ó¿Ú  
-                s.Dispose();          // Èç¹ûOnlineStreamÒ²ÓĞÇåÀí×ÊÔ´µÄ±ØÒª£¬Ò²¿ÉÒÔÔÚÕâÀï´¦Àí  
+                recognizer.Dispose(); // å‡è®¾OnlineRecognizerå®ç°äº†IDisposableæ¥å£  
+                s.Dispose();          // å¦‚æœOnlineStreamä¹Ÿæœ‰æ¸…ç†èµ„æºçš„å¿…è¦ï¼Œä¹Ÿå¯ä»¥åœ¨è¿™é‡Œå¤„ç†  
             }
 
             PortAudio.Terminate();
         }
-        static DateTime time_last = DateTime.Now;
-        private static readonly object _lockObject = new object();
-        public static void log(string message)
+
+        private void notifyIcon1_MouseClick(object sender, MouseEventArgs e)
         {
-            //log(GetWindowText(GetForegroundWindow()));
-            //File.AppendAllText("log.txt", "\r" + DateTime.Now.ToString("") + " " + message);
-            // Ê¹ÓÃusingÓï¾äÈ·±£StreamWriter±»ÕıÈ·¹Ø±ÕºÍÊÍ·Å  
-            lock (_lockObject)
+            if (e.Button == MouseButtons.Left)
             {
-                try
-                {
-                    File.AppendAllText("log.txt", "\r" + DateTime.Now.ToString("") + " " + message);
-                }
-                catch (Exception)
-                {
-                }
+                SetVisibleCore(!Visible);
             }
-        }
-
-        private void notifyIcon1_Click(object sender, EventArgs e)
-        {
-            SetVisibleCore(!Visible);
-        }
-        private GraphicsPath GetRoundedRect(Rectangle rect, int radius)
-        {
-            GraphicsPath path = new GraphicsPath();
-            path.AddArc(rect.X, rect.Y, radius, radius, 180, 90);
-            path.AddArc(rect.Right - radius, rect.Y, radius, radius, 270, 90);
-            path.AddArc(rect.Right - radius, rect.Bottom - radius, radius, radius, 0, 90);
-            path.AddArc(rect.X, rect.Bottom - radius, radius, radius, 90, 90);
-            path.CloseFigure();
-            return path;
-        }
-
-        private void Huan_ResizeEnd(object sender, EventArgs e)
-        {
-            SetVisibleCore(false);
-        }
-
-        private void notifyIcon1_DoubleClick(object sender, EventArgs e)
-        {
-            Dispose();
-        }
-
-        private void Huan_MouseHover(object sender, EventArgs e)
-        {
-            //Opacity = 1;
-        }
-
-        private void Huan_MouseLeave(object sender, EventArgs e)
-        {
-            //Opacity = 0.5;
-        }
-
-        private void toolStripMenuItem2_Click(object sender, EventArgs e)
-        {
-
         }
     }
 }

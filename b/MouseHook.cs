@@ -16,6 +16,7 @@ namespace WGestures.Core.Impl.Windows
         const int WM_HOOK_TIMEOUT = (int)User32.WM.WM_USER + 1;
 
         public bool IsDisposed { get; private set; }
+        public bool is_install = false;
         private IntPtr _hookId;
         private IntPtr _kbdHookId;
         private uint _hookThreadNativeId;
@@ -88,6 +89,7 @@ namespace WGestures.Core.Impl.Windows
             {
                 throw new Win32Exception("Fail to install mouse hook:" + Native.GetLastError());
             }
+            is_install = true;
         }
 
         private void _uinstall()
@@ -96,6 +98,7 @@ namespace WGestures.Core.Impl.Windows
             var kbdHookId = _kbdHookId;
             _hookId = IntPtr.Zero;
             _kbdHookId = IntPtr.Zero;
+            is_install = false;
 
 
             if (Native.UnhookWindowsHookEx(hookId) && Native.UnhookWindowsHookEx(kbdHookId))

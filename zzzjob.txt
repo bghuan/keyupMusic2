@@ -7,3 +7,9 @@ clean
 本地音频转文字
 1 copy
 判断windows search 是否已经打开
+
+语言识别限定词
+方法输出到lable1
+ctrl shift f1 open close listen
+1 init close other
+已经有就只切换

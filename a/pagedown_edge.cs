@@ -34,7 +34,7 @@ public static class pagedown_edge
             fildsadsePath = ex.Message;
         }
 
-        log(DateTime.Now.ToString("") + " " + windowTitle + " " + fildsadsePath + module_nasme + "\n");
+        //log(DateTime.Now.ToString("") + " " + windowTitle + " " + fildsadsePath + module_nasme + "\n");
         return module_nasme;
     }
 
