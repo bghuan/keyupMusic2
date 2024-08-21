@@ -11,8 +11,42 @@ using Win32;
 
 namespace WGestures.Core.Impl.Windows
 {
-    internal class MouseKeyboardHook : IDisposable
+    public class MouseKeyboardHook : IDisposable
     {
+        //public static Keys stop_key = Keys.F13;
+        public static List<Keys> stop_keys = new List<Keys>();
+        public static bool mouse_downing = false;
+        protected virtual int KeyboardHookProc(int code, int wParam, ref Native.keyboardHookStruct lParam)
+        {
+            var key = (Keys)lParam.vkCode;
+            {
+                KeyboardEventType type;
+
+                if ((wParam == (int)User32.WM.WM_KEYDOWN || wParam == (int)User32.WM.WM_SYSKEYDOWN))
+                {
+                    type = KeyboardEventType.KeyDown;
+                }
+                else if ((wParam == (int)User32.WM.WM_KEYUP || wParam == (int)User32.WM.WM_SYSKEYUP))
+                {
+                    type = KeyboardEventType.KeyUp;
+                }
+                else return Native.CallNextHookEx(_hookId, code, wParam, ref lParam);
+
+                var args = new KeyboardHookEventArgs(type, key, wParam, lParam);
+                //if (key != stop_key)
+                if (stop_keys.Count == 0 || !stop_keys.Contains(key) || type == KeyboardEventType.KeyUp)
+                    KeyboardHookEvent(args);
+
+                if (args.Handled) return 1;
+            }
+            //if (key == stop_key)
+            //{
+            //    stop_key = Keys.F13;
+            //    return 1;
+            //}
+
+            return Native.CallNextHookEx(_hookId, code, wParam, ref lParam);
+        }
         const int WM_HOOK_TIMEOUT = (int)User32.WM.WM_USER + 1;
 
         public bool IsDisposed { get; private set; }
@@ -56,6 +90,7 @@ namespace WGestures.Core.Impl.Windows
             public Native.keyboardHookStruct lParam;
             public Keys key;
             public bool Handled;
+            public bool Handling;
 
             public KeyboardHookEventArgs(KeyboardEventType type, Keys key, int wParam, Native.keyboardHookStruct lParam)
             {
@@ -82,13 +117,10 @@ namespace WGestures.Core.Impl.Windows
 
         private void _install()
         {
-            _hookId = Native.SetMouseHook(_mouseHookProc);
+            if (MouseHookEvent != null)
+                _hookId = Native.SetMouseHook(_mouseHookProc);
             _kbdHookId = Native.SetKeyboardHook(_kbdHookProc);
 
-            if (_hookId == IntPtr.Zero || _kbdHookId == IntPtr.Zero)
-            {
-                throw new Win32Exception("Fail to install mouse hook:" + Native.GetLastError());
-            }
             is_install = true;
         }
 
@@ -104,10 +136,6 @@ namespace WGestures.Core.Impl.Windows
             if (Native.UnhookWindowsHookEx(hookId) && Native.UnhookWindowsHookEx(kbdHookId))
             {
                 Debug.WriteLine("钩子已卸载");
-            }
-            else
-            {
-                throw new Win32Exception("Fail to uinstall mouse hook: " + Native.GetLastError());
             }
         }
 
@@ -250,32 +278,6 @@ namespace WGestures.Core.Impl.Windows
             return args.Handled ? new IntPtr(-1) : Native.CallNextHookEx(_hookId, nCode, wParam, lParam);
         }
 
-        protected virtual int KeyboardHookProc(int code, int wParam, ref Native.keyboardHookStruct lParam)
-        {
-            if (code >= 0 && KeyboardHookEvent != null)
-            {
-                var key = (Keys)lParam.vkCode;
-                KeyboardEventType type;
-
-                if ((wParam == (int)User32.WM.WM_KEYDOWN || wParam == (int)User32.WM.WM_SYSKEYDOWN))
-                {
-                    type = KeyboardEventType.KeyDown;
-                }
-                else if ((wParam == (int)User32.WM.WM_KEYUP || wParam == (int)User32.WM.WM_SYSKEYUP))
-                {
-                    type = KeyboardEventType.KeyUp;
-                }
-                else return Native.CallNextHookEx(_hookId, code, wParam, ref lParam);
-
-                var args = new KeyboardHookEventArgs(type, key, wParam, lParam);
-                KeyboardHookEvent(args);
-
-                if (args.Handled) return 1;
-
-            }
-
-            return Native.CallNextHookEx(_hookId, code, wParam, ref lParam);
-        }
 
         #region dispose
         //If the method is invoked from the finalizer (disposing is false), 

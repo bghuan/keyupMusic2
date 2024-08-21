@@ -5,6 +5,7 @@ using System.Linq;
 using System.Runtime.InteropServices;
 using System.Text;
 using System.Threading.Tasks;
+using static WGestures.Core.Impl.Windows.MouseKeyboardHook;
 
 namespace keyupMusic2
 {
@@ -48,9 +49,12 @@ namespace keyupMusic2
 
         };
 
-        public static bool is_listen = true;
+        public static bool is_listen = false;
         public static DateTime time_last = DateTime.Now;
-        public static void aaaaaaaaaalisten_word(String[] args)
+
+        public delegate void aaaEventHandler(string e, int a, bool s = true);
+        public static event aaaEventHandler aaaEvent;
+        public static void listen_word(String[] args, Action<string, int> action)
         {
             args = new string[] {
       "tokens.txt",
@@ -189,7 +193,8 @@ namespace keyupMusic2
                     Console.Write($"\r{segmentIndex}: {lastText}");
 
                     Common.log($"{segmentIndex}-{lastText}" + "--------" + time_last.ToString("yyyy-MM-dd HH:mm:ss.fff") + "--------" + time_last.AddMilliseconds(2000).ToString("yyyy-MM-dd HH:mm:ss.fff") + "-----" + DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss.fff"));
-                    //handle_word(lastText, segmentIndex);
+                    action(lastText, segmentIndex);
+                    aaaEvent(lastText, segmentIndex);
 
                     time_last = DateTime.Now;
                 }

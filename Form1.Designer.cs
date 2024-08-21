@@ -71,7 +71,6 @@
             notifyIcon1.ContextMenuStrip = contextMenuStrip1;
             notifyIcon1.Icon = (Icon)resources.GetObject("notifyIcon1.Icon");
             notifyIcon1.Text = "幻";
-            notifyIcon1.Visible = true;
             notifyIcon1.DoubleClick += notifyIcon1_DoubleClick;
             notifyIcon1.MouseClick += notifyIcon1_MouseClick;
             // 
@@ -88,7 +87,6 @@
             toolStripMenuItem2.Name = "toolStripMenuItem2";
             toolStripMenuItem2.Size = new Size(98, 30);
             toolStripMenuItem2.Text = "Q";
-            toolStripMenuItem2.Click += toolStripMenuItem2_Click;
             // 
             // toolStripMenuItem3
             // 
@@ -216,8 +214,7 @@
             TopMost = true;
             Load += Form1_Load;
             DoubleClick += Huan_ResizeEnd;
-            MouseLeave += Huan_MouseLeave;
-            MouseHover += Huan_MouseHover;
+            Resize += Huan_Resize;
             contextMenuStrip1.ResumeLayout(false);
             ResumeLayout(false);
             PerformLayout();

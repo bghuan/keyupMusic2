@@ -1,27 +1,34 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using C = keyupMusic2.Common;
+using static WGestures.Core.Impl.Windows.MouseKeyboardHook;
+
+using static keyupMusic2.Common;
 
 namespace keyupMusic2
 {
     public class devenv : Default
     {
         static int is_oem = 0;
-        public void hook_KeyDown_ddzzq(object? sender, KeyEventArgs e)
+        public void hook_KeyDown_ddzzq(KeyboardHookEventArgs e)
         {
-            if (pagedown_edge.yo() != ClassName()) return;
+            if (ProcessName != ClassName()) return;
             Common.hooked = true;
 
-            switch (e.KeyCode)
+            switch (e.key)
             {
                 case Keys.F10:
-                    Common.press([Keys.LControlKey, Keys.LShiftKey, Keys.F5]);
+                    press([Keys.LControlKey, Keys.LShiftKey, Keys.F5]);
                     break;
                 case Keys.F6:
-                    Common.press([Keys.LShiftKey, Keys.F5]);
+                    press([Keys.LShiftKey, Keys.F5]);
+                    break;
+                case Keys.F11:
+                    ProcessStartInfo startInfo = new ProcessStartInfo("taskmgr.exe");
+                    Process.Start(startInfo);
                     break;
             }
             Common.hooked = false;

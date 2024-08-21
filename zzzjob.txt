@@ -13,3 +13,8 @@ clean
 ctrl shift f1 open close listen
 1 init close other
 已经有就只切换
+去除多次触发
+判断管理员
+触发键阻止传递
+ctrlshift是否Handled
+1win已打开则跳过

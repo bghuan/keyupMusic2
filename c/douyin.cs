@@ -3,21 +3,41 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using C = keyupMusic2.Common;
+using static WGestures.Core.Impl.Windows.MouseKeyboardHook;
+
+using static keyupMusic2.Common;
 
 namespace keyupMusic2
 {
-    public class douyin: Default
+    public class douyin : Default
     {
-        public void hook_KeyDown_ddzzq(object? sender, KeyEventArgs e)
+        public void hook_KeyDown_ddzzq(KeyboardHookEventArgs e)
         {
-            if (pagedown_edge.yo() != ClassName()) return;
+            string module_name = ProcessName;
+            if (module_name != ClassName() && module_name != Common.msedge) return;
             Common.hooked = true;
 
-            switch (e.KeyCode)
+            switch (e.key)
             {
-                case Keys.F6: 
-                    Common.press("2450,73;2107,229;1302,253;2355,237;", 101);
+                case Keys.PageDown:
+                case Keys.Left:
+                    e.Handled = true;
+                    if (module_name == Common.msedge && e.key == Keys.Left) break;
+                    if (Cursor.Position.Y < 100)
+                    {
+                        press(Keys.VolumeDown);
+                        press(Keys.VolumeDown);
+                    }
+                    break;
+                case Keys.PageUp:
+                case Keys.Right:
+                    e.Handled = true;
+                    if (module_name == Common.msedge && e.key == Keys.Right) break;
+                    if (Cursor.Position.Y < 100)
+                    {
+                        press(Keys.VolumeUp);
+                        press(Keys.VolumeUp);
+                    }
                     break;
             }
             Common.hooked = false;
