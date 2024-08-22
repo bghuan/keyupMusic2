@@ -16,6 +16,7 @@ namespace WGestures.Core.Impl.Windows
         //public static Keys stop_key = Keys.F13;
         public static List<Keys> stop_keys = new List<Keys>();
         public static bool mouse_downing = false;
+        public static bool handling = false;
         protected virtual int KeyboardHookProc(int code, int wParam, ref Native.keyboardHookStruct lParam)
         {
             var key = (Keys)lParam.vkCode;
@@ -34,7 +35,7 @@ namespace WGestures.Core.Impl.Windows
 
                 var args = new KeyboardHookEventArgs(type, key, wParam, lParam);
                 //if (key != stop_key)
-                if (stop_keys.Count == 0 || !stop_keys.Contains(key) || type == KeyboardEventType.KeyUp)
+                if (stop_keys.Count == 0 || !stop_keys.Contains(key) || type == KeyboardEventType.KeyUp || key == Keys.VolumeDown || key == Keys.VolumeUp)
                     KeyboardHookEvent(args);
 
                 if (args.Handled) return 1;

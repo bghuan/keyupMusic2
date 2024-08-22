@@ -16,31 +16,24 @@ namespace keyupMusic2
             string module_name = ProcessName;
             if (module_name != ClassName() && module_name != Common.msedge) return;
             Common.hooked = true;
+            handling_keys = e.key;
 
             switch (e.key)
             {
-                case Keys.PageDown:
                 case Keys.Left:
-                    e.Handled = true;
-                    if (module_name == Common.msedge && e.key == Keys.Left) break;
-                    if (Cursor.Position.Y < 100)
-                    {
-                        press(Keys.VolumeDown);
-                        press(Keys.VolumeDown);
-                    }
+                    if (Position.Y == 0) press(Keys.VolumeDown);
                     break;
-                case Keys.PageUp:
                 case Keys.Right:
-                    e.Handled = true;
-                    if (module_name == Common.msedge && e.key == Keys.Right) break;
-                    if (Cursor.Position.Y < 100)
-                    {
-                        press(Keys.VolumeUp);
-                        press(Keys.VolumeUp);
-                    }
+                    if (Position.Y == 0) press(Keys.VolumeUp);
+                    break;
+                case Keys.X:
+                    if (Position.X == 0 && Position.Y == 0) { HideProcess(module_name); break; }
+                    if (Position.X == 2559 && Position.Y == 0) { close(); break; }
                     break;
             }
+            raw_press();
             Common.hooked = false;
+            if (!handling) handling = true;
         }
 
     }

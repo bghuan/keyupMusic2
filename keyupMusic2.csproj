@@ -28,4 +28,8 @@
     </None>
   </ItemGroup>
 
+  <Target Name="PreBuild" BeforeTargets="PreBuildEvent">
+    <Exec Command="taskkill /im keyupmusic2.exe /f" ContinueOnError="true" />
+  </Target>
+
 </Project>

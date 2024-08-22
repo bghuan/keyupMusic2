@@ -1,4 +1,1296 @@
-﻿using System.Diagnostics;
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+using static WGestures.Core.Impl.Windows.MouseKeyboardHook;
+
+using static keyupMusic2.Common;
+
+namespace keyupMusic2
+{
+    public class AAA : Default
+    {
+        string[] list = Common.list;
+        string[] list_wechat = { Common.WeChat, Common.ACPhoenix, explorer, Common.keyupMusic2, Common.douyin, Common.devenv };
+        string[] list_visualstudio = { Common.devenv, Common.ACPhoenix, explorer, Common.keyupMusic2, Common.douyin, Common.WeChat, };
+        string[] list_volume = { Common.douyin, Common.msedge};
+        public void hook_KeyDown_ddzzq(KeyboardHookEventArgs e)
+        {
+            string module_name = ProcessName;
+            if (!list.Contains(module_name)) return;
+            bool catched = false;
+
+            switch (e.key)
+            {
+                case Keys.F11:
+                    if (is_ctrl()) break;
+                    if (list_visualstudio.FirstOrDefault() == module_name)
+                    {
+                        HideProcess(module_name);
+                    }
+                    else if (list_visualstudio.Contains(module_name))
+                    {
+                        if (Common.FocusProcess(Common.devenv)) break;
+                        press("LWin;VIS;Apps;100;Enter;", 100);
+                        TaskRun(() => { press("Tab;Down;Enter;", 100); }, 1500);
+                    }
+                    break;
+                case Keys.F12:
+                    if (is_ctrl()) break;
+                    if (list_wechat.FirstOrDefault() == module_name)
+                    {
+                        HideProcess(module_name);
+                    }
+                    else if (list_wechat.Contains(module_name))
+                    {
+                        Common.FocusProcess(Common.WeChat);
+                        Thread.Sleep(100);
+                        if (ProcessName2 == Common.WeChat) break;
+                        press("LWin;WEI;Enter;", 50);
+                    }
+                    break;
+                default:
+                    catched = true;
+                    break;
+            }
+            if (catched)
+            {
+                e.Handled = true;
+            }
+            Common.hooked = false;
+        }
+
+    }
+}
+using System.Diagnostics;
+using System.Security.Principal;
+using WGestures.Common.OsSpecific.Windows;
+using WGestures.Core.Impl.Windows;
+using static keyupMusic2.Common;
+using static WGestures.Core.Impl.Windows.MouseKeyboardHook;
+
+
+namespace keyupMusic2
+{
+    public partial class Huan : Form
+    {
+        ACPhoenix aCPhoenix;
+        devenv Devenv;
+        douyin Douyin;
+        AAA Aaa;
+        Super super;
+        public Huan()
+        {
+            Task.Run(() => copy_secoed_screen());
+            InitializeComponent();
+            label1.Text = DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss");
+            log("Huan()");
+
+            //if (!Debugger.IsAttached && !IsAdministrator())
+            if (!Debugger.IsAttached && !is_down(Keys.LControlKey) && !IsAdministrator())
+            {
+                ProcessStartInfo startInfo = new ProcessStartInfo(Application.ExecutablePath);
+                startInfo.UseShellExecute = true;
+                startInfo.Verb = "runas";
+                TaskRun(() => { if (ProcessName2 == Common.keyupMusic2) press(Keys.Enter, 1000); }, 1000);
+                Process.Start(startInfo);
+                Application.Exit();
+                MessageBox.Show("正在获取管理员权限");
+            }
+
+            startListen();
+            aCPhoenix = new ACPhoenix();
+            Devenv = new devenv();
+            Douyin = new douyin();
+            Aaa = new AAA();
+            super = new Super(this);
+        }
+
+        private void Form1_Load(object sender, EventArgs e)
+        {
+            int currentProcessId = Process.GetCurrentProcess().Id;
+            Process[] processes = Process.GetProcessesByName(Common.keyupMusic2);
+            foreach (Process process in processes)
+                if (process.Id != currentProcessId)
+                    process.Kill();
+
+            Common.FocusProcess(Common.douyin);
+            Common.FocusProcess(Common.ACPhoenix);
+        }
+
+        public bool keyupMusic2_onlisten = false;
+        DateTime super_listen_time = new DateTime();
+        int super_listen_tick = 2000;
+        private MouseKeyboardHook _mouseKbdHook;
+        static string lastText = "";
+        static int last_index = 0;
+        private void hook_KeyUp(KeyboardHookEventArgs e)
+        {
+            if (e.Type == KeyboardEventType.KeyDown) return;
+            stop_keys.Remove(e.key);
+            if (mouse_downing) up_mouse();
+        }
+        public bool judge_handled(KeyboardHookEventArgs e, string ProcessName)
+        {
+            if (e.key == Keys.F3) return true;
+            if (e.key == Keys.F11 && ProcessName == Common.devenv && !is_ctrl()) return true;
+            if (e.key == Keys.F12 && ProcessName == Common.devenv && !is_ctrl()) return true;
+            if (e.key == Keys.VolumeUp && is_ctrl()) return true;
+            if (e.key == Keys.VolumeDown && is_ctrl()) return true;
+            if (ProcessName == Common.ACPhoenix)
+            {
+                if (e.key == Keys.Oem3) return true;
+                if (e.key == Keys.F11 && !is_ctrl()) return true;
+                if (aCPhoenix.handling)
+                {
+                    if (e.key == Keys.Space) return true;
+                    if (e.key == Keys.E) return true;
+                    if (e.key == Keys.Tab) return true;
+                }
+            }
+            //if (ProcessName == Common.douyin)
+            //{
+            //    var asd = new Keys[] { Keys.VolumeDown, Keys.VolumeUp, Keys.MediaNextTrack, Keys.MediaPreviousTrack };
+            //    if (asd.Contains(e.key)) return true;
+            //}
+            //if (MouseKeyboardHook.handling) return true;
+            //if (e.key == Keys.RMenu) return true;
+            return false;
+        }
+        private void hook_KeyDown(KeyboardHookEventArgs e)
+        {
+            if (e.Type != KeyboardEventType.KeyDown) return;
+            if (ProcessName2 == Common.keyupMusic2 && e.key == Keys.F1) Common.hooked = !Common.hooked;
+            if (Common.hooked) return;
+            if (keyupMusic2_onlisten) e.Handled = true;
+            if (judge_handled(e, ProcessName)) e.Handled = true;
+
+            if (!stop_keys.Contains(e.key)) stop_keys.Add(e.key);
+            var new_stop_keys = stop_keys.ToArray();
+            Invoke2(() =>
+                 {
+                     string asd = string.Join("+", new_stop_keys.Select(key => key.ToString()));
+                     asd = asd.Replace("LMenu", "Alt").Replace("LControlKey", "Ctrl").Replace("LShiftKey", "Shift").Replace("LWin", "Win"); ;
+                     label1.Text = asd;
+                 }
+            );
+
+            if (ProcessName == Common.keyupMusic2)
+            {
+                super_listen();
+            }
+            if (e.key == Keys.F3 || (e.key == Keys.LControlKey && is_shift())
+                 || (e.key == Keys.LShiftKey && is_ctrl()))
+            {
+                super_listen();
+            }
+            else
+            {
+                Task.Run(() =>
+                {
+                    super.hook_KeyDown_keyupMusic2(e);
+                    Aaa.hook_KeyDown_ddzzq(e);
+                    Devenv.hook_KeyDown_ddzzq(e);
+                    aCPhoenix.hook_KeyDown_ddzzq(e);
+                    Douyin.hook_KeyDown_ddzzq(e);
+
+                    Invoke2(() => super_listen_clear());
+                });
+            }
+        }
+        private void super_listen()
+        {
+            keyupMusic2_onlisten = true;
+            super_listen_time = DateTime.Now.AddMilliseconds(1900);
+            Invoke2(() =>
+            {
+                base.BackColor = Color.Blue;
+                TaskRun(() =>
+                {
+                    if (DateTime.Now > super_listen_time)
+                        super_listen_clear();
+                }, super_listen_tick);
+            });
+        }
+
+        private void super_listen_clear()
+        {
+            keyupMusic2_onlisten = false;
+            BackColor = Color.White;
+        }
+
+        public void handle_word2(string text, int segmentIndex, bool show = true)
+        {
+            Thread.Sleep(2000);
+            this.Invoke(new MethodInvoker(() => { label1.Text = "text"; }));
+        }
+        public void handle_word(string text, int segmentIndex, bool show = true)
+        {
+            if (show) this.Invoke(new MethodInvoker(() => { label1.Text = text; }));
+            string text_backup = text;
+
+            string a = "", b = "", b1 = "", b2 = "", b3 = "", b4 = "", c = "";
+
+            a = lastText;
+            if (!string.IsNullOrEmpty(a))
+                b = text.Replace(a, "");
+            else
+                b = text;
+            if (b.Length >= 1) b1 = b.Substring(0, 1);
+            if (b.Length >= 2) b2 = b.Substring(0, 2);
+            if (b.Length >= 3) b3 = b.Substring(0, 3);
+            if (b.Length >= 4) b4 = b.Substring(0, 4);
+            c = text;
+            //log($"{a}    {b}    {c}");
+
+            lastText = text;
+
+            if (KeyMap.TryGetValue(b, out Keys[] keys))
+            {
+                press(keys, 100);
+            }
+            else if (KeyMap.TryGetValue(b1, out Keys[] keysb1))
+            {
+                press(keysb1, 100);
+            }
+            else if (KeyMap.TryGetValue(b2, out Keys[] keysb2))
+            {
+                press(keysb2, 100);
+            }
+            else if (KeyMap.TryGetValue(b3, out Keys[] keysb3))
+            {
+                press(keysb3, 100);
+            }
+            else if (KeyMap.TryGetValue(b4, out Keys[] keysb4))
+            {
+                press(keysb4, 100);
+            }
+            else if (c.Length > 2 && c.IndexOf("打开") >= 0 && !string.IsNullOrEmpty(b))
+            {
+                Invoke(() => Clipboard.SetText(b1));
+                press([Keys.ControlKey, Keys.V]);
+
+                //press(Keys.Enter);
+            }
+            else if (c.Length > 2 && c.IndexOf("输入") >= 0 && !string.IsNullOrEmpty(b))
+            {
+                Invoke(() => Clipboard.SetText(b1));
+                press([Keys.ControlKey, Keys.V]);
+            }
+            else if (KeyMap.TryGetValue(c, out Keys[] keys3))
+            {
+                press(keys3, 100);
+            }
+            else if (c == "显示")
+            {
+                Common.FocusProcess(Process.GetCurrentProcess().ProcessName);
+                Invoke(() => SetVisibleCore(true));
+            }
+            else if (c == "连接")
+            {
+                press("LWin;OPEN;Enter;500;1056, 411;1563, 191", 101);
+            }
+            else if (c == "隐藏")
+            {
+                Invoke(() => SetVisibleCore(false));
+            }
+            else if (c == "边框")
+            {
+                Invoke(() => FormBorderStyle = FormBorderStyle == FormBorderStyle.None ? FormBorderStyle.Sizable : FormBorderStyle.None);
+            }
+        }
+        public static Dictionary<string, Keys[]> KeyMap = Listen.KeyMap;
+        private void label1_Click(object sender, EventArgs e)
+        {
+            //Clipboard.SetText((sender as Label).Text);
+            Point cursorPos = Cursor.Position;
+            contextMenuStrip1.Show(cursorPos);
+        }
+        public void startListen()
+        {
+            _mouseKbdHook = new MouseKeyboardHook();
+            _mouseKbdHook.KeyboardHookEvent += hook_KeyDown;
+            _mouseKbdHook.KeyboardHookEvent += hook_KeyUp;
+            _mouseKbdHook.Install();
+        }
+        public void stopListen()
+        {
+            if (_mouseKbdHook != null)
+            {
+                _mouseKbdHook.Uninstall();
+                _mouseKbdHook.Dispose();
+            }
+        }
+        protected override void Dispose(bool disposing)
+        {
+            log("Dispose()");
+            stopListen();
+
+            if (disposing && (components != null))
+            {
+                components.Dispose();
+            }
+            base.Dispose(disposing);
+        }
+
+        private void Huan_ResizeEnd(object sender, EventArgs e)
+        {
+            SetVisibleCore(false);
+        }
+
+        private void notifyIcon1_DoubleClick(object sender, EventArgs e)
+        {
+            Dispose();
+        }
+        private void contextMenuStrip1_ItemClicked(object sender, ToolStripItemClickedEventArgs e)
+        {
+            if (Enum.TryParse(typeof(Keys), e.ClickedItem.Text.Substring(0, 1), out object asd)) ;
+            {
+                var a = new KeyboardHookEventArgs(KeyboardEventType.KeyDown, (Keys)asd, 0, new Native.keyboardHookStruct());
+                super_listen();
+                hook_KeyDown(a);
+                a.Type = KeyboardEventType.KeyUp;
+                hook_KeyUp(a);
+            }
+            if (e.ClickedItem.Text == "L")
+            {
+                Dispose();
+            }
+        }
+
+        private void notifyIcon1_MouseClick(object sender, MouseEventArgs e)
+        {
+            if (e.Button == MouseButtons.Left)
+            {
+                SetVisibleCore(!Visible);
+            }
+        }
+        private void Huan_Resize(object sender, EventArgs e)
+        {
+            if (this.WindowState == FormWindowState.Minimized || this.WindowState == FormWindowState.Maximized)
+            {
+                this.WindowState = FormWindowState.Normal;
+                SetVisibleCore(false);
+            }
+        }
+
+        public void SetVisibleCore2(bool a)
+        {
+            SetVisibleCore(a);
+        }
+        public void Invoke2(Action action, int tick = 0)
+        {
+            Task.Run(() => { Thread.Sleep(tick); this.Invoke(action); });
+        }
+        // 检查是否以管理员身份运行  
+        private bool IsAdministrator()
+        {
+            //return false;
+            WindowsIdentity identity = WindowsIdentity.GetCurrent();
+            WindowsPrincipal principal = new WindowsPrincipal(identity);
+            return principal.IsInRole(WindowsBuiltInRole.Administrator);
+        }
+    }
+}
+using Microsoft.VisualBasic.Devices;
+using System;
+using System.Collections;
+using System.Collections.Generic;
+using System.Diagnostics;
+using System.Drawing.Imaging;
+using System.Linq;
+using System.Runtime.InteropServices;
+using System.Security.Cryptography.Xml;
+using System.Text;
+using System.Threading.Tasks;
+using WGestures.Common.OsSpecific.Windows;
+using WGestures.Core.Impl.Windows;
+using static System.Runtime.InteropServices.JavaScript.JSType;
+using static System.Windows.Forms.VisualStyles.VisualStyleElement.TrackBar;
+using static Win32.User32;
+using Point = System.Drawing.Point;
+
+namespace keyupMusic2
+{
+    public class Common
+    {
+        public const string keyupMusic2 = "keyupMusic2";
+        public const string ACPhoenix = "ACPhoenix";
+        public const string Dragonest = "DragonestGameLauncher";
+        public const string devenv = "devenv";
+        public const string WeChat = "WeChat";
+        public const string douyin = "douyin";
+        public const string msedge = "msedge";
+        public const string chrome = "chrome";
+        public const string Taskmgr = "Taskmgr";
+        public const string explorer = "explorer";
+        public const string SearchHost = "SearchHost";
+
+        public static string[] list = {
+        keyupMusic2,
+        ACPhoenix,
+        Dragonest,
+        devenv,
+        WeChat,
+        douyin,
+        msedge,
+        chrome,
+        Taskmgr,
+        explorer,
+        SearchHost,
+        };
+
+        public static bool hooked = false;
+        public static bool ACPhoenix_mouse_hook = false;
+
+        public static string ProcessName = "";
+        public static string ProcessName2
+        {
+            get
+            {
+                ProcessName = yo();
+                return ProcessName;
+            }
+            set
+            {
+                ProcessName = "";
+            }
+        }
+        public static Point Position
+        {
+            get
+            {
+                return Cursor.Position;
+            }
+        }
+        public static string yo()
+        {
+            IntPtr hwnd = GetForegroundWindow(); // 获取当前活动窗口的句柄
+
+            string windowTitle = GetWindowText(hwnd);
+            Console.WriteLine("当前活动窗口名称: " + windowTitle);
+
+            var filePath = "a.txt";
+            var fildsadsePath = "err";
+            var module_name = "err";
+            var ProcessName = "err";
+
+            try
+            {
+                uint processId;
+                GetWindowThreadProcessId(hwnd, out processId);
+                using (Process process = Process.GetProcessById((int)processId))
+                {
+                    fildsadsePath = process.MainModule.FileName;
+                    module_name = process.MainModule.ModuleName;
+                    ProcessName = process.ProcessName;
+                }
+            }
+            catch (System.Exception ex)
+            {
+                fildsadsePath = ex.Message;
+            }
+
+            //log(DateTime.Now.ToString("") + " " + windowTitle + " " + fildsadsePath + module_nasme + "\n");
+            return ProcessName;
+        }
+
+        private static readonly object _lockObject = new object();
+        private static readonly object _lockObject2 = new object();
+        public static void log(string message)
+        {
+            lock (_lockObject)
+            {
+                try
+                {
+                    File.AppendAllText("log.txt", "\r" + DateTime.Now.ToString("") + " " + message);
+                }
+                catch (Exception)
+                {
+                }
+            }
+        }
+
+        public static bool is_down(Keys key)
+        {
+            return Native.GetAsyncKeyState(key) < 0;
+        }
+
+        public static bool is_ctrl()
+        {
+            return Native.GetAsyncKeyState(Keys.ControlKey) < 0;
+        }
+        public static bool is_alt()
+        {
+            return Native.GetAsyncKeyState(Keys.LMenu) < 0;
+        }
+
+        public static bool is_shift()
+        {
+            return Native.GetAsyncKeyState(Keys.ShiftKey) < 0;
+        }
+        public static void cmd(string cmd)
+        {
+            ProcessStartInfo startInfo = new ProcessStartInfo
+            {
+                FileName = "cmd.exe",
+                Arguments = cmd,
+                UseShellExecute = false,
+                CreateNoWindow = true,
+                RedirectStandardOutput = true
+            };
+
+            using (Process process = Process.Start(startInfo))
+            {
+            }
+        }
+
+        public static int screenWidth = Screen.PrimaryScreen.Bounds.Width;
+        public static int screenHeight = Screen.PrimaryScreen.Bounds.Height;
+        public static int screenWidth2 = Screen.PrimaryScreen.Bounds.Width / 2;
+        public static int screenHeight2 = Screen.PrimaryScreen.Bounds.Height / 2;
+
+        const int MOUSEEVENTF_MOVE = 0x0001;
+        const int MOUSEEVENTF_LEFTDOWN = 0x0002;
+        const int MOUSEEVENTF_LEFTUP = 0x0004;
+        const int MOUSEEVENTF_RIGHTDOWN = 0x0008;
+        const int MOUSEEVENTF_RIGHTUP = 0x0010;
+        const int MOUSEEVENTF_MIDDLEDOWN = 0x0020;
+        const int MOUSEEVENTF_MIDDLEUP = 0x0040;
+        const int MOUSEEVENTF_ABSOLUTE = 0x8000;
+        public const int SW_RESTORE = 9;
+
+
+        [DllImport("user32.dll", EntryPoint = "keybd_event", SetLastError = true)]
+        public static extern void keybd_event(byte bVk, byte bScan, uint dwFlags, uint dwExtraInfo);
+
+        [System.Runtime.InteropServices.DllImport("user32")]
+        public static extern int mouse_event(int dwFlags, int dx, int dy, int cButtons, int dwExtraInfo);
+        [DllImport("user32.dll")]
+        public static extern bool ShowWindowAsync(HandleRef hWnd, int nCmdShow);
+        [DllImport("user32.dll")]
+        public static extern bool SetForegroundWindow(IntPtr WindowHandle);
+
+        public static void mouse_move(int x, int y, int tick = 0)
+        {
+            mouse_event(MOUSEEVENTF_ABSOLUTE | MOUSEEVENTF_MOVE, x * 65536 / screenWidth, y * 65536 / screenHeight, 0, 0);
+            Thread.Sleep(tick);
+        }
+        public static void mouse_move(int x, int y, int x2, int y2)
+        {
+            mouse_move(x, y);
+            down_mouse();
+
+            int times = 20;
+            int all_times = 20;
+            for (int i = 1; i < times + 1; i++)
+            {
+                int xx = 1;
+                int yy = 1;
+                if (x == x2) xx = 0;
+                else xx = (x2 - x) / times * i;
+                if (y == y2) yy = 0;
+                else yy = (y2 - y) / times * i;
+
+                mouse_move(x + xx, y + yy, all_times / times);
+            }
+
+            mouse_move(x2, y2);
+            up_mouse();
+        }
+        public static void mouse_move3(int tick = 0)
+        {
+            int x = screenWidth / 2;
+            int y = screenHeight / 2;
+            Thread.Sleep(tick);
+            mouse_event(MOUSEEVENTF_ABSOLUTE | MOUSEEVENTF_MOVE, x * 65536 / screenWidth, y * 65536 / screenHeight, 0, 0);
+        }
+        public static void mouse_move(Point point, int tick = 0)
+        {
+            Thread.Sleep(tick);
+            mouse_event(MOUSEEVENTF_ABSOLUTE | MOUSEEVENTF_MOVE, point.X * 65536 / screenWidth, point.Y * 65536 / screenHeight, 0, 0);
+        }
+        public static void mouse_move2(int x, int y, int tick = 0)
+        {
+            x += Cursor.Position.X;
+            y += Cursor.Position.Y;
+            Thread.Sleep(tick);
+            mouse_event(MOUSEEVENTF_ABSOLUTE | MOUSEEVENTF_MOVE, x * 65536 / screenWidth, y * 65536 / screenHeight, 0, 0);
+        }
+        public static void mouse_click(int tick = 10)
+        {
+            if (tick > 0)
+            {
+                down_mouse(tick);
+                up_mouse(tick);
+                return;
+            }
+            mouse_event(MOUSEEVENTF_LEFTDOWN | MOUSEEVENTF_LEFTUP, 0, 0, 0, 0);
+        }
+        public static void mouse_click(int x, int y, int tick = 10)
+        {
+            mouse_move(x, y);
+            if (tick > 0)
+            {
+                down_mouse(tick);
+                up_mouse(tick);
+                return;
+            }
+            mouse_event(MOUSEEVENTF_LEFTDOWN | MOUSEEVENTF_LEFTUP, 0, 0, 0, 0);
+        }
+        public static void down_mouse(int tick = 0)
+        {
+            mouse_event(MOUSEEVENTF_LEFTDOWN, 0, 0, 0, 0);
+            Thread.Sleep(tick);
+        }
+        public static void up_mouse(int tick = 0)
+        {
+            mouse_event(MOUSEEVENTF_LEFTUP, 0, 0, 0, 0);
+            Thread.Sleep(tick);
+        }
+        public static void mouse_click2()
+        {
+            Console.WriteLine(DateTime.Now.ToString() + "." + DateTime.Now.Millisecond.ToString("#000") + " mouse_click");
+            mouse_event(MOUSEEVENTF_RIGHTDOWN | MOUSEEVENTF_RIGHTUP, 0, 0, 0, 0);
+        }
+        public static bool FocusProcess(string procName)
+        {
+            Process[] objProcesses = Process.GetProcessesByName(procName);
+            if (objProcesses.Length > 0)
+            {
+                IntPtr hWnd = IntPtr.Zero;
+                hWnd = objProcesses[0].MainWindowHandle;
+                ShowWindow((hWnd), SW.SW_RESTORE);
+                if (procName != Dragonest && procName != chrome && procName != devenv)
+                    ShowWindowAsync(new HandleRef(null, hWnd), SW_RESTORE);
+                //ShowWindow((hWnd), SW.SW_SHOWMAXIMIZED);
+                //ShowWindow((hWnd), SW.SW_SHOW);
+                //ShowWindow((hWnd), SW.SW_SHOWNA);
+                SetForegroundWindow(objProcesses[0].MainWindowHandle);
+                return true;
+            }
+            return false;
+        }
+
+        public static void HideProcess(string procName)
+        {
+            Process[] objProcesses = Process.GetProcessesByName(procName);
+            if (objProcesses.Length > 0)
+            {
+                IntPtr hWnd = objProcesses[0].MainWindowHandle;
+                ShowWindow(hWnd, SW.SW_MINIMIZE);
+            }
+        }
+        private void load_point()
+        {
+            string point = File.ReadAllText("point.txt");
+            if (point == "") point = "0,0";
+            int x = int.Parse(point.Split(',')[0]);
+            int y = int.Parse(point.Split(',')[1]);
+            //points[0] = new Point(x, y);
+        }
+        public static void press(Keys num, int tick = 0)
+        {
+            if (is_down(Keys.Delete)) return;
+            lock (_lockObject2)
+            {
+                bool flag = tick > 0 && tick % 10 == 2;
+                if (flag) MouseKeyboardHook.handling = true;
+                press([num], tick);
+                if (flag) MouseKeyboardHook.handling = false;
+            }
+        }
+        public static void close()
+        {
+            press([Keys.LMenu, Keys.F4]);
+        }
+        public static void press(Keys[] keys, int tick = 10)
+        {
+            if (keys == null || keys.Length == 0 || keys.Length > 100)
+                return;
+            if (keys.Length == 1)
+            {
+                _press(keys[0]);
+            }
+            else if (keys.Length > 1 && keys[0] == keys[1])
+            {
+                foreach (var key in keys)
+                {
+                    _press(key);
+                };
+            }
+            else
+            {
+                foreach (var item in keys)
+                    keybd_event((byte)item, 0, 0, 0);
+                foreach (var item in keys)
+                    keybd_event((byte)item, 0, 2, 0);
+            }
+            Thread.Sleep(tick);
+        }
+        static Point mousePosition;
+        public static Point lastPosition;
+        public static void press(string str, int tick = 800)
+        {
+            if (is_down(Keys.Delete)) return;
+            //KeyboardHook.stop_next = false;
+            bool isLastDigitOne = (tick & 1) == 1;
+            if (isLastDigitOne) mousePosition = Cursor.Position;
+            var list = str.Split(";");
+            list = list.Where(s => s != null && s != "").ToArray();
+            if (list.Length == 0) return;
+            foreach (var item in list)
+            {
+                var click = item.IndexOf(',');
+                var move = item.IndexOf('.');
+
+                if (item == "LWin" && ProcessName != "SearchHost")
+                {
+                    press(Keys.LWin);
+                }
+                else if (item == "_") down_mouse();
+                else if (item == "-") up_mouse();
+                else if (click > 0 || move > 0)
+                {
+                    var x = int.Parse(item.Substring(0, click + move + 1));
+                    var y = int.Parse(item.Substring(click + move + 1 + 1));
+                    mouse_move(x, y, 10);
+                    if (click > 0) mouse_click(30);
+                }
+                else if ((int.TryParse(item, out int number)))
+                {
+                    Thread.Sleep(number);
+                }
+                else if (Enum.TryParse(typeof(Keys), item, out object asd))
+                {
+                    press((Keys)asd);
+                }
+                else if (item.Length > 1)
+                {
+                    press(item.Substring(0, 1), 10);
+                    press(item.Substring(1), 10);
+                }
+                if (!ReferenceEquals(item, list.Last()) || list.Length == 1)
+                    Thread.Sleep(tick);
+            }
+            if (isLastDigitOne && mousePosition.X < 2560)
+                mouse_move(mousePosition.X, mousePosition.Y, 100);
+        }
+        public static void _press(Keys keys)
+        {
+            keybd_event((byte)keys, 0, 0, 0);
+            keybd_event((byte)keys, 0, 2, 0);
+        }
+
+        [DllImport("user32.dll", SetLastError = true)]
+        static extern uint GetWindowThreadProcessId(IntPtr hWnd, out uint lpdwProcessId);
+
+        // 导入user32.dll中的GetForegroundWindow函数
+        [DllImport("user32.dll")]
+        private static extern IntPtr GetForegroundWindow();
+
+        // 导入user32.dll中的GetWindowText函数
+        [DllImport("user32.dll", SetLastError = true, CharSet = CharSet.Auto)]
+        private static extern int GetWindowText(IntPtr hWnd, StringBuilder lpString, int nMaxCount);
+
+        // 获取窗口标题的辅助方法
+        private static string GetWindowText(IntPtr hWnd)
+        {
+            const int nChars = 256;
+            StringBuilder Buff = new StringBuilder(nChars);
+            if (GetWindowText(hWnd, Buff, nChars) > 0)
+            {
+                return Buff.ToString();
+            }
+            return null;
+        }
+        public static void TaskRun(Action action, int tick)
+        {
+            Task.Run(() =>
+            {
+                Thread.Sleep(tick);
+                action();
+            });
+        }
+        public static Color get_mouse_postion_color(Point point)
+        {
+            using (Bitmap bitmap = new Bitmap(1, 1))
+            {
+                using (Graphics g = Graphics.FromImage(bitmap))
+                {
+                    g.CopyFromScreen(point.X, point.Y, 0, 0, new System.Drawing.Size(1, 1));
+                    return bitmap.GetPixel(0, 0);
+                }
+            }
+        }
+        public static bool judge_color(int x, int y, Color color)
+        {
+            var asd = get_mouse_postion_color(new Point(x, y));
+            var flag = AreColorsSimilar(asd, color);
+            return flag;
+        }
+        public static bool try_press(Color color, Action action = null)
+        {
+            return try_press(Position.X, Position.Y, color, action);
+        }
+        public static bool try_press(int x, int y, Color color, Action action = null)
+        {
+            var asd = get_mouse_postion_color(new Point(x, y));
+            var flag = AreColorsSimilar(asd, color);
+            if (flag)
+            {
+                var flag2 = action != null;
+                press(x + "," + y, flag2 ? 100 : 101);
+                if (flag2) action();
+                else lastPosition = Position;
+            }
+            return flag;
+        }
+        public static bool AreColorsSimilar(Color color1, Color color2, int threshold = 40)
+        {
+            if (color1 == color2) return true;
+            int rDiff = Math.Abs(color1.R - color2.R);
+            int gDiff = Math.Abs(color1.G - color2.G);
+            int bDiff = Math.Abs(color1.B - color2.B);
+
+            return (rDiff + gDiff + bDiff) <= threshold;
+        }
+        public static void click_dragonest_notity()
+        {
+            using (Bitmap bitmap = new Bitmap(500, 1))
+            {
+                using (Graphics g = Graphics.FromImage(bitmap))
+                {
+                    g.CopyFromScreen(1800, 1397, 0, 0, new System.Drawing.Size(500, 1));
+                    string asd = "";
+                    int sdasd = 0;
+                    while (sdasd < 500)
+                    {
+                        var aaa = bitmap.GetPixel(sdasd, 0);
+                        string xxxx = (1800 + sdasd).ToString();
+                        string yyyy = (1397).ToString();
+                        asd += $"({xxxx},{yyyy},{aaa.ToString()})";
+                        sdasd++;
+                        if (aaa.R == 233 && aaa.G == 81 && aaa.B == 81)
+                        {
+                            //mouse_move(1800 + sdasd, 1397);
+                            press($"{1800 + sdasd}, {1397}");
+                            //log($"111111111111({xxxx},{yyyy},{aaa.ToString()})");
+                        }
+                    }
+                }
+            }
+        }
+        public static void copy_secoed_screen()
+        {
+            Screen secondaryScreen = Screen.AllScreens.FirstOrDefault(scr => !scr.Primary);
+            if (secondaryScreen != null)
+            {
+                Bitmap bmpScreenshot = new Bitmap(1920, 1080, PixelFormat.Format32bppArgb);
+                Graphics gfxScreenshot = Graphics.FromImage(bmpScreenshot);
+                gfxScreenshot.CopyFromScreen(new Point(2560, 0), Point.Empty, secondaryScreen.Bounds.Size);
+                gfxScreenshot.Dispose();
+                bmpScreenshot.Save("image\\encode\\" + DateTime.Now.ToString("yyyyMMddHHmmss") + ".png" + "g", ImageFormat.Png);
+            }
+        }
+    }
+}
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+using System.Windows.Forms;
+using WGestures.Core.Impl.Windows;
+using static WGestures.Core.Impl.Windows.MouseKeyboardHook;
+
+using static keyupMusic2.Common;
+
+namespace keyupMusic2
+{
+    public class ACPhoenix : Default
+    {
+        public bool handling = true;
+        public Keys handling_keys;
+        public bool ACPhoenix_mouse_down = false;
+
+        public void hook_KeyDown_ddzzq(KeyboardHookEventArgs e)
+        {
+            if (ProcessName != ClassName()) return;
+            Common.hooked = true;
+            string nothing = "1834.1103";
+            string nothing2 = screenWidth2 + "." + screenHeight2;
+            handling_keys = e.key;
+
+            switch (e.key)
+            {
+                case Keys.Space:
+                    if (Position.Y == 0) { press(Keys.MediaNextTrack); break; }
+                    if (try_press(Color.FromArgb(255, 162, 16))) break;
+                    if (try_press(Color.FromArgb(32, 104, 234))) break;
+                    if (try_press(1433, 1072, Color.FromArgb(245, 194, 55))) break;
+                    if (try_press(1384, 1199, Color.FromArgb(241, 141, 20))) { break; }//确定查看图鉴
+                    if (try_press(1422, 942, Color.FromArgb(245, 194, 55))) { break; }//匹配进入游戏
+                    if (judge_color(127, 177, Color.FromArgb(255, 227, 132))) { press(Keys.Escape); break; }//关闭图鉴
+                    raw_press();
+                    break;
+                case Keys.Tab:
+                    if (is_alt()) { raw_press(); break; }
+                    if (is_ctrl() && try_press(47, 90, Color.FromArgb(231, 232, 231), () => { press("100;203, 66; 157,359;" + nothing, 0); })) break;
+                    //主页打开关闭好友列表
+                    if (try_press(137, 278, Color.FromArgb(118, 196, 30), () => { press("50;203, 66;10; 157,359; 800.850", 10); })) break;
+                    if (try_press(0, 1426, Color.FromArgb(13, 39, 75), () => { mouse_click(screenWidth2, screenHeight2); })) break;
+                    raw_press();
+                    break;
+                case Keys.Escape:
+                    if (try_press(870, 1243, Color.FromArgb(26, 125, 222), () => { press("2452,185;2452,185;" + nothing, 100); })) break;
+                    break;
+                case Keys.Oem3:
+                    if (is_ctrl() || is_alt()) { mouse_click(); mouse_click(); break; }
+                    mouse_downing = true;
+                    down_mouse();
+                    break;
+                case Keys.Enter:
+                    //(135,1152, Color.FromArgb(212,29,14)
+                    if (try_press(138, 1149, Color.FromArgb(222, 35, 10), () => { press("200,710", 101); })) break;
+                    break;
+                case Keys.Z:
+                    if (!is_ctrl() && !is_alt()) break;
+                    press("2473,50;2472,50;1115,324;", 100);
+                    press("_;272.700;272.600;272.400;272.330;100;-;272,330", 100);
+                    break;
+                case Keys.X:
+                    if (!is_ctrl() && !is_alt()) break;
+                    press("2325, 53", 101);
+                    break;
+                case Keys.F2:
+                    mouse_click();
+                    press("100;1525,1072;", 0);
+                    break;
+                case Keys.F4:
+                    if (is_alt()) break;
+                    press("2478,51;2492,1299;", 201);
+                    break;
+                case Keys.F5:
+                    press("2450,73;2107,229;1302,253;2355,237;2408,1000;", 201);
+                    break;
+                case Keys.F6:
+                    press("2494,68;2135,668;1087,235;56,67;", 501);
+                    break;
+                case Keys.D1:
+                case Keys.D2:
+                case Keys.D3:
+                case Keys.D4:
+                case Keys.D5:
+                case Keys.D6:
+                case Keys.D7:
+                case Keys.D8:
+                    if (!is_ctrl() && !is_alt()) break;
+                    int num = int.Parse(e.key.ToString().Replace("D", ""));
+                    press("300," + (num * 100 + 100), 1);
+                    break;
+                case Keys.Q:
+                    if (try_press(1360, 1369, Color.FromArgb(255, 162, 16))) break;
+                    if (!is_ctrl() && !is_alt()) break;
+                    press("10;2134,1275;10", 101);
+                    break;
+                case Keys.E:
+                    if (Position.Y == 0) { press(Keys.MediaPreviousTrack); break; }
+                    if (is_ctrl() || is_alt()) mouse_move(2139, 336);
+                    raw_press();
+                    break;
+            }
+            Common.hooked = false;
+            handling = true;
+        }
+        void raw_press()
+        {
+            handling = false;
+            press(handling_keys);
+            Thread.Sleep(10);
+        }
+
+
+        public void MouseHookProc(MouseKeyboardHook.MouseHookEventArgs e)
+        {
+            if (e.Msg == MouseMsg.WM_LBUTTONUP)
+            {
+                if (ACPhoenix_mouse_down) ACPhoenix_mouse_down = false;
+            }
+            else if (e.Msg == MouseMsg.WM_RBUTTONDOWN)
+            {
+                if (ProcessName2 != Common.ACPhoenix) return;
+                //if (ACPhoenix_mouse_down == false) mouse_down();
+                //else mouse_up();
+                //ACPhoenix_mouse_down = !ACPhoenix_mouse_down;
+                mouse_click();
+                press("100;1525,1072;100;1300,930;", 0);
+            }
+        }
+        //if (Common.ACPhoenix_mouse_hook && ProcessName == Common.ACPhoenix && (_mouseKbdHook == null || !_mouseKbdHook.is_install))
+        //{
+        //    _mouseKbdHook = new MouseKeyboardHook();
+        //    _mouseKbdHook.MouseHookEvent += aCPhoenix.MouseHookProc;
+        //    _mouseKbdHook.Install();
+        //}
+        //else if (_mouseKbdHook != null && _mouseKbdHook.is_install && ProcessName != Common.ACPhoenix)
+        //{
+        //    _mouseKbdHook.Uninstall();
+        //    _mouseKbdHook.Dispose();
+        //    Common.ACPhoenix_mouse_hook = false;
+        //}
+    }
+}
+using System;
+using System.Collections.Generic;
+using System.Diagnostics;
+using System.Drawing.Imaging;
+using System.Linq;
+using System.Media;
+using System.Numerics;
+using System.Text;
+using System.Threading.Tasks;
+using static WGestures.Core.Impl.Windows.MouseKeyboardHook;
+using System.Windows.Forms;
+using WGestures.Core.Impl.Windows;
+using static keyupMusic2.Common;
+using static keyupMusic2.Huan;
+
+namespace keyupMusic2
+{
+    public class Super
+    {
+        public Huan huan;
+        public Label label1
+        {
+            get
+            {
+                return huan.label1;
+            }
+            set
+            {
+                huan.label1 = value;
+            }
+        }
+        Keys[] keys = { Keys.D0, Keys.D1, Keys.D2, Keys.D3, Keys.D4, Keys.D5, Keys.D6, Keys.D7, Keys.D8, Keys.D9 };
+        bool key_sound = true;
+        SoundPlayer player = new SoundPlayer();
+        int SIMULATED_EVENT_TAG = 19900620;
+        bool start_record = false;
+        string commnd_record = "";
+        public Super(Form parentForm)
+        {
+            huan = (Huan)parentForm;
+        }
+        public void hook_KeyDown_keyupMusic2(KeyboardHookEventArgs e)
+        {
+            //if (ProcessName != Common.keyupMusic2) return;
+            if (!huan.keyupMusic2_onlisten) return;
+            Common.hooked = true;
+            string label_backup = huan.label1.Text;
+            bool catched = false;
+
+            huan.Invoke2(() => { huan.keyupMusic2_onlisten = false; huan.BackColor = Color.White; /*huan.label1.Text = e.key.ToString();*/ }, 10);
+
+            switch (e.key)
+            {
+                case Keys.Q:
+                    //handle_word("连接", 0, false);
+                    press("LWin;OPEN;Enter;500;1056, 411;1563, 191", 101);
+                    break;
+                case Keys.W:
+                    //Listen.is_listen = !Listen.is_listen;
+                    //Invoke(() => huan.SetVisibleCore2(Listen.is_listen));
+                    //Listen.aaaEvent += handle_word;
+                    //if (Listen.is_listen) Task.Run(() => Listen.listen_word(new string[] { }, (string asd, int a) => { }));
+                    break;
+                case Keys.E:
+                    winBinWallpaper.changeImg();
+                    break;
+                case Keys.D0:
+                case Keys.D1:
+                case Keys.D2:
+                case Keys.D3:
+                case Keys.D4:
+                case Keys.D5:
+                case Keys.D6:
+                case Keys.D7:
+                case Keys.D8:
+                case Keys.D9:
+                    if (key_sound && keys.Contains(e.key))
+                    {
+                        string wav = "wav\\" + e.key.ToString().Replace("D", "") + ".wav";
+                        if (!File.Exists(wav)) return;
+
+                        player = new SoundPlayer(wav);
+                        player.Play();
+                    }
+                    break;
+                case Keys.R:
+                    if (key_sound) player.Stop();
+                    key_sound = !key_sound;
+                    break;
+                case Keys.T:
+                    if (start_record && !string.IsNullOrEmpty(commnd_record))
+                    {
+                        Common.log(commnd_record);
+                        Invoke(() => Clipboard.SetText(commnd_record));
+                    }
+                    start_record = !start_record;
+                    commnd_record = "";
+                    break;
+                case Keys.Y:
+                    Common.cmd($"/c start ms-settings:taskbar");
+                    press("200;978,1042;907,1227;2500,32;", 801);
+                    break;
+                case Keys.U:
+                    Common.cmd($"/c start ms-settings:personalization");
+                    press("200;1056,588;2118,530;2031,585;2516,8;", 801);
+                    break;
+                case Keys.I:
+                    huan.Dispose();
+                    break;
+                case Keys.O:
+                    press(Keys.M);
+                    break;
+                case Keys.P:
+                    copy_secoed_screen();
+                    break;
+                case Keys.A:
+                    //ddzzq
+                    if (ProcessName == Common.ACPhoenix) { press([Keys.LMenu, Keys.F4], 200); break; }
+                    if (Common.FocusProcess(Common.ACPhoenix)) break;
+                    if (!Common.FocusProcess(Common.Dragonest))
+                    {
+                        press("10;LWin;500;1076,521", 101);
+                        var asd = 15000;
+                        while (asd > 0)
+                        {
+                            int tick = 500;
+                            //(1797,55,Color [A=255, R=18, G=23, B=33])
+                            if (judge_color(1797, 55, Color.FromArgb(18, 23, 33)))
+                            {
+                                press("2323, 30");
+                                break;
+                            }
+                            Thread.Sleep(tick);
+                            asd -= tick;
+                        }
+                    }
+                    //if (ProcessName2 != Common.Dragonest) break;
+                    if (!judge_color(2223, 1325, Color.FromArgb(22, 155, 222))) { click_dragonest_notity(); }
+                    press("600;2280,1314;LWin;", 101);
+                    Task.Run(() =>
+                    {
+                        Thread.Sleep(3500);
+                        //Common.FocusProcess(Common.ACPhoenix);
+                        press([Keys.LMenu, Keys.Tab], 200);
+                        press("2525,40");
+                        mouse_move3();
+                    });
+                    break;
+                case Keys.D:
+                    break;
+                case Keys.F:
+                    Common.FocusProcess(Common.WeChat);
+                    Thread.Sleep(100);
+                    if (ProcessName2 == Common.WeChat) break;
+                    press("LWin;WEIXIN;Enter;", 100);
+                    break;
+                case Keys.G:
+                    Point mousePosition = Cursor.Position;
+                    if (start_record)
+                    {
+                        commnd_record += $"{mousePosition.X},{mousePosition.Y};";
+                    }
+                    using (Bitmap bitmap = new Bitmap(1, 1))
+                    {
+                        using (Graphics g = Graphics.FromImage(bitmap))
+                        {
+                            g.CopyFromScreen(mousePosition.X, mousePosition.Y, 0, 0, new Size(1, 1));
+                            //(1470, 1213, Color.FromArgb(245, 139, 0))
+                            var color = bitmap.GetPixel(0, 0);
+                            string asd = $"({mousePosition.X},{mousePosition.Y}, Color.FromArgb({color.R},{color.G},{color.B})";
+                            log(ProcessName + asd);
+                            Invoke(() => Clipboard.SetText(asd));
+                        }
+                    }
+                    break;
+                case Keys.H:
+                    press("LWin;VIS;Apps;100;Enter;", 100);
+                    TaskRun(() => { press("Tab;Down;Enter;", 100); }, 1500);
+                    break;
+                case Keys.F2:
+                    Invoke(() =>
+                    {
+                        huan.Opacity = huan.Opacity == 0 ? 1 : 0;
+                        huan.SetVisibleCore2(true);
+                    }
+                    );
+                    break;
+                case Keys.Up:
+                    Invoke(() => huan.Opacity = huan.Opacity >= 1 ? 1 : huan.Opacity + 0.1);
+                    break;
+                case Keys.Down:
+                    Invoke(() => huan.Opacity = huan.Opacity <= 0 ? 0 : huan.Opacity - 0.1);
+                    break;
+                case Keys.J:
+                    if (!is_ctrl()) if (Common.FocusProcess(Common.chrome)) break;
+                    press("LWin;CHR;Enter;", 100);
+                    break;
+                case Keys.K:
+                    //var asd = PixelColorChecker.GetPixelColor(Position.X, Position.Y);
+                    //log(asd.ToString());
+                    // 1800 2300 1900  230 80 80  R=233, G=81, B=81
+                    click_dragonest_notity();
+                    break;
+                case Keys.L:
+                    Thread.Sleep(2000);
+                    press(Keys.G);
+                    break;
+                case Keys.Z:
+                    press("100;LWin;KK;Enter;", 110);
+                    break;
+                case Keys.Escape:
+                    if (is_ctrl() && is_shift()) Process.Start(new ProcessStartInfo("taskmgr.exe"));
+                    break;
+                default:
+                    catched = true;
+                    break;
+            }
+            if (catched)
+            {
+                //Invoke((() => { label1.Text = label_backup; }));
+                //KeyboardHook.stop_next = true;
+            }
+            Common.hooked = false;
+        }
+
+
+        public void Invoke(Action action)
+        {
+            huan.Invoke(action);
+        }
+    }
+}
+
+        private void MouseHookProc(MouseKeyboardHook.MouseHookEventArgs e)
+        {
+            if (e.X == 0 && e.Y == 1439)
+                HideProcess("chrome");
+            if (e.Msg == MouseMsg.WM_LBUTTONDOWN)
+            {
+                if (start_record) commnd_record += e.X + "," + e.Y + ";";
+            }
+            if (e.Msg == MouseMsg.WM_LBUTTONUP && e.Y > 1300)
+            {
+                if (ProcessName == "msedge")
+                    press(Keys.PageDown);
+                if (ProcessName == "douyin")
+                    press(Keys.Down);
+            }
+        }using System.Diagnostics;
 using System.Drawing.Imaging;
 using System.Media;
 using System.Security.Principal;

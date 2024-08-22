@@ -13,66 +13,73 @@ namespace keyupMusic2
 {
     public class ACPhoenix : Default
     {
-        public static int is_oem = 0;
-        public static int move_length = 120;
+        public bool ACPhoenix_mouse_down = false;
 
         public void hook_KeyDown_ddzzq(KeyboardHookEventArgs e)
         {
-            //if (ProcessName != ClassName() && (ProcessName != Common.explorer)) return;
+            if (is_alt() && is_down(Keys.Tab)) return;
             if (ProcessName != ClassName()) return;
             Common.hooked = true;
+            string nothing = "1834.1103";
+            string nothing2 = screenWidth2 + "." + screenHeight2;
+            handling_keys = e.key;
 
             switch (e.key)
             {
+                case Keys.Space:
+                    if (Position.Y == 0) { press(Keys.MediaNextTrack); break; }
+                    if (try_press(Color.FromArgb(255, 162, 16))) break;
+                    if (try_press(Color.FromArgb(32, 104, 234))) break;
+                    if (try_press(Color.FromArgb(220, 163, 51))) break;
+                    if (try_press(1433, 1072, Color.FromArgb(245, 194, 55))) break;
+                    if (try_press(1384, 1199, Color.FromArgb(241, 141, 20))) { break; }//确定查看图鉴
+                    if (try_press(1422, 942, Color.FromArgb(245, 194, 55))) { break; }//匹配进入游戏
+                    if (judge_color(127, 177, Color.FromArgb(255, 227, 132))) { press(Keys.Escape); break; }//关闭图鉴
+                    raw_press();
+                    break;
+                case Keys.Tab:
+                    if (is_alt()) { break; }
+                    if (is_ctrl() && try_press(47, 90, Color.FromArgb(231, 232, 231), () => { press("100;203, 66; 157,359;" + nothing, 0); })) break;
+                    //主页打开关闭好友列表
+                    if (try_press(137, 278, Color.FromArgb(118, 196, 30), () => { press("50;203, 66;10; 157,359; 800.850", 10); })) break;
+                    if (judge_color(0, 1426, Color.FromArgb(13, 39, 75), () => { mouse_click(screenWidth2, screenHeight2); })) break;
+                    //raw_press();
+                    break;
+                case Keys.Escape:
+                    if (try_press(870, 1243, Color.FromArgb(26, 125, 222), () => { press("2452,185;2452,185;" + nothing, 100); })) break;
+                    break;
                 case Keys.Oem3:
-                    if (is_oem != 0) break;
-                    mouse_down();
-                    is_oem = 30;
-                    while (is_oem > 0)
-                    {
-                        Thread.Sleep(30);
-                        if (!is_down(Keys.Oem3))
-                        {
-                            mouse_up();
-                            is_oem = 0;
-                        }
-                    }
+                    if (is_ctrl() || is_alt()) { mouse_click(); mouse_click(); break; }
+                    mouse_downing = true;
+                    down_mouse();
                     break;
-                case Keys.F1: //打开好友列表
-                    press("1800,1000;144,319;203,66;157,359;", 200);
-                    Thread.Sleep(30);
-                    mouse_move(800, 850);
+                case Keys.Enter:
+                    //(135,1152, Color.FromArgb(212,29,14)
+                    if (try_press(138, 1149, Color.FromArgb(222, 35, 10), () => { press("200,710", 101); })) break;
                     break;
-                case Keys.F2: //确认观战
-                    mouse_click();
-                    press("100;1525,1072;100;1300,930;", 0);
-                    break;
-                case Keys.F3:
-                    press("100,60;100,60;200,360;", 301);
-                    break;
-                case Keys.F4: //退出观战 //如何避免退出游戏
-                    if (is_alt()) break;
-                    press("2478,51;2492,1299;1545,1055;", 201);
-                    break;
-                case Keys.F5: //主页设置画面
-                    press("2450,73;2107,229;1302,253;2355,237;2408,1000;", 101);
-                    Common.ACPhoenix_mouse_hook = true;
-                    break;
-                case Keys.F6: //游戏设置画面
-                    press("2494,68;2135,668;1087,235;56,67;", 501);
-                    Common.ACPhoenix_mouse_hook = true;
-                    break;
-                case Keys.F12:
-                    Common.FocusProcess(Common.WeChat);
-                    Thread.Sleep(100);
-                    if (ProcessName2 == Common.WeChat) break;
-                    press("LWin;WEI;Enter;", 50);
+                case Keys.Z:
+                    if (!is_ctrl() && !is_alt()) break;
+                    press("2473,50;2472,50;1115,324;", 100);
+                    press("_;272.700;272.600;272.400;272.330;100;-;272,330", 100);
                     break;
                 case Keys.X:
-                    if (!is_ctrl()) break;
-                    press("300;Enter;A;", 101);
+                    if (!is_ctrl() && !is_alt()) break;
+                    press("2325, 53", 101);
                     break;
-                case Keys.D0:
+                case Keys.F2:
+                    mouse_click();
+                    press("100;1525,1072;", 0);
+                    break;
+                case Keys.F4:
+                    if (is_alt()) break;
+                    press("2478,51;2492,1299;", 201);
+                    break;
+                case Keys.F5:
+                    press("2450,73;2107,229;1302,253;2355,237;2408,1000;", 201);
+                    break;
+                case Keys.F6:
+                    press("2494,68;2135,668;1087,235;56,67;", 501);
+                    break;
                 case Keys.D1:
                 case Keys.D2:
                 case Keys.D3:
@@ -81,40 +88,29 @@ namespace keyupMusic2
                 case Keys.D6:
                 case Keys.D7:
                 case Keys.D8:
-                case Keys.D9:
                     if (!is_ctrl() && !is_alt()) break;
                     int num = int.Parse(e.key.ToString().Replace("D", ""));
                     press("300," + (num * 100 + 100), 1);
                     break;
-                case Keys.Up:
-                    mouse_move2(0, -move_length);
-                    break;
-                case Keys.Down:
-                    mouse_move2(0, move_length);
-                    break;
-                case Keys.Left:
-                    mouse_move2(-move_length, 0);
-                    break;
-                case Keys.Right:
-                    mouse_move2(move_length, 0);
-                    break;
-                case Keys.P:
-                    press("2325,53", 101);
-                    break;
                 case Keys.Q:
-                    press("2134,1275", 101);
+                    if (try_press(1360, 1369, Color.FromArgb(255, 162, 16))) break;
+                    if (!is_ctrl() && !is_alt()) break;
+                    press("10;2134,1275;10", 101);
                     break;
-                case Keys.LControlKey:
-                    mouse_downing = true;
-                    mouse_down();
+                case Keys.E:
+                    if (Position.Y == 0) { press(Keys.MediaPreviousTrack); break; }
+                    if (is_ctrl() || is_alt()) mouse_move(2139, 336);
+                    raw_press();
                     break;
             }
             Common.hooked = false;
+            if(!handling) handling = true;
         }
-        public bool ACPhoenix_mouse_down = false;
+
+
         public void MouseHookProc(MouseKeyboardHook.MouseHookEventArgs e)
         {
-            if (e.Msg == MouseMsg.WM_LBUTTONDOWN)
+            if (e.Msg == MouseMsg.WM_LBUTTONUP)
             {
                 if (ACPhoenix_mouse_down) ACPhoenix_mouse_down = false;
             }

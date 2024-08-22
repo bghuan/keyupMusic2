@@ -1,13 +1,18 @@
-﻿using System;
+﻿using Microsoft.VisualBasic.Devices;
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Drawing.Imaging;
 using System.Linq;
 using System.Runtime.InteropServices;
+using System.Security.Cryptography.Xml;
 using System.Text;
 using System.Threading.Tasks;
 using WGestures.Common.OsSpecific.Windows;
+using WGestures.Core.Impl.Windows;
 using static System.Runtime.InteropServices.JavaScript.JSType;
+using static System.Windows.Forms.VisualStyles.VisualStyleElement.TrackBar;
 using static Win32.User32;
 using Point = System.Drawing.Point;
 
@@ -26,6 +31,7 @@ namespace keyupMusic2
         public const string Taskmgr = "Taskmgr";
         public const string explorer = "explorer";
         public const string SearchHost = "SearchHost";
+        public const string QQMusic = "QQMusic";
 
         public static string[] list = {
         keyupMusic2,
@@ -39,6 +45,12 @@ namespace keyupMusic2
         Taskmgr,
         explorer,
         SearchHost,
+        QQMusic,
+        QQMusic,
+        QQMusic,
+        QQMusic,
+        QQMusic,
+        QQMusic,
         };
 
         public static bool hooked = false;
@@ -97,6 +109,7 @@ namespace keyupMusic2
         }
 
         private static readonly object _lockObject = new object();
+        private static readonly object _lockObject2 = new object();
         public static void log(string message)
         {
             lock (_lockObject)
@@ -145,8 +158,10 @@ namespace keyupMusic2
             }
         }
 
-        static int screenWidth = Screen.PrimaryScreen.Bounds.Width;
-        static int screenHeight = Screen.PrimaryScreen.Bounds.Height;
+        public static int screenWidth = Screen.PrimaryScreen.Bounds.Width;
+        public static int screenHeight = Screen.PrimaryScreen.Bounds.Height;
+        public static int screenWidth2 = Screen.PrimaryScreen.Bounds.Width / 2;
+        public static int screenHeight2 = Screen.PrimaryScreen.Bounds.Height / 2;
 
         const int MOUSEEVENTF_MOVE = 0x0001;
         const int MOUSEEVENTF_LEFTDOWN = 0x0002;
@@ -171,8 +186,30 @@ namespace keyupMusic2
 
         public static void mouse_move(int x, int y, int tick = 0)
         {
-            Thread.Sleep(tick);
             mouse_event(MOUSEEVENTF_ABSOLUTE | MOUSEEVENTF_MOVE, x * 65536 / screenWidth, y * 65536 / screenHeight, 0, 0);
+            Thread.Sleep(tick);
+        }
+        public static void mouse_move(int x, int y, int x2, int y2)
+        {
+            mouse_move(x, y);
+            down_mouse();
+
+            int times = 20;
+            int all_times = 20;
+            for (int i = 1; i < times + 1; i++)
+            {
+                int xx = 1;
+                int yy = 1;
+                if (x == x2) xx = 0;
+                else xx = (x2 - x) / times * i;
+                if (y == y2) yy = 0;
+                else yy = (y2 - y) / times * i;
+
+                mouse_move(x + xx, y + yy, all_times / times);
+            }
+
+            mouse_move(x2, y2);
+            up_mouse();
         }
         public static void mouse_move3(int tick = 0)
         {
@@ -193,19 +230,36 @@ namespace keyupMusic2
             Thread.Sleep(tick);
             mouse_event(MOUSEEVENTF_ABSOLUTE | MOUSEEVENTF_MOVE, x * 65536 / screenWidth, y * 65536 / screenHeight, 0, 0);
         }
-        public static void mouse_click(int tick = 0)
+        public static void mouse_click(int tick = 10)
         {
-            Console.WriteLine(DateTime.Now.ToString() + "." + DateTime.Now.Millisecond.ToString("#000") + " mouse_click");
+            if (tick > 0)
+            {
+                down_mouse(tick);
+                up_mouse(tick);
+                return;
+            }
             mouse_event(MOUSEEVENTF_LEFTDOWN | MOUSEEVENTF_LEFTUP, 0, 0, 0, 0);
-            Thread.Sleep(tick);
         }
-        public static void mouse_down(int tick = 0)
+        public static void mouse_click(int x, int y, int tick = 10)
+        {
+            mouse_move(x, y);
+            if (tick > 0)
+            {
+                down_mouse(tick);
+                up_mouse(tick);
+                return;
+            }
+            mouse_event(MOUSEEVENTF_LEFTDOWN | MOUSEEVENTF_LEFTUP, 0, 0, 0, 0);
+        }
+        public static void down_mouse(int tick = 0)
         {
             mouse_event(MOUSEEVENTF_LEFTDOWN, 0, 0, 0, 0);
+            Thread.Sleep(tick);
         }
-        public static void mouse_up(int tick = 0)
+        public static void up_mouse(int tick = 0)
         {
             mouse_event(MOUSEEVENTF_LEFTUP, 0, 0, 0, 0);
+            Thread.Sleep(tick);
         }
         public static void mouse_click2()
         {
@@ -220,7 +274,7 @@ namespace keyupMusic2
                 IntPtr hWnd = IntPtr.Zero;
                 hWnd = objProcesses[0].MainWindowHandle;
                 ShowWindow((hWnd), SW.SW_RESTORE);
-                if (procName != Dragonest && procName != chrome)
+                if (procName != Dragonest && procName != chrome && procName != devenv)
                     ShowWindowAsync(new HandleRef(null, hWnd), SW_RESTORE);
                 //ShowWindow((hWnd), SW.SW_SHOWMAXIMIZED);
                 //ShowWindow((hWnd), SW.SW_SHOW);
@@ -248,11 +302,20 @@ namespace keyupMusic2
             int y = int.Parse(point.Split(',')[1]);
             //points[0] = new Point(x, y);
         }
-
         public static void press(Keys num, int tick = 0)
         {
-            press([num], tick);
-            return;
+            if (is_down(Keys.Delete)) return;
+            lock (_lockObject2)
+            {
+                bool flag = tick > 0 && tick % 10 == 2;
+                if (flag) MouseKeyboardHook.handling = true;
+                press([num], tick);
+                if (flag) MouseKeyboardHook.handling = false;
+            }
+        }
+        public static void close()
+        {
+            press([Keys.LMenu, Keys.F4]);
         }
         public static void press(Keys[] keys, int tick = 10)
         {
@@ -279,8 +342,10 @@ namespace keyupMusic2
             Thread.Sleep(tick);
         }
         static Point mousePosition;
+        public static Point lastPosition;
         public static void press(string str, int tick = 800)
         {
+            if (is_down(Keys.Delete)) return;
             //KeyboardHook.stop_next = false;
             bool isLastDigitOne = (tick & 1) == 1;
             if (isLastDigitOne) mousePosition = Cursor.Position;
@@ -289,36 +354,36 @@ namespace keyupMusic2
             if (list.Length == 0) return;
             foreach (var item in list)
             {
-                if (string.IsNullOrEmpty(item)) continue;
-                else if (item == "LWin")
+                var click = item.IndexOf(',');
+                var move = item.IndexOf('.');
+
+                if (item == "LWin" && ProcessName != "SearchHost")
                 {
-                    if (ProcessName2 != "SearchHost")
-                        press(Keys.LWin);
+                    press(Keys.LWin);
                 }
-                else if (item.IndexOf(',') >= 0)
+                else if (item == "_") down_mouse();
+                else if (item == "-") up_mouse();
+                else if (click > 0 || move > 0)
                 {
-                    mouse_move(Int32.Parse(item.Split(",")[0]), Int32.Parse(item.Split(",")[1]));
-                    Thread.Sleep(20);
-                    mouse_click();
+                    var x = int.Parse(item.Substring(0, click + move + 1));
+                    var y = int.Parse(item.Substring(click + move + 1 + 1));
+                    mouse_move(x, y, 10);
+                    if (click > 0) mouse_click(30);
                 }
                 else if ((int.TryParse(item, out int number)))
                 {
                     Thread.Sleep(number);
                 }
-                else
+                else if (Enum.TryParse(typeof(Keys), item, out object asd))
                 {
-                    if (Enum.TryParse(typeof(Keys), item, out object asd))
-                    {
-                        press((Keys)asd);
-                    }
-                    else if (item.Length > 1)
-                    {
-                        press(item.Substring(0, 1), 2);
-                        if (item.Length > 1)
-                            press(item.Substring(1, item.Length - 1), 2);
-                    }
+                    press((Keys)asd);
                 }
-                if (!ReferenceEquals(item, list.Last()))
+                else if (item.Length > 1)
+                {
+                    press(item.Substring(0, 1), 10);
+                    press(item.Substring(1), 10);
+                }
+                if (!ReferenceEquals(item, list.Last()) || list.Length == 1)
                     Thread.Sleep(tick);
             }
             if (isLastDigitOne && mousePosition.X < 2560)
@@ -371,15 +436,38 @@ namespace keyupMusic2
                 }
             }
         }
-        public static bool judge_color(int x, int y, Color color)
+        public static bool judge_color(int x, int y, Color color, Action action = null)
         {
-            var _pos = Position;
-            mouse_move(x, y);
-            Thread.Sleep(10);
             var asd = get_mouse_postion_color(new Point(x, y));
-            var flag = asd == color;
-            mouse_move(_pos);
+            var flag = AreColorsSimilar(asd, color);
+            if (flag && action != null) action();
             return flag;
+        }
+        public static bool try_press(Color color, Action action = null)
+        {
+            return try_press(Position.X, Position.Y, color, action);
+        }
+        public static bool try_press(int x, int y, Color color, Action action = null)
+        {
+            var asd = get_mouse_postion_color(new Point(x, y));
+            var flag = AreColorsSimilar(asd, color);
+            if (flag)
+            {
+                var flag2 = action != null;
+                press(x + "," + y, flag2 ? 100 : 101);
+                if (flag2) action();
+                else lastPosition = Position;
+            }
+            return flag;
+        }
+        public static bool AreColorsSimilar(Color color1, Color color2, int threshold = 40)
+        {
+            if (color1 == color2) return true;
+            int rDiff = Math.Abs(color1.R - color2.R);
+            int gDiff = Math.Abs(color1.G - color2.G);
+            int bDiff = Math.Abs(color1.B - color2.B);
+
+            return (rDiff + gDiff + bDiff) <= threshold;
         }
         public static void click_dragonest_notity()
         {
@@ -405,6 +493,18 @@ namespace keyupMusic2
                         }
                     }
                 }
+            }
+        }
+        public static void copy_secoed_screen()
+        {
+            Screen secondaryScreen = Screen.AllScreens.FirstOrDefault(scr => !scr.Primary);
+            if (secondaryScreen != null)
+            {
+                Bitmap bmpScreenshot = new Bitmap(1920, 1080, PixelFormat.Format32bppArgb);
+                Graphics gfxScreenshot = Graphics.FromImage(bmpScreenshot);
+                gfxScreenshot.CopyFromScreen(new Point(2560, 0), Point.Empty, secondaryScreen.Bounds.Size);
+                gfxScreenshot.Dispose();
+                bmpScreenshot.Save("image\\encode\\" + DateTime.Now.ToString("yyyyMMddHHmmss") + ".png" + "g", ImageFormat.Png);
             }
         }
     }

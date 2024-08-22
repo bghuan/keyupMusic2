@@ -26,10 +26,10 @@ namespace keyupMusic2
                 case Keys.F6:
                     press([Keys.LShiftKey, Keys.F5]);
                     break;
-                case Keys.F11:
-                    ProcessStartInfo startInfo = new ProcessStartInfo("taskmgr.exe");
-                    Process.Start(startInfo);
-                    break;
+                //case Keys.F11:
+                //    ProcessStartInfo startInfo = new ProcessStartInfo("taskmgr.exe");
+                //    Process.Start(startInfo);
+                //    break;
             }
             Common.hooked = false;
         }
