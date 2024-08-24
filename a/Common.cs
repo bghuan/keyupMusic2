@@ -107,6 +107,39 @@ namespace keyupMusic2
             //log(DateTime.Now.ToString("") + " " + windowTitle + " " + fildsadsePath + module_nasme + "\n");
             return ProcessName;
         }
+        public static void log_process(string key = "")
+        {
+            IntPtr hwnd = GetForegroundWindow(); // 获取当前活动窗口的句柄
+            string a = "";
+
+            string windowTitle = GetWindowText(hwnd);
+            a += ("当前活动窗口名称: " + windowTitle);
+
+            var filePath = "a.txt";
+            var fildsadsePath = "err";
+            var module_name = "err";
+            var ProcessName = "err";
+
+            try
+            {
+                uint processId;
+                GetWindowThreadProcessId(hwnd, out processId);
+                using (Process process = Process.GetProcessById((int)processId))
+                {
+                    fildsadsePath = process.MainModule.FileName;
+                    module_name = process.MainModule.ModuleName;
+                    ProcessName = process.ProcessName;
+                }
+            }
+            catch (System.Exception ex)
+            {
+                fildsadsePath = ex.Message;
+            }
+            a += key + " " + fildsadsePath + " " + module_name + " " + ProcessName + " " + fildsadsePath;
+            log(a);
+            //log(DateTime.Now.ToString("") + " " + windowTitle + " " + fildsadsePath + module_nasme + "\n");
+            //return ProcessName;
+        }
 
         private static readonly object _lockObject = new object();
         private static readonly object _lockObject2 = new object();
@@ -317,6 +350,10 @@ namespace keyupMusic2
         {
             press([Keys.LMenu, Keys.F4]);
         }
+        public static void altab()
+        {
+            press([Keys.LMenu, Keys.Tab]);
+        }
         public static void press(Keys[] keys, int tick = 10)
         {
             if (keys == null || keys.Length == 0 || keys.Length > 100)
@@ -343,6 +380,10 @@ namespace keyupMusic2
         }
         static Point mousePosition;
         public static Point lastPosition;
+        public static void press_hold(Keys keys, int tick = 800)
+        {
+            _press_hold(keys, tick);
+        }
         public static void press(string str, int tick = 800)
         {
             if (is_down(Keys.Delete)) return;
@@ -394,6 +435,12 @@ namespace keyupMusic2
             keybd_event((byte)keys, 0, 0, 0);
             keybd_event((byte)keys, 0, 2, 0);
         }
+        public static void _press_hold(Keys keys, int tick)
+        {
+            keybd_event((byte)keys, 0, 0, 0);
+            Thread.Sleep(tick);
+            keybd_event((byte)keys, 0, 2, 0);
+        }
 
         [DllImport("user32.dll", SetLastError = true)]
         static extern uint GetWindowThreadProcessId(IntPtr hWnd, out uint lpdwProcessId);
@@ -436,10 +483,10 @@ namespace keyupMusic2
                 }
             }
         }
-        public static bool judge_color(int x, int y, Color color, Action action = null)
+        public static bool judge_color(int x, int y, Color color, Action action = null, int similar = 50)
         {
             var asd = get_mouse_postion_color(new Point(x, y));
-            var flag = AreColorsSimilar(asd, color);
+            var flag = AreColorsSimilar(asd, color, similar);
             if (flag && action != null) action();
             return flag;
         }
@@ -460,7 +507,7 @@ namespace keyupMusic2
             }
             return flag;
         }
-        public static bool AreColorsSimilar(Color color1, Color color2, int threshold = 40)
+        public static bool AreColorsSimilar(Color color1, Color color2, int threshold = 50)
         {
             if (color1 == color2) return true;
             int rDiff = Math.Abs(color1.R - color2.R);
@@ -469,30 +516,56 @@ namespace keyupMusic2
 
             return (rDiff + gDiff + bDiff) <= threshold;
         }
-        public static void click_dragonest_notity()
+        public static void dragonest_notity_click()
         {
             using (Bitmap bitmap = new Bitmap(500, 1))
             {
+                int startX = 1990;
+                int startY = 1397;
                 using (Graphics g = Graphics.FromImage(bitmap))
                 {
-                    g.CopyFromScreen(1800, 1397, 0, 0, new System.Drawing.Size(500, 1));
-                    string asd = "";
-                    int sdasd = 0;
-                    while (sdasd < 500)
-                    {
-                        var aaa = bitmap.GetPixel(sdasd, 0);
-                        string xxxx = (1800 + sdasd).ToString();
-                        string yyyy = (1397).ToString();
-                        asd += $"({xxxx},{yyyy},{aaa.ToString()})";
-                        sdasd++;
-                        if (aaa.R == 233 && aaa.G == 81 && aaa.B == 81)
-                        {
-                            //mouse_move(1800 + sdasd, 1397);
-                            press($"{1800 + sdasd}, {1397}");
-                            //log($"111111111111({xxxx},{yyyy},{aaa.ToString()})");
-                        }
-                    }
+                    g.CopyFromScreen(startX, startY, 0, 0, new System.Drawing.Size(500, 1));
                 }
+                Rectangle rect = new Rectangle(0, 0, 500, 1);
+                BitmapData bmpData = bitmap.LockBits(rect, ImageLockMode.ReadOnly, PixelFormat.Format32bppArgb);
+                int bytes = Math.Abs(bmpData.Stride) * bitmap.Height;
+                byte[] rgbValues = new byte[bytes];
+
+                Marshal.Copy(bmpData.Scan0, rgbValues, 0, bytes);
+                bitmap.UnlockBits(bmpData);
+
+                for (int i = 0; i < 500; i++)
+                {
+                    int baseIndex = i * 4; // 每个像素4个字节（ARGB）  
+                    if (rgbValues[baseIndex + 2] == 233 && rgbValues[baseIndex + 1] == 81 && rgbValues[baseIndex] == 81)
+                    {
+                        press($"{startX + i}, {startY}");
+                        i = 600;
+                        break;
+                    }
+                    //Color color = Color.FromArgb(rgbValues[baseIndex + 3], rgbValues[baseIndex + 2], rgbValues[baseIndex + 1], rgbValues[baseIndex]);
+                    //if (color == Color.FromArgb(233, 81, 81))
+                    //{
+                    //    press($"{startX + i}, {startY}");
+                    //    break;
+                    //}
+                }
+
+                //while (sdasd < 500)
+                //{
+                //    log(DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss fff"));
+                //    var aaa = bitmap.GetPixel(sdasd, 0);
+                //    string xxxx = (startX + sdasd).ToString();
+                //    string yyyy = (startY).ToString();
+                //    sdasd++;
+                //    if (aaa.R == 233 && aaa.G == 81 && aaa.B == 81)
+                //    {
+                //        //mouse_move(startX + sdasd, startY);
+                //        press($"{startX + sdasd}, {startY}");
+                //        break;
+                //        //log($"111111111111({xxxx},{yyyy},{aaa.ToString()})");
+                //    }
+                //}
             }
         }
         public static void copy_secoed_screen()

@@ -250,10 +250,10 @@
             // 
             AutoScaleDimensions = new SizeF(11F, 24F);
             AutoScaleMode = AutoScaleMode.Font;
-            ClientSize = new Size(329, 26);
             ContextMenuStrip = contextMenuStrip1;
             Controls.Add(label1);
             Icon = (Icon)resources.GetObject("$this.Icon");
+            ClientSize = new Size(329, 26);
             Location = new Point(2170, 100);
             Margin = new Padding(4);
             Name = "Huan";

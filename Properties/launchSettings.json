@@ -1,0 +1,8 @@
+{
+  "profiles": {
+    "keyupMusic2": {
+      "commandName": "Project",
+      "hotReloadEnabled": false
+    }
+  }
+}

@@ -21,17 +21,22 @@ namespace keyupMusic2
             switch (e.key)
             {
                 case Keys.Left:
-                    if (Position.Y == 0) press(Keys.VolumeDown);
+                case Keys.PageUp:
+                    if (Position.Y == 0) { press(Keys.VolumeDown); break; }
+                    raw_press();
                     break;
                 case Keys.Right:
-                    if (Position.Y == 0) press(Keys.VolumeUp);
+                case Keys.PageDown:
+                    if (Position.Y == 0) { press(Keys.VolumeUp); break; }
+                    raw_press();
                     break;
                 case Keys.X:
+                    //if (module_name == Common.msedge) { break; }
                     if (Position.X == 0 && Position.Y == 0) { HideProcess(module_name); break; }
                     if (Position.X == 2559 && Position.Y == 0) { close(); break; }
+                    raw_press();
                     break;
             }
-            raw_press();
             Common.hooked = false;
             if (!handling) handling = true;
         }

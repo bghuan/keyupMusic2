@@ -1,4 +1,6 @@
+using Microsoft.VisualBasic.Logging;
 using System.Diagnostics;
+using System.Runtime.Intrinsics.X86;
 using System.Security.Principal;
 using WGestures.Common.OsSpecific.Windows;
 using WGestures.Core.Impl.Windows;
@@ -32,6 +34,7 @@ namespace keyupMusic2
                 Process.Start(startInfo);
                 Application.Exit();
                 MessageBox.Show("正在获取管理员权限");
+
             }
 
             startListen();
@@ -50,8 +53,21 @@ namespace keyupMusic2
                 if (process.Id != currentProcessId)
                     process.Kill();
 
-            //Common.FocusProcess(Common.douyin);
-            //Common.FocusProcess(Common.ACPhoenix);
+            if (is_ctrl())
+            {
+                //Common.FocusProcess(Common.douyin);
+                Common.FocusProcess(Common.ACPhoenix);
+            }
+
+            if (!FocusProcess("keyupMusic3"))
+            {
+                ProcessStartInfo startInfo2 = new ProcessStartInfo("C:\\Users\\bu\\source\\repos\\keyupMusic3\\bin\\Debug\\net8.0-windows\\keyupMusic3.exe");
+                startInfo2.UseShellExecute = true;
+                startInfo2.Verb = "runas";
+                Process.Start(startInfo2);
+
+                HideProcess("keyupMusic3");
+            }
         }
 
         public bool keyupMusic2_onlisten = false;
@@ -64,7 +80,7 @@ namespace keyupMusic2
         {
             if (e.Type == KeyboardEventType.KeyDown) return;
             stop_keys.Remove(e.key);
-            if (mouse_downing) up_mouse();
+            if (mouse_downing) { up_mouse(); mouse_downing = false; }
         }
         public bool judge_handled(KeyboardHookEventArgs e, string ProcessName)
         {
@@ -83,14 +99,19 @@ namespace keyupMusic2
                 {
                     if (e.key == Keys.Space) return true;
                     if (e.key == Keys.E) return true;
+                    //if (e.key == Keys.W) return true;
                     //if (e.key == Keys.Tab) return true;
                 }
             }
-            if (ProcessName == Common.douyin)
+            if (ProcessName == Common.douyin || ProcessName == Common.msedge)
             {
                 if (Default.handling)
                 {
                     if (e.key == Keys.X) return true;
+                    if (e.key == Keys.Right) return true;
+                    if (e.key == Keys.Left) return true;
+                    if (e.key == Keys.PageDown) return true;
+                    if (e.key == Keys.PageUp) return true;
                 }
             }
             return false;
@@ -100,16 +121,30 @@ namespace keyupMusic2
             if (e.Type != KeyboardEventType.KeyDown) return;
             if (is_alt() && is_down(Keys.Tab)) return;
             if (ProcessName2 == Common.keyupMusic2 && e.key == Keys.F1) Common.hooked = !Common.hooked;
+            if (e.key == Keys.Tab && (ProcessName != Common.ACPhoenix)) return;
             if (Common.hooked) return;
             if (keyupMusic2_onlisten) e.Handled = true;
             if (judge_handled(e, ProcessName)) e.Handled = true;
 
-            if (!stop_keys.Contains(e.key)) stop_keys.Add(e.key);
+            if (!stop_keys.Contains(e.key))
+            {
+                var sads = new Keys[] { Keys.F22, Keys.RControlKey, Keys.RMenu, Keys.RWin };
+                if (sads.Contains(e.key))
+                {
+                    if (e.key == Keys.F22)
+                    {
+                        string dsadsadsa = "dsd";
+                    }
+                    log_process(e.key.ToString());
+                }
+                stop_keys.Add(e.key);
+            }
             var new_stop_keys = stop_keys.ToArray();
             Invoke2(() =>
                  {
                      string asd = string.Join("+", new_stop_keys.Select(key => key.ToString()));
-                     asd = asd.Replace("LMenu", "Alt").Replace("LControlKey", "Ctrl").Replace("LShiftKey", "Shift").Replace("LWin", "Win"); ;
+                     asd = asd.Replace("LMenu", "Alt").Replace("LWin", "Win").Replace("LControlKey", "Ctrl").Replace("LShiftKey", "Shift");
+                     asd = asd.Replace("Oem3", "~");
                      label1.Text = asd;
                  }
             );

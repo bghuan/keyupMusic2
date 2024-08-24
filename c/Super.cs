@@ -51,6 +51,16 @@ namespace keyupMusic2
 
             switch (e.key)
             {
+                case Keys.A:
+                    //ddzzq
+                    if (ProcessName == Common.ACPhoenix) { close(); break; }
+                    if (Common.FocusProcess(Common.ACPhoenix)) break;
+                    if (!Common.FocusProcess(Common.Dragonest)) { dragonest_init(); }
+                    //if (ProcessName2 != Common.Dragonest) break;
+                    if (!judge_color(2223, 1325, Color.FromArgb(22, 155, 222))) { Task.Run(() => dragonest_notity_click()); }
+                    //bug un close
+                    dragonest_run();
+                    break;
                 case Keys.Q:
                     //handle_word("连接", 0, false);
                     press("LWin;OPEN;Enter;500;1056, 411;1563, 191", 101);
@@ -113,34 +123,6 @@ namespace keyupMusic2
                 case Keys.P:
                     copy_secoed_screen();
                     break;
-                case Keys.A:
-                    //ddzzq
-                    if (ProcessName == Common.ACPhoenix) { close(); break; }
-                    if (Common.FocusProcess(Common.ACPhoenix)) break;
-                    if (!Common.FocusProcess(Common.Dragonest))
-                    {
-                        press("10;LWin;500;1076,521", 101);
-                        var asd = 15000;
-                        int tick = 500;
-                        while (asd > 0)
-                        {
-                            if (judge_color(1797, 55, Color.FromArgb(18, 23, 33))) { press("2323, 30"); break; }
-                            Thread.Sleep(tick);
-                            asd -= tick;
-                        }
-                    }
-                    //if (ProcessName2 != Common.Dragonest) break;
-                    if (!judge_color(2223, 1325, Color.FromArgb(22, 155, 222))) { click_dragonest_notity(); }
-                    press("600;2280,1314;LWin;", 101);
-                    Task.Run(() =>
-                    {
-                        Thread.Sleep(3500);
-                        //Common.FocusProcess(Common.ACPhoenix);
-                        press([Keys.LMenu, Keys.Tab], 200);
-                        press("2525,40");
-                        mouse_move3();
-                    });
-                    break;
                 case Keys.D:
                     break;
                 case Keys.F:
@@ -174,10 +156,10 @@ namespace keyupMusic2
                     break;
                 case Keys.F2:
                     Invoke(() =>
-                    {
-                        huan.Opacity = huan.Opacity == 0 ? 1 : 0;
-                        huan.SetVisibleCore2(true);
-                    }
+                        {
+                            huan.Opacity = huan.Opacity == 0 ? 1 : 0;
+                            huan.SetVisibleCore2(true);
+                        }
                     );
                     break;
                 case Keys.Up:
@@ -191,10 +173,7 @@ namespace keyupMusic2
                     press("LWin;CHR;Enter;", 100);
                     break;
                 case Keys.K:
-                    //var asd = PixelColorChecker.GetPixelColor(Position.X, Position.Y);
-                    //log(asd.ToString());
-                    // 1800 2300 1900  230 80 80  R=233, G=81, B=81
-                    click_dragonest_notity();
+                    dragonest_notity_click();
                     break;
                 case Keys.L:
                     Thread.Sleep(2000);
@@ -218,6 +197,43 @@ namespace keyupMusic2
             Common.hooked = false;
         }
 
+        private static void dragonest_run()
+        {
+            int asdf = 1000;
+            while (asdf > 0)
+            {
+                if (judge_color(2223, 1325, Color.FromArgb(22, 155, 222)))
+                {
+                    press("2280,1314;LWin", 0);
+                    break;
+                }
+                asdf -= 50;
+                Thread.Sleep(50);
+            }
+            //press("2280,1314", 0);
+            Task.Run(() =>
+            {
+                Thread.Sleep(3500);
+                //Common.FocusProcess(Common.ACPhoenix);
+                altab();
+                //Common.FocusProcess(Common.Dragonest);
+                press("2525,40");
+                mouse_move3();
+            });
+        }
+
+        private static void dragonest_init()
+        {
+            press("10;LWin;500;1076,521", 101);
+            var asd = 15000;
+            int tick = 500;
+            while (asd > 0)
+            {
+                if (judge_color(1797, 55, Color.FromArgb(18, 23, 33))) { press("2323, 30"); break; }
+                Thread.Sleep(tick);
+                asd -= tick;
+            }
+        }
 
         public void Invoke(Action action)
         {

@@ -20,7 +20,7 @@ namespace keyupMusic2
         {
             string module_name = ProcessName;
             if (!list.Contains(module_name)) return;
-            bool catched = false;
+            Common.hooked = true;
 
             switch (e.key)
             {
@@ -51,14 +51,8 @@ namespace keyupMusic2
                         press("LWin;WEI;Enter;", 50);
                     }
                     break;
-                default:
-                    catched = true;
-                    break;
             }
-            if (catched)
-            {
-                e.Handled = true;
-            }
+
             Common.hooked = false;
         }
 

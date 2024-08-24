@@ -22,28 +22,33 @@ namespace keyupMusic2
             Common.hooked = true;
             string nothing = "1834.1103";
             string nothing2 = screenWidth2 + "." + screenHeight2;
+            string nothing3 = "1280.634";
+            string nothing4 = "1284.640";
             handling_keys = e.key;
 
             switch (e.key)
             {
                 case Keys.Space:
-                    if (Position.Y == 0) { press(Keys.MediaNextTrack); break; }
+                    //if (Position.Y == 0) { press(Keys.MediaNextTrack); break; }
                     if (try_press(Color.FromArgb(255, 162, 16))) break;
                     if (try_press(Color.FromArgb(32, 104, 234))) break;
                     if (try_press(Color.FromArgb(220, 163, 51))) break;
-                    if (try_press(1433, 1072, Color.FromArgb(245, 194, 55))) break;
-                    if (try_press(1384, 1199, Color.FromArgb(241, 141, 20))) { break; }//确定查看图鉴
-                    if (try_press(1422, 942, Color.FromArgb(245, 194, 55))) { break; }//匹配进入游戏
+                    if (try_press(1433, 1072, Color.FromArgb(245, 194, 55), () => { })) break;//中间确定
+                    if (try_press(1384, 1199, Color.FromArgb(241, 141, 20), () => { })) { break; }//确定查看图鉴
+                    if (is_ctrl() && try_press(2079, 1280, Color.FromArgb(220, 163, 48), () => { })) break;//匹配游戏
+                    if (try_press(1422, 942, Color.FromArgb(245, 194, 55), () => { })) { break; }//匹配进入游戏
+                    if (is_ctrl() && try_press(2497, 1328, Color.FromArgb(148, 185, 195), () => { })) { break; }//匹配取消
                     if (judge_color(127, 177, Color.FromArgb(255, 227, 132))) { press(Keys.Escape); break; }//关闭图鉴
+                    if (!is_ctrl() && !is_alt() && judge_color(1307, 85, Color.FromArgb(36, 39, 54), null, 10) && judge_color(2450, 80, Color.FromArgb(194, 198, 226))) { press(Keys.Tab); break; }//关闭tab
                     raw_press();
                     break;
                 case Keys.Tab:
                     if (is_alt()) { break; }
-                    if (is_ctrl() && try_press(47, 90, Color.FromArgb(231, 232, 231), () => { press("100;203, 66; 157,359;" + nothing, 0); })) break;
-                    //主页打开关闭好友列表
-                    if (try_press(137, 278, Color.FromArgb(118, 196, 30), () => { press("50;203, 66;10; 157,359; 800.850", 10); })) break;
-                    if (judge_color(0, 1426, Color.FromArgb(13, 39, 75), () => { mouse_click(screenWidth2, screenHeight2); })) break;
-                    //raw_press();
+                    //打开关闭好友列表
+                    if (is_ctrl() && try_press(47, 90, Color.FromArgb(231, 232, 231), () => { press("100;203, 66; 157,359;" + nothing4, 0); })) break;
+                    if (judge_color(0, 1426, Color.FromArgb(13, 39, 75), () => { press(nothing4.Replace(".", ",")); })) break;
+
+                    if (try_press(137, 278, Color.FromArgb(118, 196, 30), () => { press("100;203, 66;10; 157,359;" + 800.850, 10); })) break;
                     break;
                 case Keys.Escape:
                     if (try_press(870, 1243, Color.FromArgb(26, 125, 222), () => { press("2452,185;2452,185;" + nothing, 100); })) break;
@@ -55,9 +60,13 @@ namespace keyupMusic2
                     break;
                 case Keys.Enter:
                     //(135,1152, Color.FromArgb(212,29,14)
+                    //bug 向上滑动
                     if (try_press(138, 1149, Color.FromArgb(222, 35, 10), () => { press("200,710", 101); })) break;
+                    if (try_press(0, 1439, Color.FromArgb(79, 122, 238), () => { press(nothing4); })) break;
                     break;
                 case Keys.Z:
+                    //bug 滑动
+                    //每次重置
                     if (!is_ctrl() && !is_alt()) break;
                     press("2473,50;2472,50;1115,324;", 100);
                     press("_;272.700;272.600;272.400;272.330;100;-;272,330", 100);
@@ -68,7 +77,9 @@ namespace keyupMusic2
                     break;
                 case Keys.F2:
                     mouse_click();
-                    press("100;1525,1072;", 0);
+                    press("1525,1072;", 0);
+                    //if (try_press(Color.FromArgb(220, 163, 51))) break;
+                    //if (try_press(1447, 1068, Color.FromArgb(245, 194, 55), () => { })) break;
                     break;
                 case Keys.F4:
                     if (is_alt()) break;
@@ -93,18 +104,42 @@ namespace keyupMusic2
                     press("300," + (num * 100 + 100), 1);
                     break;
                 case Keys.Q:
-                    if (try_press(1360, 1369, Color.FromArgb(255, 162, 16))) break;
-                    if (!is_ctrl() && !is_alt()) break;
-                    press("10;2134,1275;10", 101);
+                    //if (judge_color(2202, 644, Color.FromArgb(239, 116, 108), () => { press("334,944"); })) break;//装备1
+                    //if (try_press(1360, 1369, Color.FromArgb(255, 162, 16))) break;
+                    //if (!is_ctrl() && !is_alt()) break;
+                    //press("10;2134,1275;10", 101);
                     break;
                 case Keys.E:
+                    //if (judge_color(2202, 644, Color.FromArgb(239, 116, 108), () => { press("1580,932"); })) break;//装备3
                     if (Position.Y == 0) { press(Keys.MediaPreviousTrack); break; }
-                    if (is_ctrl() || is_alt()) mouse_move(2139, 336);
+                    if ((is_ctrl() || is_alt()) && judge_color(2524, 210, Color.FromArgb(39, 61, 118), null, 10)) { mouse_move(2139, 336); break; }
+                    if (is_ctrl() || is_alt()) { mouse_move(2139, 336); }
                     raw_press();
+                    break;
+                //case Keys.S:
+                //    if (is_ctrl()) { down_mouse(); press("10;S;10", 0); up_mouse(); break; }
+                //    break;
+                case Keys.W:
+                    //if (is_ctrl()) { down_mouse(); press("60;S", 0); up_mouse(); break; }
+                    //if (judge_color(170, 892, Color.FromArgb(185, 194, 205), () => { raw_press(); })) break;
+                    //if (judge_color(2202, 644, Color.FromArgb(239, 116, 108), () => { press("963,946"); })) break;//装备2
+                    if (judge_color(0, 1439, Color.FromArgb(79, 122, 238), () => { })) break;
+                    if (is_ctrl() || is_alt()) { mouse_click(); mouse_click(); break; }
+                    mouse_downing = true;
+                    down_mouse();
+                    break;
+                case Keys.R:
+                    //if (judge_color(2202, 644, Color.FromArgb(239, 116, 108), () => { press("2220,938"); })) break;//装备4
+                    //(2413,1089, Color.FromArgb(231,125,8)(1807,1125, Color.FromArgb(32,52,75)(2002,349, Color.FromArgb(255,139,0)
+                    if (judge_color(2007, 340, Color.FromArgb(255, 139, 0)))
+                    {
+                        press("1800, 1119;2130, 327;2130, 327", 100);
+                        break;
+                    }//装备重铸
                     break;
             }
             Common.hooked = false;
-            if(!handling) handling = true;
+            if (!handling) handling = true;
         }
 
 
