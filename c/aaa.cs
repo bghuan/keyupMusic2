@@ -34,7 +34,7 @@ namespace keyupMusic2
                     {
                         if (Common.FocusProcess(Common.devenv)) break;
                         press("LWin;VIS;Apps;100;Enter;", 100);
-                        TaskRun(() => { press("Tab;Down;Enter;", 100); }, 1500);
+                        TaskRun(() => { press("Tab;Down;Enter;", 100); }, 1800);
                     }
                     break;
                 case Keys.F12:

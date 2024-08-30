@@ -107,7 +107,7 @@ namespace keyupMusic2
             {
                 if (Default.handling)
                 {
-                    if (e.key == Keys.X) return true;
+                    if (e.key == Keys.X && ProcessName == Common.msedge) return true;
                     if (e.key == Keys.Right) return true;
                     if (e.key == Keys.Left) return true;
                     if (e.key == Keys.PageDown) return true;
@@ -145,6 +145,16 @@ namespace keyupMusic2
                      string asd = string.Join("+", new_stop_keys.Select(key => key.ToString()));
                      asd = asd.Replace("LMenu", "Alt").Replace("LWin", "Win").Replace("LControlKey", "Ctrl").Replace("LShiftKey", "Shift");
                      asd = asd.Replace("Oem3", "~");
+                     asd = asd.Replace("D1", "1");
+                     asd = asd.Replace("D2", "2");
+                     asd = asd.Replace("D3", "3");
+                     asd = asd.Replace("D4", "4");
+                     asd = asd.Replace("D5", "5");
+                     asd = asd.Replace("D6", "6");
+                     asd = asd.Replace("D7", "7");
+                     asd = asd.Replace("D8", "8");
+                     asd = asd.Replace("D9", "9");
+                     asd = asd.Replace("D0", "0");
                      label1.Text = asd;
                  }
             );
@@ -156,6 +166,16 @@ namespace keyupMusic2
             if (e.key == Keys.F3 || (e.key == Keys.LControlKey && is_shift())
                  || (e.key == Keys.LShiftKey && is_ctrl()))
             {
+                Invoke2(() =>
+                {
+                    if (Opacity == 0) { return; }
+                    timerMove.Interval = 1; // 设置Timer的间隔为10毫秒  
+                    timerMove.Tick += timerMove_Tick; // 订阅Tick事件  
+                    timerMove.Start(); // 启动Timer  
+                    Location = startPoint;
+                    // 记录开始时间  
+                    startTime = DateTime.Now;
+                });
                 super_listen();
             }
             else
@@ -363,6 +383,38 @@ namespace keyupMusic2
             WindowsIdentity identity = WindowsIdentity.GetCurrent();
             WindowsPrincipal principal = new WindowsPrincipal(identity);
             return principal.IsInRole(WindowsBuiltInRole.Administrator);
+        }
+        // Timer的Tick事件处理器  
+
+        // 定义起始点和终点  
+        private Point startPoint = new Point(1510, 100);
+        private Point endPoint = new Point(2170, 100);
+        private DateTime startTime; // 用于记录开始时间  
+
+        private void timerMove_Tick(object sender, EventArgs e)
+        {
+            // 计算总时间差  
+            TimeSpan elapsed = DateTime.Now - startTime;
+
+            // 如果总时间差小于或等于2000毫秒（2秒）  
+            if (elapsed.TotalMilliseconds <= 2000)
+            {
+                // 计算当前应该移动到的位置  
+                // 使用线性插值来计算X坐标的位置  
+                int currentX = (int)(startPoint.X + (endPoint.X - startPoint.X) * (elapsed.TotalMilliseconds / 2000.0));
+                // Y坐标保持不变  
+                int currentY = startPoint.Y;
+
+                // 更新控件位置  
+                Location = new Point(currentX, currentY);
+            }
+            else
+            {
+                // 如果超过2秒，直接跳到终点位置  
+                Location = endPoint;
+                // 停止Timer  
+                timerMove.Stop();
+            }
         }
     }
 }

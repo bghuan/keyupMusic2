@@ -340,10 +340,10 @@ namespace keyupMusic2
             if (is_down(Keys.Delete)) return;
             lock (_lockObject2)
             {
-                bool flag = tick > 0 && tick % 10 == 2;
-                if (flag) MouseKeyboardHook.handling = true;
+                //bool flag = tick > 0 && tick % 10 == 2;
+                //if (flag) MouseKeyboardHook.handling = true;
                 press([num], tick);
-                if (flag) MouseKeyboardHook.handling = false;
+                //if (flag) MouseKeyboardHook.handling = false;
             }
         }
         public static void close()
@@ -435,6 +435,12 @@ namespace keyupMusic2
             keybd_event((byte)keys, 0, 0, 0);
             keybd_event((byte)keys, 0, 2, 0);
         }
+        public static void press_dump(Keys keys, int tick = 500)
+        {
+            keybd_event((byte)keys, 0, 0, 0);
+            Thread.Sleep(tick);
+            keybd_event((byte)keys, 0, 2, 0);
+        }
         public static void _press_hold(Keys keys, int tick)
         {
             keybd_event((byte)keys, 0, 0, 0);
@@ -520,7 +526,7 @@ namespace keyupMusic2
         {
             using (Bitmap bitmap = new Bitmap(500, 1))
             {
-                int startX = 1990;
+                int startX = 1800;
                 int startY = 1397;
                 using (Graphics g = Graphics.FromImage(bitmap))
                 {
@@ -568,16 +574,27 @@ namespace keyupMusic2
                 //}
             }
         }
+        //占内存
         public static void copy_secoed_screen()
         {
             Screen secondaryScreen = Screen.AllScreens.FirstOrDefault(scr => !scr.Primary);
+            if (secondaryScreen == null) secondaryScreen = Screen.PrimaryScreen;
+            Bitmap bmpScreenshot = new Bitmap(1920, 1080, PixelFormat.Format32bppArgb);
+            Graphics gfxScreenshot = Graphics.FromImage(bmpScreenshot);
+            gfxScreenshot.CopyFromScreen(new Point(2560, 0), Point.Empty, secondaryScreen.Bounds.Size);
+            gfxScreenshot.Dispose();
+            bmpScreenshot.Save("image\\encode\\" + DateTime.Now.ToString("yyyyMMddHHmmss") + ".png" + "g", ImageFormat.Png);
+        }
+        public static void copy_ddzzq_screen()
+        {
+            Screen secondaryScreen = Screen.PrimaryScreen;
             if (secondaryScreen != null)
             {
-                Bitmap bmpScreenshot = new Bitmap(1920, 1080, PixelFormat.Format32bppArgb);
+                Bitmap bmpScreenshot = new Bitmap(2560, 1440, PixelFormat.Format32bppArgb);
                 Graphics gfxScreenshot = Graphics.FromImage(bmpScreenshot);
-                gfxScreenshot.CopyFromScreen(new Point(2560, 0), Point.Empty, secondaryScreen.Bounds.Size);
+                gfxScreenshot.CopyFromScreen(new Point(0, 0), Point.Empty, secondaryScreen.Bounds.Size);
                 gfxScreenshot.Dispose();
-                bmpScreenshot.Save("image\\encode\\" + DateTime.Now.ToString("yyyyMMddHHmmss") + ".png" + "g", ImageFormat.Png);
+                bmpScreenshot.Save("C:\\Users\\bu\\Pictures\\Screenshots\\dd\\" + DateTime.Now.ToString("yyyyMMddHHmmss") + ".png", ImageFormat.Png);
             }
         }
     }

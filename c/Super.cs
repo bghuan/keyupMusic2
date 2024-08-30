@@ -12,6 +12,7 @@ using System.Windows.Forms;
 using WGestures.Core.Impl.Windows;
 using static keyupMusic2.Common;
 using static keyupMusic2.Huan;
+using System.Net;
 
 namespace keyupMusic2
 {
@@ -183,7 +184,21 @@ namespace keyupMusic2
                     press("100;LWin;KK;Enter;", 110);
                     break;
                 case Keys.Escape:
-                    if (is_ctrl() && is_shift()) Process.Start(new ProcessStartInfo("taskmgr.exe"));
+                    if (is_ctrl() && is_shift()) { Process.Start(new ProcessStartInfo("taskmgr.exe")); break; }
+                    press("LWin;1957,1015");
+                    break;
+                case Keys.X:
+                    //huan.Invoke2(() =>
+                    //{
+                    //    var timerMove = huan.timerMove;
+                    //    timerMove.Interval = 1; // 设置Timer的间隔为10毫秒  
+                    //    timerMove.Tick += timerMove_Tick; // 订阅Tick事件  
+                    //    timerMove.Start(); // 启动Timer  
+                    //    // 假设huan是你的控件名，设置初始位置  
+                    //    huan.Location = startPoint;
+                    //    // 记录开始时间  
+                    //    startTime = DateTime.Now;
+                    //});
                     break;
                 default:
                     catched = true;
@@ -196,7 +211,6 @@ namespace keyupMusic2
             }
             Common.hooked = false;
         }
-
         private static void dragonest_run()
         {
             int asdf = 1000;
@@ -217,7 +231,7 @@ namespace keyupMusic2
                 //Common.FocusProcess(Common.ACPhoenix);
                 altab();
                 //Common.FocusProcess(Common.Dragonest);
-                press("2525,40");
+                press("500;2525,40;100", 0);
                 mouse_move3();
             });
         }

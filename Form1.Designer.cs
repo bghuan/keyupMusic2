@@ -59,6 +59,7 @@
             bToolStripMenuItem = new ToolStripMenuItem();
             nToolStripMenuItem = new ToolStripMenuItem();
             mToolStripMenuItem = new ToolStripMenuItem();
+            timerMove = new System.Windows.Forms.Timer(components);
             contextMenuStrip1.SuspendLayout();
             SuspendLayout();
             // 
@@ -87,173 +88,174 @@
             contextMenuStrip1.ImageScalingSize = new Size(24, 24);
             contextMenuStrip1.Items.AddRange(new ToolStripItem[] { toolStripMenuItem2, toolStripMenuItem3, toolStripMenuItem4, rToolStripMenuItem, tToolStripMenuItem, yToolStripMenuItem, uToolStripMenuItem, iToolStripMenuItem, oToolStripMenuItem, pToolStripMenuItem, aToolStripMenuItem, sToolStripMenuItem, dToolStripMenuItem, fToolStripMenuItem, gToolStripMenuItem, hToolStripMenuItem, jToolStripMenuItem, kToolStripMenuItem, lToolStripMenuItem, zToolStripMenuItem, xToolStripMenuItem, cToolStripMenuItem, vToolStripMenuItem, bToolStripMenuItem, nToolStripMenuItem, mToolStripMenuItem });
             contextMenuStrip1.Name = "contextMenuStrip1";
-            contextMenuStrip1.Size = new Size(241, 817);
+            contextMenuStrip1.Size = new Size(171, 784);
             contextMenuStrip1.ItemClicked += contextMenuStrip1_ItemClicked;
             // 
             // toolStripMenuItem2
             // 
             toolStripMenuItem2.Name = "toolStripMenuItem2";
-            toolStripMenuItem2.Size = new Size(240, 30);
+            toolStripMenuItem2.Size = new Size(170, 30);
             toolStripMenuItem2.Text = "Q";
             // 
             // toolStripMenuItem3
             // 
             toolStripMenuItem3.Name = "toolStripMenuItem3";
-            toolStripMenuItem3.Size = new Size(240, 30);
+            toolStripMenuItem3.Size = new Size(170, 30);
             toolStripMenuItem3.Text = "W";
             // 
             // toolStripMenuItem4
             // 
             toolStripMenuItem4.Name = "toolStripMenuItem4";
-            toolStripMenuItem4.Size = new Size(240, 30);
+            toolStripMenuItem4.Size = new Size(170, 30);
             toolStripMenuItem4.Text = "E";
             // 
             // rToolStripMenuItem
             // 
             rToolStripMenuItem.Name = "rToolStripMenuItem";
-            rToolStripMenuItem.Size = new Size(240, 30);
+            rToolStripMenuItem.Size = new Size(170, 30);
             rToolStripMenuItem.Text = "R";
             // 
             // tToolStripMenuItem
             // 
             tToolStripMenuItem.Name = "tToolStripMenuItem";
-            tToolStripMenuItem.Size = new Size(240, 30);
+            tToolStripMenuItem.Size = new Size(170, 30);
             tToolStripMenuItem.Text = "T";
             // 
             // yToolStripMenuItem
             // 
             yToolStripMenuItem.Name = "yToolStripMenuItem";
-            yToolStripMenuItem.Size = new Size(240, 30);
+            yToolStripMenuItem.Size = new Size(170, 30);
             yToolStripMenuItem.Text = "Y";
             // 
             // uToolStripMenuItem
             // 
             uToolStripMenuItem.Name = "uToolStripMenuItem";
-            uToolStripMenuItem.Size = new Size(240, 30);
+            uToolStripMenuItem.Size = new Size(170, 30);
             uToolStripMenuItem.Text = "U";
             // 
             // iToolStripMenuItem
             // 
             iToolStripMenuItem.Name = "iToolStripMenuItem";
-            iToolStripMenuItem.Size = new Size(240, 30);
+            iToolStripMenuItem.Size = new Size(170, 30);
             iToolStripMenuItem.Text = "I";
             // 
             // oToolStripMenuItem
             // 
             oToolStripMenuItem.Name = "oToolStripMenuItem";
-            oToolStripMenuItem.Size = new Size(240, 30);
+            oToolStripMenuItem.Size = new Size(170, 30);
             oToolStripMenuItem.Text = "O";
             // 
             // pToolStripMenuItem
             // 
             pToolStripMenuItem.Name = "pToolStripMenuItem";
-            pToolStripMenuItem.Size = new Size(240, 30);
+            pToolStripMenuItem.Size = new Size(170, 30);
             pToolStripMenuItem.Text = "PPPPPPPP";
             // 
             // aToolStripMenuItem
             // 
             aToolStripMenuItem.Name = "aToolStripMenuItem";
-            aToolStripMenuItem.Size = new Size(240, 30);
+            aToolStripMenuItem.Size = new Size(170, 30);
             aToolStripMenuItem.Text = "A";
             // 
             // sToolStripMenuItem
             // 
             sToolStripMenuItem.Name = "sToolStripMenuItem";
-            sToolStripMenuItem.Size = new Size(240, 30);
+            sToolStripMenuItem.Size = new Size(170, 30);
             sToolStripMenuItem.Text = "S";
             // 
             // dToolStripMenuItem
             // 
             dToolStripMenuItem.Name = "dToolStripMenuItem";
-            dToolStripMenuItem.Size = new Size(240, 30);
+            dToolStripMenuItem.Size = new Size(170, 30);
             dToolStripMenuItem.Text = "D";
             // 
             // fToolStripMenuItem
             // 
             fToolStripMenuItem.Name = "fToolStripMenuItem";
-            fToolStripMenuItem.Size = new Size(240, 30);
+            fToolStripMenuItem.Size = new Size(170, 30);
             fToolStripMenuItem.Text = "F";
             // 
             // gToolStripMenuItem
             // 
             gToolStripMenuItem.Name = "gToolStripMenuItem";
-            gToolStripMenuItem.Size = new Size(240, 30);
+            gToolStripMenuItem.Size = new Size(170, 30);
             gToolStripMenuItem.Text = "G";
             // 
             // hToolStripMenuItem
             // 
             hToolStripMenuItem.Name = "hToolStripMenuItem";
-            hToolStripMenuItem.Size = new Size(240, 30);
+            hToolStripMenuItem.Size = new Size(170, 30);
             hToolStripMenuItem.Text = "H";
             // 
             // jToolStripMenuItem
             // 
             jToolStripMenuItem.Name = "jToolStripMenuItem";
-            jToolStripMenuItem.Size = new Size(240, 30);
+            jToolStripMenuItem.Size = new Size(170, 30);
             jToolStripMenuItem.Text = "J";
             // 
             // kToolStripMenuItem
             // 
             kToolStripMenuItem.Name = "kToolStripMenuItem";
-            kToolStripMenuItem.Size = new Size(240, 30);
+            kToolStripMenuItem.Size = new Size(170, 30);
             kToolStripMenuItem.Text = "K";
             // 
             // lToolStripMenuItem
             // 
             lToolStripMenuItem.Name = "lToolStripMenuItem";
-            lToolStripMenuItem.Size = new Size(240, 30);
+            lToolStripMenuItem.Size = new Size(170, 30);
             lToolStripMenuItem.Text = "LLLLLLLLLL";
             // 
             // zToolStripMenuItem
             // 
             zToolStripMenuItem.Name = "zToolStripMenuItem";
-            zToolStripMenuItem.Size = new Size(240, 30);
+            zToolStripMenuItem.Size = new Size(170, 30);
             zToolStripMenuItem.Text = "Z";
             // 
             // xToolStripMenuItem
             // 
             xToolStripMenuItem.Name = "xToolStripMenuItem";
-            xToolStripMenuItem.Size = new Size(240, 30);
+            xToolStripMenuItem.Size = new Size(170, 30);
             xToolStripMenuItem.Text = "X";
             // 
             // cToolStripMenuItem
             // 
             cToolStripMenuItem.Name = "cToolStripMenuItem";
-            cToolStripMenuItem.Size = new Size(240, 30);
+            cToolStripMenuItem.Size = new Size(170, 30);
             cToolStripMenuItem.Text = "C";
             // 
             // vToolStripMenuItem
             // 
             vToolStripMenuItem.Name = "vToolStripMenuItem";
-            vToolStripMenuItem.Size = new Size(240, 30);
+            vToolStripMenuItem.Size = new Size(170, 30);
             vToolStripMenuItem.Text = "V";
             // 
             // bToolStripMenuItem
             // 
             bToolStripMenuItem.Name = "bToolStripMenuItem";
-            bToolStripMenuItem.Size = new Size(240, 30);
+            bToolStripMenuItem.Size = new Size(170, 30);
             bToolStripMenuItem.Text = "B";
             // 
             // nToolStripMenuItem
             // 
             nToolStripMenuItem.Name = "nToolStripMenuItem";
-            nToolStripMenuItem.Size = new Size(240, 30);
+            nToolStripMenuItem.Size = new Size(170, 30);
             nToolStripMenuItem.Text = "N";
             // 
             // mToolStripMenuItem
             // 
             mToolStripMenuItem.Name = "mToolStripMenuItem";
-            mToolStripMenuItem.Size = new Size(240, 30);
+            mToolStripMenuItem.Size = new Size(170, 30);
             mToolStripMenuItem.Text = "M";
             // 
             // Huan
             // 
             AutoScaleDimensions = new SizeF(11F, 24F);
             AutoScaleMode = AutoScaleMode.Font;
+            ClientSize = new Size(329, 26);
             ContextMenuStrip = contextMenuStrip1;
             Controls.Add(label1);
+            DoubleBuffered = true;
             Icon = (Icon)resources.GetObject("$this.Icon");
-            ClientSize = new Size(329, 26);
             Location = new Point(2170, 100);
             Margin = new Padding(4);
             Name = "Huan";
@@ -301,5 +303,6 @@
         private ToolStripMenuItem bToolStripMenuItem;
         private ToolStripMenuItem nToolStripMenuItem;
         private ToolStripMenuItem mToolStripMenuItem;
+        public System.Windows.Forms.Timer timerMove;
     }
 }
