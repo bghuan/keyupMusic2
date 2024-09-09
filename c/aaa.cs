@@ -6,21 +6,24 @@ using System.Threading.Tasks;
 using static WGestures.Core.Impl.Windows.MouseKeyboardHook;
 
 using static keyupMusic2.Common;
+using System.Diagnostics;
 
 namespace keyupMusic2
 {
     public class AAA : Default
     {
         string[] list = Common.list;
-        string[] list_wechat = { Common.WeChat, Common.ACPhoenix, explorer, Common.keyupMusic2, Common.douyin, Common.devenv , Common.QQMusic };
+        string[] list_wechat = { Common.WeChat, Common.ACPhoenix, explorer, Common.keyupMusic2, Common.douyin, Common.devenv, Common.QQMusic };
         string[] list_visualstudio = { Common.devenv, Common.ACPhoenix, explorer, Common.keyupMusic2, Common.douyin, Common.WeChat, Common.
         QQMusic, };
-        string[] list_volume = { Common.douyin, Common.msedge};
+        string[] list_volume = { Common.douyin, Common.msedge };
+
         public void hook_KeyDown_ddzzq(KeyboardHookEventArgs e)
         {
             string module_name = ProcessName;
             if (!list.Contains(module_name)) return;
             Common.hooked = true;
+            handling_keys = e.key;
 
             switch (e.key)
             {
@@ -34,7 +37,7 @@ namespace keyupMusic2
                     {
                         if (Common.FocusProcess(Common.devenv)) break;
                         press("LWin;VIS;Apps;100;Enter;", 100);
-                        TaskRun(() => { press("Tab;Down;Enter;", 100); }, 1800);
+                        TaskRun(() => { press("Tab;Down;Enter;", 100); }, 1600);
                     }
                     break;
                 case Keys.F12:
@@ -49,6 +52,13 @@ namespace keyupMusic2
                         Thread.Sleep(100);
                         if (ProcessName2 == Common.WeChat) break;
                         press("LWin;WEI;Enter;", 50);
+                    }
+                    break;
+                case Keys.MediaPreviousTrack:
+                    if (module_name == HuyaClient)
+                    {
+                        press("587,152", 1);
+                        break;
                     }
                     break;
             }

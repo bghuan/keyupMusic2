@@ -85,6 +85,7 @@ namespace keyupMusic2
                 case Keys.D7:
                 case Keys.D8:
                 case Keys.D9:
+                    if (is_down(Keys.LWin)) break;
                     if (key_sound && keys.Contains(e.key))
                     {
                         string wav = "wav\\" + e.key.ToString().Replace("D", "") + ".wav";
@@ -147,6 +148,7 @@ namespace keyupMusic2
                             var color = bitmap.GetPixel(0, 0);
                             string asd = $"({mousePosition.X},{mousePosition.Y}, Color.FromArgb({color.R},{color.G},{color.B})";
                             log(ProcessName + asd);
+                            log_process(e.key.ToString());
                             Invoke(() => Clipboard.SetText(asd));
                         }
                     }
@@ -158,8 +160,8 @@ namespace keyupMusic2
                 case Keys.F2:
                     Invoke(() =>
                         {
-                            huan.Opacity = huan.Opacity == 0 ? 1 : 0;
-                            huan.SetVisibleCore2(true);
+                            //huan.Opacity = huan.Opacity == 0 ? 1 : 0;
+                            huan.SetVisibleCore2(!huan.Visible);
                         }
                     );
                     break;

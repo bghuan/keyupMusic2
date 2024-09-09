@@ -16,6 +16,7 @@ namespace keyupMusic2
         devenv Devenv;
         douyin Douyin;
         AAA Aaa;
+        BBB Bbb;
         Super super;
         public Huan()
         {
@@ -42,6 +43,7 @@ namespace keyupMusic2
             Devenv = new devenv();
             Douyin = new douyin();
             Aaa = new AAA();
+            Bbb = new BBB();
             super = new Super(this);
         }
 
@@ -59,15 +61,15 @@ namespace keyupMusic2
                 Common.FocusProcess(Common.ACPhoenix);
             }
 
-            if (!FocusProcess("keyupMusic3"))
-            {
-                ProcessStartInfo startInfo2 = new ProcessStartInfo("C:\\Users\\bu\\source\\repos\\keyupMusic3\\bin\\Debug\\net8.0-windows\\keyupMusic3.exe");
-                startInfo2.UseShellExecute = true;
-                startInfo2.Verb = "runas";
-                Process.Start(startInfo2);
+            //if (!FocusProcess("keyupMusic3"))
+            //{
+            //    ProcessStartInfo startInfo2 = new ProcessStartInfo("C:\\Users\\bu\\source\\repos\\keyupMusic3\\bin\\Debug\\net8.0-windows\\keyupMusic3.exe");
+            //    startInfo2.UseShellExecute = true;
+            //    startInfo2.Verb = "runas";
+            //    Process.Start(startInfo2);
 
-                HideProcess("keyupMusic3");
-            }
+            //    HideProcess("keyupMusic3");
+            //}
         }
 
         public bool keyupMusic2_onlisten = false;
@@ -85,12 +87,14 @@ namespace keyupMusic2
         public bool judge_handled(KeyboardHookEventArgs e, string ProcessName)
         {
             if (is_alt() && is_down(Keys.Tab)) return false;
+            if (e.key == Keys.D1) return true;
+            if (e.key == Keys.D2) return true;
             if (e.key == Keys.F3) return true;
             if (e.key == Keys.F3) return true;
             if (e.key == Keys.F11 && ProcessName == Common.devenv && !is_ctrl()) return true;
             if (e.key == Keys.F12 && ProcessName == Common.devenv && !is_ctrl()) return true;
-            if (e.key == Keys.VolumeUp && is_ctrl()) return true;
-            if (e.key == Keys.VolumeDown && is_ctrl()) return true;
+            if (e.key == Keys.VolumeUp) return true;
+            if (e.key == Keys.VolumeDown) return true;
             if (ProcessName == Common.ACPhoenix)
             {
                 if (e.key == Keys.Oem3) return true;
@@ -99,65 +103,40 @@ namespace keyupMusic2
                 {
                     if (e.key == Keys.Space) return true;
                     if (e.key == Keys.E) return true;
-                    //if (e.key == Keys.W) return true;
-                    //if (e.key == Keys.Tab) return true;
                 }
             }
             if (ProcessName == Common.douyin || ProcessName == Common.msedge)
             {
                 if (Default.handling)
                 {
-                    if (e.key == Keys.X && ProcessName == Common.msedge) return true;
                     if (e.key == Keys.Right) return true;
                     if (e.key == Keys.Left) return true;
                     if (e.key == Keys.PageDown) return true;
                     if (e.key == Keys.PageUp) return true;
                 }
             }
+            if (e.key == Keys.MediaPreviousTrack || e.key == Keys.MediaPlayPause)
+            {
+                if (ProcessName == HuyaClient) return true;
+            }
             return false;
         }
+        Keys[] special_key = new Keys[] { Keys.F22, Keys.RControlKey, Keys.RShiftKey, Keys.RMenu, Keys.RWin };
         private void hook_KeyDown(KeyboardHookEventArgs e)
         {
             if (e.Type != KeyboardEventType.KeyDown) return;
             if (is_alt() && is_down(Keys.Tab)) return;
-            if (ProcessName2 == Common.keyupMusic2 && e.key == Keys.F1) Common.hooked = !Common.hooked;
             if (e.key == Keys.Tab && (ProcessName != Common.ACPhoenix)) return;
             if (Common.hooked) return;
+
+            if (ProcessName2 == Common.keyupMusic2 && e.key == Keys.F1) Common.hooked = !Common.hooked;
+            if (ProcessName2 == Common.keyupMusic2 && e.key == Keys.F2) log_always = !log_always;
+
             if (keyupMusic2_onlisten) e.Handled = true;
             if (judge_handled(e, ProcessName)) e.Handled = true;
 
-            if (!stop_keys.Contains(e.key))
-            {
-                var sads = new Keys[] { Keys.F22, Keys.RControlKey, Keys.RMenu, Keys.RWin };
-                if (sads.Contains(e.key))
-                {
-                    if (e.key == Keys.F22)
-                    {
-                        string dsadsadsa = "dsd";
-                    }
-                    log_process(e.key.ToString());
-                }
-                stop_keys.Add(e.key);
-            }
-            var new_stop_keys = stop_keys.ToArray();
-            Invoke2(() =>
-                 {
-                     string asd = string.Join("+", new_stop_keys.Select(key => key.ToString()));
-                     asd = asd.Replace("LMenu", "Alt").Replace("LWin", "Win").Replace("LControlKey", "Ctrl").Replace("LShiftKey", "Shift");
-                     asd = asd.Replace("Oem3", "~");
-                     asd = asd.Replace("D1", "1");
-                     asd = asd.Replace("D2", "2");
-                     asd = asd.Replace("D3", "3");
-                     asd = asd.Replace("D4", "4");
-                     asd = asd.Replace("D5", "5");
-                     asd = asd.Replace("D6", "6");
-                     asd = asd.Replace("D7", "7");
-                     asd = asd.Replace("D8", "8");
-                     asd = asd.Replace("D9", "9");
-                     asd = asd.Replace("D0", "0");
-                     label1.Text = asd;
-                 }
-            );
+            handle_special_or_normal_key(e);
+            print_easy_read();
 
             if (ProcessName == Common.keyupMusic2)
             {
@@ -184,6 +163,7 @@ namespace keyupMusic2
                 {
                     super.hook_KeyDown_keyupMusic2(e);
                     Aaa.hook_KeyDown_ddzzq(e);
+                    Bbb.hook_KeyDown_ddzzq(e);
                     Devenv.hook_KeyDown_ddzzq(e);
                     aCPhoenix.hook_KeyDown_ddzzq(e);
                     Douyin.hook_KeyDown_ddzzq(e);
@@ -192,6 +172,41 @@ namespace keyupMusic2
                 });
             }
         }
+
+        private void print_easy_read()
+        {
+            var new_stop_keys = stop_keys.ToArray();
+            Invoke2(() =>
+            {
+                string asd = string.Join("+", new_stop_keys.Select(key => key.ToString()));
+                asd = asd.Replace("LMenu", "Alt").Replace("LWin", "Win").Replace("LControlKey", "Ctrl").Replace("LShiftKey", "Shift");
+                asd = asd.Replace("Oem3", "~");
+                asd = asd.Replace("D1", "1");
+                asd = asd.Replace("D2", "2");
+                asd = asd.Replace("D3", "3");
+                asd = asd.Replace("D4", "4");
+                asd = asd.Replace("D5", "5");
+                asd = asd.Replace("D6", "6");
+                asd = asd.Replace("D7", "7");
+                asd = asd.Replace("D8", "8");
+                asd = asd.Replace("D9", "9");
+                asd = asd.Replace("D0", "0");
+                label1.Text = asd;
+            }
+            );
+        }
+
+        private void handle_special_or_normal_key(KeyboardHookEventArgs e)
+        {
+            if (!stop_keys.Contains(e.key))
+            {
+                string _ProcessName = "";
+                if (special_key.Contains(e.key) || log_always) _ProcessName = log_process(e.key.ToString());
+                if (e.key == Keys.F22 && (_ProcessName == "WeChatAppEx" || _ProcessName == "WeChat")) { e.Handled = true; }
+                stop_keys.Add(e.key);
+            }
+        }
+
         private void super_listen()
         {
             keyupMusic2_onlisten = true;
@@ -390,6 +405,7 @@ namespace keyupMusic2
         private Point startPoint = new Point(1510, 100);
         private Point endPoint = new Point(2170, 100);
         private DateTime startTime; // 用于记录开始时间  
+        private bool log_always;
 
         private void timerMove_Tick(object sender, EventArgs e)
         {

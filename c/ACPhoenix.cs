@@ -154,12 +154,12 @@ namespace keyupMusic2
                         break;
                     }//装备重铸
                     break;
-                case Keys.PageDown:
-                    copy_secoed_screen();
-                    break;
-                case Keys.PageUp:
-                    copy_ddzzq_screen();
-                    break;
+                //case Keys.PageDown:
+                //    copy_secoed_screen();
+                //    break;
+                //case Keys.PageUp:
+                //    copy_ddzzq_screen();
+                //    break;
                 case Keys.End:
                     HideProcess(chrome);
                     break;

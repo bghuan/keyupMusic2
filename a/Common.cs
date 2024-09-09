@@ -26,12 +26,14 @@ namespace keyupMusic2
         public const string devenv = "devenv";
         public const string WeChat = "WeChat";
         public const string douyin = "douyin";
+        public const string douyinexe = "C:\\Program Files (x86)\\ByteDance\\douyin\\x64\\4.4.0\\douyin.exe";
         public const string msedge = "msedge";
         public const string chrome = "chrome";
         public const string Taskmgr = "Taskmgr";
         public const string explorer = "explorer";
         public const string SearchHost = "SearchHost";
         public const string QQMusic = "QQMusic";
+        public const string HuyaClient = "HuyaClient";
 
         public static string[] list = {
         keyupMusic2,
@@ -46,7 +48,7 @@ namespace keyupMusic2
         explorer,
         SearchHost,
         QQMusic,
-        QQMusic,
+        HuyaClient,
         QQMusic,
         QQMusic,
         QQMusic,
@@ -107,13 +109,14 @@ namespace keyupMusic2
             //log(DateTime.Now.ToString("") + " " + windowTitle + " " + fildsadsePath + module_nasme + "\n");
             return ProcessName;
         }
-        public static void log_process(string key = "")
+        static string proc_info = "";
+        public static string log_process(string key = "")
         {
             IntPtr hwnd = GetForegroundWindow(); // 获取当前活动窗口的句柄
             string a = "";
 
             string windowTitle = GetWindowText(hwnd);
-            a += ("当前活动窗口名称: " + windowTitle);
+            //a += ("当前活动窗口名称: " + windowTitle);
 
             var filePath = "a.txt";
             var fildsadsePath = "err";
@@ -135,10 +138,13 @@ namespace keyupMusic2
             {
                 fildsadsePath = ex.Message;
             }
-            a += key + " " + fildsadsePath + " " + module_name + " " + ProcessName + " " + fildsadsePath;
+            var curr_proc_info = ProcessName + " " + windowTitle + " " + fildsadsePath;
+            a = key;
+            if (proc_info != curr_proc_info) a = key + " " + curr_proc_info;
+            proc_info = ProcessName + " " + windowTitle + " " + fildsadsePath;
             log(a);
             //log(DateTime.Now.ToString("") + " " + windowTitle + " " + fildsadsePath + module_nasme + "\n");
-            //return ProcessName;
+            return ProcessName;
         }
 
         private static readonly object _lockObject = new object();
@@ -513,6 +519,24 @@ namespace keyupMusic2
             }
             return flag;
         }
+        public static bool try_press2(int x, int y, Color color, Action action = null, int similar = 70)
+        {
+            //var pos = Position;
+            mouse_move(x, y);
+            Thread.Sleep(10);
+            var asd = get_mouse_postion_color(new Point(x, y));
+            var flag = AreColorsSimilar(asd, color, similar);
+            if (flag)
+            {
+                var flag2 = action != null;
+                press(x + "," + y, flag2 ? 100 : 101);
+                if (flag2) action();
+                else lastPosition = Position;
+            }
+            log("try_press:" + x + "," + y + "," + color.R + "," + color.G + "," + color.B + " " + asd.R + "," + asd.G + "," + asd.B);
+            //mouse_move(pos);
+            return flag;
+        }
         public static bool AreColorsSimilar(Color color1, Color color2, int threshold = 50)
         {
             if (color1 == color2) return true;
@@ -575,15 +599,29 @@ namespace keyupMusic2
             }
         }
         //占内存
+        public static void copy_screen()
+        {
+            Screen secondaryScreen = Screen.PrimaryScreen;
+            Bitmap bmpScreenshot = new Bitmap(secondaryScreen.Bounds.Width, secondaryScreen.Bounds.Height, PixelFormat.Format32bppArgb);
+            Graphics gfxScreenshot = Graphics.FromImage(bmpScreenshot);
+            gfxScreenshot.CopyFromScreen(new Point(0, 0), Point.Empty, secondaryScreen.Bounds.Size);
+            gfxScreenshot.Dispose();
+            string aaa = "C:\\Users\\bu\\Pictures\\Screenshots\\";
+            if (ProcessName == Common.ACPhoenix) aaa += "dd\\";
+            bmpScreenshot.Save(aaa + DateTime.Now.ToString("yyyyMMddHHmmss") + ".png", ImageFormat.Png);
+        }
         public static void copy_secoed_screen()
         {
             Screen secondaryScreen = Screen.AllScreens.FirstOrDefault(scr => !scr.Primary);
-            if (secondaryScreen == null) secondaryScreen = Screen.PrimaryScreen;
+            int start_x = 2560;
+            if (secondaryScreen == null) { return; }
+            //if (secondaryScreen == null) { secondaryScreen = Screen.PrimaryScreen; start_x = 0; }
+            //Bitmap bmpScreenshot = new Bitmap(secondaryScreen.Bounds.Width, secondaryScreen.Bounds.Height, PixelFormat.Format32bppArgb);
             Bitmap bmpScreenshot = new Bitmap(1920, 1080, PixelFormat.Format32bppArgb);
             Graphics gfxScreenshot = Graphics.FromImage(bmpScreenshot);
-            gfxScreenshot.CopyFromScreen(new Point(2560, 0), Point.Empty, secondaryScreen.Bounds.Size);
-            gfxScreenshot.Dispose();
+            gfxScreenshot.CopyFromScreen(new Point(start_x, 0), Point.Empty, secondaryScreen.Bounds.Size);
             bmpScreenshot.Save("image\\encode\\" + DateTime.Now.ToString("yyyyMMddHHmmss") + ".png" + "g", ImageFormat.Png);
+            gfxScreenshot.Dispose();
         }
         public static void copy_ddzzq_screen()
         {
@@ -595,6 +633,23 @@ namespace keyupMusic2
                 gfxScreenshot.CopyFromScreen(new Point(0, 0), Point.Empty, secondaryScreen.Bounds.Size);
                 gfxScreenshot.Dispose();
                 bmpScreenshot.Save("C:\\Users\\bu\\Pictures\\Screenshots\\dd\\" + DateTime.Now.ToString("yyyyMMddHHmmss") + ".png", ImageFormat.Png);
+            }
+        }
+        public static void ProcessRun(string str)
+        {
+            ProcessStartInfo startInfo2 = new ProcessStartInfo(str);
+            startInfo2.UseShellExecute = true;
+            startInfo2.Verb = "runas";
+            Process.Start(startInfo2);
+        }
+        public static void DaleyRun(Func<bool> action, int alltime, int tick)
+        {
+            while (alltime > 0)
+            {
+                Thread.Sleep(tick);
+                alltime -= tick;
+                var asd = action.Invoke();
+                if (asd) break;
             }
         }
     }

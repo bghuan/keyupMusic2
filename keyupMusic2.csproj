@@ -6,7 +6,14 @@
     <Nullable>enable</Nullable>
     <UseWindowsForms>true</UseWindowsForms>
     <ImplicitUsings>enable</ImplicitUsings>
+    <StartupObject>keyupMusic2.Program</StartupObject>
+    <ApplicationIcon>b (5).ico</ApplicationIcon>
+    <PackageIcon></PackageIcon>
   </PropertyGroup>
+
+  <ItemGroup>
+    <Content Include="b (5).ico" />
+  </ItemGroup>
 
   <ItemGroup>
     <PackageReference Include="org.k2fsa.sherpa.ncnn" Version="2.1.6" />
