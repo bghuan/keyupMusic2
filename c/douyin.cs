@@ -24,7 +24,11 @@ namespace keyupMusic2
             {
                 case Keys.Right:
                 case Keys.PageUp:
+                    if (Position.Y == 0 && Position.X == 2559) { break; }
                     if (Position.Y == 0 && Position.X != 2559) { press(Keys.VolumeUp); break; }
+                    Common.share();
+                    if (share_string == "WM_LBUTTONDOWN") { press(Keys.VolumeUp); break; }
+                    if (share_string == "WM_RBUTTONDOWN") { press(Keys.VolumeUp); break; }
                     if (module_name == ClassName())
                     {
                         handling = false;
@@ -47,17 +51,16 @@ namespace keyupMusic2
                     //if (module_name == ClassName()) { }
                     //raw_press();
                     break;
+                case Keys.Oem3:
                 case Keys.D1:
-                    if (module_name != ClassName()) break;
-                    press("2236.1400;2226,1062", 101);
-                    break;
                 case Keys.D2:
-                    if (module_name != ClassName()) break;
-                    press("2236.1400;2226,1284", 101);
-                    break;
                 case Keys.D3:
+                case Keys.D4:
+                case Keys.D5:
+                case Keys.D6:
                     if (module_name != ClassName()) break;
-                    press("2236.1400;2226,1333", 101);
+                    int num = int.Parse(e.key.ToString().Replace("D", "").Replace("Oem3", "0"));
+                    press("2236.1400;2226," + (1030 + (num * 50)), 101);
                     break;
             }
             Common.hooked = false;

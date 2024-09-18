@@ -154,24 +154,22 @@ namespace keyupMusic2
                         break;
                     }//装备重铸
                     break;
-                //case Keys.PageDown:
-                //    copy_secoed_screen();
-                //    break;
-                //case Keys.PageUp:
-                //    copy_ddzzq_screen();
-                //    break;
-                case Keys.End:
-                    HideProcess(chrome);
-                    break;
-                case Keys.Home:
+                //case Keys.Home:
+                case Keys.PageUp:
                     //if (judge_color(2098, 188, Color.FromArgb(109, 189, 205)))
                     {
                         //(1555, 1150, Color.FromArgb(250, 198, 131)(2074, 386, Color.FromArgb(246, 250, 253)(2219, 231, Color.FromArgb(201, 202, 201)
                         press("2094, 187;2219, 231;2074, 386;1555, 1150", 200);
                     }
                     break;
+                case Keys.PageDown:
+                    HideProcess(chrome);
+                    break;
                 case Keys.A:
                     if (is_ctrl()) { press(Keys.A); press(Keys.A); press(Keys.A); break; }
+                    break;
+                case Keys.Delete:
+                    press("2460,50;2460,200",103);
                     break;
             }
             Common.hooked = false;

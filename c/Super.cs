@@ -18,28 +18,17 @@ namespace keyupMusic2
 {
     public class Super
     {
-        public Huan huan;
-        public Label label1
-        {
-            get
-            {
-                return huan.label1;
-            }
-            set
-            {
-                huan.label1 = value;
-            }
-        }
-        Keys[] keys = { Keys.D0, Keys.D1, Keys.D2, Keys.D3, Keys.D4, Keys.D5, Keys.D6, Keys.D7, Keys.D8, Keys.D9 };
-        bool key_sound = true;
-        SoundPlayer player = new SoundPlayer();
-        int SIMULATED_EVENT_TAG = 19900620;
-        bool start_record = false;
-        string commnd_record = "";
         public Super(Form parentForm)
         {
             huan = (Huan)parentForm;
         }
+        public Huan huan;
+        Keys[] keys = { Keys.D0, Keys.D1, Keys.D2, Keys.D3, Keys.D4, Keys.D5, Keys.D6, Keys.D7, Keys.D8, Keys.D9 };
+        bool key_sound = true;
+        SoundPlayer player = new SoundPlayer();
+        bool start_record = false;
+        string commnd_record = "";
+
         public void hook_KeyDown_keyupMusic2(KeyboardHookEventArgs e)
         {
             //if (ProcessName != Common.keyupMusic2) return;
@@ -52,30 +41,6 @@ namespace keyupMusic2
 
             switch (e.key)
             {
-                case Keys.A:
-                    //ddzzq
-                    if (ProcessName == Common.ACPhoenix) { close(); break; }
-                    if (Common.FocusProcess(Common.ACPhoenix)) break;
-                    if (!Common.FocusProcess(Common.Dragonest)) { dragonest_init(); }
-                    //if (ProcessName2 != Common.Dragonest) break;
-                    if (!judge_color(2223, 1325, Color.FromArgb(22, 155, 222))) { Task.Run(() => dragonest_notity_click()); }
-                    //bug un close
-                    dragonest_run();
-                    break;
-                case Keys.Q:
-                    //handle_word("连接", 0, false);
-                    press("LWin;OPEN;Enter;500;1056, 411;1563, 191", 101);
-                    break;
-                case Keys.W:
-                    //Listen.is_listen = !Listen.is_listen;
-                    //Invoke(() => huan.SetVisibleCore2(Listen.is_listen));
-                    //Listen.aaaEvent += handle_word;
-                    //if (Listen.is_listen) Task.Run(() => Listen.listen_word(new string[] { }, (string asd, int a) => { }));
-                    break;
-                case Keys.E:
-                    winBinWallpaper.changeImg();
-                    break;
-                case Keys.D0:
                 case Keys.D1:
                 case Keys.D2:
                 case Keys.D3:
@@ -85,15 +50,53 @@ namespace keyupMusic2
                 case Keys.D7:
                 case Keys.D8:
                 case Keys.D9:
+                case Keys.D0:
+                case Keys.F1:
+                case Keys.F2:
+                case Keys.F3:
+                case Keys.F4:
+                case Keys.F5:
+                case Keys.F6:
+                case Keys.F7:
+                case Keys.F8:
+                case Keys.F9:
+                case Keys.F10:
+                case Keys.F11:
+                case Keys.F12:
                     if (is_down(Keys.LWin)) break;
                     if (key_sound && keys.Contains(e.key))
+                    //if (key_sound)
                     {
-                        string wav = "wav\\" + e.key.ToString().Replace("D", "") + ".wav";
+                        string wav = "wav\\" + e.key.ToString().Replace("D", "").Replace("F", "") + ".wav";
                         if (!File.Exists(wav)) return;
 
                         player = new SoundPlayer(wav);
                         player.Play();
                     }
+                    break;
+            }
+            switch (e.key)
+            {
+                case Keys.A:
+                    if (ProcessName == Common.ACPhoenix) { close(); break; }
+                    if (Common.FocusProcess(Common.ACPhoenix)) break;
+                    if (!Common.FocusProcess(Common.Dragonest)) { dragonest_init(); }
+                    //if (ProcessName2 != Common.Dragonest) break;
+                    if (!judge_color(2223, 1325, Color.FromArgb(22, 155, 222))) { Task.Run(() => dragonest_notity_click()); }
+                    dragonest_run();
+                    break;
+                case Keys.Q:
+                    //handle_word("连接", 0, false);
+                    press("LWin;OPEN;Enter;500;1056, 411;1563, 191", 101);
+                    break;
+                case Keys.W:
+                    Listen.is_listen = !Listen.is_listen;
+                    Invoke(() => huan.SetVisibleCore2(Listen.is_listen));
+                    Listen.aaaEvent += huan.handle_word;
+                    if (Listen.is_listen) Task.Run(() => Listen.listen_word(new string[] { }, (string asd, int a) => { }));
+                    break;
+                case Keys.E:
+                    winBinWallpaper.changeImg();
                     break;
                 case Keys.R:
                     if (key_sound) player.Stop();
@@ -117,21 +120,16 @@ namespace keyupMusic2
                     press("200;1056,588;2118,530;2031,585;2516,8;", 801);
                     break;
                 case Keys.I:
-                    huan.Dispose();
                     break;
                 case Keys.O:
-                    press(Keys.M);
+                    change_file_last(true);
                     break;
                 case Keys.P:
-                    copy_secoed_screen();
+                    change_file_last(false);
                     break;
                 case Keys.D:
                     break;
                 case Keys.F:
-                    Common.FocusProcess(Common.WeChat);
-                    Thread.Sleep(100);
-                    if (ProcessName2 == Common.WeChat) break;
-                    press("LWin;WEIXIN;Enter;", 100);
                     break;
                 case Keys.G:
                     Point mousePosition = Cursor.Position;
@@ -154,29 +152,13 @@ namespace keyupMusic2
                     }
                     break;
                 case Keys.H:
-                    press("LWin;VIS;Apps;100;Enter;", 100);
-                    TaskRun(() => { press("Tab;Down;Enter;", 100); }, 1500);
-                    break;
-                case Keys.F2:
-                    Invoke(() =>
-                        {
-                            //huan.Opacity = huan.Opacity == 0 ? 1 : 0;
-                            huan.SetVisibleCore2(!huan.Visible);
-                        }
-                    );
-                    break;
-                case Keys.Up:
-                    Invoke(() => huan.Opacity = huan.Opacity >= 1 ? 1 : huan.Opacity + 0.1);
-                    break;
-                case Keys.Down:
-                    Invoke(() => huan.Opacity = huan.Opacity <= 0 ? 0 : huan.Opacity - 0.1);
+                    press(Keys.F11);
                     break;
                 case Keys.J:
                     if (!is_ctrl()) if (Common.FocusProcess(Common.chrome)) break;
                     press("LWin;CHR;Enter;", 100);
                     break;
                 case Keys.K:
-                    dragonest_notity_click();
                     break;
                 case Keys.L:
                     Thread.Sleep(2000);
@@ -185,23 +167,40 @@ namespace keyupMusic2
                 case Keys.Z:
                     press("100;LWin;KK;Enter;", 110);
                     break;
+                case Keys.X:
+                    break;
+                case Keys.M:
+                    FocusProcess(Common.chrome);
+                    press_dump(Keys.M,200);
+                    break;
+
+                case Keys.F1:
+                    Invoke(() => { huan.SetVisibleCore2(!huan.Visible); });
+                    break;
+                case Keys.F2:
+                    if (!FocusProcess("keyupMusic3"))
+                    {
+                        ProcessRun("C:\\Users\\bu\\source\\repos\\keyupMusic3\\bin\\Debug\\net8.0-windows\\keyupMusic3.exe");
+                        HideProcess("keyupMusic3");
+                    }
+                    break;
+                //case Keys.F4:
+                //    Common.stop_listen = !Common.stop_listen;
+                //    break;
+                case Keys.F5:
+                    log_always = !log_always;
+                    break;
+                case Keys.Up:
+                    Invoke(() => huan.Opacity = huan.Opacity >= 1 ? 1 : huan.Opacity + 0.1);
+                    break;
+                case Keys.Down:
+                    Invoke(() => huan.Opacity = huan.Opacity <= 0 ? 0 : huan.Opacity - 0.1);
+                    break;
                 case Keys.Escape:
                     if (is_ctrl() && is_shift()) { Process.Start(new ProcessStartInfo("taskmgr.exe")); break; }
                     press("LWin;1957,1015");
                     break;
-                case Keys.X:
-                    //huan.Invoke2(() =>
-                    //{
-                    //    var timerMove = huan.timerMove;
-                    //    timerMove.Interval = 1; // 设置Timer的间隔为10毫秒  
-                    //    timerMove.Tick += timerMove_Tick; // 订阅Tick事件  
-                    //    timerMove.Start(); // 启动Timer  
-                    //    // 假设huan是你的控件名，设置初始位置  
-                    //    huan.Location = startPoint;
-                    //    // 记录开始时间  
-                    //    startTime = DateTime.Now;
-                    //});
-                    break;
+
                 default:
                     catched = true;
                     break;
@@ -254,6 +253,47 @@ namespace keyupMusic2
         public void Invoke(Action action)
         {
             huan.Invoke(action);
+        }
+        public void change_file_last(bool pngg)
+        {
+            // 指定要处理的文件夹路径  
+            string folderPath = "image\\encode\\";
+
+            // 指定旧后缀和新后缀（不包含点号）  
+            string oldExtension = "pngg";
+            string newExtension = "png";
+            if (pngg) { oldExtension = "png"; newExtension = "pngg"; }
+
+            // 确保文件夹路径存在  
+            if (!Directory.Exists(folderPath))
+            {
+                Console.WriteLine("指定的文件夹不存在。");
+                return;
+            }
+
+            // 遍历文件夹下的所有文件  
+            foreach (string filePath in Directory.GetFiles(folderPath))
+            {
+                // 检查文件是否匹配旧后缀  
+                if (Path.GetExtension(filePath)?.TrimStart('.') == oldExtension)
+                {
+                    // 构建新文件名  
+                    string newFilePath = Path.Combine(Path.GetDirectoryName(filePath), Path.GetFileNameWithoutExtension(filePath) + "." + newExtension);
+
+                    // 重命名文件  
+                    try
+                    {
+                        File.Move(filePath, newFilePath);
+                        Console.WriteLine($"文件 {filePath} 已更改为 {newFilePath}");
+                    }
+                    catch (Exception ex)
+                    {
+                        Console.WriteLine($"无法重命名文件 {filePath}。错误：{ex.Message}");
+                    }
+                }
+            }
+
+            Console.WriteLine("所有匹配的文件后缀已更改。");
         }
     }
 }

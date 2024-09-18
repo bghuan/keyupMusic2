@@ -57,13 +57,13 @@ namespace keyupMusic2
         public static void listen_word(String[] args, Action<string, int> action)
         {
             args = new string[] {
-      "tokens.txt",
-      "encoder.ncnn.param" ,
-      "encoder.ncnn.bin",
-      "decoder.ncnn.param" ,
-      "decoder.ncnn.bin",
-      "joiner.ncnn.param",
-      "joiner.ncnn.bin" };
+      "ncnn/tokens.txt",
+      "ncnn/encoder.ncnn.param" ,
+      "ncnn/encoder.ncnn.bin",
+      "ncnn/decoder.ncnn.param" ,
+      "ncnn/decoder.ncnn.bin",
+      "ncnn/joiner.ncnn.param",
+      "ncnn/joiner.ncnn.bin" };
             String usage = @"1111";
             if (args.Length < 7 || args.Length > 9)
             {

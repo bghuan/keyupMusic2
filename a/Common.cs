@@ -4,9 +4,11 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Drawing.Imaging;
+using System.IO.MemoryMappedFiles;
 using System.Linq;
 using System.Runtime.InteropServices;
 using System.Security.Cryptography.Xml;
+using System.Security.Principal;
 using System.Text;
 using System.Threading.Tasks;
 using WGestures.Common.OsSpecific.Windows;
@@ -21,6 +23,7 @@ namespace keyupMusic2
     public class Common
     {
         public const string keyupMusic2 = "keyupMusic2";
+        public const string keyupMusic3 = "keyupMusic3";
         public const string ACPhoenix = "ACPhoenix";
         public const string Dragonest = "DragonestGameLauncher";
         public const string devenv = "devenv";
@@ -56,6 +59,7 @@ namespace keyupMusic2
         };
 
         public static bool hooked = false;
+        public static bool stop_listen = false;
         public static bool ACPhoenix_mouse_hook = false;
 
         public static string ProcessName = "";
@@ -63,7 +67,8 @@ namespace keyupMusic2
         {
             get
             {
-                ProcessName = yo();
+                //ProcessName = yo();
+                yo();
                 return ProcessName;
             }
             set
@@ -107,6 +112,7 @@ namespace keyupMusic2
             }
 
             //log(DateTime.Now.ToString("") + " " + windowTitle + " " + fildsadsePath + module_nasme + "\n");
+            Common.ProcessName = ProcessName;
             return ProcessName;
         }
         static string proc_info = "";
@@ -390,11 +396,14 @@ namespace keyupMusic2
         {
             _press_hold(keys, tick);
         }
+        //1 返回原来鼠标位置
+        //2
+        //3 跳过delete return
         public static void press(string str, int tick = 800)
         {
-            if (is_down(Keys.Delete)) return;
+            if (is_down(Keys.Delete) && (tick % 10) != 3) return;
             //KeyboardHook.stop_next = false;
-            bool isLastDigitOne = (tick & 1) == 1;
+            bool isLastDigitOne = (tick % 10) == 1;
             if (isLastDigitOne) mousePosition = Cursor.Position;
             var list = str.Split(";");
             list = list.Where(s => s != null && s != "").ToArray();
@@ -610,7 +619,56 @@ namespace keyupMusic2
             if (ProcessName == Common.ACPhoenix) aaa += "dd\\";
             bmpScreenshot.Save(aaa + DateTime.Now.ToString("yyyyMMddHHmmss") + ".png", ImageFormat.Png);
         }
-        public static void copy_secoed_screen()
+        static string mmapName = "Global\\MyMemoryMappedFile";
+        static long mmapSize = 1024;
+        public static string share_string = "";
+        public static string share(string msg = "")
+        {
+            return "";
+            if (string.IsNullOrEmpty(msg))
+            {
+                return share_string;
+            }
+            else
+            {
+                share_string = msg;
+                return "";
+            }
+
+            if (string.IsNullOrEmpty(msg))
+            {
+                using (var mmf = MemoryMappedFile.CreateOrOpen(mmapName, mmapSize))
+                {
+                    using (var accessor = mmf.CreateViewAccessor())
+                    {
+                        byte[] buffer = new byte[mmapSize];
+                        accessor.ReadArray(0, buffer, 0, buffer.Length);
+                        string asd = Encoding.UTF8.GetString(buffer).TrimEnd('\0'); // 去除字符串末尾的null字符  
+                        if (asd.Length > 0) share_string = asd;
+                        return asd;
+                    }
+                }
+            }
+            else
+            {
+                Task.Run(() =>
+                {
+                    using (var mmf = MemoryMappedFile.CreateOrOpen(mmapName, mmapSize))
+                    {
+                        using (var accessor = mmf.CreateViewAccessor())
+                        {
+
+                            byte[] data = Encoding.UTF8.GetBytes(msg);
+                            accessor.WriteArray(0, data, 0, data.Length);
+                            Thread.Sleep(5000);
+                            return "";
+                        }
+                    }
+                });
+                return "";
+            }
+        }
+        public static void copy_secoed_screen(string path = "")
         {
             Screen secondaryScreen = Screen.AllScreens.FirstOrDefault(scr => !scr.Primary);
             int start_x = 2560;
@@ -620,7 +678,7 @@ namespace keyupMusic2
             Bitmap bmpScreenshot = new Bitmap(1920, 1080, PixelFormat.Format32bppArgb);
             Graphics gfxScreenshot = Graphics.FromImage(bmpScreenshot);
             gfxScreenshot.CopyFromScreen(new Point(start_x, 0), Point.Empty, secondaryScreen.Bounds.Size);
-            bmpScreenshot.Save("image\\encode\\" + DateTime.Now.ToString("yyyyMMddHHmmss") + ".png" + "g", ImageFormat.Png);
+            bmpScreenshot.Save("image\\encode\\" + path + DateTime.Now.ToString("yyyyMMddHHmmss") + ".png" + "g", ImageFormat.Png);
             gfxScreenshot.Dispose();
         }
         public static void copy_ddzzq_screen()
@@ -651,6 +709,16 @@ namespace keyupMusic2
                 var asd = action.Invoke();
                 if (asd) break;
             }
+        }
+        public static string DateTimeNow()
+        {
+            return DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss");
+        }
+        public static bool IsAdministrator()
+        {
+            WindowsIdentity identity = WindowsIdentity.GetCurrent();
+            WindowsPrincipal principal = new WindowsPrincipal(identity);
+            return principal.IsInRole(WindowsBuiltInRole.Administrator);
         }
     }
 }

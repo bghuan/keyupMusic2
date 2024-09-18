@@ -139,6 +139,17 @@ namespace WGestures.Core.Impl.Windows
                 Debug.WriteLine("钩子已卸载");
             }
         }
+        public void uninstall_mouse()
+        {
+            var hookId = _hookId;
+            _hookId = IntPtr.Zero;
+
+
+            if (Native.UnhookWindowsHookEx(hookId))
+            {
+                Debug.WriteLine("钩子已卸载");
+            }
+        }
 
         public void Install()
         {
