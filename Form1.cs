@@ -31,6 +31,8 @@ namespace keyupMusic2
             Aaa = new AAA();
             Bbb = new BBB();
             super = new Super(this);
+
+            Task.Run(() => { new TcpServer(this).StartServer(13000); });
         }
 
         private void Form1_Load(object sender, EventArgs e)
@@ -46,8 +48,14 @@ namespace keyupMusic2
                 Common.FocusProcess(Common.douyin);
                 Common.FocusProcess(Common.ACPhoenix);
             }
+            //this.InputLanguageChanged += new InputLanguageChangedEventHandler(languageChange);
         }
-
+        //private void languageChange(Object sender, InputLanguageChangedEventArgs e)
+        //{
+        //    // If the input language is Japanese.
+        //    // set the initial IMEMode to Katakana.
+        //        label1.Text= e.InputLanguage.Culture.Name;
+        //}
         public bool keyupMusic2_onlisten = false;
         DateTime super_listen_time = new DateTime();
         int super_listen_tick = 2000;
@@ -87,8 +95,8 @@ namespace keyupMusic2
             {
                 if (Default.handling)
                 {
-                    if (e.key == Keys.Right) return true;
-                    if (e.key == Keys.Left) return true;
+                    //if (e.key == Keys.Right) return true;
+                    //if (e.key == Keys.Left) return true;
                     if (e.key == Keys.PageDown) return true;
                     if (e.key == Keys.PageUp) return true;
                 }
@@ -115,8 +123,8 @@ namespace keyupMusic2
             {
                 super_listen();
             }
-            if (e.key == Keys.F3 || (e.key == Keys.LControlKey && is_shift())
-                 || (e.key == Keys.LShiftKey && is_ctrl()))
+            if (e.key == Keys.F3 || (e.key == Keys.LControlKey && is_alt())
+                 || (e.key == Keys.LMenu && is_ctrl()))
             {
                 //if ((DateTime.Now > super_listen_time))
                 //{

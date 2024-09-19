@@ -22,7 +22,7 @@ namespace keyupMusic2
 
             switch (e.key)
             {
-                case Keys.Right:
+                //case Keys.Right:
                 case Keys.PageUp:
                     if (Position.Y == 0 && Position.X == 2559) { break; }
                     if (Position.Y == 0 && Position.X != 2559) { press(Keys.VolumeUp); break; }
@@ -39,7 +39,7 @@ namespace keyupMusic2
                     }
                     raw_press();
                     break;
-                case Keys.Left:
+                //case Keys.Left:
                 case Keys.PageDown:
                     if (Position.Y == 0 && Position.X != 2559) { press(Keys.VolumeDown); break; }
                     raw_press();

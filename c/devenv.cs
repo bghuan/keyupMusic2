@@ -20,11 +20,11 @@ namespace keyupMusic2
 
             switch (e.key)
             {
-                case Keys.F10:
-                    press([Keys.LControlKey, Keys.LShiftKey, Keys.F5]);
+                case Keys.F4:
+                    press([Keys.LShiftKey, Keys.F5]);
                     break;
                 case Keys.F6:
-                    press([Keys.LShiftKey, Keys.F5]);
+                    press([Keys.LControlKey, Keys.LShiftKey, Keys.F5]);
                     break;
                 //case Keys.F11:
                 //    ProcessStartInfo startInfo = new ProcessStartInfo("taskmgr.exe");

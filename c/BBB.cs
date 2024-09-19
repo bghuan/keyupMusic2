@@ -79,6 +79,8 @@ namespace keyupMusic2
                     if (right_top) { press(Keys.F7); break; } else { raw_press(); break; }
                 case Keys.VolumeUp:
                     if (right_top) { press(Keys.F8); break; } else { raw_press(); break; }
+                case Keys.Delete:
+                    DaleyRun_stop = true; break;
             }
 
             Common.hooked = false;

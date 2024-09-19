@@ -13,9 +13,8 @@ namespace keyupMusic2
     public class AAA : Default
     {
         string[] list = Common.list;
-        string[] list_wechat = { Common.WeChat, Common.ACPhoenix, explorer, Common.keyupMusic2, Common.douyin, Common.devenv, Common.QQMusic };
-        string[] list_visualstudio = { Common.devenv, Common.ACPhoenix, explorer, Common.keyupMusic2, Common.douyin, Common.WeChat, Common.
-        QQMusic, };
+        string[] list_wechat = { Common.WeChat, Common.ACPhoenix, explorer, Common.keyupMusic2, Common.douyin, Common.devenv, Common.QQMusic, Common.SearchHost };
+        string[] list_visualstudio = { Common.devenv, Common.ACPhoenix, explorer, Common.keyupMusic2, Common.douyin, Common.WeChat, Common.QQMusic, Common.SearchHost };
         string[] list_volume = { Common.douyin, Common.msedge };
 
         public void hook_KeyDown_ddzzq(KeyboardHookEventArgs e)
@@ -29,13 +28,20 @@ namespace keyupMusic2
             {
                 case Keys.F11:
                     if (is_ctrl()) break;
-                    if (list_visualstudio.FirstOrDefault() == module_name)
+                    if (is_shift())
+                    {
+                        //ctrl_shift(false);
+                        press("500;LWin;VIS;Apps;100;Enter;", 100);
+                        TaskRun(() => { press("Tab;Down;Enter;", 100); }, 1600);
+                    }
+                    else if (list_visualstudio.FirstOrDefault() == module_name)
                     {
                         HideProcess(module_name);
                     }
                     else if (list_visualstudio.Contains(module_name))
                     {
                         if (Common.FocusProcess(Common.devenv)) break;
+                        //ctrl_shift(false);
                         press("LWin;VIS;Apps;100;Enter;", 100);
                         TaskRun(() => { press("Tab;Down;Enter;", 100); }, 1600);
                     }

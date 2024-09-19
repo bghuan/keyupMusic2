@@ -1,18 +1,11 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Diagnostics;
-using System.Drawing.Imaging;
-using System.Linq;
+﻿using System.Diagnostics;
 using System.Media;
-using System.Numerics;
+using System.Runtime.InteropServices;
 using System.Text;
-using System.Threading.Tasks;
-using static WGestures.Core.Impl.Windows.MouseKeyboardHook;
-using System.Windows.Forms;
-using WGestures.Core.Impl.Windows;
 using static keyupMusic2.Common;
 using static keyupMusic2.Huan;
-using System.Net;
+using static System.Windows.Forms.VisualStyles.VisualStyleElement.TrackBar;
+using static WGestures.Core.Impl.Windows.MouseKeyboardHook;
 
 namespace keyupMusic2
 {
@@ -77,14 +70,6 @@ namespace keyupMusic2
             }
             switch (e.key)
             {
-                case Keys.A:
-                    if (ProcessName == Common.ACPhoenix) { close(); break; }
-                    if (Common.FocusProcess(Common.ACPhoenix)) break;
-                    if (!Common.FocusProcess(Common.Dragonest)) { dragonest_init(); }
-                    //if (ProcessName2 != Common.Dragonest) break;
-                    if (!judge_color(2223, 1325, Color.FromArgb(22, 155, 222))) { Task.Run(() => dragonest_notity_click()); }
-                    dragonest_run();
-                    break;
                 case Keys.Q:
                     //handle_word("连接", 0, false);
                     press("LWin;OPEN;Enter;500;1056, 411;1563, 191", 101);
@@ -144,7 +129,7 @@ namespace keyupMusic2
                             g.CopyFromScreen(mousePosition.X, mousePosition.Y, 0, 0, new Size(1, 1));
                             //(1470, 1213, Color.FromArgb(245, 139, 0))
                             var color = bitmap.GetPixel(0, 0);
-                            string asd = $"({mousePosition.X},{mousePosition.Y}, Color.FromArgb({color.R},{color.G},{color.B})";
+                            string asd = $"({mousePosition.X},{mousePosition.Y}, Color.FromArgb({color.R},{color.G},{color.B}))";
                             log(ProcessName + asd);
                             log_process(e.key.ToString());
                             Invoke(() => Clipboard.SetText(asd));
@@ -168,14 +153,49 @@ namespace keyupMusic2
                     press("100;LWin;KK;Enter;", 110);
                     break;
                 case Keys.X:
+                    Invoke(() => { try { press(Clipboard.GetText()); } catch { } });
+                    break;
+                case Keys.C:
+                    press("1333.1444", 0);
+                    break;
+                case Keys.V:
+                    KeyboardInput.SendString("m");
+                    //KeyboardInput2.SendString("Hello, World!");
+                    //KeyboardInput3.SendString("Hello, World!");
+                    //SendKeyboardMouse sendKeyMouse = new SendKeyboardMouse();
+                    //sendKeyMouse.SendKeyPress(VKCODE.VK_A);
+                    break;
+                case Keys.B:
+                    byte[] ikl = new byte[10];
+                    GetKeyboardLayoutList(10, ikl);
+
+                    // 获取当前键盘布局
+                    IntPtr kl = GetKeyboardLayout(0);
+
+                    // 获取键盘布局名称
+                    StringBuilder kLID = new StringBuilder(256);
+                    GetKeyboardLayoutName(kLID, 256);
+
+                    // 判断是否是中文输入法
+                    bool isChineseIME = kLID.ToString().Contains("0804"); // 0804代表简体中文输入法的ID
+
+                    Console.WriteLine(isChineseIME ? "当前是中文输入法" : "当前不是中文输入法");
+
+                    var currentInputLanguage = InputLanguage.CurrentInputLanguage;
+                    var cultureInfo = currentInputLanguage.Culture;
+                    var aaaa = Common.GetForegroundWindow();
+                    var sdaddd = Common.ImmGetContext(aaaa);
+
                     break;
                 case Keys.M:
                     FocusProcess(Common.chrome);
-                    press_dump(Keys.M,200);
+                    press_dump(Keys.M, 200);
                     break;
 
                 case Keys.F1:
                     Invoke(() => { huan.SetVisibleCore2(!huan.Visible); });
+                    HideProcess(keyupMusic3);
+                    //HideProcess(chrome);
                     break;
                 case Keys.F2:
                     if (!FocusProcess("keyupMusic3"))
@@ -184,9 +204,27 @@ namespace keyupMusic2
                         HideProcess("keyupMusic3");
                     }
                     break;
-                //case Keys.F4:
-                //    Common.stop_listen = !Common.stop_listen;
-                //    break;
+                case Keys.F4:
+                case Keys.A:
+                    if (ProcessName == Common.ACPhoenix) { close(); break; }
+                    if (Common.FocusProcess(Common.ACPhoenix)) break;
+                    if (!Common.ExsitProcess(Common.Dragonest))
+                    {
+                        dragonest_init();
+                        dragonest_max(10000);
+                    }
+                    else
+                    {
+                        dragonest_notity_click();
+                        if (!judge_color(71, 199, Color.FromArgb(242, 95, 99)))
+                        {
+                            dragonest_notity_click();
+                        }
+                        if (!judge_color(2223, 1325, Color.FromArgb(22, 155, 222)))
+                            dragonest_max(100);
+                    }
+                    dragonest_run();
+                    break;
                 case Keys.F5:
                     log_always = !log_always;
                     break;
@@ -214,40 +252,58 @@ namespace keyupMusic2
         }
         private static void dragonest_run()
         {
-            int asdf = 1000;
-            while (asdf > 0)
-            {
-                if (judge_color(2223, 1325, Color.FromArgb(22, 155, 222)))
-                {
-                    press("2280,1314;LWin", 0);
-                    break;
-                }
-                asdf -= 50;
-                Thread.Sleep(50);
-            }
-            //press("2280,1314", 0);
+            //press("2280,1314;LWin;3222;LWin;", 500); 
+            press("2280,1314;LWin", 0);
+            //press("2280,1314;LWin;", 500);
+            //Task.Run(() =>
+            //{
+            //    DaleyRun(() =>
+            //    {
+            //        return (judge_color(2463, 1281, Color.FromArgb(220, 163, 50)));
+            //    },
+            //    () =>
+            //    {
+            //        Thread.Sleep(200);
+            //        //press("100;525.40;");
+            //        //return;
+            //        altab();
+            //        Thread.Sleep(200);
+            //        press("100;2525,40;100", 0); mouse_move_center();
+            //    },
+            //    15000,
+            //    100);
+            //});
             Task.Run(() =>
             {
+                if (DaleyRun_stop) return;
+                DaleyRun_stop = false;
                 Thread.Sleep(3500);
-                //Common.FocusProcess(Common.ACPhoenix);
+                if (DaleyRun_stop) return;
                 altab();
-                //Common.FocusProcess(Common.Dragonest);
                 press("500;2525,40;100", 0);
-                mouse_move3();
+                mouse_move_center();
             });
+            return;
         }
 
         private static void dragonest_init()
         {
             press("10;LWin;500;1076,521", 101);
-            var asd = 15000;
-            int tick = 500;
-            while (asd > 0)
-            {
-                if (judge_color(1797, 55, Color.FromArgb(18, 23, 33))) { press("2323, 30"); break; }
-                Thread.Sleep(tick);
-                asd -= tick;
-            }
+            //press("10;LWin;zh;DUODUO;Space;Apps;100;Enter", 101);
+        }
+        private static void dragonest_max(int tick)
+        {
+            DaleyRun(
+                () =>
+                {
+                    return (
+                        //yo() == Common.Dragonest &&
+                        judge_color(71, 199, Color.FromArgb(242, 95, 99)) &&
+                        !judge_color(2223, 1325, Color.FromArgb(22, 155, 222)));
+                },
+                () => { press("2323, 30"); },
+                tick,
+                10);
         }
 
         public void Invoke(Action action)
@@ -295,5 +351,14 @@ namespace keyupMusic2
 
             Console.WriteLine("所有匹配的文件后缀已更改。");
         }
+        [DllImport("user32.dll")]
+        public static extern int GetKeyboardLayoutList(int nBuff, byte[] lpList);
+
+        [DllImport("user32.dll")]
+        public static extern IntPtr GetKeyboardLayout(uint dwLayout);
+
+        [DllImport("user32.dll")]
+        public static extern int GetKeyboardLayoutName(StringBuilder pwszKLID, int cchKLID);
+
     }
 }

@@ -66,6 +66,7 @@ namespace keyupMusic2
                     down_mouse();
                     break;
                 case Keys.Enter:
+                    //if (is_ctrl()) { Clipboard.SetText("谢谢老板"); }
                     //(135,1152, Color.FromArgb(212,29,14)
                     //bug 向上滑动
                     if (try_press(138, 1149, Color.FromArgb(222, 35, 10), () => { press("200,710", 101); })) break;
@@ -74,6 +75,29 @@ namespace keyupMusic2
                     //    press(nothing4);
                     //    break;
                     //}
+                    break;
+                case Keys.Oem7:
+                    if (!judge_color(1353, 1407, Color.FromArgb(255, 162, 16), () => { })) break;
+                    press("Back;", 0);
+                    ctrl_shift(true);
+                    KeyboardInput.SendString("xiexielaoban");
+                    press(Keys.Space);
+                    break;
+                    KeyboardInput.SendString("x");
+                    Thread.Sleep(200);
+                    if (judge_color(1076, 1416, Color.FromArgb(249, 249, 249), () => { }))
+                    {
+                        KeyboardInput.SendString("iexielaoban");
+                        press(Keys.Space);
+                    }
+                    else
+                    {
+                        press("Back;", 0);
+                        press(Keys.LShiftKey);
+                        KeyboardInput.SendString("xiexielaoban");
+                        press(Keys.Space);
+                    }
+
                     break;
                 case Keys.Z:
                     if (judge_color(2141, 214, Color.FromArgb(215, 214, 216), null, 10)) { press(Keys.E); break; }
@@ -88,12 +112,12 @@ namespace keyupMusic2
                     if (!is_ctrl() && !is_alt()) break;
                     press("2325, 53", 101);
                     break;
-                case Keys.F2:
-                    mouse_click();
-                    press("1525,1072;", 0);
-                    //if (try_press(Color.FromArgb(220, 163, 51))) break;
-                    //if (try_press(1447, 1068, Color.FromArgb(245, 194, 55), () => { })) break;
-                    break;
+                //case Keys.F2:
+                //    mouse_click();
+                //    press("1525,1072;", 0);
+                //    //if (try_press(Color.FromArgb(220, 163, 51))) break;
+                //    //if (try_press(1447, 1068, Color.FromArgb(245, 194, 55), () => { })) break;
+                //    break;
                 case Keys.F4:
                     if (is_alt()) break;
                     press("2478,51;2492,1299;", 201);
@@ -164,12 +188,38 @@ namespace keyupMusic2
                     break;
                 case Keys.PageDown:
                     HideProcess(chrome);
+                    var altTabProcess = AltTabProcess();
+                    //if (altTabProcess.Equals(QyClient))
+                    //{
+                    //    press(Keys.Space, 100);
+                    //    altab();
+                    //}
+                    //if (altTabProcess.Equals(msedge))
+                    //{
+                    //    press(Keys.PageDown, 100);
+                    //    altab();
+                    //}
+                    switch (altTabProcess)
+                    {
+                        case msedge:
+                            press(Keys.PageDown, 100);
+                            break;
+                        case QyClient:
+                            press(Keys.Space, 100);
+                            break;
+                    }
+                    altab();
                     break;
                 case Keys.A:
                     if (is_ctrl()) { press(Keys.A); press(Keys.A); press(Keys.A); break; }
                     break;
                 case Keys.Delete:
-                    press("2460,50;2460,200",103);
+                    if (judge_color(2409, 265, Color.FromArgb(93, 199, 250)) && judge_color(2358, 263, Color.FromArgb(93, 199, 250)))
+                    {
+                        press("2409,265", 3);
+                    }
+                    else
+                        press("2460,50;2460,200", 103);
                     break;
             }
             Common.hooked = false;

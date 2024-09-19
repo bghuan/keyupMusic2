@@ -6,6 +6,7 @@ using System.Diagnostics;
 using System.Drawing.Imaging;
 using System.IO.MemoryMappedFiles;
 using System.Linq;
+using System.Numerics;
 using System.Runtime.InteropServices;
 using System.Security.Cryptography.Xml;
 using System.Security.Principal;
@@ -37,6 +38,7 @@ namespace keyupMusic2
         public const string SearchHost = "SearchHost";
         public const string QQMusic = "QQMusic";
         public const string HuyaClient = "HuyaClient";
+        public const string QyClient = "QyClient";
 
         public static string[] list = {
         keyupMusic2,
@@ -87,8 +89,8 @@ namespace keyupMusic2
         {
             IntPtr hwnd = GetForegroundWindow(); // 获取当前活动窗口的句柄
 
-            string windowTitle = GetWindowText(hwnd);
-            Console.WriteLine("当前活动窗口名称: " + windowTitle);
+            //string windowTitle = GetWindowText(hwnd);
+            //Console.WriteLine("当前活动窗口名称: " + windowTitle);
 
             var filePath = "a.txt";
             var fildsadsePath = "err";
@@ -256,7 +258,7 @@ namespace keyupMusic2
             mouse_move(x2, y2);
             up_mouse();
         }
-        public static void mouse_move3(int tick = 0)
+        public static void mouse_move_center(int tick = 0)
         {
             int x = screenWidth / 2;
             int y = screenHeight / 2;
@@ -329,6 +331,15 @@ namespace keyupMusic2
             }
             return false;
         }
+        public static bool ExsitProcess(string procName)
+        {
+            Process[] objProcesses = Process.GetProcessesByName(procName);
+            if (objProcesses.Length > 0)
+            {
+                return true;
+            }
+            return false;
+        }
 
         public static void HideProcess(string procName)
         {
@@ -338,6 +349,11 @@ namespace keyupMusic2
                 IntPtr hWnd = objProcesses[0].MainWindowHandle;
                 ShowWindow(hWnd, SW.SW_MINIMIZE);
             }
+        }
+        public static string AltTabProcess()
+        {
+            altab(100);
+            return yo();
         }
         private void load_point()
         {
@@ -362,9 +378,10 @@ namespace keyupMusic2
         {
             press([Keys.LMenu, Keys.F4]);
         }
-        public static void altab()
+        public static void altab(int tick = 0)
         {
             press([Keys.LMenu, Keys.Tab]);
+            Thread.Sleep(tick);
         }
         public static void press(Keys[] keys, int tick = 10)
         {
@@ -384,9 +401,16 @@ namespace keyupMusic2
             else
             {
                 foreach (var item in keys)
+                {
+                    //Thread.Sleep(10);
                     keybd_event((byte)item, 0, 0, 0);
+                }
+                Array.Reverse(keys);
                 foreach (var item in keys)
+                {
+                    //Thread.Sleep(10);
                     keybd_event((byte)item, 0, 2, 0);
+                }
             }
             Thread.Sleep(tick);
         }
@@ -399,6 +423,32 @@ namespace keyupMusic2
         //1 返回原来鼠标位置
         //2
         //3 跳过delete return
+        public static void ctrl_shift(bool zh)
+        {
+            if (zh)
+                press([Keys.LControlKey, Keys.LShiftKey, Keys.D1]);
+            else
+                press([Keys.LControlKey, Keys.LShiftKey, Keys.D2]);
+            return;
+
+            //不准确
+            var is_zh = InputLanguage.CurrentInputLanguage.Culture.Name == "zh-CH";
+            foreach (InputLanguage lang in InputLanguage.InstalledInputLanguages)
+            {
+                if (zh && lang.Equals(InputLanguage.DefaultInputLanguage))
+                {
+                    InputLanguage.CurrentInputLanguage = lang; return;
+                }
+                if (!zh && !lang.Equals(InputLanguage.DefaultInputLanguage))
+                {
+                    InputLanguage.CurrentInputLanguage = lang; return;
+                }
+            }
+
+            if (is_zh && zh) return;
+            if (!is_zh && !zh) return;
+            press([Keys.LControlKey, Keys.LShiftKey]);
+        }
         public static void press(string str, int tick = 800)
         {
             if (is_down(Keys.Delete) && (tick % 10) != 3) return;
@@ -413,14 +463,29 @@ namespace keyupMusic2
                 var click = item.IndexOf(',');
                 var move = item.IndexOf('.');
 
-                if (item == "LWin" && ProcessName != "SearchHost")
+                if (item == "LWin")
                 {
-                    press(Keys.LWin);
+                    ctrl_shift(false);
+                    if (ProcessName == "SearchHost")
+                        press([Keys.LControlKey, Keys.A, Keys.Back]);
+                    else
+                        press(Keys.LWin);
+                }
+                else if (item == "zh")
+                {
+                    ctrl_shift(true);
+                }
+                else if (item == "en")
+                {
+                    ctrl_shift(false);
                 }
                 else if (item == "_") down_mouse();
                 else if (item == "-") up_mouse();
+                //else if (click > 0 && item.Substring(0, click + 1).IndexOf(",") > 0)
+                //{ }
                 else if (click > 0 || move > 0)
                 {
+
                     var x = int.Parse(item.Substring(0, click + move + 1));
                     var y = int.Parse(item.Substring(click + move + 1 + 1));
                     mouse_move(x, y, 10);
@@ -464,18 +529,18 @@ namespace keyupMusic2
         }
 
         [DllImport("user32.dll", SetLastError = true)]
-        static extern uint GetWindowThreadProcessId(IntPtr hWnd, out uint lpdwProcessId);
+        public static extern uint GetWindowThreadProcessId(IntPtr hWnd, out uint lpdwProcessId);
 
         // 导入user32.dll中的GetForegroundWindow函数
         [DllImport("user32.dll")]
-        private static extern IntPtr GetForegroundWindow();
+        public static extern IntPtr GetForegroundWindow();
 
         // 导入user32.dll中的GetWindowText函数
         [DllImport("user32.dll", SetLastError = true, CharSet = CharSet.Auto)]
-        private static extern int GetWindowText(IntPtr hWnd, StringBuilder lpString, int nMaxCount);
+        public static extern int GetWindowText(IntPtr hWnd, StringBuilder lpString, int nMaxCount);
 
         // 获取窗口标题的辅助方法
-        private static string GetWindowText(IntPtr hWnd)
+        public static string GetWindowText(IntPtr hWnd)
         {
             const int nChars = 256;
             StringBuilder Buff = new StringBuilder(nChars);
@@ -555,56 +620,39 @@ namespace keyupMusic2
 
             return (rDiff + gDiff + bDiff) <= threshold;
         }
-        public static void dragonest_notity_click()
+        public static void dragonest_notity_click(bool repeat = false)
         {
-            using (Bitmap bitmap = new Bitmap(500, 1))
+            Bitmap bitmap = new Bitmap(500, 1);
+            int startX = 1800;
+            int startY = 1397;
+            Graphics g = Graphics.FromImage(bitmap);
+            g.CopyFromScreen(startX, startY, 0, 0, new System.Drawing.Size(500, 1));
+            Rectangle rect = new Rectangle(0, 0, 500, 1);
+            BitmapData bmpData = bitmap.LockBits(rect, ImageLockMode.ReadOnly, PixelFormat.Format32bppArgb);
+            int bytes = Math.Abs(bmpData.Stride) * bitmap.Height;
+            byte[] rgbValues = new byte[bytes];
+
+            Marshal.Copy(bmpData.Scan0, rgbValues, 0, bytes);
+            bitmap.UnlockBits(bmpData);
+            bool flag = false;
+            var ds11a = DateTime.Now.ToString("ssfff");
+
+            for (int i = 0; i < 500; i++)
             {
-                int startX = 1800;
-                int startY = 1397;
-                using (Graphics g = Graphics.FromImage(bitmap))
+                int baseIndex = i * 4; // 每个像素4个字节（ARGB）  
+                if (rgbValues[baseIndex + 2] == 233 && rgbValues[baseIndex + 1] == 81 && rgbValues[baseIndex] == 81)
                 {
-                    g.CopyFromScreen(startX, startY, 0, 0, new System.Drawing.Size(500, 1));
+                    press($"{startX + i}, {startY}", 0);
+                    i = 600;
+                    flag = true;
+                    break;
                 }
-                Rectangle rect = new Rectangle(0, 0, 500, 1);
-                BitmapData bmpData = bitmap.LockBits(rect, ImageLockMode.ReadOnly, PixelFormat.Format32bppArgb);
-                int bytes = Math.Abs(bmpData.Stride) * bitmap.Height;
-                byte[] rgbValues = new byte[bytes];
-
-                Marshal.Copy(bmpData.Scan0, rgbValues, 0, bytes);
-                bitmap.UnlockBits(bmpData);
-
-                for (int i = 0; i < 500; i++)
-                {
-                    int baseIndex = i * 4; // 每个像素4个字节（ARGB）  
-                    if (rgbValues[baseIndex + 2] == 233 && rgbValues[baseIndex + 1] == 81 && rgbValues[baseIndex] == 81)
-                    {
-                        press($"{startX + i}, {startY}");
-                        i = 600;
-                        break;
-                    }
-                    //Color color = Color.FromArgb(rgbValues[baseIndex + 3], rgbValues[baseIndex + 2], rgbValues[baseIndex + 1], rgbValues[baseIndex]);
-                    //if (color == Color.FromArgb(233, 81, 81))
-                    //{
-                    //    press($"{startX + i}, {startY}");
-                    //    break;
-                    //}
-                }
-
-                //while (sdasd < 500)
-                //{
-                //    log(DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss fff"));
-                //    var aaa = bitmap.GetPixel(sdasd, 0);
-                //    string xxxx = (startX + sdasd).ToString();
-                //    string yyyy = (startY).ToString();
-                //    sdasd++;
-                //    if (aaa.R == 233 && aaa.G == 81 && aaa.B == 81)
-                //    {
-                //        //mouse_move(startX + sdasd, startY);
-                //        press($"{startX + sdasd}, {startY}");
-                //        break;
-                //        //log($"111111111111({xxxx},{yyyy},{aaa.ToString()})");
-                //    }
-                //}
+            }
+            if (flag == false && repeat == false)
+            {
+                press(Keys.LWin);
+                Thread.Sleep(500);
+                dragonest_notity_click(true);
             }
         }
         //占内存
@@ -710,6 +758,22 @@ namespace keyupMusic2
                 if (asd) break;
             }
         }
+        public static bool DaleyRun_stop = false;
+        public static void DaleyRun(Func<bool> flag_action, Action action2, int alltime, int tick)
+        {
+            if (DaleyRun_stop) return;
+            DaleyRun_stop = false;
+            int i = 0;
+            while (alltime >= 0)
+            {
+                if (i > 6000) break;
+                if (DaleyRun_stop) break;
+                Thread.Sleep(tick);
+                alltime -= tick;
+                var asd = flag_action.Invoke();
+                if (asd) { action2(); break; }
+            }
+        }
         public static string DateTimeNow()
         {
             return DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss");
@@ -720,5 +784,7 @@ namespace keyupMusic2
             WindowsPrincipal principal = new WindowsPrincipal(identity);
             return principal.IsInRole(WindowsBuiltInRole.Administrator);
         }
+        [DllImport("imm32.dll", CharSet = CharSet.Auto)]
+        public static extern IntPtr ImmGetContext(IntPtr hWnd);
     }
 }
