@@ -9,6 +9,11 @@ namespace keyupMusic2
 {
     public class KeyboardInput
     {
+        public static void SimulateMouseWheel(uint msg)
+        {
+            KeyboardInput.INPUT.SimulateMouseWheel(msg);
+        }
+
         // 声明Windows API函数  
         [DllImport("user32.dll", SetLastError = true)]
         private static extern uint SendInput(uint nInputs, ref INPUT pInputs, int cbSize);
@@ -53,7 +58,31 @@ namespace keyupMusic2
                     public ushort wParamH;
                 }
             }
+            public const uint INPUT_MOUSE = 1;
+            public const uint MOUSEEVENTF_WHEEL = 0x0800;
 
+
+            public static void SimulateMouseWheel(uint delta)
+            {
+                INPUT inputDown = new INPUT
+                {
+                    type = INPUT_MOUSE,
+                    U = new InputUnion
+                    {
+                        mi = new InputUnion.MOUSEINPUT
+                        {
+                            dx = 0,
+                            dy = 0,
+                            mouseData = delta, // 滚轮滚动的量，正值向上滚动，负值向下滚动  
+                            dwFlags = MOUSEEVENTF_WHEEL,
+                            time = 0,
+                            dwExtraInfo = IntPtr.Zero
+                        }
+                    }
+                };
+
+                SendInput(1, ref inputDown, Marshal.SizeOf(typeof(INPUT)));
+            }
             public static INPUT CreateKeyDown(ushort virtualKey)
             {
                 return new INPUT

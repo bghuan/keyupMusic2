@@ -23,13 +23,17 @@ namespace keyupMusic2
                 case Keys.F4:
                     press([Keys.LShiftKey, Keys.F5]);
                     break;
+                case Keys.F5:
+                    if (judge_color(82, 68, Color.FromArgb(189, 64, 77)))
+                        press([Keys.LControlKey, Keys.LShiftKey, Keys.F5]);
+                    break;
                 case Keys.F6:
                     press([Keys.LControlKey, Keys.LShiftKey, Keys.F5]);
                     break;
-                //case Keys.F11:
-                //    ProcessStartInfo startInfo = new ProcessStartInfo("taskmgr.exe");
-                //    Process.Start(startInfo);
-                //    break;
+                    //case Keys.F11:
+                    //    ProcessStartInfo startInfo = new ProcessStartInfo("taskmgr.exe");
+                    //    Process.Start(startInfo);
+                    //    break;
             }
             Common.hooked = false;
         }

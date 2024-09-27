@@ -39,6 +39,7 @@ namespace keyupMusic2
         public const string QQMusic = "QQMusic";
         public const string HuyaClient = "HuyaClient";
         public const string QyClient = "QyClient";
+        public const string ApplicationFrameHost = "ApplicationFrameHost";
 
         public static string[] list = {
         keyupMusic2,
@@ -54,6 +55,10 @@ namespace keyupMusic2
         SearchHost,
         QQMusic,
         HuyaClient,
+        ApplicationFrameHost,
+        QyClient,
+        QQMusic,
+        QQMusic,
         QQMusic,
         QQMusic,
         QQMusic,
@@ -165,8 +170,13 @@ namespace keyupMusic2
                 {
                     File.AppendAllText("log.txt", "\r" + DateTime.Now.ToString("") + " " + message);
                 }
-                catch (Exception)
+                catch (Exception e)
                 {
+                    string msg = e.Message;
+                }
+                finally
+                {
+                    string fff = "ffs";
                 }
             }
         }
@@ -189,7 +199,7 @@ namespace keyupMusic2
         {
             return Native.GetAsyncKeyState(Keys.ShiftKey) < 0;
         }
-        public static void cmd(string cmd)
+        public static void cmd(string cmd, Action action = null)
         {
             ProcessStartInfo startInfo = new ProcessStartInfo
             {
@@ -202,6 +212,8 @@ namespace keyupMusic2
 
             using (Process process = Process.Start(startInfo))
             {
+                if (action != null)
+                    action();
             }
         }
 
@@ -218,6 +230,8 @@ namespace keyupMusic2
         const int MOUSEEVENTF_MIDDLEDOWN = 0x0020;
         const int MOUSEEVENTF_MIDDLEUP = 0x0040;
         const int MOUSEEVENTF_ABSOLUTE = 0x8000;
+        // 定义 MOUSEEVENTF_WHEEL 标志  
+        public const int MOUSEEVENTF_WHEEL = 0x0800;
         public const int SW_RESTORE = 9;
 
 
@@ -226,6 +240,12 @@ namespace keyupMusic2
 
         [System.Runtime.InteropServices.DllImport("user32")]
         public static extern int mouse_event(int dwFlags, int dx, int dy, int cButtons, int dwExtraInfo);
+
+        //// 声明 mouse_event 函数  
+        //[DllImport("user32.dll", CharSet = CharSet.Auto, CallingConvention = CallingConvention.StdCall)]
+        //public static extern void mouse_event(uint dwFlags, uint dx, uint dy, uint cButtons, uint dwExtraInfo);
+
+
         [DllImport("user32.dll")]
         public static extern bool ShowWindowAsync(HandleRef hWnd, int nCmdShow);
         [DllImport("user32.dll")]
@@ -233,6 +253,8 @@ namespace keyupMusic2
 
         public static void mouse_move(int x, int y, int tick = 0)
         {
+            //x = x * 3840 / 2560;
+            //y = y * 2160 / 1440;
             mouse_event(MOUSEEVENTF_ABSOLUTE | MOUSEEVENTF_MOVE, x * 65536 / screenWidth, y * 65536 / screenHeight, 0, 0);
             Thread.Sleep(tick);
         }
@@ -420,11 +442,18 @@ namespace keyupMusic2
         {
             _press_hold(keys, tick);
         }
+
         //1 返回原来鼠标位置
         //2
         //3 跳过delete return
         public static void ctrl_shift(bool zh)
         {
+            var flag = (judge_color(2289, 1411, Color.FromArgb(202, 202, 202)));
+            if (zh && !flag)
+                press(Keys.LShiftKey,10);
+            else if(!zh && flag)
+                press(Keys.LShiftKey, 10);
+            return;
             if (zh)
                 press([Keys.LControlKey, Keys.LShiftKey, Keys.D1]);
             else
@@ -465,11 +494,12 @@ namespace keyupMusic2
 
                 if (item == "LWin")
                 {
-                    ctrl_shift(false);
                     if (ProcessName == "SearchHost")
                         press([Keys.LControlKey, Keys.A, Keys.Back]);
                     else
                         press(Keys.LWin);
+                    Thread.Sleep(100);
+                    ctrl_shift(false);
                 }
                 else if (item == "zh")
                 {
@@ -571,6 +601,8 @@ namespace keyupMusic2
         }
         public static bool judge_color(int x, int y, Color color, Action action = null, int similar = 50)
         {
+            //x = x * 3840 / 2560;
+            //y = y * 2160 / 1440;
             var asd = get_mouse_postion_color(new Point(x, y));
             var flag = AreColorsSimilar(asd, color, similar);
             if (flag && action != null) action();
@@ -582,6 +614,8 @@ namespace keyupMusic2
         }
         public static bool try_press(int x, int y, Color color, Action action = null)
         {
+            //x = x * 3840 / 2560;
+            //y = y * 2160 / 1440;
             var asd = get_mouse_postion_color(new Point(x, y));
             var flag = AreColorsSimilar(asd, color);
             if (flag)
@@ -778,6 +812,10 @@ namespace keyupMusic2
         {
             return DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss");
         }
+        public static string DateTimeNow2()
+        {
+            return DateTime.Now.ToString("HH:mm:ss fff");
+        }
         public static bool IsAdministrator()
         {
             WindowsIdentity identity = WindowsIdentity.GetCurrent();
@@ -786,5 +824,10 @@ namespace keyupMusic2
         }
         [DllImport("imm32.dll", CharSet = CharSet.Auto)]
         public static extern IntPtr ImmGetContext(IntPtr hWnd);
+
+        public static void Sleep(int tick)
+        {
+            Thread.Sleep(tick);
+        }
     }
 }

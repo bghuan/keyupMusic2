@@ -19,7 +19,7 @@ namespace keyupMusic2
 
         public Huan()
         {
-            Task.Run(() => { if (!Debugger.IsAttached) copy_secoed_screen("start"); });
+            Task.Run(() => { if (!Debugger.IsAttached) copy_secoed_screen("_"); });
             InitializeComponent();
 
             try_restart_in_admin();
@@ -47,6 +47,7 @@ namespace keyupMusic2
             {
                 Common.FocusProcess(Common.douyin);
                 Common.FocusProcess(Common.ACPhoenix);
+                SetVisibleCore(false);
             }
             //this.InputLanguageChanged += new InputLanguageChangedEventHandler(languageChange);
         }
@@ -79,8 +80,8 @@ namespace keyupMusic2
             if (e.key == Keys.F11 && ProcessName == Common.devenv && !is_ctrl()) return true;
             if (e.key == Keys.F11 && ProcessName == Common.explorer && !is_ctrl()) return true;
             if (e.key == Keys.F12 && ProcessName == Common.devenv && !is_ctrl()) return true;
-            if (e.key == Keys.VolumeUp) return true;
-            if (e.key == Keys.VolumeDown) return true;
+            //if (e.key == Keys.VolumeUp) return true;
+            //if (e.key == Keys.VolumeDown) return true;
             if (ProcessName == Common.ACPhoenix)
             {
                 if (e.key == Keys.Oem3) return true;
@@ -99,6 +100,11 @@ namespace keyupMusic2
                     //if (e.key == Keys.Left) return true;
                     if (e.key == Keys.PageDown) return true;
                     if (e.key == Keys.PageUp) return true;
+                    if (e.key == Keys.VolumeDown) return true;
+                    if (e.key == Keys.VolumeUp) return true;
+                    //if (e.key == Keys.S) return true;
+                    if (e.key == Keys.Home && is_ctrl()) return true;
+                    if (e.key == Keys.End && is_ctrl()) return true;
                 }
             }
             if (e.key == Keys.MediaPreviousTrack || e.key == Keys.MediaPlayPause)
@@ -112,19 +118,26 @@ namespace keyupMusic2
         {
             if (e.Type != KeyboardEventType.KeyDown) return;
             if (Common.hooked) return;
+            if (is_down(Keys.LWin)) return;
+            if (is_alt() && (e.key == Keys.F4 || e.key == Keys.Tab)) return;
 
             if (keyupMusic2_onlisten) e.Handled = true;
             if (judge_handled(e, ProcessName)) e.Handled = true;
 
-            handle_special_or_normal_key(e);
-            print_easy_read();
-
-            if (ProcessName == Common.keyupMusic2)
+            Task.Run(() =>
             {
-                super_listen();
-            }
-            if (e.key == Keys.F3 || (e.key == Keys.LControlKey && is_alt())
-                 || (e.key == Keys.LMenu && is_ctrl()))
+                handle_special_or_normal_key(e);
+                print_easy_read();
+            });
+
+            //if (ProcessName == Common.keyupMusic2)
+            //{
+            //    super_listen();
+            //}
+            //if (e.key == Keys.F3 || (e.key == Keys.LControlKey && is_alt())
+            //     || (e.key == Keys.LMenu && is_ctrl()))
+            if (e.key == Keys.F3 || (e.key == Keys.LControlKey && is_shift())
+           || (e.key == Keys.LShiftKey && is_ctrl()))
             {
                 //if ((DateTime.Now > super_listen_time))
                 //{
@@ -170,8 +183,9 @@ namespace keyupMusic2
                 string asd = string.Join("+", new_stop_keys.Select(key => key.ToString()));
                 asd = asd.Replace("LMenu", "Alt").Replace("LWin", "Win").Replace("LControlKey", "Ctrl").Replace("LShiftKey", "Shift");
                 asd = asd.Replace("Oem3", "~");
+                asd = asd.Replace("VolumeUp", "v↑").Replace("VolumeDown", "v↓");
                 for (int i = 0; i <= 9; i++) { asd = asd.Replace($"D{i}", i.ToString()); }
-                if (label1.Text == asd) asd += " " + DateTimeNow();
+                if (label1.Text == asd) asd += " " + DateTimeNow2();
                 label1.Text = asd;
             }
             );
@@ -292,6 +306,7 @@ namespace keyupMusic2
         public void startListen()
         {
             label1.Text = DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss");
+            label2.Text = "";
             _mouseKbdHook = new MouseKeyboardHook();
             _mouseKbdHook.KeyboardHookEvent += hook_KeyDown;
             _mouseKbdHook.KeyboardHookEvent += hook_KeyUp;

@@ -34,16 +34,18 @@ namespace keyupMusic2
                     if (try_press(Color.FromArgb(32, 104, 234))) break;
                     if (try_press(Color.FromArgb(220, 163, 51))) break;
                     if (try_press(1433, 1072, Color.FromArgb(245, 194, 55), () => { })) break;//中间确定
+                    if (try_press(1431, 1205, Color.FromArgb(255, 202, 57), () => { })) break;//中间确定
                     if (try_press(1384, 1199, Color.FromArgb(241, 141, 20), () => { })) { break; }//确定查看图鉴
-                    if (is_ctrl() && try_press(2079, 1280, Color.FromArgb(220, 163, 48), () => { })) break;//匹配游戏
+                    if (is_alt() && try_press(2079, 1280, Color.FromArgb(220, 163, 48), () => { })) break;//匹配游戏
                     if (try_press(1422, 942, Color.FromArgb(245, 194, 55), () => { })) { break; }//匹配进入游戏
-                    if (is_ctrl() && try_press(2497, 1328, Color.FromArgb(148, 185, 195), () => { })) { break; }//匹配取消
+                    if (is_alt() && try_press(2497, 1328, Color.FromArgb(148, 185, 195), () => { })) { break; }//匹配取消
                     if (judge_color(127, 177, Color.FromArgb(255, 227, 132))) { press(Keys.Escape); break; }//关闭图鉴
                     if (!is_ctrl() && !is_alt() && judge_color(1307, 85, Color.FromArgb(36, 39, 54), null, 10) && judge_color(2450, 80, Color.FromArgb(194, 198, 226))) { press(Keys.Tab); break; }//关闭tab
                     raw_press();
                     break;
                 case Keys.Tab:
                     if (is_alt()) { break; }
+                    if (is_down(Keys.LWin)) { break; }
                     if (try_press(137, 278, Color.FromArgb(118, 196, 30), () => { }))
                     {
                         if (judge_color(592, 67, Color.FromArgb(255, 255, 255)))
@@ -112,23 +114,6 @@ namespace keyupMusic2
                     if (!is_ctrl() && !is_alt()) break;
                     press("2325, 53", 101);
                     break;
-                //case Keys.F2:
-                //    mouse_click();
-                //    press("1525,1072;", 0);
-                //    //if (try_press(Color.FromArgb(220, 163, 51))) break;
-                //    //if (try_press(1447, 1068, Color.FromArgb(245, 194, 55), () => { })) break;
-                //    break;
-                case Keys.F4:
-                    if (is_alt()) break;
-                    press("2478,51;2492,1299;", 201);
-                    break;
-                case Keys.F5:
-                    press("2450,73;2107,229;1302,253;2355,237;2408,1000;", 201);
-                    break;
-                case Keys.F6:
-                    //(2381, 805, Color.FromArgb(60, 68, 82)
-                    press("2494,68;2135,805;1087,235;56,67;", 501);
-                    break;
                 case Keys.D1:
                 case Keys.D2:
                 case Keys.D3:
@@ -178,6 +163,24 @@ namespace keyupMusic2
                         break;
                     }//装备重铸
                     break;
+                //case Keys.F2:
+                //    mouse_click();
+                //    press("1525,1072;", 0);
+                //    //if (try_press(Color.FromArgb(220, 163, 51))) break;
+                //    //if (try_press(1447, 1068, Color.FromArgb(245, 194, 55), () => { })) break;
+                //    break;
+                case Keys.F4:
+                    if (is_alt()) break;
+                    if (ProcessName2 != keyupMusic2.Common.ACPhoenix) { break; }
+                    press("2478,51;2492,1299;", 201);
+                    break;
+                case Keys.F5:
+                    press("2450,73;2107,229;1302,253;2355,237;2408,1000;", 201);
+                    break;
+                case Keys.F6:
+                    //(2381, 805, Color.FromArgb(60, 68, 82)
+                    press("2494,68;2135,805;1087,235;56,67;", 501);
+                    break;
                 //case Keys.Home:
                 case Keys.PageUp:
                     //if (judge_color(2098, 188, Color.FromArgb(109, 189, 205)))
@@ -189,16 +192,6 @@ namespace keyupMusic2
                 case Keys.PageDown:
                     HideProcess(chrome);
                     var altTabProcess = AltTabProcess();
-                    //if (altTabProcess.Equals(QyClient))
-                    //{
-                    //    press(Keys.Space, 100);
-                    //    altab();
-                    //}
-                    //if (altTabProcess.Equals(msedge))
-                    //{
-                    //    press(Keys.PageDown, 100);
-                    //    altab();
-                    //}
                     switch (altTabProcess)
                     {
                         case msedge:
@@ -212,6 +205,14 @@ namespace keyupMusic2
                     break;
                 case Keys.A:
                     if (is_ctrl()) { press(Keys.A); press(Keys.A); press(Keys.A); break; }
+                    //Task.Run(() =>
+                    //{
+                    //    for (var i = 0; i < 50; i++)
+                    //    {
+                    //        if (!is_ctrl()) break;
+                    //        mouse_click2(50);
+                    //    }
+                    //});
                     break;
                 case Keys.Delete:
                     if (judge_color(2409, 265, Color.FromArgb(93, 199, 250)) && judge_color(2358, 263, Color.FromArgb(93, 199, 250)))

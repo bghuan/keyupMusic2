@@ -13,8 +13,10 @@ namespace keyupMusic2
     public class AAA : Default
     {
         string[] list = Common.list;
-        string[] list_wechat = { Common.WeChat, Common.ACPhoenix, explorer, Common.keyupMusic2, Common.douyin, Common.devenv, Common.QQMusic, Common.SearchHost };
-        string[] list_visualstudio = { Common.devenv, Common.ACPhoenix, explorer, Common.keyupMusic2, Common.douyin, Common.WeChat, Common.QQMusic, Common.SearchHost };
+        //string[] list_wechat = { Common.WeChat, Common.ACPhoenix, explorer, Common.keyupMusic2, Common.douyin, Common.devenv,
+        //    Common.QQMusic, Common.SearchHost };
+        //string[] list_visualstudio = { Common.devenv, Common.ACPhoenix, explorer, Common.keyupMusic2, Common.douyin, Common.WeChat, Common.QQMusic, Common.SearchHost };
+        string[] list_wechat_visualstudio = { Common.WeChat, Common.ACPhoenix, explorer, Common.keyupMusic2, Common.douyin, Common.devenv, Common.QQMusic, Common.SearchHost, Common.ApplicationFrameHost };
         string[] list_volume = { Common.douyin, Common.msedge };
 
         public void hook_KeyDown_ddzzq(KeyboardHookEventArgs e)
@@ -31,39 +33,46 @@ namespace keyupMusic2
                     if (is_shift())
                     {
                         //ctrl_shift(false);
-                        press("500;LWin;VIS;Apps;100;Enter;", 100);
+                        press("500;LWin;VIS;100;Apps;100;Enter;", 100);
                         TaskRun(() => { press("Tab;Down;Enter;", 100); }, 1600);
                     }
-                    else if (list_visualstudio.FirstOrDefault() == module_name)
+                    else if (Common.devenv == module_name)
                     {
                         HideProcess(module_name);
                     }
-                    else if (list_visualstudio.Contains(module_name))
+                    else if (list_wechat_visualstudio.Contains(module_name))
                     {
                         if (Common.FocusProcess(Common.devenv)) break;
                         //ctrl_shift(false);
-                        press("LWin;VIS;Apps;100;Enter;", 100);
+                        press("LWin;VIS;100;Apps;100;Enter;", 100);
                         TaskRun(() => { press("Tab;Down;Enter;", 100); }, 1600);
                     }
                     break;
                 case Keys.F12:
                     if (is_ctrl()) break;
-                    if (list_wechat.FirstOrDefault() == module_name)
+                    if (Common.WeChat == module_name)
                     {
                         HideProcess(module_name);
                     }
-                    else if (list_wechat.Contains(module_name))
+                    else if (list_wechat_visualstudio.Contains(module_name))
                     {
                         Common.FocusProcess(Common.WeChat);
                         Thread.Sleep(100);
                         if (ProcessName2 == Common.WeChat) break;
-                        press("LWin;WEI;Enter;", 50);
+                        press("LWin;100;WEI;100;Enter;", 50);
                     }
                     break;
                 case Keys.MediaPreviousTrack:
                     if (module_name == HuyaClient)
                     {
                         press("587,152", 1);
+                        break;
+                    }
+                    break;
+                case Keys.PageDown:
+                    if (module_name == QyClient)
+                    {
+                        press("563, 894", 1);
                         break;
                     }
                     break;

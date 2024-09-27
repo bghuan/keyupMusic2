@@ -62,6 +62,14 @@ namespace keyupMusic2
                     int num = int.Parse(e.key.ToString().Replace("D", "").Replace("Oem3", "0"));
                     press("2236.1400;2226," + (1030 + (num * 50)), 101);
                     break;
+                case Keys.VolumeDown:
+                    if (Position.Y == 0 && Position.X != 2559) { press(Keys.VolumeDown); break; }
+                    press(Keys.PageDown);
+                    break;
+                case Keys.VolumeUp:
+                    if (Position.Y == 0 && Position.X != 2559) { press(Keys.VolumeUp); break; }
+                    press(Keys.PageUp);
+                    break;
             }
             Common.hooked = false;
             if (!handling) handling = true;

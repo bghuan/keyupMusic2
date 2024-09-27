@@ -32,53 +32,15 @@ namespace keyupMusic2
 
             huan.Invoke2(() => { huan.keyupMusic2_onlisten = false; huan.BackColor = Color.White; /*huan.label1.Text = e.key.ToString();*/ }, 10);
 
-            switch (e.key)
-            {
-                case Keys.D1:
-                case Keys.D2:
-                case Keys.D3:
-                case Keys.D4:
-                case Keys.D5:
-                case Keys.D6:
-                case Keys.D7:
-                case Keys.D8:
-                case Keys.D9:
-                case Keys.D0:
-                case Keys.F1:
-                case Keys.F2:
-                case Keys.F3:
-                case Keys.F4:
-                case Keys.F5:
-                case Keys.F6:
-                case Keys.F7:
-                case Keys.F8:
-                case Keys.F9:
-                case Keys.F10:
-                case Keys.F11:
-                case Keys.F12:
-                    if (is_down(Keys.LWin)) break;
-                    if (key_sound && keys.Contains(e.key))
-                    //if (key_sound)
-                    {
-                        string wav = "wav\\" + e.key.ToString().Replace("D", "").Replace("F", "") + ".wav";
-                        if (!File.Exists(wav)) return;
+            if (key_sound && keys.Contains(e.key)) paly_sound(e);
 
-                        player = new SoundPlayer(wav);
-                        player.Play();
-                    }
-                    break;
-            }
             switch (e.key)
             {
                 case Keys.Q:
-                    //handle_word("连接", 0, false);
                     press("LWin;OPEN;Enter;500;1056, 411;1563, 191", 101);
                     break;
                 case Keys.W:
-                    Listen.is_listen = !Listen.is_listen;
-                    Invoke(() => huan.SetVisibleCore2(Listen.is_listen));
-                    Listen.aaaEvent += huan.handle_word;
-                    if (Listen.is_listen) Task.Run(() => Listen.listen_word(new string[] { }, (string asd, int a) => { }));
+                    start_listen_to_word();
                     break;
                 case Keys.E:
                     winBinWallpaper.changeImg();
@@ -105,6 +67,7 @@ namespace keyupMusic2
                     press("200;1056,588;2118,530;2031,585;2516,8;", 801);
                     break;
                 case Keys.I:
+                    sound_setting();
                     break;
                 case Keys.O:
                     change_file_last(true);
@@ -113,28 +76,13 @@ namespace keyupMusic2
                     change_file_last(false);
                     break;
                 case Keys.D:
+                    //KeyboardInput.SimulateMouseWheel(120);
+                    new AAA().hook_KeyDown_ddzzq(new KeyboardHookEventArgs(WGestures.Core.Impl.Windows.KeyboardEventType.KeyDown, Keys.F11, 0, new WGestures.Common.OsSpecific.Windows.Native.keyboardHookStruct()));
                     break;
                 case Keys.F:
                     break;
                 case Keys.G:
-                    Point mousePosition = Cursor.Position;
-                    if (start_record)
-                    {
-                        commnd_record += $"{mousePosition.X},{mousePosition.Y};";
-                    }
-                    using (Bitmap bitmap = new Bitmap(1, 1))
-                    {
-                        using (Graphics g = Graphics.FromImage(bitmap))
-                        {
-                            g.CopyFromScreen(mousePosition.X, mousePosition.Y, 0, 0, new Size(1, 1));
-                            //(1470, 1213, Color.FromArgb(245, 139, 0))
-                            var color = bitmap.GetPixel(0, 0);
-                            string asd = $"({mousePosition.X},{mousePosition.Y}, Color.FromArgb({color.R},{color.G},{color.B}))";
-                            log(ProcessName + asd);
-                            log_process(e.key.ToString());
-                            Invoke(() => Clipboard.SetText(asd));
-                        }
-                    }
+                    get_point_color(e);
                     break;
                 case Keys.H:
                     press(Keys.F11);
@@ -153,39 +101,19 @@ namespace keyupMusic2
                     press("100;LWin;KK;Enter;", 110);
                     break;
                 case Keys.X:
-                    Invoke(() => { try { press(Clipboard.GetText()); } catch { } });
                     break;
                 case Keys.C:
                     press("1333.1444", 0);
                     break;
                 case Keys.V:
-                    KeyboardInput.SendString("m");
-                    //KeyboardInput2.SendString("Hello, World!");
-                    //KeyboardInput3.SendString("Hello, World!");
-                    //SendKeyboardMouse sendKeyMouse = new SendKeyboardMouse();
-                    //sendKeyMouse.SendKeyPress(VKCODE.VK_A);
+                    //KeyboardInput.SendString("mG");
+                    ////KeyboardInput2.SendString("Hello, World!");
+                    ////KeyboardInput3.SendString("Hello, World!");
+                    ////SendKeyboardMouse sendKeyMouse = new SendKeyboardMouse();
+                    ////sendKeyMouse.SendKeyPress(VKCODE.VK_A);
+                    Invoke(() => { try { press(Clipboard.GetText()); } catch { } });
                     break;
                 case Keys.B:
-                    byte[] ikl = new byte[10];
-                    GetKeyboardLayoutList(10, ikl);
-
-                    // 获取当前键盘布局
-                    IntPtr kl = GetKeyboardLayout(0);
-
-                    // 获取键盘布局名称
-                    StringBuilder kLID = new StringBuilder(256);
-                    GetKeyboardLayoutName(kLID, 256);
-
-                    // 判断是否是中文输入法
-                    bool isChineseIME = kLID.ToString().Contains("0804"); // 0804代表简体中文输入法的ID
-
-                    Console.WriteLine(isChineseIME ? "当前是中文输入法" : "当前不是中文输入法");
-
-                    var currentInputLanguage = InputLanguage.CurrentInputLanguage;
-                    var cultureInfo = currentInputLanguage.Culture;
-                    var aaaa = Common.GetForegroundWindow();
-                    var sdaddd = Common.ImmGetContext(aaaa);
-
                     break;
                 case Keys.M:
                     FocusProcess(Common.chrome);
@@ -198,6 +126,7 @@ namespace keyupMusic2
                     //HideProcess(chrome);
                     break;
                 case Keys.F2:
+                case Keys.S:
                     if (!FocusProcess("keyupMusic3"))
                     {
                         ProcessRun("C:\\Users\\bu\\source\\repos\\keyupMusic3\\bin\\Debug\\net8.0-windows\\keyupMusic3.exe");
@@ -206,7 +135,8 @@ namespace keyupMusic2
                     break;
                 case Keys.F4:
                 case Keys.A:
-                    if (ProcessName == Common.ACPhoenix) { close(); break; }
+                    //if (ProcessName == Common.ACPhoenix) { close(); break; }
+                    if (ProcessName == Common.ACPhoenix) { Common.HideProcess(Common.ACPhoenix); break; }
                     if (Common.FocusProcess(Common.ACPhoenix)) break;
                     if (!Common.ExsitProcess(Common.Dragonest))
                     {
@@ -249,7 +179,75 @@ namespace keyupMusic2
                 //KeyboardHook.stop_next = true;
             }
             Common.hooked = false;
+
+            void paly_sound(KeyboardHookEventArgs e)
+            {
+                if (is_down(Keys.LWin)) return;
+                if (key_sound && keys.Contains(e.key))
+                //if (key_sound)
+                {
+                    string wav = "wav\\" + e.key.ToString().Replace("D", "").Replace("F", "") + ".wav";
+                    if (!File.Exists(wav)) return;
+
+                    player = new SoundPlayer(wav);
+                    player.Play();
+                }
+            }
         }
+
+        private static void sound_setting()
+        {
+            var action = () =>
+            {
+                DaleyRun(
+       () =>
+       {
+           return (judge_color(1072, 105, Color.FromArgb(26, 26, 25)));
+       },
+       () =>
+       {
+           Sleep(520);
+           mouse_click(2303, 565);
+           press(Keys.PageDown, 10);
+           press(Keys.PageDown, 10);
+           press("400;2211, 765", 10);
+       },
+       2211,
+       100);
+            };
+            Common.cmd($"/c start ms-settings:sound", action);
+        }
+
+        private void get_point_color(KeyboardHookEventArgs e)
+        {
+            Point mousePosition = Cursor.Position;
+            if (start_record)
+            {
+                commnd_record += $"{mousePosition.X},{mousePosition.Y};";
+            }
+            using (Bitmap bitmap = new Bitmap(1, 1))
+            {
+                using (Graphics g = Graphics.FromImage(bitmap))
+                {
+                    g.CopyFromScreen(mousePosition.X, mousePosition.Y, 0, 0, new Size(1, 1));
+                    //(1470, 1213, Color.FromArgb(245, 139, 0))
+                    var color = bitmap.GetPixel(0, 0);
+                    string asd = $"({mousePosition.X},{mousePosition.Y}, Color.FromArgb({color.R},{color.G},{color.B}))";
+                    log(ProcessName + asd);
+                    log_process(e.key.ToString());
+                    Invoke(() => Clipboard.SetText(asd));
+                }
+            }
+        }
+
+        private void start_listen_to_word()
+        {
+            Listen.is_listen = !Listen.is_listen;
+            Invoke(() => huan.SetVisibleCore2(Listen.is_listen));
+            Listen.aaaEvent += huan.handle_word;
+            if (Listen.is_listen) Task.Run(() => Listen.listen_word(new string[] { }, (string asd, int a) => { }));
+        }
+
         private static void dragonest_run()
         {
             //press("2280,1314;LWin;3222;LWin;", 500); 

@@ -38,7 +38,8 @@ namespace WGestures.Core.Impl.Windows
                 if (stop_keys.Count == 0 || !stop_keys.Contains(key) || type == KeyboardEventType.KeyUp || key == Keys.VolumeDown || key == Keys.VolumeUp)
                     KeyboardHookEvent(args);
 
-                if (args.Handled) return 1;
+                if (args.Handled)
+                    return 1;
             }
             //if (key == stop_key)
             //{

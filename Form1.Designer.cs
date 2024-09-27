@@ -60,6 +60,7 @@
             nToolStripMenuItem = new ToolStripMenuItem();
             mToolStripMenuItem = new ToolStripMenuItem();
             timerMove = new System.Windows.Forms.Timer(components);
+            label2 = new Label();
             contextMenuStrip1.SuspendLayout();
             SuspendLayout();
             // 
@@ -247,12 +248,23 @@
             mToolStripMenuItem.Size = new Size(170, 30);
             mToolStripMenuItem.Text = "M";
             // 
+            // label2
+            // 
+            label2.AutoSize = true;
+            label2.Location = new Point(223, 0);
+            label2.Name = "label2";
+            label2.Size = new Size(63, 24);
+            label2.TabIndex = 2;
+            label2.Text = "label2";
+            // 
             // Huan
             // 
             AutoScaleDimensions = new SizeF(11F, 24F);
             AutoScaleMode = AutoScaleMode.Font;
+            BackColor = SystemColors.Window;
             ClientSize = new Size(329, 26);
             ContextMenuStrip = contextMenuStrip1;
+            Controls.Add(label2);
             Controls.Add(label1);
             DoubleBuffered = true;
             Icon = (Icon)resources.GetObject("$this.Icon");
@@ -304,5 +316,6 @@
         private ToolStripMenuItem nToolStripMenuItem;
         private ToolStripMenuItem mToolStripMenuItem;
         public System.Windows.Forms.Timer timerMove;
+        private Label label2;
     }
 }

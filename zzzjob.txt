@@ -1,20 +1,24 @@
 ﻿job
 
-
-输入?
+0 输入?
 1 时间间隔
-clean
+0 clean
 本地音频转文字
 1 copy
-判断windows search 是否已经打开
+1 判断windows search 是否已经打开 win已打开则跳过
 
 语言识别限定词
 方法输出到lable1
-ctrl shift f1 open close listen
+1 ctrl shift f1 open close listen
 1 init close other
-已经有就只切换
-去除多次触发
-判断管理员
-触发键阻止传递
-ctrlshift是否Handled
-1win已打开则跳过
+1 已经有就只切换
+1 去除多次触发
+1 判断管理员
+1 触发键阻止传递
+1 ctrlshift是否Handled
+
+1 volumn pagedown double
+1 right ctrl shift close
+1 mouse jump middle bottom
+1 mouse click run vs
+1 中文判断

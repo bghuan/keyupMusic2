@@ -63,6 +63,10 @@ namespace keyupMusic2
                     }
                     raw_press();
                     break;
+            }
+
+            switch (e.key)
+            {
                 case Keys.Home:
                     copy_screen(); break;
                 case Keys.End:
@@ -75,12 +79,14 @@ namespace keyupMusic2
                     if (right_top) press(Keys.F8); break;
                 case Keys.PageUp:
                     if (right_top) press(Keys.F8); break;
-                case Keys.VolumeDown:
-                    if (right_top) { press(Keys.F7); break; } else { raw_press(); break; }
-                case Keys.VolumeUp:
-                    if (right_top) { press(Keys.F8); break; } else { raw_press(); break; }
+                //case Keys.VolumeDown:
+                //    if (right_top) { press(Keys.F7); break; } else { raw_press(); break; }
+                //case Keys.VolumeUp:
+                //    if (right_top) { press(Keys.F8); break; } else { raw_press(); break; }
                 case Keys.Delete:
                     DaleyRun_stop = true; break;
+                case Keys.LMenu:
+                    yo(); break;
             }
 
             Common.hooked = false;
