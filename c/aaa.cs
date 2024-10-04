@@ -76,6 +76,16 @@ namespace keyupMusic2
                         break;
                     }
                     break;
+                case Keys.Oem3:
+                case Keys.D1:
+                    if (module_name == QQLive) press("2431.1404;2431.1406;2431.1408;100;2343,923", 101);
+                    break;
+                case Keys.D2:
+                    if (module_name == QQLive) press("2431.1404;2431.1406;2431.1408;100;2269,959", 101);
+                    break;
+                case Keys.D3:
+                    if (module_name == QQLive) press("2431.1404;2431.1406;2431.1408;100;2475,957", 101);
+                    break;
             }
 
             Common.hooked = false;

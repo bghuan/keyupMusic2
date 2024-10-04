@@ -51,6 +51,7 @@ namespace keyupMusic2
                     {
                         if (!Common.FocusProcess(Common.douyin))
                         {
+                            press(Keys.MediaStop);
                             ProcessRun(douyinexe);
                             DaleyRun(() => { return judge_color(2318, 1258, Color.FromArgb(111, 112, 120), null, 10); }, 3000, 100);
                             press("311, 1116", 0);
@@ -84,9 +85,11 @@ namespace keyupMusic2
                 //case Keys.VolumeUp:
                 //    if (right_top) { press(Keys.F8); break; } else { raw_press(); break; }
                 case Keys.Delete:
-                    DaleyRun_stop = true; special_delete_key_time = DateTime.Now; break;
+                    DaleyRun_stop = true; special_delete_key_time = DateTime.Now; player.Stop(); break;
                 case Keys.LMenu:
                     yo(); break;
+                case Keys.Escape:
+                    player.Stop(); break;
             }
 
             Common.hooked = false;

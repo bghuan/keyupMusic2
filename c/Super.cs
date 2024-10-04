@@ -3,6 +3,7 @@ using System.Management;
 using System.Media;
 using System.Runtime.InteropServices;
 using System.Text;
+using System.Windows.Forms;
 using static keyupMusic2.Common;
 using static keyupMusic2.Huan;
 using static System.Windows.Forms.VisualStyles.VisualStyleElement.TrackBar;
@@ -19,7 +20,6 @@ namespace keyupMusic2
         public Huan huan;
         Keys[] keys = { Keys.D0, Keys.D1, Keys.D2, Keys.D3, Keys.D4, Keys.D5, Keys.D6, Keys.D7, Keys.D8, Keys.D9 };
         bool key_sound = true;
-        SoundPlayer player = new SoundPlayer();
         bool start_record = false;
         string commnd_record = "";
 
@@ -30,23 +30,20 @@ namespace keyupMusic2
             //if (is_ctrl() && is_shift()) return;
             Common.hooked = true;
             string label_backup = huan.label1.Text;
-            bool catched = false;
-
-            huan.Invoke2(() => { huan.keyupMusic2_onlisten = false; huan.BackColor = Color.White; /*huan.label1.Text = e.key.ToString();*/ }, 10);
-
-            if (key_sound && keys.Contains(e.key)) paly_sound(e);
+            bool catched = true;
 
             switch (e.key)
             {
                 case Keys.Q:
                     press("LWin;OPEN;Enter;500;", 101);
-                    if(judge_color(1493, 1109, Color.FromArgb(237, 127, 34)))
-                    press("1056, 411;1563, 191", 101);
+                    if (judge_color(1493, 1109, Color.FromArgb(237, 127, 34)))
+                        press("1056, 411;1563, 191", 101);
                     break;
                 case Keys.W:
                     start_listen_to_word();
                     break;
                 case Keys.E:
+                    paly_sound(Keys.D0);
                     winBinWallpaper.changeImg();
                     break;
                 case Keys.R:
@@ -74,9 +71,11 @@ namespace keyupMusic2
                     sound_setting();
                     break;
                 case Keys.O:
+                    paly_sound(Keys.D5);
                     change_file_last(true);
                     break;
                 case Keys.P:
+                    paly_sound(Keys.D3);
                     change_file_last(false);
                     break;
                 case Keys.D:
@@ -87,6 +86,7 @@ namespace keyupMusic2
                     press("0.0", 100);
                     break;
                 case Keys.G:
+                    paly_sound(Keys.D4);
                     get_point_color(e);
                     break;
                 case Keys.H:
@@ -133,6 +133,7 @@ namespace keyupMusic2
                     ////SendKeyboardMouse sendKeyMouse = new SendKeyboardMouse();
                     ////sendKeyMouse.SendKeyPress(VKCODE.VK_A);
                     Invoke(() => { try { press(Clipboard.GetText()); } catch { } });
+                    paly_sound(Keys.D1);
                     break;
                 case Keys.B:
                     stop_keys = new List<Keys>();
@@ -147,9 +148,9 @@ namespace keyupMusic2
                     break;
 
                 case Keys.F1:
-                    Invoke(() => { huan.SetVisibleCore2(!huan.Visible); });
-                    hide_keyupmusic3();
-                    //HideProcess(chrome);
+                    Invoke(() => { huan.SetVisibleCore2(huan.last_visiable); });
+                    //hide_keyupmusic3();
+                    huan.last_visiable = false;
                     break;
                 case Keys.F2:
                 case Keys.S:
@@ -161,28 +162,14 @@ namespace keyupMusic2
                     break;
                 case Keys.F4:
                 case Keys.A:
-                    //if (ProcessName == Common.ACPhoenix) { close(); break; }
+                    paly_sound(Keys.D2);
                     if (ProcessName == Common.ACPhoenix) { Common.HideProcess(Common.ACPhoenix); break; }
                     if (Common.FocusProcess(Common.ACPhoenix)) break;
-                    if (!Common.ExsitProcess(Common.Dragonest))
-                    {
-                        dragonest_init();
-                        dragonest_max(10000);
-                    }
-                    else
-                    {
-                        dragonest_notity_click();
-                        if (!judge_color(71, 199, Color.FromArgb(242, 95, 99)))
-                        {
-                            dragonest_notity_click();
-                        }
-                        if (!judge_color(2223, 1325, Color.FromArgb(22, 155, 222)))
-                            dragonest_max(100);
-                    }
-                    dragonest_run();
+                    dragonest();
                     break;
                 case Keys.F5:
-                    log_always = !log_always;
+                    //log_always = !log_always;
+                    press(Keys.MediaPlayPause);
                     break;
                 case Keys.Up:
                     Invoke(() => huan.Opacity = huan.Opacity >= 1 ? 1 : huan.Opacity + 0.1);
@@ -192,33 +179,58 @@ namespace keyupMusic2
                     break;
                 case Keys.Escape:
                     if (is_ctrl() && is_shift()) { Process.Start(new ProcessStartInfo("taskmgr.exe")); break; }
-                    press("LWin;1957,1015");
+                    //press("LWin;1957,1015");
+                    press_middle_bottom();
                     break;
 
                 default:
-                    catched = true;
+                    catched = false;
                     break;
             }
+
+            if (key_sound && keys.Contains(e.key)) { paly_sound(e.key); catched = true; }
+
             if (catched)
             {
+                huan.Invoke2(() => { huan.keyupMusic2_onlisten = false; huan.BackColor = Color.White; /*huan.label1.Text = e.key.ToString();*/ }, 10);
                 //Invoke((() => { label1.Text = label_backup; }));
                 //KeyboardHook.stop_next = true;
             }
             Common.hooked = false;
 
-            void paly_sound(KeyboardHookEventArgs e)
+            void paly_sound(Keys key)
             {
                 if (is_down(Keys.LWin)) return;
-                if (key_sound && keys.Contains(e.key))
-                //if (key_sound)
+                //if (key_sound && keys.Contains(e.key))
+                if (key_sound)
                 {
-                    string wav = "wav\\" + e.key.ToString().Replace("D", "").Replace("F", "") + ".wav";
+                    string wav = "wav\\" + key.ToString().Replace("D", "").Replace("F", "") + ".wav";
                     if (!File.Exists(wav)) return;
 
                     player = new SoundPlayer(wav);
                     player.Play();
                 }
             }
+        }
+
+        private static void dragonest()
+        {
+            if (!Common.ExsitProcess(Common.Dragonest))
+            {
+                dragonest_init();
+                dragonest_max(10000);
+            }
+            else
+            {
+                dragonest_notity_click();
+                if (!judge_color(71, 199, Color.FromArgb(242, 95, 99)))
+                {
+                    dragonest_notity_click();
+                }
+                if (!judge_color(2223, 1325, Color.FromArgb(22, 155, 222)))
+                    dragonest_max(100);
+            }
+            dragonest_run();
         }
 
         private static void sound_setting()

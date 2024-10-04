@@ -55,7 +55,8 @@ namespace keyupMusic2
         }
         public bool keyupMusic2_onlisten = false;
         DateTime super_listen_time = new DateTime();
-        int super_listen_tick = 2000;
+        static int super_listen_tick = 144 * 14;
+        Double timerMove_Tick_tick = super_listen_tick;
         public MouseKeyboardHook _mouseKbdHook;
         static string lastText = "";
         static int last_index = 0;
@@ -102,14 +103,14 @@ namespace keyupMusic2
                     //if (e.key == Keys.VolumeUp) return true;
                     //if (e.key == Keys.S) return true;
                     if (e.key == Keys.Home && is_ctrl()) return true;
-                    if (e.key == Keys.End && is_ctrl()) return true;
+                    if (e.key == Keys.End) return true;
                 }
             }
             if (e.key == Keys.MediaPreviousTrack || e.key == Keys.MediaPlayPause)
             {
                 if (ProcessName == HuyaClient) return true;
             }
-            var flag = chrome.judge_handled(e)|| Douyin.judge_handled(e);
+            var flag = chrome.judge_handled(e) || Douyin.judge_handled(e);
             return flag;
         }
         Keys last_handled_key;
@@ -119,7 +120,9 @@ namespace keyupMusic2
             if (Common.hooked) return;
             if (is_down(Keys.LWin)) return;
             if (is_alt() && (e.key == Keys.F4 || e.key == Keys.Tab)) { special_key_quick_yo(e); ; return; }
+            if (stop_keys.Contains(e.key)) return;
 
+            yo();
             if (keyupMusic2_onlisten) e.Handled = true;
             if (judge_handled(e, ProcessName)) { last_handled_key = e.key; e.Handled = true; }
 
@@ -140,7 +143,6 @@ namespace keyupMusic2
             {
                 Task.Run(() =>
                 {
-                    yo();
                     //var old_processName = ProcessName; ;
                     //var new_processName = yo();
                     //if (old_processName != new_processName && e.key == Keys.PageDown) { return; }
@@ -153,8 +155,6 @@ namespace keyupMusic2
 
                     Aaa.hook_KeyDown_ddzzq(e);
                     Bbb.hook_KeyDown_ddzzq(e);
-
-                    Invoke2(() => super_listen_clear());
                 });
             }
         }
@@ -171,12 +171,13 @@ namespace keyupMusic2
                 });
             }
         }
-
+        public bool last_visiable = false;
         private void form_move()
         {
             Invoke2(() =>
             {
                 if (Opacity == 0) { return; }
+                if (!Visible) { SetVisibleCore(true); last_visiable = true; }
                 timerMove.Interval = 1;
                 timerMove.Tick += timerMove_Tick;
                 timerMove.Start();
@@ -216,22 +217,21 @@ namespace keyupMusic2
         private void super_listen()
         {
             keyupMusic2_onlisten = true;
-            super_listen_time = DateTime.Now.AddMilliseconds(1900);
+            super_listen_time = DateTime.Now.AddMilliseconds(super_listen_tick);
             Invoke2(() =>
             {
                 base.BackColor = Color.Blue;
                 TaskRun(() =>
                 {
                     if (DateTime.Now > super_listen_time)
-                        super_listen_clear();
+                        super_listen_clear(Color.White);
                 }, super_listen_tick);
             });
         }
-
-        private void super_listen_clear()
+        private void super_listen_clear(Color color)
         {
             keyupMusic2_onlisten = false;
-            BackColor = Color.White;
+            BackColor = color;
         }
         public static string speak_word = "";
         public static int sssssegmentIndex;
@@ -425,9 +425,9 @@ namespace keyupMusic2
         {
             TimeSpan elapsed = DateTime.Now - startTime;
 
-            if (elapsed.TotalMilliseconds <= 2000)
+            if (elapsed.TotalMilliseconds <= timerMove_Tick_tick)
             {
-                int currentX = (int)(startPoint.X + (endPoint.X - startPoint.X) * (elapsed.TotalMilliseconds / 2000.0));
+                int currentX = (int)(startPoint.X + (endPoint.X - startPoint.X) * (elapsed.TotalMilliseconds / timerMove_Tick_tick));
                 int currentY = startPoint.Y;
                 Location = new Point(currentX, currentY);
             }
@@ -435,6 +435,7 @@ namespace keyupMusic2
             {
                 Location = endPoint;
                 timerMove.Stop();
+                if (last_visiable) { SetVisibleCore(false); last_visiable = false; }
             }
         }
         private void try_restart_in_admin()
@@ -453,7 +454,8 @@ namespace keyupMusic2
             {
                 Text = Text + "(非管理员)";
             }
-            ProcessRun(keyupMusic3exe);
+            if (!ExsitProcess(keyupMusic3))
+                ProcessRun(keyupMusic3exe);
         }
     }
 }

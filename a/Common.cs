@@ -6,6 +6,7 @@ using System.Diagnostics;
 using System.Drawing.Imaging;
 using System.IO.MemoryMappedFiles;
 using System.Linq;
+using System.Media;
 using System.Numerics;
 using System.Runtime.InteropServices;
 using System.Security.Cryptography.Xml;
@@ -41,6 +42,7 @@ namespace keyupMusic2
         public const string HuyaClient = "HuyaClient";
         public const string QyClient = "QyClient";
         public const string ApplicationFrameHost = "ApplicationFrameHost";
+        public const string QQLive = "QQLive";
 
         public static string[] list = {
         keyupMusic2,
@@ -58,7 +60,7 @@ namespace keyupMusic2
         HuyaClient,
         ApplicationFrameHost,
         QyClient,
-        QQMusic,
+        QQLive,
         QQMusic,
         QQMusic,
         QQMusic,
@@ -68,6 +70,7 @@ namespace keyupMusic2
         public static List<string> list2 = new List<string> { };
 
 
+        public static SoundPlayer player = new SoundPlayer();
         public static bool hooked = false;
         public static bool stop_listen = false;
         public static bool ACPhoenix_mouse_hook = false;
@@ -460,7 +463,7 @@ namespace keyupMusic2
         }
         public static void press_middle_bottom()
         {
-            press("1333.1444", 0);
+            press("1333.1439", 0);
         }
 
             //1 返回原来鼠标位置
