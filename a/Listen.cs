@@ -32,10 +32,10 @@ namespace keyupMusic2
             //{ "小",       [Keys.VolumeDown,Keys.VolumeDown,Keys.VolumeDown,Keys.VolumeDown]},
             { "音量20",   [Keys.MediaPlayPause]},
 
-            { "上",       [Keys.Up]},
-            { "下",       [Keys.Down]},
-            { "左",       [Keys.Left]},
-            { "右",       [Keys.Right]},
+            //{ "上",       [Keys.Up]},
+            //{ "下",       [Keys.Down]},
+            //{ "左",       [Keys.Left]},
+            //{ "右",       [Keys.Right]},
 
             { "H",        [Keys.H]},
             { "X",        [Keys.X]},
@@ -185,14 +185,17 @@ namespace keyupMusic2
                 var text = recognizer.GetResult(s).Text;
                 bool isEndpoint = recognizer.IsEndpoint(s);
                 //
-                if (!string.IsNullOrWhiteSpace(text) && (lastText != text || (time_last.AddMilliseconds(2000) < DateTime.Now)))
-                //if (!string.IsNullOrWhiteSpace(text))
+                //if (!string.IsNullOrWhiteSpace(text) && (lastText != text || (time_last.AddMilliseconds(2000) < DateTime.Now)))
+                //if (!string.IsNullOrWhiteSpace(text) && (lastText != text)&& (time_last.AddMilliseconds(1544) < DateTime.Now))
+                if (!string.IsNullOrWhiteSpace(text) && (lastText != text))
+                //if (!string.IsNullOrWhiteSpace(text)) 
+                //if (!string.IsNullOrWhiteSpace(text) && (lastText != text || (time_last.AddSeconds(3) < DateTime.Now)))
                 {
                     //log("--------" + time_last.AddMilliseconds(800).ToString("yyyy-MM-dd HH:mm:ss.fff") + "-----" + DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss.fff"));
                     lastText = text;
                     Console.Write($"\r{segmentIndex}: {lastText}");
 
-                    Common.log($"{segmentIndex}-{lastText}" + "--------" + time_last.ToString("yyyy-MM-dd HH:mm:ss.fff") + "--------" + time_last.AddMilliseconds(2000).ToString("yyyy-MM-dd HH:mm:ss.fff") + "-----" + DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss.fff"));
+                    //Common.log($"{segmentIndex}-{lastText}" + "--------" + time_last.ToString("yyyy-MM-dd HH:mm:ss.fff") + "--------" + time_last.AddMilliseconds(2000).ToString("yyyy-MM-dd HH:mm:ss.fff") + "-----" + DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss.fff"));
                     action(lastText, segmentIndex);
                     aaaEvent(lastText, segmentIndex);
 

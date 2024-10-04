@@ -22,3 +22,4 @@
 1 mouse jump middle bottom
 1 mouse click run vs
 1 中文判断
+super zh

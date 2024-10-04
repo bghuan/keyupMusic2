@@ -84,7 +84,7 @@ namespace keyupMusic2
                 //case Keys.VolumeUp:
                 //    if (right_top) { press(Keys.F8); break; } else { raw_press(); break; }
                 case Keys.Delete:
-                    DaleyRun_stop = true; break;
+                    DaleyRun_stop = true; special_delete_key_time = DateTime.Now; break;
                 case Keys.LMenu:
                     yo(); break;
             }

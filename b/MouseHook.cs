@@ -84,7 +84,16 @@ namespace WGestures.Core.Impl.Windows
                 this.lParam = lParam;
             }
         }
-
+        //public class KeyEvent : KeyboardHookEventArgs
+        //{
+        //    public KeyEvent(KeyboardEventType type, Keys key, int wParam, Native.keyboardHookStruct lParam) : base(type, key, wParam, lParam)
+        //    {
+        //        Type = type;
+        //        this.wParam = wParam;
+        //        this.lParam = lParam;
+        //        this.key = key;
+        //    }
+        //}
         public class KeyboardHookEventArgs : EventArgs
         {
             public KeyboardEventType Type;

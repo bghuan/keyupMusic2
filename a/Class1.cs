@@ -4,6 +4,8 @@ using System.Linq;
 using System.Runtime.InteropServices;
 using System.Text;
 using System.Threading.Tasks;
+using static System.Net.Mime.MediaTypeNames;
+using static System.Runtime.CompilerServices.RuntimeHelpers;
 
 namespace keyupMusic2
 {
@@ -18,8 +20,11 @@ namespace keyupMusic2
         [DllImport("user32.dll", SetLastError = true)]
         private static extern uint SendInput(uint nInputs, ref INPUT pInputs, int cbSize);
 
+        //[DllImport("user32.dll", SetLastError = true)]
+        //public unsafe static extern UInt32 SendInput(UInt32 numberOfInputs, INPUT* inputs, Int32 sizeOfInputStructure);
+
         [StructLayout(LayoutKind.Sequential)]
-        private struct INPUT
+        public struct INPUT
         {
             public uint type;
             public InputUnion U;
@@ -136,6 +141,23 @@ namespace keyupMusic2
 
             SendInput((uint)inputs.Length, ref inputs[0], KeyboardInput.INPUT.Size);
         }
+
+        //public unsafe static void SendString2(string text)
+        //{
+        //    var inputs = new INPUT[text.Length * 2];
+        //    for (int i = 0; i < text.Length; i++)
+        //    {
+        //        ushort vk = VirtualKeyFromChar(text[i]);
+        //        inputs[i * 2] = KeyboardInput.INPUT.CreateKeyDown(vk);
+        //        inputs[i * 2 + 1] = KeyboardInput.INPUT.CreateKeyUp(vk);
+        //    }
+
+        //    var input = stackalloc INPUT[1];
+        //    input[0] = inputs[0];
+
+        //    var successful = SendInput((uint)inputs.Length, input, Marshal.SizeOf(typeof(INPUT)));
+        //}
+
 
         // 辅助函数：从字符到虚拟键码的映射（这里仅处理ASCII字符）  
         private static ushort VirtualKeyFromChar(char c)

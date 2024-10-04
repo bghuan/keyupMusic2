@@ -1,4 +1,5 @@
 ﻿using System.Diagnostics;
+using System.Management;
 using System.Media;
 using System.Runtime.InteropServices;
 using System.Text;
@@ -26,6 +27,7 @@ namespace keyupMusic2
         {
             //if (ProcessName != Common.keyupMusic2) return;
             if (!huan.keyupMusic2_onlisten) return;
+            //if (is_ctrl() && is_shift()) return;
             Common.hooked = true;
             string label_backup = huan.label1.Text;
             bool catched = false;
@@ -37,7 +39,9 @@ namespace keyupMusic2
             switch (e.key)
             {
                 case Keys.Q:
-                    press("LWin;OPEN;Enter;500;1056, 411;1563, 191", 101);
+                    press("LWin;OPEN;Enter;500;", 101);
+                    if(judge_color(1493, 1109, Color.FromArgb(237, 127, 34)))
+                    press("1056, 411;1563, 191", 101);
                     break;
                 case Keys.W:
                     start_listen_to_word();
@@ -80,6 +84,7 @@ namespace keyupMusic2
                     new AAA().hook_KeyDown_ddzzq(new KeyboardHookEventArgs(WGestures.Core.Impl.Windows.KeyboardEventType.KeyDown, Keys.F11, 0, new WGestures.Common.OsSpecific.Windows.Native.keyboardHookStruct()));
                     break;
                 case Keys.F:
+                    press("0.0", 100);
                     break;
                 case Keys.G:
                     get_point_color(e);
@@ -92,6 +97,20 @@ namespace keyupMusic2
                     press("LWin;CHR;Enter;", 100);
                     break;
                 case Keys.K:
+                    ManagementObjectSearcher searcher = new ManagementObjectSearcher(
+                "SELECT * FROM Win32_PnPEntity");
+
+                    ManagementObjectCollection collection = searcher.Get();
+
+                    foreach (ManagementObject mo in collection)
+                    {
+                        Console.WriteLine("Device ID: " + mo["DeviceID"]);
+                        Console.WriteLine("Name: " + mo["Name"]);
+                        Console.WriteLine("PNPDeviceID: " + mo["PNPDeviceID"]);
+                        Console.WriteLine("PNPClass: " + mo["PNPClass"]);
+                        Console.WriteLine("Caption: " + mo["Caption"]);
+                        Console.WriteLine("----------------------------------");
+                    }
                     break;
                 case Keys.L:
                     Thread.Sleep(2000);
@@ -101,12 +120,14 @@ namespace keyupMusic2
                     press("100;LWin;KK;Enter;", 110);
                     break;
                 case Keys.X:
+                    Thread.Sleep(3000);
+                    mouse_move(1, 1);
+                    press(Keys.Left);
                     break;
                 case Keys.C:
-                    press("1333.1444", 0);
+                    press_middle_bottom();
                     break;
                 case Keys.V:
-                    //KeyboardInput.SendString("mG");
                     ////KeyboardInput2.SendString("Hello, World!");
                     ////KeyboardInput3.SendString("Hello, World!");
                     ////SendKeyboardMouse sendKeyMouse = new SendKeyboardMouse();
@@ -114,15 +135,20 @@ namespace keyupMusic2
                     Invoke(() => { try { press(Clipboard.GetText()); } catch { } });
                     break;
                 case Keys.B:
+                    stop_keys = new List<Keys>();
+                    break;
+                case Keys.N:
+                    //ctrl_shift();
+                    //KeyboardInput.SendString("xiexielaoban");
                     break;
                 case Keys.M:
                     FocusProcess(Common.chrome);
-                    press_dump(Keys.M, 200);
+                    KeyboardInput.SendString("f");
                     break;
 
                 case Keys.F1:
                     Invoke(() => { huan.SetVisibleCore2(!huan.Visible); });
-                    HideProcess(keyupMusic3);
+                    hide_keyupmusic3();
                     //HideProcess(chrome);
                     break;
                 case Keys.F2:
@@ -246,6 +272,7 @@ namespace keyupMusic2
             Invoke(() => huan.SetVisibleCore2(Listen.is_listen));
             Listen.aaaEvent += huan.handle_word;
             if (Listen.is_listen) Task.Run(() => Listen.listen_word(new string[] { }, (string asd, int a) => { }));
+            speak_word = "";
         }
 
         private static void dragonest_run()

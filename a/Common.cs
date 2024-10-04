@@ -25,6 +25,7 @@ namespace keyupMusic2
     {
         public const string keyupMusic2 = "keyupMusic2";
         public const string keyupMusic3 = "keyupMusic3";
+        public const string keyupMusic3exe = "C:\\Users\\bu\\source\\repos\\keyupMusic3\\bin\\Debug\\net8.0-windows\\keyupMusic3.exe";
         public const string ACPhoenix = "ACPhoenix";
         public const string Dragonest = "DragonestGameLauncher";
         public const string devenv = "devenv";
@@ -64,10 +65,13 @@ namespace keyupMusic2
         QQMusic,
         QQMusic,
         };
+        public static List<string> list2 = new List<string> { };
+
 
         public static bool hooked = false;
         public static bool stop_listen = false;
         public static bool ACPhoenix_mouse_hook = false;
+        public static DateTime special_delete_key_time;
 
         public static string ProcessName = "";
         public static string ProcessName2
@@ -255,6 +259,8 @@ namespace keyupMusic2
         {
             //x = x * 3840 / 2560;
             //y = y * 2160 / 1440;
+            x += 1;
+            y += 1;
             mouse_event(MOUSEEVENTF_ABSOLUTE | MOUSEEVENTF_MOVE, x * 65536 / screenWidth, y * 65536 / screenHeight, 0, 0);
             Thread.Sleep(tick);
         }
@@ -353,6 +359,16 @@ namespace keyupMusic2
             }
             return false;
         }
+        public static void hide_keyupmusic3()
+        {
+            {
+                HideProcess(keyupMusic3);
+                var _po = Position;
+                press("2467.220", 110);
+                if (judge_color(2467, 220, Color.FromArgb(196, 43, 28))) { press("2352,226", 10); }
+                press(_po.X + "." + _po.Y, 0);
+            }
+        }
         public static bool ExsitProcess(string procName)
         {
             Process[] objProcesses = Process.GetProcessesByName(procName);
@@ -442,11 +458,15 @@ namespace keyupMusic2
         {
             _press_hold(keys, tick);
         }
+        public static void press_middle_bottom()
+        {
+            press("1333.1444", 0);
+        }
 
-        //1 返回原来鼠标位置
-        //2
-        //3 跳过delete return
-        public static void ctrl_shift(bool zh)
+            //1 返回原来鼠标位置
+            //2
+            //3 跳过delete return
+            public static void ctrl_shift(bool zh=true)
         {
             var flag = (judge_color(2289, 1411, Color.FromArgb(202, 202, 202)));
             if (zh && !flag)

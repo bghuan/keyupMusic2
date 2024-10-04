@@ -636,7 +636,7 @@ namespace keyupMusic2
         internal static extern IntPtr SetWindowLong(IntPtr hWnd, int nIndex, int dwNewLong);
 
         [DllImport("User32.dll", EntryPoint = "SendInput", CharSet = CharSet.Auto)]
-        internal static extern UInt32 SendInput(UInt32 nInputs, Input[] pInputs, Int32 cbSize);
+        internal static extern UInt32 SendInput(UInt32 nInputs, Input[] pInputs, Int32 cbSize); 
 
         [DllImport("Kernel32.dll", EntryPoint = "GetTickCount", CharSet = CharSet.Auto)]
         internal static extern int GetTickCount();

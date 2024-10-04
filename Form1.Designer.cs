@@ -262,13 +262,13 @@
             AutoScaleDimensions = new SizeF(11F, 24F);
             AutoScaleMode = AutoScaleMode.Font;
             BackColor = SystemColors.Window;
-            ClientSize = new Size(329, 26);
+            ClientSize = new Size(266, 26);
             ContextMenuStrip = contextMenuStrip1;
             Controls.Add(label2);
             Controls.Add(label1);
             DoubleBuffered = true;
             Icon = (Icon)resources.GetObject("$this.Icon");
-            Location = new Point(2170, 100);
+            Location = new Point(2250, 100);
             Margin = new Padding(4);
             Name = "Huan";
             ShowIcon = false;
