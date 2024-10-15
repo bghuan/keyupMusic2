@@ -814,10 +814,14 @@ namespace keyupMusic2
         }
         public static void ProcessRun(string str)
         {
-            ProcessStartInfo startInfo2 = new ProcessStartInfo(str);
-            startInfo2.UseShellExecute = true;
-            startInfo2.Verb = "runas";
-            Process.Start(startInfo2);
+            try
+            {
+                ProcessStartInfo startInfo2 = new ProcessStartInfo(str);
+                startInfo2.UseShellExecute = true;
+                startInfo2.Verb = "runas";
+                Process.Start(startInfo2);
+            }
+            catch { }
         }
         public static void DaleyRun(Func<bool> action, int alltime, int tick)
         {

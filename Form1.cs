@@ -117,7 +117,7 @@ namespace keyupMusic2
             {
                 if (ProcessName == HuyaClient) return true;
             }
-            if (is_esc())
+            if (is_down(Keys.F1))
             {
                 var number_button = new List<Keys> { Keys.Oemcomma, Keys.OemPeriod, Keys.Oem2, Keys.K, Keys.L, Keys.OemSemicolon, Keys.I, Keys.O, Keys.P, Keys.Space };
                 if (number_button.Contains(e.key))

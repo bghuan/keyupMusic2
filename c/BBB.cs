@@ -57,7 +57,7 @@ namespace keyupMusic2
             //            break;
             //    }
 
-            if (is_esc())
+            if (is_down(Keys.F1))
                 switch (e.key)
                 {
                     case Keys.Oemcomma:

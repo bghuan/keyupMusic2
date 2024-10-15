@@ -127,21 +127,23 @@ namespace keyupMusic2
                 //    });
                 //    break;
                 case Keys.F1:
-                    Invoke(() => Clipboard.SetText("攻击"));
+                    var aaa = Position;
+                    press("2220,1385", 100);
                     press([Keys.LControlKey, Keys.V]);
+                    press([Keys.Enter]);
+                    press(aaa.X + "." + aaa.Y, 100);
                     break;
-                case Keys.F2:
-                    Invoke(() => Clipboard.SetText("增援"));
-                    press([Keys.LControlKey, Keys.V]);
-                    break;
-                case Keys.F5:
-                    Invoke(() => Clipboard.SetText("全军出击"));
-                    press([Keys.LControlKey, Keys.V]);
-                    break;
-                case Keys.F6:
-                    Invoke(() => Clipboard.SetText("修养生息"));
-                    press([Keys.LControlKey, Keys.V]);
-                    break;
+                //case Keys.F2:
+                //case Keys.F5:
+                //    string txt = "攻击";
+                //    if (is_ctrl()) txt = "全军出击";
+                //    Invoke(() => Clipboard.SetText(txt));
+                //    press([Keys.LControlKey, Keys.V]);
+                //    break;
+                //case Keys.F6:
+                //    Invoke(() => Clipboard.SetText("增援"));
+                //    press([Keys.LControlKey, Keys.V]);
+                //    break;
                 case Keys.Enter:
                     if (!is_ctrl()) break;
                     string old_clipboard = "";
