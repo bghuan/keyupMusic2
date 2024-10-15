@@ -1,4 +1,5 @@
-﻿using System.Diagnostics;
+﻿using System;
+using System.Diagnostics;
 using System.Management;
 using System.Media;
 using System.Runtime.InteropServices;
@@ -17,19 +18,28 @@ namespace keyupMusic2
         {
             huan = (Huan)parentForm;
         }
-        public Huan huan;
+        public Super()
+        {
+        }
+        public static Huan huan;
         Keys[] keys = { Keys.D0, Keys.D1, Keys.D2, Keys.D3, Keys.D4, Keys.D5, Keys.D6, Keys.D7, Keys.D8, Keys.D9 };
         bool key_sound = true;
         bool start_record = false;
         string commnd_record = "";
 
+        public static void hook_KeyDown(Keys keys)
+        {
+            huan.keyupMusic2_onlisten = true;
+            var e = new KeyboardHookEventArgs(WGestures.Core.Impl.Windows.KeyboardEventType.KeyDown, keys, 0, new WGestures.Common.OsSpecific.Windows.Native.keyboardHookStruct());
+            new Super().hook_KeyDown_keyupMusic2(e);
+        }
         public void hook_KeyDown_keyupMusic2(KeyboardHookEventArgs e)
         {
             //if (ProcessName != Common.keyupMusic2) return;
             if (!huan.keyupMusic2_onlisten) return;
             //if (is_ctrl() && is_shift()) return;
             Common.hooked = true;
-            string label_backup = huan.label1.Text;
+            //string label_backup = huan.label1.Text;
             bool catched = true;
 
             switch (e.key)
@@ -136,14 +146,14 @@ namespace keyupMusic2
                     paly_sound(Keys.D1);
                     break;
                 case Keys.B:
+                    Invoke(() => { Clipboard.Clear(); });
                     stop_keys = new List<Keys>();
                     break;
                 case Keys.N:
-                    //ctrl_shift();
-                    //KeyboardInput.SendString("xiexielaoban");
+                    notify();
                     break;
                 case Keys.M:
-                    FocusProcess(Common.chrome);
+                    //FocusProcess(Common.chrome);
                     KeyboardInput.SendString("f");
                     break;
 
@@ -170,6 +180,12 @@ namespace keyupMusic2
                 case Keys.F5:
                     //log_always = !log_always;
                     press(Keys.MediaPlayPause);
+                    break;
+                case Keys.F6:
+                    Process[] processes = Process.GetProcessesByName(keyupMusic2.Common.keyupMusic2);
+                    Process[] processes2 = Process.GetProcessesByName(keyupMusic2.Common.keyupMusic3);
+                    processes2[0].Kill();
+                    processes[0].Kill();
                     break;
                 case Keys.Up:
                     Invoke(() => huan.Opacity = huan.Opacity >= 1 ? 1 : huan.Opacity + 0.1);
@@ -211,6 +227,22 @@ namespace keyupMusic2
                     player.Play();
                 }
             }
+        }
+
+        private static void notify()
+        {
+            //ctrl_shift();
+            //KeyboardInput.SendString("xiexielaoban");
+            //huan.Invoke2(() =>
+            //{
+            // 创建一个通知图标对象
+            NotifyIcon notifyIcon = new NotifyIcon();
+            notifyIcon.Icon = SystemIcons.Application;
+            notifyIcon.Visible = true;
+            notifyIcon.BalloonTipTitle = "拯救锁屏无登录";
+            notifyIcon.BalloonTipText = "这是一个系统通知内容。";
+            notifyIcon.ShowBalloonTip(5000);
+            //});
         }
 
         private static void dragonest()

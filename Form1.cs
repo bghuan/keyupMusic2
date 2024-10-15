@@ -28,7 +28,7 @@ namespace keyupMusic2
 
             aCPhoenix = new ACPhoenix();
             Devenv = new devenv();
-            Douyin = new douyin();
+            Douyin = new douyin(this);
             Aaa = new AAA();
             Bbb = new BBB();
             super = new Super(this);
@@ -53,6 +53,14 @@ namespace keyupMusic2
                 TaskRun(() => { Invoke(() => SetVisibleCore(false)); }, 200);
             }
         }
+        public void Invoke(Action method)
+        {
+            try { base.Invoke(method); }
+            catch (Exception ex)
+            {
+                log(ex.Message);
+            }
+        }
         public bool keyupMusic2_onlisten = false;
         DateTime super_listen_time = new DateTime();
         static int super_listen_tick = 144 * 14;
@@ -71,9 +79,8 @@ namespace keyupMusic2
         public bool judge_handled(KeyboardHookEventArgs e, string ProcessName)
         {
             if (is_alt() && is_down(Keys.Tab)) return false;
-            if (e.key == Keys.D1) return true;
-            if (e.key == Keys.D2) return true;
-            if (e.key == Keys.F3) return true;
+            //if (e.key == Keys.D1 && is_down(Keys.LWin)) return true;
+            //if (e.key == Keys.D2 && is_down(Keys.LWin)) return true;
             if (e.key == Keys.F3) return true;
             if (e.key == Keys.F11 && ProcessName == Common.devenv && !is_ctrl()) return true;
             if (e.key == Keys.F11 && ProcessName == Common.explorer && !is_ctrl()) return true;
@@ -109,6 +116,12 @@ namespace keyupMusic2
             if (e.key == Keys.MediaPreviousTrack || e.key == Keys.MediaPlayPause)
             {
                 if (ProcessName == HuyaClient) return true;
+            }
+            if (is_esc())
+            {
+                var number_button = new List<Keys> { Keys.Oemcomma, Keys.OemPeriod, Keys.Oem2, Keys.K, Keys.L, Keys.OemSemicolon, Keys.I, Keys.O, Keys.P, Keys.Space };
+                if (number_button.Contains(e.key))
+                    return true;
             }
             var flag = chrome.judge_handled(e) || Douyin.judge_handled(e);
             return flag;

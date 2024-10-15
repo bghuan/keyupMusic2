@@ -128,18 +128,34 @@ namespace keyupMusic2
         }
 
         // 使用SendInput发送字符串  
+        //public static void SendString(string text)
+        //{
+        //    var inputs = new INPUT[text.Length * 2];
+
+        //    for (int i = 0; i < text.Length; i++)
+        //    {
+        //        ushort vk = VirtualKeyFromChar(text[i]);
+        //        inputs[i * 2] = KeyboardInput.INPUT.CreateKeyDown(vk);
+        //        inputs[i * 2 + 1] = KeyboardInput.INPUT.CreateKeyUp(vk);
+        //    }
+
+        //    SendInput((uint)inputs.Length, ref inputs[0], KeyboardInput.INPUT.Size);
+        //}
         public static void SendString(string text)
         {
-            var inputs = new INPUT[text.Length * 2];
+            var keyDownInputs = new INPUT[text.Length];
+            var keyUpInputs = new INPUT[text.Length];
 
             for (int i = 0; i < text.Length; i++)
             {
                 ushort vk = VirtualKeyFromChar(text[i]);
-                inputs[i * 2] = KeyboardInput.INPUT.CreateKeyDown(vk);
-                inputs[i * 2 + 1] = KeyboardInput.INPUT.CreateKeyUp(vk);
+                keyDownInputs[i] = KeyboardInput.INPUT.CreateKeyDown(vk);
+                keyUpInputs[i] = KeyboardInput.INPUT.CreateKeyUp(vk);
             }
 
-            SendInput((uint)inputs.Length, ref inputs[0], KeyboardInput.INPUT.Size);
+            SendInput((uint)keyDownInputs.Length, ref keyDownInputs[0], KeyboardInput.INPUT.Size);
+            Thread.Sleep(107);
+            SendInput((uint)keyUpInputs.Length, ref keyUpInputs[0], KeyboardInput.INPUT.Size);
         }
 
         //public unsafe static void SendString2(string text)

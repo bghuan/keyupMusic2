@@ -268,7 +268,7 @@
             Controls.Add(label1);
             DoubleBuffered = true;
             Icon = (Icon)resources.GetObject("$this.Icon");
-            Location = new Point(2250, 100);
+            Location = new Point(Screen.PrimaryScreen.Bounds.Width - 310, 100);
             Margin = new Padding(4);
             Name = "Huan";
             ShowIcon = false;

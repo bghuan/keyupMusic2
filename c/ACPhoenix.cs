@@ -57,7 +57,7 @@ namespace keyupMusic2
                     }
                     //打开关闭好友列表
                     if (is_ctrl() && try_press(47, 90, Color.FromArgb(231, 232, 231), () => { press("100;203, 66; 157,359;" + nothing4, 0); })) break;
-                    if (judge_color(0, 1426, Color.FromArgb(13, 39, 75), () => { press(nothing4.Replace(".", ",")); })) break;
+                    //if (judge_color(0, 1426, Color.FromArgb(13, 39, 75), () => { press(nothing4.Replace(".", ",")); })) break;
                     break;
                 case Keys.Escape:
                     if (try_press(870, 1243, Color.FromArgb(26, 125, 222), () => { press("2452,185;2452,185;" + nothing, 100); })) break;
@@ -79,12 +79,12 @@ namespace keyupMusic2
                     //}
                     break;
                 case Keys.Oem7:
-                    if (!judge_color(1353, 1407, Color.FromArgb(255, 162, 16), () => { })) break;
-                    press("Back;", 0);
-                    ctrl_shift(true);
-                    KeyboardInput.SendString("xiexielaoban");
-                    press(Keys.Space);
-                    break;
+                    //if (!judge_color(1353, 1407, Color.FromArgb(255, 162, 16), () => { })) break;
+                    //press("Back;", 0);
+                    ////ctrl_shift(true);
+                    //KeyboardInput.SendString("xiexielaoban");
+                    //press(Keys.Space);
+                    //break;
                     KeyboardInput.SendString("x");
                     Thread.Sleep(200);
                     if (judge_color(1076, 1416, Color.FromArgb(249, 249, 249), () => { }))
@@ -123,7 +123,7 @@ namespace keyupMusic2
                 case Keys.D7:
                 case Keys.D8:
                     int num = int.Parse(e.key.ToString().Replace("D", ""));
-                    if (judge_color(515, 25, Color.FromArgb(9, 72, 177), () => { press("800," + (num * 170 + 510 - 170) + ";Space", 1); })) break;
+                    //if (judge_color(515, 25, Color.FromArgb(9, 72, 177), () => { press("800," + (num * 170 + 510 - 170) + ";Space", 1); })) break;
                     if (!is_ctrl() && !is_alt()) break;
                     press("300," + (num * 104 + 100), 1);
                     break;
@@ -143,15 +143,15 @@ namespace keyupMusic2
                 //case Keys.S:
                 //    if (is_ctrl()) { down_mouse(); press("10;S;10", 0); up_mouse(); break; }
                 //    break;
-                case Keys.W:
-                    //if (is_ctrl()) { down_mouse(); press("60;S", 0); up_mouse(); break; }
-                    //if (judge_color(170, 892, Color.FromArgb(185, 194, 205), () => { raw_press(); })) break;
-                    //if (judge_color(2202, 644, Color.FromArgb(239, 116, 108), () => { press("963,946"); })) break;//装备2
-                    if (judge_color(0, 1439, Color.FromArgb(79, 122, 238), () => { })) break;
-                    if (is_ctrl() || is_alt()) { mouse_click(); mouse_click(); break; }
-                    mouse_downing = true;
-                    down_mouse();
-                    break;
+                //case Keys.W:
+                //    //if (is_ctrl()) { down_mouse(); press("60;S", 0); up_mouse(); break; }
+                //    //if (judge_color(170, 892, Color.FromArgb(185, 194, 205), () => { raw_press(); })) break;
+                //    //if (judge_color(2202, 644, Color.FromArgb(239, 116, 108), () => { press("963,946"); })) break;//装备2
+                //    if (judge_color(0, 1439, Color.FromArgb(79, 122, 238), () => { })) break;
+                //    if (is_ctrl() || is_alt()) { mouse_click(); mouse_click(); break; }
+                //    mouse_downing = true;
+                //    down_mouse();
+                //    break;
                 case Keys.R:
                     //if (judge_color(2202, 644, Color.FromArgb(239, 116, 108), () => { press("2220,938"); })) break;//装备4
                     //(2413,1089, Color.FromArgb(231,125,8)(1807,1125, Color.FromArgb(32,52,75)(2002,349, Color.FromArgb(255,139,0)
@@ -205,14 +205,6 @@ namespace keyupMusic2
                     break;
                 case Keys.A:
                     if (is_ctrl()) { press(Keys.A); press(Keys.A); press(Keys.A); break; }
-                    //Task.Run(() =>
-                    //{
-                    //    for (var i = 0; i < 50; i++)
-                    //    {
-                    //        if (!is_ctrl()) break;
-                    //        mouse_click2(50);
-                    //    }
-                    //});
                     break;
                 case Keys.Delete:
                     if (judge_color(2409, 265, Color.FromArgb(93, 199, 250)) && judge_color(2358, 263, Color.FromArgb(93, 199, 250)))

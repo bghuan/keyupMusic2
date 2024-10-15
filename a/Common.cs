@@ -24,6 +24,45 @@ namespace keyupMusic2
 {
     public class Common
     {
+        public static int[] deal_size_x_y(int x, int y)
+        {
+            x = x + 1;
+            y = y + 1;
+            x = x * screenWidth / 2560;
+            y = y * screenHeight / 1440;
+            return new int[] { x, y };
+        }
+        public static void mouse_move(int x, int y, int tick = 0)
+        {
+            x = deal_size_x_y(x, y)[0];
+            y = deal_size_x_y(x, y)[1];
+            mouse_event(MOUSEEVENTF_ABSOLUTE | MOUSEEVENTF_MOVE, x * 65536 / screenWidth, y * 65536 / screenHeight, 0, 0);
+            Thread.Sleep(tick);
+        }
+        public static bool judge_color(int x, int y, Color color, Action action = null, int similar = 50)
+        {
+            x = deal_size_x_y(x, y)[0];
+            y = deal_size_x_y(x, y)[1];
+            var asd = get_mouse_postion_color(new Point(x, y));
+            var flag = AreColorsSimilar(asd, color, similar);
+            if (flag && action != null) action();
+            return flag;
+        }
+        public static bool try_press(int x, int y, Color color, Action action = null)
+        {
+            x = deal_size_x_y(x, y)[0];
+            y = deal_size_x_y(x, y)[1];
+            var asd = get_mouse_postion_color(new Point(x, y));
+            var flag = AreColorsSimilar(asd, color);
+            if (flag)
+            {
+                var flag2 = action != null;
+                press(x + "," + y, flag2 ? 100 : 101);
+                if (flag2) action();
+                else lastPosition = Position;
+            }
+            return flag;
+        }
         public const string keyupMusic2 = "keyupMusic2";
         public const string keyupMusic3 = "keyupMusic3";
         public const string keyupMusic3exe = "C:\\Users\\bu\\source\\repos\\keyupMusic3\\bin\\Debug\\net8.0-windows\\keyupMusic3.exe";
@@ -129,6 +168,15 @@ namespace keyupMusic2
             Common.ProcessName = ProcessName;
             return ProcessName;
         }
+        public static string GetWindowText()
+        {
+            IntPtr hwnd = GetForegroundWindow(); // 获取当前活动窗口的句柄
+
+            string windowTitle = GetWindowText(hwnd);
+            //Console.WriteLine("当前活动窗口名称: " + windowTitle);
+
+            return windowTitle;
+        }
         static string proc_info = "";
         public static string log_process(string key = "")
         {
@@ -197,6 +245,10 @@ namespace keyupMusic2
         {
             return Native.GetAsyncKeyState(Keys.ControlKey) < 0;
         }
+        public static bool is_esc()
+        {
+            return Native.GetAsyncKeyState(Keys.Escape) < 0;
+        }
         public static bool is_alt()
         {
             return Native.GetAsyncKeyState(Keys.LMenu) < 0;
@@ -258,15 +310,6 @@ namespace keyupMusic2
         [DllImport("user32.dll")]
         public static extern bool SetForegroundWindow(IntPtr WindowHandle);
 
-        public static void mouse_move(int x, int y, int tick = 0)
-        {
-            //x = x * 3840 / 2560;
-            //y = y * 2160 / 1440;
-            x += 1;
-            y += 1;
-            mouse_event(MOUSEEVENTF_ABSOLUTE | MOUSEEVENTF_MOVE, x * 65536 / screenWidth, y * 65536 / screenHeight, 0, 0);
-            Thread.Sleep(tick);
-        }
         public static void mouse_move(int x, int y, int x2, int y2)
         {
             mouse_move(x, y);
@@ -338,11 +381,6 @@ namespace keyupMusic2
         {
             mouse_event(MOUSEEVENTF_LEFTUP, 0, 0, 0, 0);
             Thread.Sleep(tick);
-        }
-        public static void mouse_click2()
-        {
-            Console.WriteLine(DateTime.Now.ToString() + "." + DateTime.Now.Millisecond.ToString("#000") + " mouse_click");
-            mouse_event(MOUSEEVENTF_RIGHTDOWN | MOUSEEVENTF_RIGHTUP, 0, 0, 0, 0);
         }
         public static bool FocusProcess(string procName)
         {
@@ -466,15 +504,15 @@ namespace keyupMusic2
             press("1333.1439", 0);
         }
 
-            //1 返回原来鼠标位置
-            //2
-            //3 跳过delete return
-            public static void ctrl_shift(bool zh=true)
+        //1 返回原来鼠标位置
+        //2
+        //3 跳过delete return
+        public static void ctrl_shift(bool zh = true)
         {
             var flag = (judge_color(2289, 1411, Color.FromArgb(202, 202, 202)));
             if (zh && !flag)
-                press(Keys.LShiftKey,10);
-            else if(!zh && flag)
+                press(Keys.LShiftKey, 10);
+            else if (!zh && flag)
                 press(Keys.LShiftKey, 10);
             return;
             if (zh)
@@ -622,33 +660,9 @@ namespace keyupMusic2
                 }
             }
         }
-        public static bool judge_color(int x, int y, Color color, Action action = null, int similar = 50)
-        {
-            //x = x * 3840 / 2560;
-            //y = y * 2160 / 1440;
-            var asd = get_mouse_postion_color(new Point(x, y));
-            var flag = AreColorsSimilar(asd, color, similar);
-            if (flag && action != null) action();
-            return flag;
-        }
         public static bool try_press(Color color, Action action = null)
         {
             return try_press(Position.X, Position.Y, color, action);
-        }
-        public static bool try_press(int x, int y, Color color, Action action = null)
-        {
-            //x = x * 3840 / 2560;
-            //y = y * 2160 / 1440;
-            var asd = get_mouse_postion_color(new Point(x, y));
-            var flag = AreColorsSimilar(asd, color);
-            if (flag)
-            {
-                var flag2 = action != null;
-                press(x + "," + y, flag2 ? 100 : 101);
-                if (flag2) action();
-                else lastPosition = Position;
-            }
-            return flag;
         }
         public static bool try_press2(int x, int y, Color color, Action action = null, int similar = 70)
         {
@@ -851,6 +865,53 @@ namespace keyupMusic2
         public static void Sleep(int tick)
         {
             Thread.Sleep(tick);
+        }
+
+        [DllImport("user32.dll", SetLastError = true)]
+        private static extern bool GetWindowRect(IntPtr hWnd, out RECT lpRect);
+
+        [DllImport("user32.dll")]
+        private static extern int GetSystemMetrics(int nIndex);
+
+        // Structure to hold window rectangle  
+        [StructLayout(LayoutKind.Sequential)]
+        private struct RECT
+        {
+            public int Left;
+            public int Top;
+            public int Right;
+            public int Bottom;
+        }
+
+        // Constants for GetSystemMetrics  
+        private const int SM_CXSCREEN = 0;
+        private const int SM_CYSCREEN = 1;
+
+        public static bool IsFullScreen()
+        {
+            IntPtr hWnd = GetForegroundWindow();
+            if (hWnd == IntPtr.Zero)
+            {
+                // No foreground window found  
+                return false;
+            }
+
+            RECT windowRect;
+            if (!GetWindowRect(hWnd, out windowRect))
+            {
+                // Failed to get window rectangle  
+                return false;
+            }
+
+            int screenWidth = GetSystemMetrics(SM_CXSCREEN);
+            int screenHeight = GetSystemMetrics(SM_CYSCREEN);
+
+            //Thread.Sleep(1000); 
+            // Check if the window covers the entire screen  
+            return windowRect.Left == 0 &&
+                   windowRect.Top == 0 &&
+                   windowRect.Right == screenWidth &&
+                   windowRect.Bottom == screenHeight;
         }
     }
 }

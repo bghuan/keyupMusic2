@@ -7,13 +7,13 @@
     <UseWindowsForms>true</UseWindowsForms>
     <ImplicitUsings>enable</ImplicitUsings>
     <StartupObject>keyupMusic2.Program</StartupObject>
-    <ApplicationIcon>b (5).ico</ApplicationIcon>
+    <ApplicationIcon>ztemp\b (5).ico</ApplicationIcon>
     <PackageIcon></PackageIcon>
     <AllowUnsafeBlocks>False</AllowUnsafeBlocks>
   </PropertyGroup>
 
   <ItemGroup>
-    <Content Include="b (5).ico" />
+    <Content Include="ztemp\b (5).ico" />
   </ItemGroup>
 
   <ItemGroup>

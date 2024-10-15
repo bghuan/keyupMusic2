@@ -11,6 +11,14 @@ namespace keyupMusic2
 {
     public class douyin : Default
     {
+        public douyin(Form parentForm)
+        {
+            huan = (Huan)parentForm;
+        }
+        public douyin()
+        {
+        }
+        public static Huan huan;
         bool signle = true;
         public static Keys[] judge_handled_key = { Keys.X, Keys.H, };
         int num;
@@ -21,7 +29,7 @@ namespace keyupMusic2
             //if (judge_handled_key.Contains(e.key)) return true;
             if (is_ctrl())
             {
-                if (e.key == Keys.Left || e.key == Keys.Right || e.key == Keys.A || e.key == Keys.D)
+                if (e.key == Keys.Left || e.key == Keys.Right || e.key == Keys.Enter)
                     return true;
             }
             return false;
@@ -29,7 +37,8 @@ namespace keyupMusic2
         public void hook_KeyDown_ddzzq(KeyboardHookEventArgs e)
         {
             string module_name = ProcessName;
-            if (module_name != ClassName() && module_name != Common.msedge) return;
+            if (module_name != ClassName()) return;
+            //if (module_name != ClassName() && module_name != Common.msedge) return;
             if (is_down(Keys.LWin)) return;
             //if (!handling) return;
             Common.hooked = true;
@@ -64,54 +73,100 @@ namespace keyupMusic2
                     }
                     raw_press();
                     break;
-                case Keys.Oem3:
-                case Keys.D1:
-                case Keys.D2:
-                case Keys.D3:
-                case Keys.D4:
-                case Keys.D5:
-                case Keys.D6:
-                    if (module_name != ClassName()) break;
-                    num = int.Parse(e.key.ToString().Replace("D", "").Replace("Oem3", "0"));
-                    press("2236.1400;2226," + (1030 + (num * 50)), 101);
-                    break;
-                case Keys.LControlKey:
-                    if (module_name == Common.douyin)
-                        press_middle_bottom();
-                    break;
-                case Keys.End:
-                    if (module_name == Common.msedge)
-                    {
-                        string windowTitle = GetWindowText(GetForegroundWindow());
-                        if (windowTitle.IndexOf("起点中文网") >= 0) break;
-                        raw_press();
-                    }
-                    break;
+                //case Keys.Oem3:
+                //case Keys.D1:
+                //case Keys.D2:
+                //case Keys.D3:
+                //case Keys.D4:
+                //case Keys.D5:
+                //case Keys.D6:
+                //    if (module_name != ClassName()) break;
+                //    num = int.Parse(e.key.ToString().Replace("D", "").Replace("Oem3", "0"));
+                //    press("2236.1400;2226," + (1030 + (num * 50)), 101);
+                //    break;
+                //case Keys.LControlKey:
+                //    if (module_name == Common.douyin)
+                //        press_middle_bottom();
+                //    break;
+                //case Keys.D3:
+                //case Keys.D4:
+                //case Keys.D5:
+                //case Keys.D6:
+                //    if (module_name != ClassName()) break;
+                //    num = int.Parse(e.key.ToString().Replace("D", "").Replace("Oem3", "0"));
+                //    press("2236.1400;2226," + (1030 + (num * 50)), 101);
+                //    break;
                 case Keys.Right:
-                case Keys.D:
-                    if (module_name != ClassName()) break;
+                    //case Keys.D:
                     if (!is_ctrl()) break;
-                    if (num1222 <= 3 && num1222 > 0) num1222++;
+                    if (num1222 < 3 && num1222 >= 1) num1222++;
                     if (num1222 == 2) num = 5;
                     else if (num1222 == 3) num = 6;
                     else num = 1;
                     press("2236.1400;2226," + (1030 + (num * 50)), 101);
                     break;
                 case Keys.Left:
-                case Keys.A:
-                    if (module_name != ClassName()) break;
+                    //case Keys.A:
                     if (!is_ctrl()) break;
-                    if (num1222 <= 3 && num1222 > 0) num1222--;
+                    if (num1222 <= 3 && num1222 > 1) num1222--;
                     if (num1222 == 2) num = 5;
                     else if (num1222 == 3) num = 6;
                     else num = 1;
                     press("2236.1400;2226," + (1030 + (num * 50)), 101);
                     break;
+                //case Keys.F5:
+                //    zan = !zan;
+                //    Task.Run(() =>
+                //    {
+                //        while (zan)
+                //        {
+                //            int tick = 20 + new Random().Next(1, 6);
+                //            mouse_click(tick);
+                //            if (yo() != ClassName()) zan = false;
+                //        }
+                //    });
+                //    break;
+                case Keys.F1:
+                    Invoke(() => Clipboard.SetText("攻击"));
+                    press([Keys.LControlKey, Keys.V]);
+                    break;
+                case Keys.F2:
+                    Invoke(() => Clipboard.SetText("增援"));
+                    press([Keys.LControlKey, Keys.V]);
+                    break;
+                case Keys.F5:
+                    Invoke(() => Clipboard.SetText("全军出击"));
+                    press([Keys.LControlKey, Keys.V]);
+                    break;
+                case Keys.F6:
+                    Invoke(() => Clipboard.SetText("修养生息"));
+                    press([Keys.LControlKey, Keys.V]);
+                    break;
+                case Keys.Enter:
+                    if (!is_ctrl()) break;
+                    string old_clipboard = "";
+                    Invoke(() => old_clipboard = Clipboard.GetText());
+                    press([Keys.LControlKey, Keys.A]);
+                    press([Keys.LControlKey, Keys.C], 100);
+                    Invoke(() =>
+                    {
+                        string curr_clipboard = Clipboard.GetText();
+                        //bool blank = "" == curr_clipboard || old_clipboard == curr_clipboard;
+                        //if ("" == curr_clipboard) Clipboard.SetText(old_clipboard);
+                        if (old_clipboard == curr_clipboard)
+                            press([Keys.LControlKey, Keys.V], 100);
+                    });
+                    press([Keys.Enter]);
+                    break;
             }
             Common.hooked = false;
             if (!handling) handling = true;
         }
-
+        bool zan = false;
+        public void Invoke(Action action)
+        {
+            huan.Invoke(action);
+        }
     }
 }
 
