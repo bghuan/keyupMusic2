@@ -65,7 +65,7 @@ namespace keyupMusic2
         }
         public const string keyupMusic2 = "keyupMusic2";
         public const string keyupMusic3 = "keyupMusic3";
-        public const string keyupMusic3exe = "C:\\Users\\bu\\source\\repos\\keyupMusic3\\bin\\Debug\\net8.0-windows\\keyupMusic3.exe";
+        public const string keyupMusic3exe = "C:\\Users\\bu\\source\\repos\\keyupMusic2\\keyupMusic3\\bin\\Debug\\net8.0-windows\\keyupMusic3.exe";
         public const string ACPhoenix = "ACPhoenix";
         public const string Dragonest = "DragonestGameLauncher";
         public const string devenv = "devenv";
@@ -371,6 +371,11 @@ namespace keyupMusic2
                 return;
             }
             mouse_event(MOUSEEVENTF_LEFTDOWN | MOUSEEVENTF_LEFTUP, 0, 0, 0, 0);
+        }
+        public static void mouse_click2(int tick = 0)
+        {
+            mouse_event(MOUSEEVENTF_LEFTDOWN | MOUSEEVENTF_LEFTUP, 0, 0, 0, 0);
+            Thread.Sleep(tick);
         }
         public static void down_mouse(int tick = 0)
         {

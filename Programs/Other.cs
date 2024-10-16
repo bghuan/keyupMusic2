@@ -10,7 +10,7 @@ using System.Diagnostics;
 
 namespace keyupMusic2
 {
-    public class AAA : Default
+    public class Other : Default
     {
         string[] list = Common.list;
         //string[] list_wechat = { Common.WeChat, Common.ACPhoenix, explorer, Common.keyupMusic2, Common.douyin, Common.devenv,

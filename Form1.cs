@@ -5,7 +5,6 @@ using WGestures.Core.Impl.Windows;
 using static keyupMusic2.Common;
 using static WGestures.Core.Impl.Windows.MouseKeyboardHook;
 
-
 namespace keyupMusic2
 {
     public partial class Huan : Form
@@ -13,8 +12,8 @@ namespace keyupMusic2
         ACPhoenix aCPhoenix;
         devenv Devenv;
         douyin Douyin;
-        AAA Aaa;
-        BBB Bbb;
+        Other Aaa;
+        All Bbb;
         Super super;
         Chrome chrome;
 
@@ -29,8 +28,8 @@ namespace keyupMusic2
             aCPhoenix = new ACPhoenix();
             Devenv = new devenv();
             Douyin = new douyin(this);
-            Aaa = new AAA();
-            Bbb = new BBB();
+            Aaa = new Other();
+            Bbb = new All();
             super = new Super(this);
             chrome = new Chrome();
 
@@ -364,7 +363,6 @@ namespace keyupMusic2
         }
         protected override void Dispose(bool disposing)
         {
-            log("Dispose()");
             stopListen();
 
             if (disposing && (components != null))

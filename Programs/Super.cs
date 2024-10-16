@@ -90,7 +90,7 @@ namespace keyupMusic2
                     break;
                 case Keys.D:
                     //KeyboardInput.SimulateMouseWheel(120);
-                    new AAA().hook_KeyDown_ddzzq(new KeyboardHookEventArgs(WGestures.Core.Impl.Windows.KeyboardEventType.KeyDown, Keys.F11, 0, new WGestures.Common.OsSpecific.Windows.Native.keyboardHookStruct()));
+                    new Other().hook_KeyDown_ddzzq(new KeyboardHookEventArgs(WGestures.Core.Impl.Windows.KeyboardEventType.KeyDown, Keys.F11, 0, new WGestures.Common.OsSpecific.Windows.Native.keyboardHookStruct()));
                     break;
                 case Keys.F:
                     press("0.0", 100);

@@ -5,9 +5,9 @@ VisualStudioVersion = 17.8.34330.188
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "keyupMusic2", "keyupMusic2.csproj", "{829C2FBB-9DC7-407C-AD20-DAAE8AD0A4AF}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "keyupMusic3", "..\keyupMusic3\keyupMusic3.csproj", "{1C9BDF6A-E66D-4B17-956E-E6C720061A65}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "keyupMusic3", "keyupMusic3\keyupMusic3.csproj", "{D12F97FB-B470-4F1B-9A56-62AE687B484F}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "keyupmusic2_test", "..\keyupmusic2_test\keyupmusic2_test.csproj", "{D9AFF94D-7417-4CE3-A1BD-07C59CC4293A}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "keyupmusic2_test", "keyupmusic2_test\keyupmusic2_test.csproj", "{0CB97F3D-19FD-4AC5-8F59-8C6755235530}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -19,14 +19,14 @@ Global
 		{829C2FBB-9DC7-407C-AD20-DAAE8AD0A4AF}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{829C2FBB-9DC7-407C-AD20-DAAE8AD0A4AF}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{829C2FBB-9DC7-407C-AD20-DAAE8AD0A4AF}.Release|Any CPU.Build.0 = Release|Any CPU
-		{1C9BDF6A-E66D-4B17-956E-E6C720061A65}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{1C9BDF6A-E66D-4B17-956E-E6C720061A65}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{1C9BDF6A-E66D-4B17-956E-E6C720061A65}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{1C9BDF6A-E66D-4B17-956E-E6C720061A65}.Release|Any CPU.Build.0 = Release|Any CPU
-		{D9AFF94D-7417-4CE3-A1BD-07C59CC4293A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{D9AFF94D-7417-4CE3-A1BD-07C59CC4293A}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{D9AFF94D-7417-4CE3-A1BD-07C59CC4293A}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{D9AFF94D-7417-4CE3-A1BD-07C59CC4293A}.Release|Any CPU.Build.0 = Release|Any CPU
+		{D12F97FB-B470-4F1B-9A56-62AE687B484F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{D12F97FB-B470-4F1B-9A56-62AE687B484F}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{D12F97FB-B470-4F1B-9A56-62AE687B484F}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{D12F97FB-B470-4F1B-9A56-62AE687B484F}.Release|Any CPU.Build.0 = Release|Any CPU
+		{0CB97F3D-19FD-4AC5-8F59-8C6755235530}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{0CB97F3D-19FD-4AC5-8F59-8C6755235530}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{0CB97F3D-19FD-4AC5-8F59-8C6755235530}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{0CB97F3D-19FD-4AC5-8F59-8C6755235530}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

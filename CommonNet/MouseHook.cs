@@ -130,7 +130,8 @@ namespace WGestures.Core.Impl.Windows
         {
             if (MouseHookEvent != null)
                 _hookId = Native.SetMouseHook(_mouseHookProc);
-            _kbdHookId = Native.SetKeyboardHook(_kbdHookProc);
+            if (KeyboardHookEvent != null)
+                _kbdHookId = Native.SetKeyboardHook(_kbdHookProc);
 
             is_install = true;
         }

@@ -10,7 +10,7 @@ using System.Diagnostics;
 
 namespace keyupMusic2
 {
-    public class BBB : Default
+    public class All : Default
     {
         public void hook_KeyDown_ddzzq(KeyboardHookEventArgs e)
         {

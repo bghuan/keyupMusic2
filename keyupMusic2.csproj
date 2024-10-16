@@ -13,6 +13,15 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Compile Remove="keyupmusic2_test\**" />
+    <Compile Remove="keyupMusic3\**" />
+    <EmbeddedResource Remove="keyupmusic2_test\**" />
+    <EmbeddedResource Remove="keyupMusic3\**" />
+    <None Remove="keyupmusic2_test\**" />
+    <None Remove="keyupMusic3\**" />
+  </ItemGroup>
+
+  <ItemGroup>
     <Content Include="ztemp\b (5).ico" />
   </ItemGroup>
 
