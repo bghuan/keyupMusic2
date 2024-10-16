@@ -17,6 +17,7 @@ using WGestures.Common.OsSpecific.Windows;
 using WGestures.Core.Impl.Windows;
 using static System.Runtime.InteropServices.JavaScript.JSType;
 using static System.Windows.Forms.VisualStyles.VisualStyleElement.TrackBar;
+using static keyupMusic2.Log;
 using static Win32.User32;
 using Point = System.Drawing.Point;
 
@@ -24,10 +25,13 @@ namespace keyupMusic2
 {
     public class Common
     {
-        public static int[] deal_size_x_y(int x, int y)
+        public static int[] deal_size_x_y(int x, int y, bool puls_one = true)
         {
-            x = x + 1;
-            y = y + 1;
+            if (puls_one)
+            {
+                x = x + 1;
+                y = y + 1;
+            }
             x = x * screenWidth / 2560;
             y = y * screenHeight / 1440;
             return new int[] { x, y };
@@ -41,8 +45,8 @@ namespace keyupMusic2
         }
         public static bool judge_color(int x, int y, Color color, Action action = null, int similar = 50)
         {
-            x = deal_size_x_y(x, y)[0];
-            y = deal_size_x_y(x, y)[1];
+            x = deal_size_x_y(x, y, false)[0];
+            y = deal_size_x_y(x, y, false)[1];
             var asd = get_mouse_postion_color(new Point(x, y));
             var flag = AreColorsSimilar(asd, color, similar);
             if (flag && action != null) action();
@@ -214,28 +218,31 @@ namespace keyupMusic2
             //log(DateTime.Now.ToString("") + " " + windowTitle + " " + fildsadsePath + module_nasme + "\n");
             return ProcessName;
         }
-
-        private static readonly object _lockObject = new object();
-        private static readonly object _lockObject2 = new object();
         public static void log(string message)
         {
-            lock (_lockObject)
-            {
-                try
-                {
-                    File.AppendAllText("log.txt", "\r" + DateTime.Now.ToString("") + " " + message);
-                }
-                catch (Exception e)
-                {
-                    string msg = e.Message;
-                }
-                finally
-                {
-                    string fff = "ffs";
-                }
-            }
+            Log.log(message);
         }
 
+        //private static readonly object _lockObject = new object();
+        //private static readonly object _lockObject2 = new object();
+        //public static void log(string message)
+        //{
+        //    lock (_lockObject)
+        //    {
+        //        try
+        //        {
+        //            File.AppendAllText("log.txt", "\r" + DateTime.Now.ToString("") + " " + message);
+        //        }
+        //        catch (Exception e)
+        //        {
+        //            string msg = e.Message;
+        //        }
+        //        finally
+        //        {
+        //            string fff = "ffs";
+        //        }
+        //    }
+        //}
         public static bool is_down(Keys key)
         {
             return Native.GetAsyncKeyState(key) < 0;
@@ -447,6 +454,7 @@ namespace keyupMusic2
             int y = int.Parse(point.Split(',')[1]);
             //points[0] = new Point(x, y);
         }
+        private static readonly object _lockObject2 = new object();
         public static void press(Keys num, int tick = 0)
         {
             if (is_down(Keys.Delete)) return;
@@ -514,10 +522,11 @@ namespace keyupMusic2
         //3 跳过delete return
         public static void ctrl_shift(bool zh = true)
         {
-            var flag = (judge_color(2289, 1411, Color.FromArgb(202, 202, 202)));
-            if (zh && !flag)
+            //var _zh = (judge_color(2289, 1411, Color.FromArgb(202, 202, 202)));
+            var _en = judge_color(2288, 1413, Color.FromArgb(255, 255, 255));
+            if (zh && _en)
                 press(Keys.LShiftKey, 10);
-            else if (!zh && flag)
+            else if (!zh && !_en)
                 press(Keys.LShiftKey, 10);
             return;
             if (zh)

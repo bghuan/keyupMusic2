@@ -88,6 +88,7 @@ namespace keyupMusic2
                     //KeyboardInput.SendString("xiexielaoban");
                     //press(Keys.Space);
                     //break;
+                    press("Back;", 0);
                     KeyboardInput.SendString("x");
                     Thread.Sleep(200);
                     if (judge_color(1076, 1416, Color.FromArgb(249, 249, 249), () => { }))

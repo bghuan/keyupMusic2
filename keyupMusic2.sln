@@ -9,6 +9,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "keyupMusic3", "keyupMusic3\
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "keyupmusic2_test", "keyupmusic2_test\keyupmusic2_test.csproj", "{0CB97F3D-19FD-4AC5-8F59-8C6755235530}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "mouse_hook_douyin_game", "mouse_hook_douyin_game\mouse_hook_douyin_game.csproj", "{36E714E2-4204-4FD0-9C42-851FDDB32C82}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -27,6 +29,10 @@ Global
 		{0CB97F3D-19FD-4AC5-8F59-8C6755235530}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{0CB97F3D-19FD-4AC5-8F59-8C6755235530}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{0CB97F3D-19FD-4AC5-8F59-8C6755235530}.Release|Any CPU.Build.0 = Release|Any CPU
+		{36E714E2-4204-4FD0-9C42-851FDDB32C82}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{36E714E2-4204-4FD0-9C42-851FDDB32C82}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{36E714E2-4204-4FD0-9C42-851FDDB32C82}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{36E714E2-4204-4FD0-9C42-851FDDB32C82}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

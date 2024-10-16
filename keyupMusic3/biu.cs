@@ -32,13 +32,15 @@ namespace keyupMusic3
             //Task.Run(() => { Douyin(e); });
             Douyin(e);
             Task.Run(() => { Devenv(e); });
-            Task.Run(() => { EdgeClick(e); });
+            Task.Run(() => { ScreenEdgeClick(e); });
+            Task.Run(() => { QQMusic(e); });
             Task.Run(() => { Other(e); });
 
             //TcpServer.socket_write(e.Msg.ToString());
 
             handing = false;
         }
+
         public void ACPhoenix(MouseKeyboardHook.MouseHookEventArgs e)
         {
             if (ProcessName != keyupMusic2.Common.ACPhoenix) return;
@@ -161,7 +163,7 @@ namespace keyupMusic3
         bool right_up_click = false;
         private static List<MousePositionWithTime> recentMousePositions = new List<MousePositionWithTime>();
 
-        public void EdgeClick(MouseKeyboardHook.MouseHookEventArgs e)
+        public void ScreenEdgeClick(MouseKeyboardHook.MouseHookEventArgs e)
         {
             if (e.Msg == MouseMsg.WM_MOUSEMOVE)
             {
@@ -201,6 +203,15 @@ namespace keyupMusic3
                 left_left_click = false;
                 left_down_click = false;
                 right_up_click = false;
+            }
+        }
+
+        private void QQMusic(MouseKeyboardHook.MouseHookEventArgs e)
+        {
+            if (ProcessName != keyupMusic2.Common.QQMusic) return;
+            if (e.Msg == MouseMsg.WM_LBUTTONDOWN)
+            {
+                ctrl_shift(true);
             }
         }
         public void Other(MouseKeyboardHook.MouseHookEventArgs e)

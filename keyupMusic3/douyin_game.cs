@@ -2,7 +2,9 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Text.RegularExpressions;
 using System.Threading.Tasks;
+using System.Windows.Forms;
 using WGestures.Core.Impl.Windows;
 using static keyupMusic2.Common;
 
@@ -11,9 +13,24 @@ namespace keyupMusic3
     public class Douyin_game
     {
         public Form2 huan;
+        string douyin_game_txt = "douyin_game.txt";
         public Douyin_game(Form parentForm)
         {
             huan = (Form2)parentForm;
+            try
+            {
+                string json = File.ReadAllText(douyin_game_txt);
+                var jsons = json.Split(';');
+                var point_start_str = jsons[0].Split(":")[1];
+                var R_str = jsons[1].Split(":")[1];
+                Match match = Regex.Match(point_start_str, @"X=(?<x>\d+),Y=(?<y>\d+)");
+
+                point_start = new Point(int.Parse(match.Groups["x"].Value), int.Parse(match.Groups["y"].Value));
+                R = double.Parse(R_str);
+            }
+            catch (Exception e)
+            {
+            }
         }
 
         public void MouseHookProc(MouseKeyboardHook.MouseHookEventArgs e)
@@ -23,8 +40,6 @@ namespace keyupMusic3
 
         Point point_start = new Point();
         Point point_end = new Point();
-        int X;
-        int Y;
         double R;
         string area_start = "";
         string area_end = "";
@@ -44,7 +59,7 @@ namespace keyupMusic3
             else if (e.Msg == MouseMsg.WM_LBUTTONUP)
             {
                 area_end = get_area_number(x, y);
-                string vs = "-";
+                string vs = "攻击";
                 set_clip_txt(area_start, vs, area_end);
             }
             else if (e.Msg == MouseMsg.WM_RBUTTONDOWN)
@@ -58,21 +73,25 @@ namespace keyupMusic3
                 else
                 {
                     area_end = get_area_number(x, y);
-                    string vs = "/";
+                    string vs = "增援";
                     set_clip_txt(area_start, vs, area_end);
                 }
             }
         }
-
+        string old_cmd = "";
         private void set_clip_txt(string a, string b, string c)
         {
             if (a == c || string.IsNullOrEmpty(a) || string.IsNullOrEmpty(c)) return;
             string cmd = a + b + c;
-            if (string.IsNullOrEmpty(cmd) || cmd.Length < 3 || cmd.Length > 6) { return; }
+            if (string.IsNullOrEmpty(cmd) || cmd.Length < 3 || cmd.Length > 10) { return; }
             huan.Invoke(() =>
             {
+                if (old_cmd == cmd) { cmd += "第二次"; }
+                if (old_cmd == cmd + "第二次") { cmd += "第三次"; }
+                if (old_cmd == cmd + "第三次") { cmd += "第四次"; }
                 huan.label1.Text = cmd;
                 Clipboard.SetText(cmd);
+                old_cmd = cmd;
             });
 
             if (!judge_color(2030, 1209, Color.FromArgb(37, 38, 50), null, 10)) return;
@@ -88,9 +107,11 @@ namespace keyupMusic3
         {
             point_end = e.Pos;
 
-            X = Math.Abs(point_end.X - point_start.X) / 2;
-            Y = Math.Abs(point_end.Y - point_start.Y) / 4;
+            int X = Math.Abs(point_end.X - point_start.X) / 2;
+            int Y = Math.Abs(point_end.Y - point_start.Y) / 4;
             R = X / 2;
+            string json = "point_start:" + point_start.ToString() + ";R:" + R.ToString();
+            File.WriteAllText(douyin_game_txt, json);
         }
 
         int[] arr_area = new int[] { 5, 6, 7, 8, 9, 8, 7, 6, 5 };

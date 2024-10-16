@@ -15,10 +15,13 @@
   <ItemGroup>
     <Compile Remove="keyupmusic2_test\**" />
     <Compile Remove="keyupMusic3\**" />
+    <Compile Remove="mouse_hook_douyin_game\**" />
     <EmbeddedResource Remove="keyupmusic2_test\**" />
     <EmbeddedResource Remove="keyupMusic3\**" />
+    <EmbeddedResource Remove="mouse_hook_douyin_game\**" />
     <None Remove="keyupmusic2_test\**" />
     <None Remove="keyupMusic3\**" />
+    <None Remove="mouse_hook_douyin_game\**" />
   </ItemGroup>
 
   <ItemGroup>

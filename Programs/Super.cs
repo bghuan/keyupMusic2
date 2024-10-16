@@ -217,6 +217,7 @@ namespace keyupMusic2
             void paly_sound(Keys key)
             {
                 if (is_down(Keys.LWin)) return;
+                if (Position.Y == 0) return;
                 //if (key_sound && keys.Contains(e.key))
                 if (key_sound)
                 {

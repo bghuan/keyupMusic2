@@ -114,36 +114,36 @@ namespace keyupMusic2
                     else num = 1;
                     press("2236.1400;2226," + (1030 + (num * 50)), 101);
                     break;
-                //case Keys.F5:
-                //    zan = !zan;
-                //    Task.Run(() =>
-                //    {
-                //        while (zan)
-                //        {
-                //            int tick = 20 + new Random().Next(1, 6);
-                //            mouse_click(tick);
-                //            if (yo() != ClassName()) zan = false;
-                //        }
-                //    });
-                //    break;
                 case Keys.F1:
-                    var aaa = Position;
-                    press("2220,1385", 100);
-                    press([Keys.LControlKey, Keys.V]);
-                    press([Keys.Enter]);
-                    press(aaa.X + "." + aaa.Y, 100);
+                    zan = !zan;
+                    Task.Run(() =>
+                    {
+                        while (zan)
+                        {
+                            int tick = 220 + new Random().Next(1, 6);
+                            mouse_click2(tick);
+                            if (yo() != ClassName()) zan = false;
+                        }
+                    });
                     break;
+                //case Keys.F1:
+                //    var aaa = Position;
+                //    press("2220,1385", 100);
+                //    press([Keys.LControlKey, Keys.V]);
+                //    press([Keys.Enter]);
+                //    press(aaa.X + "." + aaa.Y, 100);
+                //    break;
                 //case Keys.F2:
-                //case Keys.F5:
-                //    string txt = "攻击";
-                //    if (is_ctrl()) txt = "全军出击";
-                //    Invoke(() => Clipboard.SetText(txt));
-                //    press([Keys.LControlKey, Keys.V]);
-                //    break;
-                //case Keys.F6:
-                //    Invoke(() => Clipboard.SetText("增援"));
-                //    press([Keys.LControlKey, Keys.V]);
-                //    break;
+                case Keys.F5:
+                    string txt = "全军出击";
+                    Invoke(() => Clipboard.SetText(txt));
+                    press([Keys.LControlKey, Keys.V]);
+                    break;
+                case Keys.F6:
+                    string txt2 = "修养生息";
+                    Invoke(() => Clipboard.SetText(txt));
+                    press([Keys.LControlKey, Keys.V]);
+                    break;
                 case Keys.Enter:
                     if (!is_ctrl()) break;
                     string old_clipboard = "";
