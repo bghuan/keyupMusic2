@@ -57,12 +57,13 @@ namespace keyupMusic2
                     }
                     //打开关闭好友列表
                     if (is_ctrl() && try_press(47, 90, Color.FromArgb(231, 232, 231), () => { press("100;203, 66; 157,359;" + nothing4, 0); })) break;
-                    if (judge_color(0, 1426, Color.FromArgb(13, 39, 75))&& judge_color(2402, 97, Color.FromArgb(36, 39, 54))&& judge_color(858, 177, Color.FromArgb(32, 104, 234)))
+                    if (judge_color(0, 1426, Color.FromArgb(13, 39, 75)) && judge_color(2402, 97, Color.FromArgb(36, 39, 54)) && judge_color(858, 177, Color.FromArgb(32, 104, 234)))
                     {
                         press("1342, 1112"); break;
                     }
                     break;
                 case Keys.Escape:
+                    if (judge_color(2487, 936, Color.FromArgb(49, 218, 255))) break;
                     if (try_press(870, 1243, Color.FromArgb(26, 125, 222), () => { press("2452,185;2452,185;" + nothing, 100); })) break;
                     break;
                 case Keys.Oem3:

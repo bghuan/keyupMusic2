@@ -1,6 +1,5 @@
+using keyupMusic2;
 using System.Diagnostics;
-using System.IO.MemoryMappedFiles;
-using System.Text;
 using WGestures.Core.Impl.Windows;
 using static keyupMusic2.Common;
 
@@ -19,7 +18,7 @@ namespace keyupMusic3
             _mouseKbdHook.MouseHookEvent += douyin_game.MouseHookProc;
             _mouseKbdHook.Install();
             SetVisibleCore(false);
-            ////Task.Run(() => { TcpServer.StartServer(); });
+            //TcpServer.StartServer();
             ////TcpServer.StartServer();
         }
         private void Form1_FormClosing(object sender, FormClosingEventArgs e)
@@ -30,6 +29,7 @@ namespace keyupMusic3
         {
             Dispose();
         }
+        int sda = 0;
         private void notifyIcon1_MouseClick(object sender, MouseEventArgs e)
         {
             if (e.Button == MouseButtons.Left)
@@ -37,6 +37,8 @@ namespace keyupMusic3
                 this.WindowState = FormWindowState.Normal;
                 SetVisibleCore(!Visible);
             }
+            sda++;
+            //TcpServer.socket_write(""+ sda.ToString()+" "+DateTimeNow());
         }
 
         private void Form2_Load(object sender, EventArgs e)

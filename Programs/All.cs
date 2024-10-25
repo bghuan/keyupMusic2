@@ -88,23 +88,24 @@ namespace keyupMusic2
                 case Keys.End:
                     copy_secoed_screen(); break;
                 case Keys.Left:
-                    if (right_top) press(Keys.F7); break;
                 case Keys.PageDown:
+                case Keys.Down:
+                case Keys.VolumeDown:
                     if (right_top) press(Keys.F7); break;
                 case Keys.Right:
-                    if (right_top) press(Keys.F8); break;
                 case Keys.PageUp:
+                case Keys.Up:
+                case Keys.VolumeUp:
                     if (right_top) press(Keys.F8); break;
-                //case Keys.VolumeDown:
-                //    if (right_top) { press(Keys.F7); break; } else { raw_press(); break; }
-                //case Keys.VolumeUp:
-                //    if (right_top) { press(Keys.F8); break; } else { raw_press(); break; }
                 case Keys.Delete:
-                    DaleyRun_stop = true; special_delete_key_time = DateTime.Now; player.Stop(); break;
-                case Keys.LMenu:
-                    yo(); break;
                 case Keys.Escape:
+                    Special_Input = false; DaleyRun_stop = true; special_delete_key_time = DateTime.Now; player.Stop(); break;
+                case Keys.LControlKey:
                     player.Stop(); break;
+                case Keys.LMenu:
+                    FreshProcessName(); break;
+                case Keys.F4:
+                    Sleep(100); FreshProcessName(); break;
             }
 
             Common.hooked = false;

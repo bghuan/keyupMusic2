@@ -35,10 +35,14 @@ namespace keyupMusic2
             switch (e.key)
             {
                 case Keys.VolumeDown:
-                    if (Position.Y == 0 || Position.X == 0 || Position.X == 6719) {press(Keys.Left); deal(); }
+                    if (Position.Y == 0 || Position.X == 0 || Position.X == 6719) { press(Keys.Left); deal(); }
                     break;
                 case Keys.VolumeUp:
                     if (Position.Y == 0 || Position.X == 0 || Position.X == 6719) { press(Keys.Right); deal(); }
+                    break;
+                //case Keys.F:
+                //    if (Position.Y == 1619)
+                //        copy_secoed_screen();
                     break;
             }
             if (catched == false && judge_handled_key.Contains(e.key))

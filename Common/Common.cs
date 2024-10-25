@@ -43,6 +43,15 @@ namespace keyupMusic2
             mouse_event(MOUSEEVENTF_ABSOLUTE | MOUSEEVENTF_MOVE, x * 65536 / screenWidth, y * 65536 / screenHeight, 0, 0);
             Thread.Sleep(tick);
         }
+        public static bool judge_color(Color color,Action action = null, int similar = 50)
+        {
+            int x = Position.X;
+            int y = Position.Y;
+            var asd = get_mouse_postion_color(new Point(x, y));
+            var flag = AreColorsSimilar(asd, color, similar);
+            if (flag && action != null) action();
+            return flag;
+        }
         public static bool judge_color(int x, int y, Color color, Action action = null, int similar = 50)
         {
             x = deal_size_x_y(x, y, false)[0];
@@ -115,6 +124,7 @@ namespace keyupMusic2
 
         public static SoundPlayer player = new SoundPlayer();
         public static bool hooked = false;
+        public static bool hooked_mouse = false;
         public static bool stop_listen = false;
         public static bool ACPhoenix_mouse_hook = false;
         public static DateTime special_delete_key_time;
@@ -125,7 +135,7 @@ namespace keyupMusic2
             get
             {
                 //ProcessName = yo();
-                yo();
+                FreshProcessName();
                 return ProcessName;
             }
             set
@@ -140,7 +150,7 @@ namespace keyupMusic2
                 return Cursor.Position;
             }
         }
-        public static string yo()
+        public static string FreshProcessName()
         {
             IntPtr hwnd = GetForegroundWindow(); // 获取当前活动窗口的句柄
 
@@ -384,6 +394,10 @@ namespace keyupMusic2
             mouse_event(MOUSEEVENTF_LEFTDOWN | MOUSEEVENTF_LEFTUP, 0, 0, 0, 0);
             Thread.Sleep(tick);
         }
+        public static void mouse_click3()
+        {
+            mouse_event(MOUSEEVENTF_LEFTDOWN | MOUSEEVENTF_LEFTUP, 0, 0, 0, 0);
+        }
         public static void down_mouse(int tick = 0)
         {
             mouse_event(MOUSEEVENTF_LEFTDOWN, 0, 0, 0, 0);
@@ -444,7 +458,7 @@ namespace keyupMusic2
         public static string AltTabProcess()
         {
             altab(100);
-            return yo();
+            return FreshProcessName();
         }
         private void load_point()
         {
@@ -848,9 +862,10 @@ namespace keyupMusic2
             }
         }
         public static bool DaleyRun_stop = false;
+        public static bool Special_Input { get { return is_down(Keys.F2)|| Position.X == 0 ; }set { } }
+        public static bool Special_Input2 = false;
         public static void DaleyRun(Func<bool> flag_action, Action action2, int alltime, int tick)
         {
-            if (DaleyRun_stop) return;
             DaleyRun_stop = false;
             int i = 0;
             while (alltime >= 0)
@@ -930,6 +945,47 @@ namespace keyupMusic2
                    windowRect.Top == 0 &&
                    windowRect.Right == screenWidth &&
                    windowRect.Bottom == screenHeight;
+        }
+        public static void change_file_last(bool pngg)
+        {
+            // 指定要处理的文件夹路径  
+            string folderPath = "image\\encode\\";
+
+            // 指定旧后缀和新后缀（不包含点号）  
+            string oldExtension = "pngg";
+            string newExtension = "png";
+            if (pngg) { oldExtension = "png"; newExtension = "pngg"; }
+
+            // 确保文件夹路径存在  
+            if (!Directory.Exists(folderPath))
+            {
+                Console.WriteLine("指定的文件夹不存在。");
+                return;
+            }
+
+            // 遍历文件夹下的所有文件  
+            foreach (string filePath in Directory.GetFiles(folderPath))
+            {
+                // 检查文件是否匹配旧后缀  
+                if (Path.GetExtension(filePath)?.TrimStart('.') == oldExtension)
+                {
+                    // 构建新文件名  
+                    string newFilePath = Path.Combine(Path.GetDirectoryName(filePath), Path.GetFileNameWithoutExtension(filePath) + "." + newExtension);
+
+                    // 重命名文件  
+                    try
+                    {
+                        File.Move(filePath, newFilePath);
+                        Console.WriteLine($"文件 {filePath} 已更改为 {newFilePath}");
+                    }
+                    catch (Exception ex)
+                    {
+                        Console.WriteLine($"无法重命名文件 {filePath}。错误：{ex.Message}");
+                    }
+                }
+            }
+
+            Console.WriteLine("所有匹配的文件后缀已更改。");
         }
     }
 }

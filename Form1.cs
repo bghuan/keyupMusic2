@@ -33,7 +33,8 @@ namespace keyupMusic2
             super = new Super(this);
             chrome = new Chrome();
 
-            //Task.Run(() => { new TcpServer(this).StartServer(13000); });
+            //new TcpServer(this);
+            //TcpServer.StartServer(13000);
         }
 
         private void Form1_Load(object sender, EventArgs e)
@@ -44,20 +45,12 @@ namespace keyupMusic2
                 if (process.Id != currentProcessId)
                     process.Kill();
 
-            if (is_ctrl() || Position.X == 0 || Position.Y == 0)
+            if (is_ctrl() || Position.X == 0 || Position.Y == 0 || Position.Y == 1439)
             {
                 Common.FocusProcess(Common.douyin);
                 Common.FocusProcess(Common.ACPhoenix);
                 SetVisibleCore(false);
                 TaskRun(() => { Invoke(() => SetVisibleCore(false)); }, 200);
-            }
-        }
-        public void Invoke(Action method)
-        {
-            try { base.Invoke(method); }
-            catch (Exception ex)
-            {
-                log(ex.Message);
             }
         }
         public bool keyupMusic2_onlisten = false;
@@ -67,7 +60,7 @@ namespace keyupMusic2
         public MouseKeyboardHook _mouseKbdHook;
         static string lastText = "";
         static int last_index = 0;
-        Keys[] special_key = new Keys[] { Keys.F22, Keys.RControlKey, Keys.RShiftKey, Keys.RMenu, Keys.RWin };
+        Keys[] special_key = new Keys[] { Keys.F22, Keys.RControlKey, Keys.RShiftKey, Keys.RMenu, Keys.RWin, Keys.MediaPreviousTrack };
 
         private void hook_KeyUp(KeyboardHookEventArgs e)
         {
@@ -103,13 +96,13 @@ namespace keyupMusic2
                 {
                     //if (e.key == Keys.Right) return true;
                     //if (e.key == Keys.Left) return true;
-                    if (e.key == Keys.PageDown) return true;
-                    if (e.key == Keys.PageUp) return true;
+                    //if (e.key == Keys.PageDown) return true;
+                    //if (e.key == Keys.PageUp) return true;
                     //if (e.key == Keys.VolumeDown) return true;
                     //if (e.key == Keys.VolumeUp) return true;
                     //if (e.key == Keys.S) return true;
                     if (e.key == Keys.Home && is_ctrl()) return true;
-                    if (e.key == Keys.End) return true;
+                    if (e.key == Keys.End && is_ctrl()) return true;
                 }
             }
             if (e.key == Keys.MediaPreviousTrack || e.key == Keys.MediaPlayPause)
@@ -134,8 +127,8 @@ namespace keyupMusic2
             if (is_alt() && (e.key == Keys.F4 || e.key == Keys.Tab)) { special_key_quick_yo(e); ; return; }
             if (stop_keys.Contains(e.key)) return;
 
-            yo();
-            if (keyupMusic2_onlisten) e.Handled = true;
+            FreshProcessName();
+            if (keyupMusic2_onlisten && (e.key != Keys.Left && e.key != Keys.Right)) e.Handled = true;
             if (judge_handled(e, ProcessName)) { last_handled_key = e.key; e.Handled = true; }
 
             Task.Run(() =>
@@ -148,6 +141,13 @@ namespace keyupMusic2
             if (e.key == Keys.F3 || (e.key == Keys.LControlKey && is_shift())
            || (e.key == Keys.LShiftKey && is_ctrl()))
             {
+                if (keyupMusic2_onlisten)
+                {
+                    Invoke(() => { SetVisibleCore2(last_visiable); });
+                    last_visiable = false;
+                    keyupMusic2_onlisten = false; 
+                    return;
+                }
                 form_move();
                 super_listen();
             }
@@ -155,10 +155,8 @@ namespace keyupMusic2
             {
                 Task.Run(() =>
                 {
-                    //var old_processName = ProcessName; ;
-                    //var new_processName = yo();
-                    //if (old_processName != new_processName && e.key == Keys.PageDown) { return; }
                     super.hook_KeyDown_keyupMusic2(e);
+                    if (keyupMusic2_onlisten) return;
 
                     Devenv.hook_KeyDown_ddzzq(e);
                     aCPhoenix.hook_KeyDown_ddzzq(e);
@@ -179,7 +177,7 @@ namespace keyupMusic2
                 {
                     //yo();
                     Thread.Sleep(100);
-                    yo();
+                    FreshProcessName();
                 });
             }
         }
@@ -467,6 +465,14 @@ namespace keyupMusic2
             }
             if (!ExsitProcess(keyupMusic3))
                 ProcessRun(keyupMusic3exe);
+        }
+        public void Invoke(Action method)
+        {
+            try { base.Invoke(method); }
+            catch (Exception ex)
+            {
+                log(ex.Message);
+            }
         }
     }
 }

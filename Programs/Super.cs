@@ -22,7 +22,7 @@ namespace keyupMusic2
         {
         }
         public static Huan huan;
-        Keys[] keys = { Keys.D0, Keys.D1, Keys.D2, Keys.D3, Keys.D4, Keys.D5, Keys.D6, Keys.D7, Keys.D8, Keys.D9 };
+        Keys[] keys = { Keys.D0, Keys.D1, Keys.D2, Keys.D3, Keys.D4, Keys.D5, Keys.D6, Keys.D7, Keys.D8, Keys.D9, Keys.PageUp, Keys.Next, Keys.Home, Keys.End, Keys.Space };
         bool key_sound = true;
         bool start_record = false;
         string commnd_record = "";
@@ -93,7 +93,8 @@ namespace keyupMusic2
                     new Other().hook_KeyDown_ddzzq(new KeyboardHookEventArgs(WGestures.Core.Impl.Windows.KeyboardEventType.KeyDown, Keys.F11, 0, new WGestures.Common.OsSpecific.Windows.Native.keyboardHookStruct()));
                     break;
                 case Keys.F:
-                    press("0.0", 100);
+                    new SendKeyboardMouse().SendKeyDown(VKCODE.VK_F);
+                    new SendKeyboardMouse().MouseWhell(120);
                     break;
                 case Keys.G:
                     paly_sound(Keys.D4);
@@ -123,8 +124,21 @@ namespace keyupMusic2
                     }
                     break;
                 case Keys.L:
-                    Thread.Sleep(2000);
-                    press(Keys.G);
+                    string imagePath = @"C:\Users\bu\Pictures\Screenshots\屏幕截图 2024-10-15 204332.png";
+                    try
+                    {
+                        ProcessStartInfo startInfo = new ProcessStartInfo
+                        {
+                            FileName = "explorer.exe",
+                            Arguments = $"\"{imagePath}\"",
+                            UseShellExecute = true
+                        };
+                        Process.Start(startInfo);
+                    }
+                    catch (Exception ex)
+                    {
+                        Console.WriteLine($"Error opening image: {ex.Message}");
+                    }
                     break;
                 case Keys.Z:
                     press("100;LWin;KK;Enter;", 110);
@@ -166,7 +180,7 @@ namespace keyupMusic2
                 case Keys.S:
                     if (!FocusProcess("keyupMusic3"))
                     {
-                        ProcessRun("C:\\Users\\bu\\source\\repos\\keyupMusic3\\bin\\Debug\\net8.0-windows\\keyupMusic3.exe");
+                        ProcessRun(Common.keyupMusic3exe);
                         HideProcess("keyupMusic3");
                     }
                     break;
@@ -197,6 +211,7 @@ namespace keyupMusic2
                     if (is_ctrl() && is_shift()) { Process.Start(new ProcessStartInfo("taskmgr.exe")); break; }
                     //press("LWin;1957,1015");
                     press_middle_bottom();
+                    Special_Input = false; DaleyRun_stop = true; special_delete_key_time = DateTime.Now; player.Stop();
                     break;
 
                 default:
@@ -232,18 +247,12 @@ namespace keyupMusic2
 
         private static void notify()
         {
-            //ctrl_shift();
-            //KeyboardInput.SendString("xiexielaoban");
-            //huan.Invoke2(() =>
-            //{
-            // 创建一个通知图标对象
             NotifyIcon notifyIcon = new NotifyIcon();
             notifyIcon.Icon = SystemIcons.Application;
             notifyIcon.Visible = true;
             notifyIcon.BalloonTipTitle = "拯救锁屏无登录";
             notifyIcon.BalloonTipText = "这是一个系统通知内容。";
-            notifyIcon.ShowBalloonTip(5000);
-            //});
+            notifyIcon.ShowBalloonTip(10000);
         }
 
         private static void dragonest()
@@ -268,25 +277,19 @@ namespace keyupMusic2
 
         private static void sound_setting()
         {
-            var action = () =>
+            var mo = new SendKeyboardMouse();
+            var judge = () =>
             {
-                DaleyRun(
-       () =>
-       {
-           return (judge_color(1072, 105, Color.FromArgb(26, 26, 25)));
-       },
-       () =>
-       {
-           Sleep(520);
-           mouse_click(2303, 565);
-           press(Keys.PageDown, 10);
-           press(Keys.PageDown, 10);
-           press("400;2211, 765", 10);
-       },
-       2211,
-       100);
+                huan.Invoke(() => { huan.label1.Text = DateTimeNow2(); });
+                mo.MouseWhell(-120 * 10);
+                return (judge_color(775, 1265, Color.FromArgb(26, 26, 25))) && judge_color(2124, 1327, Color.FromArgb(249, 241, 239), null, 10);
             };
-            Common.cmd($"/c start ms-settings:sound", action);
+            var run = () => { press("200;2220,1070", 10); };
+            var action2 = () =>
+                    DaleyRun(judge, run, 3222, 122);
+
+            mouse_move(2220, 1070);
+            Common.cmd($"/c start ms-settings:sound", action2);
         }
 
         private void get_point_color(KeyboardHookEventArgs e)
@@ -324,28 +327,8 @@ namespace keyupMusic2
         {
             //press("2280,1314;LWin;3222;LWin;", 500); 
             press("2280,1314;LWin", 0);
-            //press("2280,1314;LWin;", 500);
-            //Task.Run(() =>
-            //{
-            //    DaleyRun(() =>
-            //    {
-            //        return (judge_color(2463, 1281, Color.FromArgb(220, 163, 50)));
-            //    },
-            //    () =>
-            //    {
-            //        Thread.Sleep(200);
-            //        //press("100;525.40;");
-            //        //return;
-            //        altab();
-            //        Thread.Sleep(200);
-            //        press("100;2525,40;100", 0); mouse_move_center();
-            //    },
-            //    15000,
-            //    100);
-            //});
             Task.Run(() =>
             {
-                if (DaleyRun_stop) return;
                 DaleyRun_stop = false;
                 Thread.Sleep(3500);
                 if (DaleyRun_stop) return;
@@ -358,77 +341,28 @@ namespace keyupMusic2
 
         private static void dragonest_init()
         {
-            press("10;LWin;500;1076,521", 101);
+            var judge = () => judge_color(1063, 529, Color.FromArgb(199, 71, 69));
+            var run = () => { press("1076,521"); };
+            var action2 = () => DaleyRun(judge, run, 3222, 122);
+
+            press("LWin", 0);
+            action2();
             //press("10;LWin;zh;DUODUO;Space;Apps;100;Enter", 101);
         }
         private static void dragonest_max(int tick)
         {
             DaleyRun(
-                () =>
-                {
-                    return (
+                () => (
                         //yo() == Common.Dragonest &&
                         judge_color(71, 199, Color.FromArgb(242, 95, 99)) &&
-                        !judge_color(2223, 1325, Color.FromArgb(22, 155, 222)));
-                },
+                        !judge_color(2223, 1325, Color.FromArgb(22, 155, 222))),
                 () => { press("2323, 30"); },
-                tick,
-                10);
+                tick, 10);
         }
 
         public void Invoke(Action action)
         {
             huan.Invoke(action);
         }
-        public void change_file_last(bool pngg)
-        {
-            // 指定要处理的文件夹路径  
-            string folderPath = "image\\encode\\";
-
-            // 指定旧后缀和新后缀（不包含点号）  
-            string oldExtension = "pngg";
-            string newExtension = "png";
-            if (pngg) { oldExtension = "png"; newExtension = "pngg"; }
-
-            // 确保文件夹路径存在  
-            if (!Directory.Exists(folderPath))
-            {
-                Console.WriteLine("指定的文件夹不存在。");
-                return;
-            }
-
-            // 遍历文件夹下的所有文件  
-            foreach (string filePath in Directory.GetFiles(folderPath))
-            {
-                // 检查文件是否匹配旧后缀  
-                if (Path.GetExtension(filePath)?.TrimStart('.') == oldExtension)
-                {
-                    // 构建新文件名  
-                    string newFilePath = Path.Combine(Path.GetDirectoryName(filePath), Path.GetFileNameWithoutExtension(filePath) + "." + newExtension);
-
-                    // 重命名文件  
-                    try
-                    {
-                        File.Move(filePath, newFilePath);
-                        Console.WriteLine($"文件 {filePath} 已更改为 {newFilePath}");
-                    }
-                    catch (Exception ex)
-                    {
-                        Console.WriteLine($"无法重命名文件 {filePath}。错误：{ex.Message}");
-                    }
-                }
-            }
-
-            Console.WriteLine("所有匹配的文件后缀已更改。");
-        }
-        [DllImport("user32.dll")]
-        public static extern int GetKeyboardLayoutList(int nBuff, byte[] lpList);
-
-        [DllImport("user32.dll")]
-        public static extern IntPtr GetKeyboardLayout(uint dwLayout);
-
-        [DllImport("user32.dll")]
-        public static extern int GetKeyboardLayoutName(StringBuilder pwszKLID, int cchKLID);
-
     }
 }

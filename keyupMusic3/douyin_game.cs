@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
@@ -14,6 +15,8 @@ namespace keyupMusic3
     {
         public Form2 huan;
         string douyin_game_txt = "douyin_game.txt";
+        string douyin_game_txts = "douyin_games.txt";
+        string douyin_game_txt_log = "douyin_game.txt.log";
         public Douyin_game(Form parentForm)
         {
             huan = (Form2)parentForm;
@@ -86,21 +89,74 @@ namespace keyupMusic3
             if (string.IsNullOrEmpty(cmd) || cmd.Length < 3 || cmd.Length > 10) { return; }
             huan.Invoke(() =>
             {
-                if (old_cmd == cmd) { cmd += "第二次"; }
-                if (old_cmd == cmd + "第二次") { cmd += "第三次"; }
-                if (old_cmd == cmd + "第三次") { cmd += "第四次"; }
+                if (old_cmd == cmd) { cmd += ",第二次"; }
+                else if (old_cmd == cmd + ",第二次") { cmd += ",第三次"; }
+                else if (old_cmd == cmd + ",第三次") { cmd += ",第四次"; }
+                old_cmd = cmd;
+
+
+                //string dsadsad = DateTime.Now.ToString("hh:mm+ss=");
+                //dsadsad = ConvertNumberToChinese(dsadsad);
+                //{ cmd += ",时间:" + dsadsad; }
+
+                //if (cmd.IndexOf("第") > 0)
+                //    cmd += "全军出啊吧啊吧看不到我吗?啊?抖音?";
+
+                string url = "https://bghuan.cn/api/save.php/?namespace=douyin_game&format=string&str=" + cmd;
+                HttpGet(url);
+
                 huan.label1.Text = cmd;
                 Clipboard.SetText(cmd);
-                old_cmd = cmd;
             });
 
-            if (!judge_color(2030, 1209, Color.FromArgb(37, 38, 50), null, 10)) return;
-            if (!judge_color(2295, 1383, Color.FromArgb(51, 52, 63), null, 10)) return;
-            var old_pos = Position;
-            press("2220,1385", 10);
-            press([Keys.LControlKey, Keys.V]);
-            press([Keys.Enter]);
-            press(old_pos.X + "." + old_pos.Y, 0);
+            //if (is_ctrl()) return;
+            //if (!judge_color(2030, 1209, Color.FromArgb(37, 38, 50), null, 10)) return;
+            //if (!judge_color(2295, 1383, Color.FromArgb(51, 52, 63), null, 10)) return;
+            //var old_pos = Position;
+            //press("2220,1385", 100);
+            //press([Keys.LControlKey, Keys.V], 100);
+            //press([Keys.Enter], 100);
+            //press(old_pos.X + "." + old_pos.Y, 0);
+            try { File.AppendAllText(douyin_game_txt_log, DateTimeNow() + cmd + "\n"); }
+            catch { }
+        }
+
+        private static void HttpGet(string url)
+        {
+            HttpWebRequest request = (HttpWebRequest)WebRequest.Create(url);
+            using (HttpWebResponse response = (HttpWebResponse)request.GetResponse())
+            {
+                Stream stream = response.GetResponseStream();
+
+                using (StreamReader reader = new StreamReader(stream))
+                {
+                    string refJson = reader.ReadToEnd();
+
+                    Console.WriteLine(refJson);
+                    Console.Read();
+                }
+            }
+        }
+
+        static string ConvertNumberToChinese(string aaa)
+        {
+            string[] chineseDigits = { "零", "一", "二", "三", "四", "五", "六", "七", "八", "九" };
+            aaa = aaa.Replace("10", "十");
+            aaa = aaa.Replace("11", "十一");
+            aaa = aaa.Replace("1", "一");
+            aaa = aaa.Replace("2", "二");
+            aaa = aaa.Replace("3", "三");
+            aaa = aaa.Replace("4", "四");
+            aaa = aaa.Replace("5", "五");
+            aaa = aaa.Replace("6", "六");
+            aaa = aaa.Replace("7", "七");
+            aaa = aaa.Replace("8", "八");
+            aaa = aaa.Replace("9", "九");
+            aaa = aaa.Replace("0", "零");
+            aaa = aaa.Replace(":", "时");
+            aaa = aaa.Replace("+", "分");
+            aaa = aaa.Replace("=", "秒");
+            return aaa;
         }
 
         private void init_area(MouseKeyboardHook.MouseHookEventArgs e, int x, int y)
@@ -110,8 +166,10 @@ namespace keyupMusic3
             int X = Math.Abs(point_end.X - point_start.X) / 2;
             int Y = Math.Abs(point_end.Y - point_start.Y) / 4;
             R = X / 2;
+            R = Math.Abs(point_end.X - point_start.X) / 2;
             string json = "point_start:" + point_start.ToString() + ";R:" + R.ToString();
             File.WriteAllText(douyin_game_txt, json);
+            File.AppendAllText(douyin_game_txts, json+"\n");
         }
 
         int[] arr_area = new int[] { 5, 6, 7, 8, 9, 8, 7, 6, 5 };

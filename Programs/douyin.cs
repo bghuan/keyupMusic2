@@ -6,6 +6,8 @@ using System.Threading.Tasks;
 using static WGestures.Core.Impl.Windows.MouseKeyboardHook;
 
 using static keyupMusic2.Common;
+using System.Media;
+using System.Windows.Forms;
 
 namespace keyupMusic2
 {
@@ -43,6 +45,8 @@ namespace keyupMusic2
             //if (!handling) return;
             Common.hooked = true;
             handling_keys = e.key;
+            bool is_string_cmd = Special_Input && is_douyin_live_and_input();
+            is_string_cmd = Special_Input2;
 
             switch (e.key)
             {
@@ -122,7 +126,7 @@ namespace keyupMusic2
                         {
                             int tick = 220 + new Random().Next(1, 6);
                             mouse_click2(tick);
-                            if (yo() != ClassName()) zan = false;
+                            if (FreshProcessName() != ClassName()) zan = false;
                         }
                     });
                     break;
@@ -133,17 +137,41 @@ namespace keyupMusic2
                 //    press([Keys.Enter]);
                 //    press(aaa.X + "." + aaa.Y, 100);
                 //    break;
-                //case Keys.F2:
+                case Keys.F2:
+                    Special_Input2 = !Special_Input2;
+                    if (Special_Input2) play_sound_di();
+                    break;
+                case Keys.F4:
+                    send_input("揭竿而起");
+                    break;
                 case Keys.F5:
-                    string txt = "全军出击";
-                    Invoke(() => Clipboard.SetText(txt));
-                    press([Keys.LControlKey, Keys.V]);
+                    send_input("全军出击");
+                    //send_input("隔山打牛");
                     break;
                 case Keys.F6:
-                    string txt2 = "修养生息";
-                    Invoke(() => Clipboard.SetText(txt));
-                    press([Keys.LControlKey, Keys.V]);
+                    send_input("休养生息");
+                    //send_input("勇冠三军");
                     break;
+                case Keys.D1:
+                    if (is_string_cmd) send_input("隔山打牛"); break;
+                case Keys.D2:
+                    if (is_string_cmd) send_input("兵不厌诈"); break;
+                case Keys.D3:
+                    if (is_string_cmd) send_input("勇冠三军"); break;
+                case Keys.D4:
+                    if (is_string_cmd) send_input("固若金汤"); break;
+                case Keys.D5:
+                    if (is_string_cmd) send_input("破釜沉舟"); break;
+                case Keys.D6:
+                    if (is_string_cmd) send_input("急速冷却"); break;
+                case Keys.D7:
+                    if (is_string_cmd) send_input("招贤纳士"); break;
+                case Keys.D8:
+                    if (is_string_cmd) send_input("战无不胜"); break;
+                case Keys.D9:
+                    if (is_string_cmd) send_input("天降神兵"); break;
+                case Keys.D0:
+                    if (is_string_cmd) send_input("极寒领域"); break;
                 case Keys.Enter:
                     if (!is_ctrl()) break;
                     string old_clipboard = "";
@@ -164,6 +192,40 @@ namespace keyupMusic2
             Common.hooked = false;
             if (!handling) handling = true;
         }
+
+        private void play_sound_di()
+        {
+            string wav = "wav\\d.wav";
+            if (!File.Exists(wav)) return;
+
+            player = new SoundPlayer(wav);
+            player.Play();
+        }
+        private void send_input(string txt)
+        {
+            play_sound_di();
+            Invoke(() => Clipboard.SetText(txt));
+
+            if (!is_douyin_live_and_input()) return;
+            if (is_ctrl()) return;
+
+            var old_pos = Position;
+            press("2220,1385", 10);
+            press([Keys.LControlKey, Keys.A]);
+            press([Keys.Back]);
+            press([Keys.LControlKey, Keys.V]);
+            //press("2519.1384", 10);
+            //press([Keys.Enter]);
+            press(old_pos.X + "." + old_pos.Y, 0);
+        }
+
+        private static bool is_douyin_live_and_input()
+        {
+            if (!judge_color(2030, 1209, Color.FromArgb(37, 38, 50), null, 10)) return false;
+            if (!judge_color(2295, 1383, Color.FromArgb(51, 52, 63), null, 10)) return false;
+            return true;
+        }
+
         bool zan = false;
         public void Invoke(Action action)
         {

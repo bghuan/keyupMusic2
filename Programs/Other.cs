@@ -54,12 +54,9 @@ namespace keyupMusic2
                     {
                         HideProcess(module_name);
                     }
-                    else if (explorer.Equals(module_name))
+                    else if (explorer.Equals(module_name) && (GetWindowText() == "UnlockingWindow"))
                     {
-                        if (GetWindowText() == "UnlockingWindow")
-                        {
-                            Super.hook_KeyDown(Keys.N);
-                        }
+                        Super.hook_KeyDown(Keys.N);
                     }
                     else if (list_wechat_visualstudio.Contains(module_name))
                     {
@@ -76,18 +73,18 @@ namespace keyupMusic2
                         break;
                     }
                     break;
-                case Keys.PageUp:
-                    if (module_name == msedge)
-                    {
-                        if (Position.Y == 0 && Position.X == 2559) { break; }
-                        if (Position.Y == 0 && Position.X != 2559) { press(Keys.VolumeUp); press(Keys.VolumeUp); press(Keys.VolumeUp); press(Keys.VolumeUp); break; }
-                    }
-                    break;
+                //case Keys.PageUp:
+                //    if (module_name == msedge)
+                //    {
+                //        if (Position.Y == 0 && Position.X == 2559) { break; }
+                //        if (Position.Y == 0 && Position.X != 2559) { press(Keys.VolumeUp); press(Keys.VolumeUp); press(Keys.VolumeUp); press(Keys.VolumeUp); break; }
+                //    }
+                //    break;
                 case Keys.PageDown:
-                    if (module_name == msedge)
-                    {
-                        if (Position.Y == 0 && Position.X != 2559) { press(Keys.VolumeDown); press(Keys.VolumeDown); press(Keys.VolumeDown); press(Keys.VolumeDown); break; }
-                    }
+                    //if (module_name == msedge)
+                    //{
+                    //    if (Position.Y == 0 && Position.X != 2559) { press(Keys.VolumeDown); press(Keys.VolumeDown); press(Keys.VolumeDown); press(Keys.VolumeDown); break; }
+                    //}
                     if (module_name == QyClient)
                     {
                         press("563, 894", 1);
