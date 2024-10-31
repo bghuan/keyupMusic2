@@ -29,6 +29,8 @@ namespace keyupMusic2
         {
             if (Common.ProcessName != ClassName()) return false;
             //if (judge_handled_key.Contains(e.key)) return true;
+            if (is_down(Keys.F2)) return true;
+            if ((Special_Input_tiem != init_time && Special_Input_tiem.AddMilliseconds(1000) > DateTime.Now)) return true;
             if (is_ctrl())
             {
                 if (e.key == Keys.Left || e.key == Keys.Right || e.key == Keys.Enter)
@@ -39,14 +41,15 @@ namespace keyupMusic2
         public void hook_KeyDown_ddzzq(KeyboardHookEventArgs e)
         {
             string module_name = ProcessName;
-            if (module_name != ClassName()) return;
+            if (module_name != ClassName() && ProcessName != ApplicationFrameHost) return;
             //if (module_name != ClassName() && module_name != Common.msedge) return;
             if (is_down(Keys.LWin)) return;
             //if (!handling) return;
             Common.hooked = true;
             handling_keys = e.key;
-            bool is_string_cmd = Special_Input && is_douyin_live_and_input();
-            is_string_cmd = Special_Input2;
+            //bool is_string_cmd = Special_Input && is_douyin_live_and_input();
+            //bool is_string_cmd = Special_Input2;
+            bool is_string_cmd = (Special_Input_tiem != init_time && Special_Input_tiem.AddMilliseconds(1000)> DateTime.Now ) || Special_Input;
 
             switch (e.key)
             {
@@ -59,7 +62,8 @@ namespace keyupMusic2
                         if (num1222 == 2) num = 5;
                         else if (num1222 == 3) num = 6;
                         else num = 1;
-                        press("2236.1400;2226," + (1030 + (num * 50)), 101);
+                        if (judge_color(2471, 657, Color.FromArgb(254, 44, 85)))
+                            press("2236.1400;2226," + (1030 + (num * 50)), 101);
                         break;
                     }
                     raw_press();
@@ -72,34 +76,12 @@ namespace keyupMusic2
                         if (num1222 == 2) num = 5;
                         else if (num1222 == 3) num = 6;
                         else num = 1;
-                        press("2236.1400;2226," + (1030 + (num * 50)), 101);
+                        if (judge_color(2471, 657, Color.FromArgb(254, 44, 85)))
+                            press("2236.1400;2226," + (1030 + (num * 50)), 101);
                         break;
                     }
                     raw_press();
                     break;
-                //case Keys.Oem3:
-                //case Keys.D1:
-                //case Keys.D2:
-                //case Keys.D3:
-                //case Keys.D4:
-                //case Keys.D5:
-                //case Keys.D6:
-                //    if (module_name != ClassName()) break;
-                //    num = int.Parse(e.key.ToString().Replace("D", "").Replace("Oem3", "0"));
-                //    press("2236.1400;2226," + (1030 + (num * 50)), 101);
-                //    break;
-                //case Keys.LControlKey:
-                //    if (module_name == Common.douyin)
-                //        press_middle_bottom();
-                //    break;
-                //case Keys.D3:
-                //case Keys.D4:
-                //case Keys.D5:
-                //case Keys.D6:
-                //    if (module_name != ClassName()) break;
-                //    num = int.Parse(e.key.ToString().Replace("D", "").Replace("Oem3", "0"));
-                //    press("2236.1400;2226," + (1030 + (num * 50)), 101);
-                //    break;
                 case Keys.Right:
                     //case Keys.D:
                     if (!is_ctrl()) break;
@@ -107,7 +89,8 @@ namespace keyupMusic2
                     if (num1222 == 2) num = 5;
                     else if (num1222 == 3) num = 6;
                     else num = 1;
-                    press("2236.1400;2226," + (1030 + (num * 50)), 101);
+                    if (judge_color(2471, 657, Color.FromArgb(254, 44, 85)))
+                        press("2236.1400;2226," + (1030 + (num * 50)), 101);
                     break;
                 case Keys.Left:
                     //case Keys.A:
@@ -116,20 +99,21 @@ namespace keyupMusic2
                     if (num1222 == 2) num = 5;
                     else if (num1222 == 3) num = 6;
                     else num = 1;
-                    press("2236.1400;2226," + (1030 + (num * 50)), 101);
+                    if (judge_color(2471, 657, Color.FromArgb(254, 44, 85)))
+                        press("2236.1400;2226," + (1030 + (num * 50)), 101);
                     break;
-                case Keys.F1:
-                    zan = !zan;
-                    Task.Run(() =>
-                    {
-                        while (zan)
-                        {
-                            int tick = 220 + new Random().Next(1, 6);
-                            mouse_click2(tick);
-                            if (FreshProcessName() != ClassName()) zan = false;
-                        }
-                    });
-                    break;
+                //case Keys.F1:
+                //    zan = !zan;
+                //    Task.Run(() =>
+                //    {
+                //        while (zan)
+                //        {
+                //            int tick = 220 + new Random().Next(1, 6);
+                //            mouse_click2(tick);
+                //            if (FreshProcessName() != ClassName()) zan = false;
+                //        }
+                //    });
+                //    break;
                 //case Keys.F1:
                 //    var aaa = Position;
                 //    press("2220,1385", 100);
@@ -139,7 +123,9 @@ namespace keyupMusic2
                 //    break;
                 case Keys.F2:
                     Special_Input2 = !Special_Input2;
-                    if (Special_Input2) play_sound_di();
+                    Special_Input_tiem = DateTime.Now;
+                    //if (Special_Input2) 
+                        play_sound_di();
                     break;
                 case Keys.F4:
                     send_input("揭竿而起");
@@ -153,25 +139,50 @@ namespace keyupMusic2
                     //send_input("勇冠三军");
                     break;
                 case Keys.D1:
-                    if (is_string_cmd) send_input("隔山打牛"); break;
+                    if (is_string_cmd) send_input("隔山打牛"); break;//远
+                case Keys.Q:
+                    if (is_string_cmd) send_input("雷霆万钧"); break;//         2
+
                 case Keys.D2:
-                    if (is_string_cmd) send_input("兵不厌诈"); break;
+                    if (is_string_cmd) send_input("兵不厌诈"); break;//+2       pick
+                case Keys.W:
+                    if (is_string_cmd) send_input("无中生有"); break;//         1
+
                 case Keys.D3:
-                    if (is_string_cmd) send_input("勇冠三军"); break;
+                    if (is_string_cmd) send_input("勇冠三军"); break;//+2
+                case Keys.E:
+                    if (is_string_cmd) send_input("如影随形"); break;//         3
+
                 case Keys.D4:
-                    if (is_string_cmd) send_input("固若金汤"); break;
+                    if (is_string_cmd) send_input("固若金汤"); break;//+3
+                case Keys.R:
+                    if (is_string_cmd) send_input("溃不成军"); break;//no
+
                 case Keys.D5:
-                    if (is_string_cmd) send_input("破釜沉舟"); break;
+                    if (is_string_cmd) send_input("救死扶伤"); break;//铁
+                case Keys.T:
+                    if (is_string_cmd) send_input("殃及池鱼"); break;//         01
+
                 case Keys.D6:
-                    if (is_string_cmd) send_input("急速冷却"); break;
+                    if (is_string_cmd) send_input("急速冷却"); break;//辅
+                case Keys.Y:
+                    if (is_string_cmd) send_input("调兵遣将"); break;//no
+
                 case Keys.D7:
-                    if (is_string_cmd) send_input("招贤纳士"); break;
+                    if (is_string_cmd) send_input("指鹿为马"); break;//+3       pick
+                case Keys.U:
+                    if (is_string_cmd) send_input("偷梁换柱"); break;//no
+
                 case Keys.D8:
-                    if (is_string_cmd) send_input("战无不胜"); break;
+                    if (is_string_cmd) send_input("破釜沉舟"); break;//逆风
+
                 case Keys.D9:
-                    if (is_string_cmd) send_input("天降神兵"); break;
+                    if (is_string_cmd) send_input("割地称臣"); break;//逆风
+
+
                 case Keys.D0:
-                    if (is_string_cmd) send_input("极寒领域"); break;
+                    if (is_string_cmd) send_input("招贤纳士"); break;//
+
                 case Keys.Enter:
                     if (!is_ctrl()) break;
                     string old_clipboard = "";
@@ -188,6 +199,12 @@ namespace keyupMusic2
                     });
                     press([Keys.Enter]);
                     break;
+                case Keys.H:
+                    if (judge_color(2318, 1110, Color.FromArgb(22, 24, 35), null, 10))
+                        if (judge_color(1051, 123, Color.FromArgb(22, 24, 35), null, 10))
+                            if (judge_color(267, 1203, Color.FromArgb(14, 16, 23), null, 10))
+                                press("267, 1203");
+                    break;
             }
             Common.hooked = false;
             if (!handling) handling = true;
@@ -203,6 +220,7 @@ namespace keyupMusic2
         }
         private void send_input(string txt)
         {
+            Special_Input_tiem = init_time;
             play_sound_di();
             Invoke(() => Clipboard.SetText(txt));
 
@@ -213,6 +231,21 @@ namespace keyupMusic2
             press("2220,1385", 10);
             press([Keys.LControlKey, Keys.A]);
             press([Keys.Back]);
+            press([Keys.LControlKey, Keys.V]);
+            //press("2519.1384", 10);
+            //press([Keys.Enter]);
+            press(old_pos.X + "." + old_pos.Y, 0);
+        }
+        private void send_input_num(string txt)
+        {
+            play_sound_di();
+            Invoke(() => Clipboard.SetText(txt));
+
+            if (!is_douyin_live_and_input()) return;
+            if (is_ctrl()) return;
+
+            var old_pos = Position;
+            press("2220,1385", 10);
             press([Keys.LControlKey, Keys.V]);
             //press("2519.1384", 10);
             //press([Keys.Enter]);
@@ -233,46 +266,3 @@ namespace keyupMusic2
         }
     }
 }
-
-//case Keys.X:
-//    //if (Position.X == 0)
-//    //{
-//    //    num1222++;
-//    //    num = num1222;
-//    //    press("2236.1400;2226," + (1030 + (num * 50)), 101);
-//    //    break;
-//    //}
-//    raw_press2();
-//    break;
-//case Keys.H:
-//    if (Position.X == 0)
-//    {
-//        num1222--;
-//        num = num1222;
-//        press("2236.1400;2226," + (1030 + (num * 50)), 101);
-//        break;
-//    }
-//    raw_press();
-//    break;
-//case Keys.VolumeDown:
-//    if (special_delete_key_time.AddSeconds(2) > DateTime.Now)
-//    {
-//        press(Keys.VolumeDown);
-//        special_delete_key_time = DateTime.Now;
-//        break;
-//    }
-//    if (Position.Y == 0 && Position.X != 2559) { press(Keys.VolumeDown); break; }
-//    //if (signle)
-//        press(Keys.PageDown);
-//    //signle = !signle;
-//    break;
-//case Keys.VolumeUp:
-//    if (special_delete_key_time.AddSeconds(2) > DateTime.Now)
-//    {
-//        press(Keys.VolumeUp);
-//        special_delete_key_time = DateTime.Now;
-//        break;
-//    }
-//    if (Position.Y == 0 && Position.X != 2559) { press(Keys.VolumeUp); break; }
-//    press(Keys.PageUp);
-//    break;

@@ -1,37 +1,31 @@
 ﻿using System;
-using System.IO;
-using System.Net;
-using System.Net.Sockets;
+using System.Globalization;
 using System.Text;
 
 class Program
 {
-    private const string Hostname = "127.0.0.1";
-
-    static TcpListener listener;
-    static TcpClient client;
-    static NetworkStream stream;
     static void Main()
     {
-        socket_write("AA");
-    }
-    public static void socket_write(string msg)
-    {
-        if (string.IsNullOrEmpty(msg))
-            return;
-        if (client == null || stream == null || client.Connected == false)
+        int score1 = 0, score2 = 0, score3 = 0;
+        int times = 10000;
+        var random = new Random();
+        int random1 = 1,random2 = 7;
+        //random1--; random2--;
+        for (int i = 0; i < times; i++)
         {
-            client = new TcpClient(Hostname, 13000);
-            stream = client.GetStream();
+            int a = 0, b = 0;
+            for (int j = 0; j < 12; j++)
+            {
+                a += random.Next(random1, random2);
+            }
+            for (int j = 0; j < 11; j++)
+            {
+                b += random.Next(random1, random2);
+            }
+            if (a > b) { score1++; }
+            else if (a < b) { score2++; }
+            else { score3++; }
         }
-        try
-        {
-            byte[] data = Encoding.ASCII.GetBytes(msg);
-            stream.Write(data, 0, data.Length);
-        }
-        catch (Exception ex)
-        {
-            Console.WriteLine("发送数据时发生错误：" + ex.Message);
-        }
+        Console.WriteLine(score1 + "    " + (score2 + score3));
     }
 }

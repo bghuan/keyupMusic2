@@ -23,7 +23,6 @@ namespace keyupMusic2
         }
         public static Huan huan;
         Keys[] keys = { Keys.D0, Keys.D1, Keys.D2, Keys.D3, Keys.D4, Keys.D5, Keys.D6, Keys.D7, Keys.D8, Keys.D9, Keys.PageUp, Keys.Next, Keys.Home, Keys.End, Keys.Space };
-        bool key_sound = true;
         bool start_record = false;
         string commnd_record = "";
 
@@ -60,15 +59,15 @@ namespace keyupMusic2
                     if (key_sound) player.Stop();
                     key_sound = !key_sound;
                     break;
-                case Keys.T:
-                    if (start_record && !string.IsNullOrEmpty(commnd_record))
-                    {
-                        Common.log(commnd_record);
-                        Invoke(() => Clipboard.SetText(commnd_record));
-                    }
-                    start_record = !start_record;
-                    commnd_record = "";
-                    break;
+                //case Keys.T:
+                //    if (start_record && !string.IsNullOrEmpty(commnd_record))
+                //    {
+                //        Common.log(commnd_record);
+                //        Invoke(() => Clipboard.SetText(commnd_record));
+                //    }
+                //    start_record = !start_record;
+                //    commnd_record = "";
+                //    break;
                 case Keys.Y:
                     Common.cmd($"/c start ms-settings:taskbar");
                     press("200;978,1042;907,1227;2500,32;", 801);
@@ -228,21 +227,6 @@ namespace keyupMusic2
                 //KeyboardHook.stop_next = true;
             }
             Common.hooked = false;
-
-            void paly_sound(Keys key)
-            {
-                if (is_down(Keys.LWin)) return;
-                if (Position.Y == 0) return;
-                //if (key_sound && keys.Contains(e.key))
-                if (key_sound)
-                {
-                    string wav = "wav\\" + key.ToString().Replace("D", "").Replace("F", "") + ".wav";
-                    if (!File.Exists(wav)) return;
-
-                    player = new SoundPlayer(wav);
-                    player.Play();
-                }
-            }
         }
 
         private static void notify()

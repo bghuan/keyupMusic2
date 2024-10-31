@@ -214,10 +214,10 @@ namespace keyupMusic2
                 case Keys.Delete:
                     if (judge_color(2409, 265, Color.FromArgb(93, 199, 250)) && judge_color(2358, 263, Color.FromArgb(93, 199, 250)))
                     {
-                        press("2409,265", 3);
+                        press("2409,265", 1, true);
                     }
                     else
-                        press("2460,50;2460,200", 103);
+                        press("2460,50;2460,200", 101, true);
                     break;
             }
             Common.hooked = false;

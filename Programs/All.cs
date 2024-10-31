@@ -100,8 +100,8 @@ namespace keyupMusic2
                 case Keys.Delete:
                 case Keys.Escape:
                     Special_Input = false; DaleyRun_stop = true; special_delete_key_time = DateTime.Now; player.Stop(); break;
-                case Keys.LControlKey:
-                    player.Stop(); break;
+                //case Keys.LControlKey:
+                //    player.Stop(); break;
                 case Keys.LMenu:
                     FreshProcessName(); break;
                 case Keys.F4:

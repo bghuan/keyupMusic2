@@ -1,4 +1,636 @@
-﻿using System.Runtime.InteropServices;
+﻿using System;
+using System.Globalization;
+using System.Text;
+
+class Program
+{
+    static void Main()
+    {
+        string[] strings = { "11111", "顶顶顶顶顶", "99999", "aaaaa", ".,...", ">>>>>", "MMMMM" };
+
+        int maxWidth = 0;
+        foreach (var str in strings)
+        {
+            int width = GetStringWidth(str);
+            if (width > maxWidth)
+            {
+                maxWidth = width;
+            }
+        }
+
+        foreach (var str in strings)
+        {
+            StringBuilder paddedStr = new StringBuilder(str);
+            while (GetStringWidth(paddedStr.ToString()) < maxWidth)
+            {
+                paddedStr.Append(' ');
+            }
+            Console.WriteLine(paddedStr + ":");
+        }
+    }
+
+    static int GetStringWidth(string str)
+    {
+        int width = 0;
+        foreach (char c in str)
+        {
+            width += GetCharWidth(c);
+        }
+        return width;
+    }
+
+    static int GetCharWidth(char c)
+    {
+        // 中文字符通常宽度为2，英文字符等通常宽度为1，特殊字符可根据需要调整宽度
+        return CharUnicodeInfo.GetUnicodeCategory(c) == UnicodeCategory.OtherLetter ? 2 : 1;
+    }
+}using System.Net;
+using System.Text.RegularExpressions;
+using WGestures.Core.Impl.Windows;
+using static keyupMusic2.Common;
+
+namespace keyupMusic3
+{
+    public class Douyin_game
+    {
+        public Form2 huan;
+        string douyin_game_txt = "douyin_game.txt";
+        string douyin_game_txts = "douyin_games.txt";
+        string douyin_game_txt_log = "douyin_game.txt.log";
+        public Douyin_game(Form parentForm)
+        {
+            huan = (Form2)parentForm;
+            try
+            {
+                string json = File.ReadAllText(douyin_game_txt);
+                var jsons = json.Split(';');
+                var point_start_str = jsons[0].Split(":")[1];
+                var R_str = jsons[1].Split(":")[1];
+                Match match = Regex.Match(point_start_str, @"X=(?<x>\d+),Y=(?<y>\d+)");
+
+                point_start = new Point(int.Parse(match.Groups["x"].Value), int.Parse(match.Groups["y"].Value));
+                R = double.Parse(R_str);
+            }
+            catch (Exception e)
+            {
+            }
+        }
+
+        public void MouseHookProc(MouseKeyboardHook.MouseHookEventArgs e)
+        {
+            Task.Run(() => { MouseHookProcDouyin(e); });
+        }
+
+        Point point_start = new Point();
+        Point point_end = new Point();
+        double R;
+        double R1 = 45;
+        double R2 = 56;
+        double R3 = 80;
+        double R4 = 130;
+        string area_start = "";
+        string area_end = "";
+
+        public void MouseHookProcDouyin(MouseKeyboardHook.MouseHookEventArgs e)
+        {
+            if (ProcessName != douyin && ProcessName != ApplicationFrameHost) return;
+            //if (e.Msg == MouseMsg.WM_MOUSEMOVE) return;
+            int x = e.X - point_start.X;
+            int y = -(e.Y - point_start.Y);
+            //R = 50;
+
+            if (e.Msg == MouseMsg.WM_MOUSEMOVE)
+            {
+                var area_start = get_area_number(x, y, true);
+                var sss = huan.label1.Text;
+                if (area_start == sss || area_start == ExtractAfterAttack(sss)) return;
+                huan.Invoke(() =>
+                {
+                    huan.label1.Text = area_start;
+                });
+            }
+            else if (e.Msg == MouseMsg.WM_LBUTTONDOWN)
+            {
+                area_start = get_area_number(x, y);
+            }
+            else if (e.Msg == MouseMsg.WM_LBUTTONUP)
+            {
+                area_end = get_area_number(x, y);
+                string vs = "攻击";
+                set_clip_txt(area_start, vs, area_end);
+            }
+            else if (e.Msg == MouseMsg.WM_RBUTTONDOWN)
+            {
+                if (is_ctrl() || is_alt()) point_start = e.Pos;
+                else area_start = get_area_number(x, y);
+            }
+            else if (e.Msg == MouseMsg.WM_RBUTTONUP)
+            {
+                if (is_ctrl()) init_area(e, x, y);
+                else
+                {
+                    area_end = get_area_number(x, y);
+                    string vs = "增援";
+                    set_clip_txt(area_start, vs, area_end);
+                }
+            }
+        }
+        string old_cmd = "";
+        private void set_clip_txt(string a, string b, string c)
+        {
+            if (a == c || string.IsNullOrEmpty(a) || string.IsNullOrEmpty(c)) return;
+            string cmd = a + b + c;
+            if (string.IsNullOrEmpty(cmd) || cmd.Length < 3 || cmd.Length > 10) { return; }
+            huan.Invoke(() =>
+            {
+                if (old_cmd == cmd) { cmd += ",第二次"; }
+                else if (old_cmd == cmd + ",第二次") { cmd += ",第三次"; }
+                else if (old_cmd == cmd + ",第三次") { cmd += ",第四次"; }
+                old_cmd = cmd;
+
+                //string dsadsad = DateTime.Now.ToString("hh:mm+ss=");
+                //dsadsad = ConvertNumberToChinese(dsadsad);
+                //{ cmd += ",时间:" + dsadsad; }
+
+                //if (cmd.IndexOf("第") > 0)
+                //    cmd += "全军出啊吧啊吧看不到我吗?啊?抖音?";
+
+                string url = "https://bghuan.cn/api/save.php/?namespace=douyin_game&format=string&str=" + cmd;
+                HttpGet(url);
+
+                huan.label1.Text = cmd;
+                Clipboard.SetText(cmd);
+            });
+            try { File.AppendAllText(douyin_game_txt_log, DateTimeNow() + cmd + "\n"); }
+            catch { }
+        }
+
+        private static void HttpGet(string url)
+        {
+            HttpWebRequest request = (HttpWebRequest)WebRequest.Create(url);
+            using (HttpWebResponse response = (HttpWebResponse)request.GetResponse())
+            {
+                Stream stream = response.GetResponseStream();
+
+                using (StreamReader reader = new StreamReader(stream))
+                {
+                    string refJson = reader.ReadToEnd();
+
+                    Console.WriteLine(refJson);
+                    Console.Read();
+                }
+            }
+        }
+
+        private void init_area(MouseKeyboardHook.MouseHookEventArgs e, int x, int y)
+        {
+            point_end = e.Pos;
+
+            int X = Math.Abs(point_end.X - point_start.X) / 2;
+            int Y = Math.Abs(point_end.Y - point_start.Y) / 4;
+            R = X / 2;
+            R = Math.Abs(point_end.X - point_start.X) / 2;
+            string json = "point_start:" + point_start.ToString() + ";R:" + R.ToString();
+            File.WriteAllText(douyin_game_txt, json);
+            File.AppendAllText(douyin_game_txts, json + "\n");
+
+            R1 = R;
+            R2 = R;
+            R3 = R;
+            R4 = R;
+        }
+
+        int[] arr_area = new int[] { 5, 6, 7, 8, 9, 8, 7, 6, 5 };
+        double[] arr_start_x = new double[] { -2, -2.5, -3, -3.5, -4, -3.5, -3, -2.5, -2 };
+        double last_R = 1;
+        private string get_area_number(int x, int y, bool soon = false)
+        {
+            var R = this.R;
+            if (soon)
+            {
+                R = last_R;
+            }
+            else
+            {
+                var color = Color.FromArgb(10, 8, 18);
+                var a1 = judge_color(673, 787, color) && judge_color(1355, 788, color);
+                var a2 = judge_color(696, 812, color) && judge_color(1329, 811, color);
+                var a3 = judge_color(1012, 1036, color) && judge_color(741, 878, color);
+                if (a1) R = R2;
+                else if (a2) R = R3;
+                else if (a3) R = R4;
+                else R = R1;
+                last_R = R;
+            }
+
+            string number_area = x + " " + y;
+
+            int number = 1;
+            for (int i = 0; i < arr_area.Length; i++)
+            {
+                double current_y = -4 + i;
+                current_y = little_change(current_y);
+                double current_x = arr_start_x[i];
+                double current_point_y = (current_y * R * 2);
+
+                for (int j = 0; j < arr_area[i]; j++)
+                {
+                    double current_point_x = ((current_x + j) * R * 2);
+                    var current_point = new Point((int)current_point_x, (int)current_point_y);
+                    var diff_x = x - current_point.X;
+                    var diff_y = y - current_point.Y;
+
+                    number_area += "," + current_point.X + " " + current_point.Y;
+                    if (diff_x > -R && diff_x < R && diff_y > -R && diff_y < R)
+                    {
+                        return number.ToString();
+                    }
+                    number++;
+                }
+            }
+            return "";
+        }
+
+        private static double little_change(double current_y)
+        {
+            switch (current_y)
+            {
+                case -4: current_y = -3.6; break;
+                case -3: current_y = -2.7; break;
+                case -2: current_y = -1.8; break;
+                case -1: current_y = -0.9; break;
+                case 1: current_y = 0.9; break;
+                case 2: current_y = 1.8; break;
+                case 3: current_y = 2.7; break;
+                case 4: current_y = 3.6; break;
+            }
+
+            return current_y;
+        }
+        static string ExtractAfterAttack(string input)
+        {
+            int attackIndex = input.IndexOf("攻击") + input.IndexOf("增援")+1;
+            if (attackIndex > 0)
+            {
+                string partAfterAttack = input.Substring(attackIndex + 2);
+                int commaIndex = partAfterAttack.IndexOf(',');
+                if (commaIndex > 0)
+                {
+                    return partAfterAttack.Substring(0, commaIndex);
+                }
+                else
+                {
+                    return partAfterAttack;
+                }
+            }
+            else
+            {
+                return "未找到'攻击'关键字";
+            }
+        }
+    }
+}using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+using static WGestures.Core.Impl.Windows.MouseKeyboardHook;
+
+using static keyupMusic2.Common;
+using System.Media;
+using System.Windows.Forms;
+
+namespace keyupMusic2
+{
+    public class douyin : Default
+    {
+        public douyin(Form parentForm)
+        {
+            huan = (Huan)parentForm;
+        }
+        public douyin()
+        {
+        }
+        public static Huan huan;
+        bool signle = true;
+        public static Keys[] judge_handled_key = { Keys.X, Keys.H, };
+        int num;
+        int num1222 = 1;
+        public override bool judge_handled(KeyboardHookEventArgs e)
+        {
+            if (Common.ProcessName != ClassName()) return false;
+            //if (judge_handled_key.Contains(e.key)) return true;
+            if (is_ctrl())
+            {
+                if (e.key == Keys.Left || e.key == Keys.Right || e.key == Keys.Enter)
+                    return true;
+            }
+            return false;
+        }
+        public void hook_KeyDown_ddzzq(KeyboardHookEventArgs e)
+        {
+            string module_name = ProcessName;
+            if (module_name != ClassName()) return;
+            //if (module_name != ClassName() && module_name != Common.msedge) return;
+            if (is_down(Keys.LWin)) return;
+            //if (!handling) return;
+            Common.hooked = true;
+            handling_keys = e.key;
+            bool is_string_cmd = Special_Input && is_douyin_live_and_input();
+            //is_string_cmd = Special_Input2;
+
+            switch (e.key)
+            {
+                case Keys.PageUp:
+                    if (Position.Y == 0 && Position.X == 2559) { break; }
+                    if (Position.Y == 0 && Position.X != 2559) { press(Keys.VolumeUp); press(Keys.VolumeUp); press(Keys.VolumeUp); press(Keys.VolumeUp); break; }
+                    if (module_name == ClassName())
+                    {
+                        if (num1222 <= 3 && num1222 > 1) num1222--;
+                        if (num1222 == 2) num = 5;
+                        else if (num1222 == 3) num = 6;
+                        else num = 1;
+                        if (judge_color(2471, 657, Color.FromArgb(254, 44, 85)))
+                        press("2236.1400;2226," + (1030 + (num * 50)), 101);
+                        break;
+                    }
+                    raw_press();
+                    break;
+                case Keys.PageDown:
+                    if (Position.Y == 0 && Position.X != 2559) { press(Keys.VolumeDown); press(Keys.VolumeDown); press(Keys.VolumeDown); press(Keys.VolumeDown); break; }
+                    if (module_name == ClassName())
+                    {
+                        if (num1222 < 3 && num1222 >= 1) num1222++;
+                        if (num1222 == 2) num = 5;
+                        else if (num1222 == 3) num = 6;
+                        else num = 1;
+                        if (judge_color(2471, 657, Color.FromArgb(254, 44, 85)))
+                            press("2236.1400;2226," + (1030 + (num * 50)), 101);
+                        break;
+                    }
+                    raw_press();
+                    break;
+                case Keys.Right:
+                    //case Keys.D:
+                    if (!is_ctrl()) break;
+                    if (num1222 < 3 && num1222 >= 1) num1222++;
+                    if (num1222 == 2) num = 5;
+                    else if (num1222 == 3) num = 6;
+                    else num = 1;
+                    if (judge_color(2471, 657, Color.FromArgb(254, 44, 85)))
+                        press("2236.1400;2226," + (1030 + (num * 50)), 101);
+                    break;
+                case Keys.Left:
+                    //case Keys.A:
+                    if (!is_ctrl()) break;
+                    if (num1222 <= 3 && num1222 > 1) num1222--;
+                    if (num1222 == 2) num = 5;
+                    else if (num1222 == 3) num = 6;
+                    else num = 1;
+                    if (judge_color(2471, 657, Color.FromArgb(254, 44, 85)))
+                        press("2236.1400;2226," + (1030 + (num * 50)), 101);
+                    break;
+                //case Keys.F1:
+                //    zan = !zan;
+                //    Task.Run(() =>
+                //    {
+                //        while (zan)
+                //        {
+                //            int tick = 220 + new Random().Next(1, 6);
+                //            mouse_click2(tick);
+                //            if (FreshProcessName() != ClassName()) zan = false;
+                //        }
+                //    });
+                //    break;
+                //case Keys.F1:
+                //    var aaa = Position;
+                //    press("2220,1385", 100);
+                //    press([Keys.LControlKey, Keys.V]);
+                //    press([Keys.Enter]);
+                //    press(aaa.X + "." + aaa.Y, 100);
+                //    break;
+                case Keys.F2:
+                    Special_Input2 = !Special_Input2;
+                    if (Special_Input2) play_sound_di();
+                    break;
+                case Keys.F4:
+                    send_input("揭竿而起");
+                    break;
+                case Keys.F5:
+                    send_input("全军出击");
+                    //send_input("隔山打牛");
+                    break;
+                case Keys.F6:
+                    send_input("休养生息");
+                    //send_input("勇冠三军");
+                    break;
+                case Keys.D1:
+                    if (is_string_cmd) send_input("隔山打牛"); break;//远
+                case Keys.Q:
+                    if (is_string_cmd) send_input("雷霆万钧"); break;//         2
+
+                case Keys.D2:
+                    if (is_string_cmd) send_input("兵不厌诈"); break;//+2       pick
+                case Keys.W:
+                    if (is_string_cmd) send_input("无中生有"); break;//         1
+
+                case Keys.D3:
+                    if (is_string_cmd) send_input("勇冠三军"); break;//+2
+                case Keys.E:
+                    if (is_string_cmd) send_input("如影随形"); break;//         3
+
+                case Keys.D4:
+                    if (is_string_cmd) send_input("固若金汤"); break;//+3
+                case Keys.R:
+                    if (is_string_cmd) send_input("溃不成军"); break;//no
+
+                case Keys.D5:
+                    if (is_string_cmd) send_input("救死扶伤"); break;//铁
+                case Keys.T:
+                    if (is_string_cmd) send_input("殃及池鱼"); break;//         01
+
+                case Keys.D6:
+                    if (is_string_cmd) send_input("急速冷却"); break;//辅
+                case Keys.Y:
+                    if (is_string_cmd) send_input("调兵遣将"); break;//no
+
+                case Keys.D7:
+                    if (is_string_cmd) send_input("指鹿为马"); break;//+3       pick
+                case Keys.U:
+                    if (is_string_cmd) send_input("偷梁换柱"); break;//no
+
+                case Keys.D8:
+                    if (is_string_cmd) send_input("破釜沉舟"); break;//逆风
+
+
+                case Keys.D0:
+                    if (is_string_cmd) send_input("招贤纳士"); break;//
+
+                case Keys.Enter:
+                    if (!is_ctrl()) break;
+                    string old_clipboard = "";
+                    Invoke(() => old_clipboard = Clipboard.GetText());
+                    press([Keys.LControlKey, Keys.A]);
+                    press([Keys.LControlKey, Keys.C], 100);
+                    Invoke(() =>
+                    {
+                        string curr_clipboard = Clipboard.GetText();
+                        //bool blank = "" == curr_clipboard || old_clipboard == curr_clipboard;
+                        //if ("" == curr_clipboard) Clipboard.SetText(old_clipboard);
+                        if (old_clipboard == curr_clipboard)
+                            press([Keys.LControlKey, Keys.V], 100);
+                    });
+                    press([Keys.Enter]);
+                    break;
+                case Keys.H:
+                    if (judge_color(2318, 1110, Color.FromArgb(22, 24, 35), null, 10))
+                        if (judge_color(1051, 123, Color.FromArgb(22, 24, 35), null, 10))
+                            if (judge_color(267, 1203, Color.FromArgb(14, 16, 23), null, 10))
+                                press("267, 1203");
+                    break;
+            }
+            Common.hooked = false;
+            if (!handling) handling = true;
+        }
+
+        private void play_sound_di()
+        {
+            string wav = "wav\\d.wav";
+            if (!File.Exists(wav)) return;
+
+            player = new SoundPlayer(wav);
+            player.Play();
+        }
+        private void send_input(string txt)
+        {
+            play_sound_di();
+            Invoke(() => Clipboard.SetText(txt));
+
+            if (!is_douyin_live_and_input()) return;
+            if (is_ctrl()) return;
+
+            var old_pos = Position;
+            press("2220,1385", 10);
+            press([Keys.LControlKey, Keys.A]);
+            press([Keys.Back]);
+            press([Keys.LControlKey, Keys.V]);
+            //press("2519.1384", 10);
+            //press([Keys.Enter]);
+            press(old_pos.X + "." + old_pos.Y, 0);
+        }
+        private void send_input_num(string txt)
+        {
+            play_sound_di();
+            Invoke(() => Clipboard.SetText(txt));
+
+            if (!is_douyin_live_and_input()) return;
+            if (is_ctrl()) return;
+
+            var old_pos = Position;
+            press("2220,1385", 10);
+            press([Keys.LControlKey, Keys.V]);
+            //press("2519.1384", 10);
+            //press([Keys.Enter]);
+            press(old_pos.X + "." + old_pos.Y, 0);
+        }
+
+        private static bool is_douyin_live_and_input()
+        {
+            if (!judge_color(2030, 1209, Color.FromArgb(37, 38, 50), null, 10)) return false;
+            if (!judge_color(2295, 1383, Color.FromArgb(51, 52, 63), null, 10)) return false;
+            return true;
+        }
+
+        bool zan = false;
+        public void Invoke(Action action)
+        {
+            huan.Invoke(action);
+        }
+    }
+}
+
+//case Keys.X:
+//    //if (Position.X == 0)
+//    //{
+//    //    num1222++;
+//    //    num = num1222;
+//    //    press("2236.1400;2226," + (1030 + (num * 50)), 101);
+//    //    break;
+//    //}
+//    raw_press2();
+//    break;
+//case Keys.H:
+//    if (Position.X == 0)
+//    {
+//        num1222--;
+//        num = num1222;
+//        press("2236.1400;2226," + (1030 + (num * 50)), 101);
+//        break;
+//    }
+//    raw_press();
+//    break;
+//case Keys.VolumeDown:
+//    if (special_delete_key_time.AddSeconds(2) > DateTime.Now)
+//    {
+//        press(Keys.VolumeDown);
+//        special_delete_key_time = DateTime.Now;
+//        break;
+//    }
+//    if (Position.Y == 0 && Position.X != 2559) { press(Keys.VolumeDown); break; }
+//    //if (signle)
+//        press(Keys.PageDown);
+//    //signle = !signle;
+//    break;
+//case Keys.VolumeUp:
+//    if (special_delete_key_time.AddSeconds(2) > DateTime.Now)
+//    {
+//        press(Keys.VolumeUp);
+//        special_delete_key_time = DateTime.Now;
+//        break;
+//    }
+//    if (Position.Y == 0 && Position.X != 2559) { press(Keys.VolumeUp); break; }
+//    press(Keys.PageUp);
+//    break;using System.Media;
+using static keyupMusic2.Common;
+using static WGestures.Core.Impl.Windows.MouseKeyboardHook;
+
+namespace keyupMusic2
+{
+    public class Music
+    {
+        static Keys[] keys = { Keys.D0, Keys.D1, Keys.D2, Keys.D3, Keys.D4, Keys.D5, Keys.D6, Keys.D7, Keys.D8, Keys.D9, Keys.PageUp, Keys.Next, Keys.Home, Keys.End, Keys.Space };
+        static Keys last_key_sound = new Keys();
+        static DateTime last_key_sound_time = DateTime.Now.AddDays(-1);
+        static DateTime last_key_sound_time2 = DateTime.Now.AddDays(-1);
+
+        public static void hook_KeyDown_keyupMusic2(KeyboardHookEventArgs e)
+        {
+            if (!key_sound) return;
+            if (!keys.Contains(e.key)) return;
+            Common.hooked = true;
+
+            if (last_key_sound == e.key)
+            {
+                if (last_key_sound_time.AddMilliseconds(500) > DateTime.Now)
+                {
+                    paly_sound(e.key);
+                    last_key_sound_time2 = DateTime.Now.AddMilliseconds(1200);
+                }
+                else if (last_key_sound_time2 > DateTime.Now)
+                {
+                    player.Stop();
+                    last_key_sound_time2 = DateTime.Now;
+                }
+                
+            }
+
+            last_key_sound = e.key;
+            last_key_sound_time = DateTime.Now;
+            Common.hooked = false;
+        }
+    }
+}
+using System.Runtime.InteropServices;
 using static mouse_hook_douyin_game.MouseHook;
 using static mouse_hook_douyin_game.MouseHook.MouseMsg;
 using System.Drawing;

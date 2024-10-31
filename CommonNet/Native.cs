@@ -351,7 +351,10 @@ namespace WGestures.Common.OsSpecific.Windows
         public static extern IntPtr GetActiveWindow();
 
         [DllImport("user32.dll")]
-        public static extern short GetAsyncKeyState(Keys vKey);
+        public static extern short GetAsyncKeyState(Keys vKey); 
+        [DllImport("user32.dll")]
+        public static extern short GetAsyncKeyState(int vKey);
+
 
         [DllImport("kernel32.dll", SetLastError = true)]
         [return: MarshalAs(UnmanagedType.Bool)]

@@ -74,9 +74,22 @@ namespace keyupMusic2
             //if (e.key == Keys.D1 && is_down(Keys.LWin)) return true;
             //if (e.key == Keys.D2 && is_down(Keys.LWin)) return true;
             if (e.key == Keys.F3) return true;
-            if (e.key == Keys.F11 && ProcessName == Common.devenv && !is_ctrl()) return true;
-            if (e.key == Keys.F11 && ProcessName == Common.explorer && !is_ctrl()) return true;
-            if (e.key == Keys.F12 && ProcessName == Common.devenv && !is_ctrl()) return true;
+
+            //if (e.key == Keys.F11 && ProcessName == Common.explorer && !is_ctrl()) return true;
+            //if (e.key == Keys.F11 && ProcessName == Common.devenv && !is_ctrl()) return true;
+            //if (e.key == Keys.F12 && ProcessName == Common.devenv && !is_ctrl()) return true;
+            if (e.key == Keys.F11 || e.key == Keys.F12)
+            {
+                if (!is_ctrl())
+                {
+                    var list = new List<string>() { Common.devenv, Common.explorer };
+                    if (list.Contains(ProcessName)) return true;               }
+                if (Not_F10_F11_F12_Delete(true))
+                {
+                    var list = new List<string>() { Common.msedge, Common.chrome };
+                    if (list.Contains(ProcessName)) return true;
+                }
+            }
             //if (e.key == Keys.VolumeUp) return true;
             //if (e.key == Keys.VolumeDown) return true;
             if (ProcessName == Common.ACPhoenix)
@@ -128,7 +141,8 @@ namespace keyupMusic2
             if (stop_keys.Contains(e.key)) return;
 
             FreshProcessName();
-            if (keyupMusic2_onlisten && (e.key != Keys.Left && e.key != Keys.Right)) e.Handled = true;
+            if (keyupMusic2_onlisten &&
+                (e.key != Keys.Left && e.key != Keys.Right && e.key != Keys.T)) e.Handled = true;
             if (judge_handled(e, ProcessName)) { last_handled_key = e.key; e.Handled = true; }
 
             Task.Run(() =>
@@ -145,7 +159,7 @@ namespace keyupMusic2
                 {
                     Invoke(() => { SetVisibleCore2(last_visiable); });
                     last_visiable = false;
-                    keyupMusic2_onlisten = false; 
+                    keyupMusic2_onlisten = false;
                     return;
                 }
                 form_move();
@@ -165,6 +179,8 @@ namespace keyupMusic2
 
                     Aaa.hook_KeyDown_ddzzq(e);
                     Bbb.hook_KeyDown_ddzzq(e);
+
+                    Music.hook_KeyDown_keyupMusic2(e);
                 });
             }
         }

@@ -108,6 +108,7 @@ namespace keyupMusic3
                 listen_move = false;
             }
         }
+        bool current_conor_down_mouse = false;
         public void Douyin(MouseKeyboardHook.MouseHookEventArgs e, string allow = Common.douyin)
         {
             if (ProcessName != allow) return;
@@ -124,6 +125,13 @@ namespace keyupMusic3
             else if (e.Msg == MouseMsg.WM_RBUTTONUP)
             {
                 if (ProcessName2 != allow) return;
+                //if (current_conor == 3)
+                //{
+                //    var num = current_conor_down_mouse ? 5 : 1;
+                //    if (judge_color(2471, 657, Color.FromArgb(254, 44, 85)))
+                //        press("2236.1400;111;2226," + (1030 + (num * 50)), 101);
+                //    return;
+                //}
                 if (!downing) return;
                 e.Handled = true;
                 downing = false;
@@ -208,19 +216,48 @@ namespace keyupMusic3
                 right_up_click = false;
             }
         }
+        int current_conor = 0;
         public void Conor(MouseKeyboardHook.MouseHookEventArgs e)
         {
             if (e.Msg != MouseMsg.WM_MOUSEMOVE) return;
-            var a1 = e.X == 0 && e.Y == 0;
-            var a2 = e.X == 0 && e.Y == 1439;
-            var a3 = e.X == 2559 && e.Y == 0;
-            var a4 = e.X == 2559 && e.Y == 1439;
-            if (!a1 && !a2 && !a3 && !a4) return;
+            current_conor = 0;
+            if (e.X == 0 && e.Y == 0) current_conor = 1;
+            else if (e.X == 0 && e.Y == 1439) current_conor = 2;
+            else if (e.X == 2559 && e.Y == 0) current_conor = 3;
+            else if (e.X == 2559 && e.Y == 1439) current_conor = 4;
+            else return;
 
-            if (a3 && ProcessName == ApplicationFrameHost) mouse_click3();
-            if (a3 && ProcessName == explorer) mouse_click3();
+            if (current_conor == 3 && ProcessName == ApplicationFrameHost) mouse_click3();
+            else if (current_conor == 3 && ProcessName == explorer) mouse_click3();
+            else if (current_conor == 3 && ProcessName == Common.douyin)
+            {
+                //if (!current_conor_down_mouse)
+                //{
+                //    current_conor_down_mouse = true;
+                //}
+                //else if (current_conor_down_mouse)
+                //{
+                //    current_conor_down_mouse = false;
+                //}
+                //else { return; }
+                //var num = current_conor_down_mouse ? 5 : 1;
+                //if (judge_color(2471, 657, Color.FromArgb(254, 44, 85)))
+                //    press("2236.1400;111;2226," + (1030 + (num * 50)), 101);
+                //if (!current_conor_down_mouse)
+                //{
+                //    down_press(Keys.Right);
+                //    current_conor_down_mouse = true;
+                //}
+                //else if (current_conor_down_mouse && is_down(Keys.Right))
+                //{
+                //    up_press(Keys.Right);
+                //    current_conor_down_mouse = false;
+                //}
+            }
 
-            ProcessName = "";
+            //if (a3 && is_down(0x02)) { press(Keys.Delete);up_mouse(); }
+            else
+                ProcessName = "";
         }
 
         private void QQMusic(MouseKeyboardHook.MouseHookEventArgs e)

@@ -29,7 +29,7 @@ namespace keyupMusic3
         {
             Dispose();
         }
-        int sda = 0;
+        //int sda = 0;
         private void notifyIcon1_MouseClick(object sender, MouseEventArgs e)
         {
             if (e.Button == MouseButtons.Left)
@@ -37,7 +37,7 @@ namespace keyupMusic3
                 this.WindowState = FormWindowState.Normal;
                 SetVisibleCore(!Visible);
             }
-            sda++;
+            //sda++;
             //TcpServer.socket_write(""+ sda.ToString()+" "+DateTimeNow());
         }
 

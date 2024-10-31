@@ -43,7 +43,7 @@ namespace keyupMusic2
             mouse_event(MOUSEEVENTF_ABSOLUTE | MOUSEEVENTF_MOVE, x * 65536 / screenWidth, y * 65536 / screenHeight, 0, 0);
             Thread.Sleep(tick);
         }
-        public static bool judge_color(Color color,Action action = null, int similar = 50)
+        public static bool judge_color(Color color, Action action = null, int similar = 50)
         {
             int x = Position.X;
             int y = Position.Y;
@@ -95,6 +95,7 @@ namespace keyupMusic2
         public const string QyClient = "QyClient";
         public const string ApplicationFrameHost = "ApplicationFrameHost";
         public const string QQLive = "QQLive";
+        public const string vlc = "vlc";
 
         public static string[] list = {
         keyupMusic2,
@@ -113,7 +114,7 @@ namespace keyupMusic2
         ApplicationFrameHost,
         QyClient,
         QQLive,
-        QQMusic,
+        vlc,
         QQMusic,
         QQMusic,
         QQMusic,
@@ -254,6 +255,10 @@ namespace keyupMusic2
         //    }
         //}
         public static bool is_down(Keys key)
+        {
+            return Native.GetAsyncKeyState(key) < 0;
+        }
+        public static bool is_down(int key)
         {
             return Native.GetAsyncKeyState(key) < 0;
         }
@@ -480,6 +485,18 @@ namespace keyupMusic2
                 //if (flag) MouseKeyboardHook.handling = false;
             }
         }
+        public static bool _Not_F10_F11_F12_Delete = true;
+        public static bool Not_F10_F11_F12_Delete(bool refresh = false)
+        {
+            if (refresh)
+            {
+                //var keys = new []{ Keys.F10, Keys.F11, Keys.F12, Keys.Delete, Keys.LControlKey, Keys.RControlKey };
+                //var sss=false;
+                //foreach (Keys key in keys) { if(!is_down(Keys.F10))}
+                _Not_F10_F11_F12_Delete = !is_down(Keys.F10) && !is_down(Keys.F11) && !is_down(Keys.Delete);
+            }
+            return _Not_F10_F11_F12_Delete;
+        }
         public static void close()
         {
             press([Keys.LMenu, Keys.F4]);
@@ -567,9 +584,9 @@ namespace keyupMusic2
             if (!is_zh && !zh) return;
             press([Keys.LControlKey, Keys.LShiftKey]);
         }
-        public static void press(string str, int tick = 800)
+        public static void press(string str, int tick = 800, bool force = false)
         {
-            if (is_down(Keys.Delete) && (tick % 10) != 3) return;
+            if (is_down(Keys.Delete) && !force) return;
             //KeyboardHook.stop_next = false;
             bool isLastDigitOne = (tick % 10) == 1;
             if (isLastDigitOne) mousePosition = Cursor.Position;
@@ -638,6 +655,14 @@ namespace keyupMusic2
         {
             keybd_event((byte)keys, 0, 0, 0);
             Thread.Sleep(tick);
+            keybd_event((byte)keys, 0, 2, 0);
+        }
+        public static void down_press(Keys keys)
+        {
+            keybd_event((byte)keys, 0, 0, 0);
+        }
+        public static void up_press(Keys keys)
+        {
             keybd_event((byte)keys, 0, 2, 0);
         }
         public static void _press_hold(Keys keys, int tick)
@@ -862,8 +887,10 @@ namespace keyupMusic2
             }
         }
         public static bool DaleyRun_stop = false;
-        public static bool Special_Input { get { return is_down(Keys.F2)|| Position.X == 0 ; }set { } }
+        public static bool Special_Input { get { return is_down(Keys.F2) || Position.X == 0; } set { } }
         public static bool Special_Input2 = false;
+        public static DateTime init_time = DateTime.Now;
+        public static DateTime Special_Input_tiem = init_time;
         public static void DaleyRun(Func<bool> flag_action, Action action2, int alltime, int tick)
         {
             DaleyRun_stop = false;
@@ -986,6 +1013,22 @@ namespace keyupMusic2
             }
 
             Console.WriteLine("所有匹配的文件后缀已更改。");
+        }
+
+        public static bool key_sound = true;
+        public static void paly_sound(Keys key)
+        {
+            if (is_down(Keys.LWin)) return;
+            if (Position.Y == 0) return;
+            //if (key_sound && keys.Contains(e.key))
+            if (key_sound)
+            {
+                string wav = "wav\\" + key.ToString().Replace("D", "").Replace("F", "") + ".wav";
+                if (!File.Exists(wav)) return;
+
+                player = new SoundPlayer(wav);
+                player.Play();
+            }
         }
     }
 }
