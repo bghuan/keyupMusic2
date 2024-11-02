@@ -102,6 +102,8 @@ namespace WGestures.Core.Impl.Windows
             public Keys key;
             public bool Handled;
             public bool Handling;
+            public int X;
+            public int Y;
 
             public KeyboardHookEventArgs(KeyboardEventType type, Keys key, int wParam, Native.keyboardHookStruct lParam)
             {
@@ -109,6 +111,9 @@ namespace WGestures.Core.Impl.Windows
                 this.wParam = wParam;
                 this.lParam = lParam;
                 this.key = key;
+
+                this.X = Cursor.Position.X;
+                this.Y = Cursor.Position.Y;
             }
         }
 

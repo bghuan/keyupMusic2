@@ -51,7 +51,7 @@ namespace keyupMusic2
                     if (!Not_F10_F11_F12_Delete()) break;
                     if (Common.WeChat == module_name)
                     {
-                        HideProcess(module_name);
+                        CloseProcess(module_name);
                     }
                     else if (explorer.Equals(module_name) && (GetWindowText() == "UnlockingWindow"))
                     {
@@ -77,12 +77,32 @@ namespace keyupMusic2
                 case Keys.D3:
                     if (module_name == QQLive) press("2431.1404;2431.1406;2431.1408;100;2475,957", 101); break;
             }
+            //switch (module_name)
+            //{
+            //    case QQLive:
+            //        switch (e.key)
+            //        {
+            //            case Keys.D1:
+            //                press("2431.1404;2431.1406;2431.1408;100;2343,923", 101); break;
+            //            case Keys.D2:
+            //                press("2431.1404;2431.1406;2431.1408;100;2269,959", 101); break;
+            //            case Keys.D3:
+            //                press("2431.1404;2431.1406;2431.1408;100;2475,957", 101); break;
+            //        }
+            //        break;
+            //}
+
+
 
             Common.hooked = false;
         }
         private static void run_wei()
         {
-            press("LWin;100;WEI;100;Enter;", 50, flag_special);
+            if (!Common.ExsitProcess(Common.WeChat))
+            {
+                press("LWin;100;WEI;100;Enter;", 50, flag_special);
+            }
+            press([Keys.LControlKey, Keys.LMenu, Keys.W]);
         }
 
         private static void run_vis()

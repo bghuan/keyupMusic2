@@ -1,23 +1,12 @@
-﻿using Microsoft.VisualBasic.Devices;
-using System;
-using System.Collections;
-using System.Collections.Generic;
-using System.Diagnostics;
+﻿using System.Diagnostics;
 using System.Drawing.Imaging;
 using System.IO.MemoryMappedFiles;
-using System.Linq;
 using System.Media;
-using System.Numerics;
+using System.Net;
 using System.Runtime.InteropServices;
-using System.Security.Cryptography.Xml;
 using System.Security.Principal;
 using System.Text;
-using System.Threading.Tasks;
 using WGestures.Common.OsSpecific.Windows;
-using WGestures.Core.Impl.Windows;
-using static System.Runtime.InteropServices.JavaScript.JSType;
-using static System.Windows.Forms.VisualStyles.VisualStyleElement.TrackBar;
-using static keyupMusic2.Log;
 using static Win32.User32;
 using Point = System.Drawing.Point;
 
@@ -38,6 +27,17 @@ namespace keyupMusic2
         }
         public static void mouse_move(int x, int y, int tick = 0)
         {
+            x = deal_size_x_y(x, y)[0];
+            y = deal_size_x_y(x, y)[1];
+            mouse_event(MOUSEEVENTF_ABSOLUTE | MOUSEEVENTF_MOVE, x * 65536 / screenWidth, y * 65536 / screenHeight, 0, 0);
+            Thread.Sleep(tick);
+        }
+        public static void mouse_move_to(int x, int y, int tick = 0)
+        {
+            var Pos = Position;
+            x += Pos.X;
+            y += Pos.Y;
+
             x = deal_size_x_y(x, y)[0];
             y = deal_size_x_y(x, y)[1];
             mouse_event(MOUSEEVENTF_ABSOLUTE | MOUSEEVENTF_MOVE, x * 65536 / screenWidth, y * 65536 / screenHeight, 0, 0);
@@ -115,7 +115,7 @@ namespace keyupMusic2
         QyClient,
         QQLive,
         vlc,
-        QQMusic,
+        keyupMusic3,
         QQMusic,
         QQMusic,
         QQMusic,
@@ -131,6 +131,7 @@ namespace keyupMusic2
         public static DateTime special_delete_key_time;
 
         public static string ProcessName = "";
+        public static string ProcessTitle = "";
         public static string ProcessName2
         {
             get
@@ -151,11 +152,22 @@ namespace keyupMusic2
                 return Cursor.Position;
             }
         }
+        public static bool is_douyin()
+        {
+            return ProcessName == douyin || ProcessTitle.Contains("抖音");
+        }
+        static IntPtr old_hwnd = 0;
+        [DllImport("user32.dll ", EntryPoint = "FindWindow")]
+        static extern IntPtr FindWindow_AppFormHandle(string lpClassName, string lpWindowName);
         public static string FreshProcessName()
         {
+            IntPtr ptr = FindWindow_AppFormHandle("WeChatMainWndForPC", "微信");
             IntPtr hwnd = GetForegroundWindow(); // 获取当前活动窗口的句柄
+            if (hwnd == old_hwnd) return Common.ProcessName;
+            old_hwnd = hwnd;
 
-            //string windowTitle = GetWindowText(hwnd);
+            string windowTitle = GetWindowText(hwnd);
+            ProcessTitle = string.IsNullOrEmpty(windowTitle) ? "" : windowTitle;
             //Console.WriteLine("当前活动窗口名称: " + windowTitle);
 
             var filePath = "a.txt";
@@ -403,6 +415,13 @@ namespace keyupMusic2
         {
             mouse_event(MOUSEEVENTF_LEFTDOWN | MOUSEEVENTF_LEFTUP, 0, 0, 0, 0);
         }
+        static DateTime mouse_click_not_repeat_time = DateTime.Now;
+        public static void mouse_click_not_repeat()
+        {
+            if (mouse_click_not_repeat_time.AddSeconds(1) > DateTime.Now) return;
+            mouse_event(MOUSEEVENTF_LEFTDOWN | MOUSEEVENTF_LEFTUP, 0, 0, 0, 0);
+            mouse_click_not_repeat_time = DateTime.Now;
+        }
         public static void down_mouse(int tick = 0)
         {
             mouse_event(MOUSEEVENTF_LEFTDOWN, 0, 0, 0, 0);
@@ -458,6 +477,19 @@ namespace keyupMusic2
             {
                 IntPtr hWnd = objProcesses[0].MainWindowHandle;
                 ShowWindow(hWnd, SW.SW_MINIMIZE);
+            }
+        }
+
+        private const int WM_CLOSE = 0x0010;
+        [DllImport("user32.dll")]
+        private static extern bool PostMessage(IntPtr hWnd, uint Msg, IntPtr wParam, IntPtr lParam);
+        public static void CloseProcess(string procName)
+        {
+            Process[] objProcesses = Process.GetProcessesByName(procName);
+            if (objProcesses.Length > 0)
+            {
+                IntPtr hWnd = objProcesses[0].MainWindowHandle;
+                PostMessage(hWnd, (uint)WM_CLOSE, IntPtr.Zero, IntPtr.Zero);
             }
         }
         public static string AltTabProcess()
@@ -553,8 +585,9 @@ namespace keyupMusic2
         //3 跳过delete return
         public static void ctrl_shift(bool zh = true)
         {
-            //var _zh = (judge_color(2289, 1411, Color.FromArgb(202, 202, 202)));
-            var _en = judge_color(2288, 1413, Color.FromArgb(255, 255, 255));
+            var _zh = (judge_color(2289, 1411, Color.FromArgb(202, 202, 202)));
+            //var _en = judge_color(2288, 1413, Color.FromArgb(255, 255, 255));
+            var _en = !_zh;
             if (zh && _en)
                 press(Keys.LShiftKey, 10);
             else if (!zh && !_en)
@@ -1030,5 +1063,30 @@ namespace keyupMusic2
                 player.Play();
             }
         }
+        public static void play_sound_di()
+        {
+            string wav = "wav\\d.wav";
+            if (!File.Exists(wav)) return;
+
+            player = new SoundPlayer(wav);
+            player.Play();
+        }
+        public static void HttpGet(string url)
+        {
+            HttpWebRequest request = (HttpWebRequest)WebRequest.Create(url);
+            using (HttpWebResponse response = (HttpWebResponse)request.GetResponse())
+            {
+                Stream stream = response.GetResponseStream();
+
+                using (StreamReader reader = new StreamReader(stream))
+                {
+                    string refJson = reader.ReadToEnd();
+
+                    Console.WriteLine(refJson);
+                    Console.Read();
+                }
+            }
+        }
+
     }
 }

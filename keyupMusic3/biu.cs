@@ -23,29 +23,33 @@ namespace keyupMusic3
         private int threshold = 10;
         bool handing = false;
         bool handing2 = false;
+        private static readonly object _lockObject_handing2 = new object();
         bool handing3 = false;
+        bool r_downing = false;
+        MouseKeyboardHook.MouseHookEventArgs e = null;
 
         public void MouseHookProc(MouseKeyboardHook.MouseHookEventArgs e)
         {
             if (hooked_mouse) return;
             if (handing3) return;
-            if (handing2) return;
             if (handing) return;
             hooked_mouse = true;
             handing = true;
-            handing2 = true;
             handing3 = true;
+            this.e = e;
             if (e.Msg != MouseMsg.WM_MOUSEMOVE) Task.Run(() => { FreshProcessName(); });
 
             Task.Run(() => { ACPhoenix(e); });
             //Task.Run(() => { Douyin(e); });
             Douyin(e);
-            Task.Run(() => { Douyin(e, Common.msedge); });
-            Task.Run(() => { Devenv(e); });
-            Task.Run(() => { ScreenEdgeClick(e); handing3 = false; });
-            Task.Run(() => { Conor(e); handing2 = false; });
-            Task.Run(() => { QQMusic(e); });
-            Task.Run(() => { Other(e); });
+            //Task.Run(() => { Douyin(e, Common.msedge); });
+            Douyin(e, Common.msedge);
+            Task.Run(Devenv);
+            Task.Run(() => { ScreenEdgeClick(); handing3 = false; });
+            Task.Run(Conor);
+            Task.Run(UnderLine);
+            Task.Run(QQMusic);
+            Task.Run(Other);
 
             //TcpServer.socket_write(e.Msg.ToString());
 
@@ -109,13 +113,22 @@ namespace keyupMusic3
             }
         }
         bool current_conor_down_mouse = false;
+        bool in_ctrl = false;
         public void Douyin(MouseKeyboardHook.MouseHookEventArgs e, string allow = Common.douyin)
         {
             if (ProcessName != allow) return;
-
             if (e.Msg == MouseMsg.WM_MOUSEMOVE && !downing) { return; }
+
+
             if (e.Msg == MouseMsg.WM_RBUTTONDOWN)
             {
+                if (ProcessName == msedge && ProcessTitle.Contains("抖音"))
+                {
+                    //in_ctrl = is_ctrl();
+                    //if (in_ctrl) { e.Handled = true; return; }
+                    e.Handled = true;
+                    r_downing = true;
+                }
                 if (ProcessName2 != allow) return;
                 if (e.X != 0) return;
                 e.Handled = true;
@@ -124,6 +137,13 @@ namespace keyupMusic3
             }
             else if (e.Msg == MouseMsg.WM_RBUTTONUP)
             {
+                if (!r_downing && ProcessName == msedge && ProcessTitle.Contains("抖音"))
+                {
+                    //in_ctrl = is_ctrl();
+                    //if (in_ctrl) { e.Handled = true; return; }
+                    e.Handled = true;
+                    r_downing = false;
+                }
                 if (ProcessName2 != allow) return;
                 //if (current_conor == 3)
                 //{
@@ -148,8 +168,16 @@ namespace keyupMusic3
                     start = Position;
                 }
             }
+            //else if (e.Msg == MouseMsg.WM_XBUTTONDOWN)
+            //{
+            //    e.Handled = true;
+            //    //Task.Run(() =>
+            //    //{
+            //    //    press_hold(Keys.H, 300);
+            //    //});
+            //}
         }
-        public void Devenv(MouseKeyboardHook.MouseHookEventArgs e)
+        public void Devenv()
         {
             //if (ProcessName != keyupMusic2.Common.devenv) return;
 
@@ -173,7 +201,7 @@ namespace keyupMusic3
         bool right_up_click = false;
         private static List<MousePositionWithTime> recentMousePositions = new List<MousePositionWithTime>();
 
-        public void ScreenEdgeClick(MouseKeyboardHook.MouseHookEventArgs e)
+        public void ScreenEdgeClick()
         {
             if (e.Msg == MouseMsg.WM_MOUSEMOVE)
             {
@@ -190,14 +218,23 @@ namespace keyupMusic3
 
                 if (left_left_click && e.X == 0)
                 {
-                    if (!not_allow && IsFullScreen()) return;
-                    if (ProcessName == Common.douyin && IsFullScreen()) return;
+                    //if (!not_allow && IsFullScreen()) return;
+                    //if (is_douyin() && IsFullScreen()) return;
                     left_left_click = false;
-                    mouse_click2(0);
+                    mouse_click2(400);
+                    if (is_douyin()
+                        && judge_color(1279, 684, Color.FromArgb(200, 200, 200), null, 60)
+                        && judge_color(1262, 713, Color.FromArgb(200, 200, 200), null, 60)
+                        && judge_color(1311, 685, Color.FromArgb(200, 200, 200), null, 60))
+                    {
+                        mouse_click2(10);
+                        press_middle_bottom();
+                    }
                 }
                 else if (left_down_click && e.Y == (screenHeight - 1) && e.X < screenWidth)
                 {
                     if (!not_allow && IsFullScreen()) return;
+                    if (is_douyin() && IsFullScreen()) return;
                     if (judge_color(Color.FromArgb(210, 27, 70))) { return; }
                     left_down_click = false;
                     mouse_click2(0);
@@ -217,50 +254,59 @@ namespace keyupMusic3
             }
         }
         int current_conor = 0;
-        public void Conor(MouseKeyboardHook.MouseHookEventArgs e)
+        public void UnderLine()
         {
-            if (e.Msg != MouseMsg.WM_MOUSEMOVE) return;
-            current_conor = 0;
-            if (e.X == 0 && e.Y == 0) current_conor = 1;
-            else if (e.X == 0 && e.Y == 1439) current_conor = 2;
-            else if (e.X == 2559 && e.Y == 0) current_conor = 3;
-            else if (e.X == 2559 && e.Y == 1439) current_conor = 4;
-            else return;
-
-            if (current_conor == 3 && ProcessName == ApplicationFrameHost) mouse_click3();
-            else if (current_conor == 3 && ProcessName == explorer) mouse_click3();
-            else if (current_conor == 3 && ProcessName == Common.douyin)
+            if (e.Msg == MouseMsg.WM_RBUTTONDOWN)
             {
-                //if (!current_conor_down_mouse)
-                //{
-                //    current_conor_down_mouse = true;
-                //}
-                //else if (current_conor_down_mouse)
-                //{
-                //    current_conor_down_mouse = false;
-                //}
-                //else { return; }
-                //var num = current_conor_down_mouse ? 5 : 1;
-                //if (judge_color(2471, 657, Color.FromArgb(254, 44, 85)))
-                //    press("2236.1400;111;2226," + (1030 + (num * 50)), 101);
-                //if (!current_conor_down_mouse)
-                //{
-                //    down_press(Keys.Right);
-                //    current_conor_down_mouse = true;
-                //}
-                //else if (current_conor_down_mouse && is_down(Keys.Right))
-                //{
-                //    up_press(Keys.Right);
-                //    current_conor_down_mouse = false;
-                //}
+                if (e.Y + 1 == screenHeight)
+                {
+                    Sleep(322);
+                    mouse_move_to(0, 1325 - screenHeight);
+                    mouse_click();
+                }
             }
+        }
+        int ffff = 0;
+        public void Conor()
+        {
+            lock (_lockObject_handing2)
+            {
+                if (handing2) { handing2 = false; return; }
+                handing2 = true;
+                if (ffff != 10) ffff++;
+                if (ffff < 10) { handing2 = false; return; }
+                if (e.Msg != MouseMsg.WM_MOUSEMOVE) { handing2 = false; return; }
+                current_conor = 0;
+                if (e.X == 0 && e.Y == 0) current_conor = 1;
+                else if (e.X == 0 && e.Y == 1439) current_conor = 2;
+                else if (e.X == 2559 && e.Y == 0) current_conor = 3;
+                else if (e.X == 2559 && e.Y == 1439) current_conor = 4;
+                else { handing2 = false; return; }
 
-            //if (a3 && is_down(0x02)) { press(Keys.Delete);up_mouse(); }
-            else
-                ProcessName = "";
+                if (current_conor == 3 && ProcessName == ApplicationFrameHost) mouse_click_not_repeat();
+                else if (current_conor == 3 && ProcessName == explorer) mouse_click_not_repeat();
+                else if (current_conor == 3 && ProcessName == vlc) mouse_click_not_repeat();
+
+                if (current_conor == 3)
+                {
+                    if (ProcessName == ApplicationFrameHost)
+                        mouse_click_not_repeat();
+                    if (ProcessName == explorer)
+                        mouse_click_not_repeat();
+                    if (ProcessName == vlc)
+                        mouse_click_not_repeat();
+                    ffff = 0;
+                    ProcessName = "";
+                    
+                }
+
+                //else
+                //    ProcessName = "";
+                   handing2 = false;
+            }
         }
 
-        private void QQMusic(MouseKeyboardHook.MouseHookEventArgs e)
+        private void QQMusic()
         {
             if (ProcessName != keyupMusic2.Common.QQMusic) return;
             if (e.Msg == MouseMsg.WM_LBUTTONDOWN)
@@ -268,7 +314,7 @@ namespace keyupMusic3
                 ctrl_shift(true);
             }
         }
-        public void Other(MouseKeyboardHook.MouseHookEventArgs e)
+        public void Other()
         {
             if (e.Msg == MouseMsg.WM_LBUTTONDOWN)
             {

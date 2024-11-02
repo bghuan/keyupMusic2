@@ -47,7 +47,8 @@ namespace keyupMusic3
 
         public void MouseHookProcDouyin(MouseKeyboardHook.MouseHookEventArgs e)
         {
-            if (ProcessName != douyin && ProcessName != ApplicationFrameHost) return;
+            //if (ProcessName != douyin && ProcessName != ApplicationFrameHost && ProcessName != explorer) return;
+            if (ProcessName != douyin && ProcessName != ApplicationFrameHost && !ProcessTitle.Contains("抖音")) return;
             //if (e.Msg == MouseMsg.WM_MOUSEMOVE) return;
             int x = e.X - point_start.X;
             int y = -(e.Y - point_start.Y);
@@ -118,23 +119,6 @@ namespace keyupMusic3
             });
             try { File.AppendAllText(douyin_game_txt_log, DateTimeNow() + cmd + "\n"); }
             catch { }
-        }
-
-        private static void HttpGet(string url)
-        {
-            HttpWebRequest request = (HttpWebRequest)WebRequest.Create(url);
-            using (HttpWebResponse response = (HttpWebResponse)request.GetResponse())
-            {
-                Stream stream = response.GetResponseStream();
-
-                using (StreamReader reader = new StreamReader(stream))
-                {
-                    string refJson = reader.ReadToEnd();
-
-                    Console.WriteLine(refJson);
-                    Console.Read();
-                }
-            }
         }
 
         private void init_area(MouseKeyboardHook.MouseHookEventArgs e, int x, int y)

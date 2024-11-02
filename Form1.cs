@@ -67,6 +67,11 @@ namespace keyupMusic2
             if (e.Type == KeyboardEventType.KeyDown) return;
             stop_keys.Remove(e.key);
             if (mouse_downing) { up_mouse(); mouse_downing = false; }
+            Invoke2(() =>
+            {
+                label1.Text = label1.Text.Replace(easy_read(e.key),easy_read(e.key).ToLower());
+            }
+            );
         }
         public bool judge_handled(KeyboardHookEventArgs e, string ProcessName)
         {
@@ -228,17 +233,26 @@ namespace keyupMusic2
             var _stop_keys = stop_keys.ToArray();
             Invoke2(() =>
             {
-                string asd = string.Join("+", _stop_keys.Select(key => key.ToString()));
-                asd = asd.Replace("LMenu", "Alt").Replace("LWin", "Win").Replace("LControlKey", "Ctrl").Replace("LShiftKey", "Shift");
-                asd = asd.Replace("Oem3", "~");
-                asd = asd.Replace("VolumeUp", "v↑").Replace("VolumeDown", "v↓");
-                for (int i = 0; i <= 9; i++) { asd = asd.Replace($"D{i}", i.ToString()); }
+                string asd = string.Join("+", _stop_keys.Select(key => easy_read(key.ToString())));
                 if (label1.Text == asd) asd += " " + DateTimeNow2();
                 label1.Text = speak_word + "" + asd;
             }
             );
         }
 
+        private static string easy_read(string asd)
+        {
+            asd = asd.Replace("LMenu", "Alt").Replace("LWin", "Win").Replace("LControlKey", "Ctrl").Replace("LShiftKey", "Shift");
+            asd = asd.Replace("Oem3", "~");
+            asd = asd.Replace("VolumeUp", "v↑").Replace("VolumeDown", "v↓");
+            for (int i = 0; i <= 9; i++) { asd = asd.Replace($"D{i}", i.ToString()); }
+
+            return asd;
+        }
+        private static string easy_read(Keys asd)
+        {
+            return easy_read(asd.ToString());
+        }
 
         private void super_listen()
         {
