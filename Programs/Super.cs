@@ -7,6 +7,7 @@ using System.Text;
 using System.Windows.Forms;
 using static keyupMusic2.Common;
 using static keyupMusic2.Huan;
+using static System.Net.Mime.MediaTypeNames;
 using static System.Windows.Forms.VisualStyles.VisualStyleElement.TrackBar;
 using static WGestures.Core.Impl.Windows.MouseKeyboardHook;
 
@@ -95,10 +96,6 @@ namespace keyupMusic2
                     new SendKeyboardMouse().SendKeyDown(VKCODE.VK_F);
                     new SendKeyboardMouse().MouseWhell(120);
                     break;
-                case Keys.G:
-                    paly_sound(Keys.D4);
-                    get_point_color(e);
-                    break;
                 case Keys.H:
                     press(Keys.F11);
                     break;
@@ -155,6 +152,14 @@ namespace keyupMusic2
                     ////KeyboardInput3.SendString("Hello, World!");
                     ////SendKeyboardMouse sendKeyMouse = new SendKeyboardMouse();
                     ////sendKeyMouse.SendKeyPress(VKCODE.VK_A);
+                    if (ProcessName == Common.devenv && ProcessTitle.Contains("正在运行"))
+                    {
+                        var txt = "Common.";
+                        Invoke(() => Clipboard.SetText(txt));
+                        press([Keys.LControlKey, Keys.V]);
+                        break;
+                    }
+
                     Invoke(() => { try { press(Clipboard.GetText()); } catch { } });
                     paly_sound(Keys.D1);
                     break;
@@ -171,9 +176,13 @@ namespace keyupMusic2
                     break;
 
                 case Keys.F1:
-                    Invoke(() => { huan.SetVisibleCore2(huan.last_visiable); });
-                    //hide_keyupmusic3();
-                    huan.last_visiable = false;
+                case Keys.G:
+                    paly_sound(Keys.D4);
+                    get_point_color(e);
+                    break;
+                    //Invoke(() => { huan.SetVisibleCore2(huan.last_visiable); });
+                    ////hide_keyupmusic3();
+                    //huan.last_visiable = false;
                     break;
                 case Keys.F2:
                 case Keys.S:
@@ -183,14 +192,14 @@ namespace keyupMusic2
                         HideProcess("keyupMusic3");
                     }
                     break;
-                case Keys.F4:
+                case Keys.F5:
                 case Keys.A:
                     paly_sound(Keys.D2);
                     if (ProcessName == Common.ACPhoenix) { Common.HideProcess(Common.ACPhoenix); break; }
                     if (Common.FocusProcess(Common.ACPhoenix)) break;
                     dragonest();
                     break;
-                case Keys.F5:
+                case Keys.F4:
                     //log_always = !log_always;
                     press(Keys.MediaPlayPause);
                     break;
@@ -266,14 +275,15 @@ namespace keyupMusic2
             {
                 huan.Invoke(() => { huan.label1.Text = DateTimeNow2(); });
                 mo.MouseWhell(-120 * 10);
-                return (judge_color(775, 1265, Color.FromArgb(26, 26, 25))) && judge_color(2124, 1327, Color.FromArgb(249, 241, 239), null, 10);
+                return (judge_color(775, 1265, Color.FromArgb(26, 26, 25))) 
+                     && judge_color(2124, 1327, Color.FromArgb(242, 242, 249), null, 2);
             };
             var run = () => { press("200;2220,1070", 10); };
             var action2 = () =>
                     DaleyRun(judge, run, 3222, 122);
 
             mouse_move(2220, 1070);
-            Common.cmd($"/c start ms-settings:sound", action2);
+            Common.cmd($"/c start ms-settings:sound", action2, 200);
         }
 
         private void get_point_color(KeyboardHookEventArgs e)

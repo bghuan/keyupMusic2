@@ -33,7 +33,7 @@ namespace keyupMusic2
             super = new Super(this);
             chrome = new Chrome();
 
-            //new TcpServer(this);
+            new TcpServer(this);
             //TcpServer.StartServer(13000);
         }
 
@@ -52,6 +52,10 @@ namespace keyupMusic2
                 SetVisibleCore(false);
                 TaskRun(() => { Invoke(() => SetVisibleCore(false)); }, 200);
             }
+            Location = new Point(Screen.PrimaryScreen.Bounds.Width - 310, 100);
+
+            startPoint = new Point(Location.X - 300, Location.Y);
+            endPoint = Location;
         }
         public bool keyupMusic2_onlisten = false;
         DateTime super_listen_time = new DateTime();
@@ -67,11 +71,8 @@ namespace keyupMusic2
             if (e.Type == KeyboardEventType.KeyDown) return;
             stop_keys.Remove(e.key);
             if (mouse_downing) { up_mouse(); mouse_downing = false; }
-            Invoke2(() =>
-            {
-                label1.Text = label1.Text.Replace(easy_read(e.key),easy_read(e.key).ToLower());
-            }
-            );
+            if (!no_sleep) return;
+            Invoke2(() => { label1.Text = label1.Text.Replace(easy_read(e.key), easy_read(e.key).ToLower()); });
         }
         public bool judge_handled(KeyboardHookEventArgs e, string ProcessName)
         {
@@ -79,24 +80,21 @@ namespace keyupMusic2
             //if (e.key == Keys.D1 && is_down(Keys.LWin)) return true;
             //if (e.key == Keys.D2 && is_down(Keys.LWin)) return true;
             if (e.key == Keys.F3) return true;
+            if (e.key == Keys.F9) return true;
 
-            //if (e.key == Keys.F11 && ProcessName == Common.explorer && !is_ctrl()) return true;
-            //if (e.key == Keys.F11 && ProcessName == Common.devenv && !is_ctrl()) return true;
-            //if (e.key == Keys.F12 && ProcessName == Common.devenv && !is_ctrl()) return true;
             if (e.key == Keys.F11 || e.key == Keys.F12)
             {
                 if (!is_ctrl())
                 {
                     var list = new List<string>() { Common.devenv, Common.explorer };
-                    if (list.Contains(ProcessName)) return true;               }
-                if (Not_F10_F11_F12_Delete(true))
-                {
-                    var list = new List<string>() { Common.msedge, Common.chrome };
                     if (list.Contains(ProcessName)) return true;
                 }
+                //if (Not_F10_F11_F12_Delete(true))
+                //{
+                //    var list = new List<string>() { Common.msedge, Common.chrome };
+                //    if (list.Contains(ProcessName)) return true;
+                //}
             }
-            //if (e.key == Keys.VolumeUp) return true;
-            //if (e.key == Keys.VolumeDown) return true;
             if (ProcessName == Common.ACPhoenix)
             {
                 if (e.key == Keys.Oem3) return true;
@@ -107,20 +105,14 @@ namespace keyupMusic2
                     if (e.key == Keys.E) return true;
                 }
             }
-            //if (ProcessName == Common.douyin || ProcessName == Common.msedge)
             if (ProcessName == Common.msedge)
             {
                 if (Default.handling)
                 {
-                    //if (e.key == Keys.Right) return true;
-                    //if (e.key == Keys.Left) return true;
-                    //if (e.key == Keys.PageDown) return true;
-                    //if (e.key == Keys.PageUp) return true;
-                    //if (e.key == Keys.VolumeDown) return true;
-                    //if (e.key == Keys.VolumeUp) return true;
-                    //if (e.key == Keys.S) return true;
-                    if (e.key == Keys.Home && is_ctrl()) return true;
-                    if (e.key == Keys.End && is_ctrl()) return true;
+                    if (e.key == Keys.Home) return true;
+                    if (e.key == Keys.End) return true;
+                    //if (e.key == Keys.Home && is_ctrl()) return true;
+                    //if (e.key == Keys.End && is_ctrl()) return true;
                 }
             }
             if (e.key == Keys.MediaPreviousTrack || e.key == Keys.MediaPlayPause)
@@ -129,7 +121,7 @@ namespace keyupMusic2
             }
             if (is_down(Keys.F1))
             {
-                var number_button = new List<Keys> { Keys.Oemcomma, Keys.OemPeriod, Keys.Oem2, Keys.K, Keys.L, Keys.OemSemicolon, Keys.I, Keys.O, Keys.P, Keys.Space };
+                var number_button = new[] { Keys.Oemcomma, Keys.OemPeriod, Keys.Oem2, Keys.K, Keys.L, Keys.OemSemicolon, Keys.I, Keys.O, Keys.P, Keys.Space };
                 if (number_button.Contains(e.key))
                     return true;
             }
@@ -157,7 +149,23 @@ namespace keyupMusic2
                 //special_key_quick_yo(e);
             });
 
-            if (e.key == Keys.F3 || (e.key == Keys.LControlKey && is_shift())
+            if (e.key == Keys.F9)
+            {
+                //timer = new System.Windows.Forms.Timer();
+                //timer.Interval = 3000;
+                //timer.Tick += Timer_Tick;
+                //timer.Start();
+
+                if (!no_sleep) { Timer_Tick(); return; }
+                TaskRun(() => { Timer_Tick(); }, 70000);
+                Task.Run(() =>
+                {
+                    paly_sound(Keys.D0);
+                    Invoke(() => { label1.Text = "系统即将进入睡眠状态"; });
+                });
+                no_sleep = false;
+            }
+            else if (e.key == Keys.F3 || (e.key == Keys.LControlKey && is_shift())
            || (e.key == Keys.LShiftKey && is_ctrl()))
             {
                 if (keyupMusic2_onlisten)
@@ -186,10 +194,33 @@ namespace keyupMusic2
                     Bbb.hook_KeyDown_ddzzq(e);
 
                     Music.hook_KeyDown_keyupMusic2(e);
+                    if (!no_sleep)
+                    {
+                        player.Stop();
+                        Invoke2(() => { label1.Text = "取消睡眠"; });
+                        no_sleep = true;
+                    }
                 });
             }
         }
-
+        private static bool no_sleep = true;
+        private static System.Windows.Forms.Timer timer;
+        private static void Timer_Tick()
+        {
+            if (no_sleep) return;
+            // 执行系统睡眠命令
+            //Process.Start("rundll32.exe", "powrprof.dll,SetSuspendState 0,1,1");
+            // 011 010 111 001 000 101 110 100
+            // 000 001 010 011 100 101 110 111
+            //ProcessRun("powershell sleep");
+            //ProcessStartInfo psi = new ProcessStartInfo();
+            //psi.FileName = "powershell";
+            //psi.Arguments = "sleep";
+            //Process.Start(psi);
+            //Process.Start("shutdown", "/i");
+            press("LWin;1650,1300;1650,1140", 1000);
+            no_sleep = true;
+        }
         private void special_key_quick_yo(KeyboardHookEventArgs e)
         {
             if (e.key == Keys.F4 || e.key == Keys.LMenu || e.key == Keys.Tab)
@@ -231,7 +262,7 @@ namespace keyupMusic2
         private void print_easy_read()
         {
             var _stop_keys = stop_keys.ToArray();
-            Invoke2(() =>
+            Invoke(() =>
             {
                 string asd = string.Join("+", _stop_keys.Select(key => easy_read(key.ToString())));
                 if (label1.Text == asd) asd += " " + DateTimeNow2();
@@ -366,8 +397,8 @@ namespace keyupMusic2
         public static Dictionary<string, Keys[]> KeyMap = Listen.KeyMap;
         private void label1_Click(object sender, EventArgs e)
         {
-            Point cursorPos = Cursor.Position;
-            contextMenuStrip1.Show(cursorPos);
+            //Point cursorPos = Cursor.Position;
+            //contextMenuStrip1.Show(cursorPos);
         }
         public void startListen()
         {
@@ -377,9 +408,6 @@ namespace keyupMusic2
             _mouseKbdHook.KeyboardHookEvent += hook_KeyDown;
             _mouseKbdHook.KeyboardHookEvent += hook_KeyUp;
             _mouseKbdHook.Install();
-
-            startPoint = new Point(Location.X - 300, Location.Y);
-            endPoint = Location;
         }
         public void stopListen()
         {
@@ -409,11 +437,11 @@ namespace keyupMusic2
         {
             Dispose();
         }
-        //protected override void SetVisibleCore(bool value)
-        //{
-        //    base.SetVisibleCore(value);
-        //    if (!value) hide_keyupmusic3();
-        //}
+        protected override void SetVisibleCore(bool value)
+        {
+            base.SetVisibleCore(value);
+            if (!value) hide_keyupmusic3();
+        }
         private void contextMenuStrip1_ItemClicked(object sender, ToolStripItemClickedEventArgs e)
         {
             if (Enum.TryParse(typeof(Keys), e.ClickedItem.Text.Substring(0, 1), out object asd)) ;
@@ -429,7 +457,6 @@ namespace keyupMusic2
                 Dispose();
             }
         }
-
         private void notifyIcon1_MouseClick(object sender, MouseEventArgs e)
         {
             if (e.Button == MouseButtons.Left)
@@ -494,7 +521,10 @@ namespace keyupMusic2
                 Text = Text + "(非管理员)";
             }
             if (!ExsitProcess(keyupMusic3))
+            {
                 ProcessRun(keyupMusic3exe);
+                Focus();
+            }
         }
         public void Invoke(Action method)
         {

@@ -37,8 +37,8 @@ namespace keyupMusic2
                 handling_times++;
                 handling = false;
                 //KeyboardInput.SendString("x");
-                Common.press_hold(handling_keys,300);
-                Common.press_hold(handling_keys,300);
+                Common.press_dump(handling_keys,300);
+                Common.press_dump(handling_keys,300);
                 keys.Add(handling_keys);
                 Thread.Sleep(10);
             }

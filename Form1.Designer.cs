@@ -69,6 +69,7 @@
             label1.AutoSize = true;
             label1.Location = new Point(7, 0);
             label1.Margin = new Padding(4, 0, 4, 0);
+            label1.MaximumSize = new Size(180, 0);
             label1.Name = "label1";
             label1.Size = new Size(63, 24);
             label1.TabIndex = 1;
@@ -251,7 +252,7 @@
             // label2
             // 
             label2.AutoSize = true;
-            label2.Location = new Point(223, 0);
+            label2.Location = new Point(180, 0);
             label2.Name = "label2";
             label2.Size = new Size(63, 24);
             label2.TabIndex = 2;
@@ -268,7 +269,7 @@
             Controls.Add(label1);
             DoubleBuffered = true;
             Icon = (Icon)resources.GetObject("$this.Icon");
-            Location = new Point(Screen.PrimaryScreen.Bounds.Width - 310, 100);
+            Location = new Point(2560, 100);
             Margin = new Padding(4);
             Name = "Huan";
             ShowIcon = false;
@@ -316,6 +317,6 @@
         private ToolStripMenuItem nToolStripMenuItem;
         private ToolStripMenuItem mToolStripMenuItem;
         public System.Windows.Forms.Timer timerMove;
-        private Label label2;
+        public Label label2;
     }
 }

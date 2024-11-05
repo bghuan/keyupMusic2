@@ -53,13 +53,26 @@ namespace keyupMusic3
             {
                 Text = Text + "(非管理员)";
             }
-            if (is_ctrl() || Position.X == 0 || Position.Y == 0)
+            if (true||is_ctrl() || Position.X == 0 || Position.Y == 0)
             {
                 SetVisibleCore(false);
                 TaskRun(() => { Invoke(() => SetVisibleCore(false)); }, 200);
             }
-            this.Location = new Point(Screen.PrimaryScreen.Bounds.Width - 310, 200);
+            //this.Location = new Point(Screen.PrimaryScreen.Bounds.Width - 310, 200);
+            Location = new Point(Screen.PrimaryScreen.Bounds.Width - 380, 100);
             this.Resize += Form2_Resize;
+
+            label1.TextChanged += TextBox1_TextChanged;
+            System.Timers.Timer timer = new System.Timers.Timer(100);
+            timer.Elapsed += (sender, e) =>
+            {
+                TcpServer.CheckAndSendPendingMessage(label1.Text);
+            };
+            timer.Start();
+        }
+        private void TextBox1_TextChanged(object sender, EventArgs e)
+        {
+            TcpServer.socket_write(label1.Text);
         }
         private void Form2_Resize(object sender, EventArgs e)
         {

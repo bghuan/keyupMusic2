@@ -19,14 +19,20 @@ namespace keyupMusic3
         bool listen_move = false;
         bool downing = false;
         bool downing2 = false;
-        private Point start = Point.Empty;
-        private int threshold = 10;
         bool handing = false;
         bool handing2 = false;
-        private static readonly object _lockObject_handing2 = new object();
         bool handing3 = false;
-        bool r_downing = false;
+        bool left_left_click = false;
+        bool left_down_click = false;
+        bool right_up_click = false;
+        bool right_down_click = false;
+        private static readonly object _lockObject_handing2 = new object();
         MouseKeyboardHook.MouseHookEventArgs e = null;
+        private Point start = Point.Empty;
+        private int threshold = 10;
+        bool r_button_downing = false;
+        bool x_button_dowing = false;
+
 
         public void MouseHookProc(MouseKeyboardHook.MouseHookEventArgs e)
         {
@@ -40,21 +46,90 @@ namespace keyupMusic3
             if (e.Msg != MouseMsg.WM_MOUSEMOVE) Task.Run(() => { FreshProcessName(); });
 
             Task.Run(() => { ACPhoenix(e); });
-            //Task.Run(() => { Douyin(e); });
-            Douyin(e);
-            //Task.Run(() => { Douyin(e, Common.msedge); });
+            //Douyin(e);
             Douyin(e, Common.msedge);
             Task.Run(Devenv);
+            Task.Run(Cornor);
             Task.Run(() => { ScreenEdgeClick(); handing3 = false; });
-            Task.Run(Conor);
             Task.Run(UnderLine);
             Task.Run(QQMusic);
             Task.Run(Other);
 
-            //TcpServer.socket_write(e.Msg.ToString());
-
             handing = false;
             hooked_mouse = false;
+        }
+        public void Douyin(MouseKeyboardHook.MouseHookEventArgs e, string allow = Common.douyin)
+        {
+            if (ProcessName != allow && !is_douyin()) return;
+            if (e.Msg == MouseMsg.WM_MOUSEMOVE && !downing) { return; }
+
+            if (e.Msg == MouseMsg.WM_RBUTTONDOWN)
+            {
+                if (e.Y > 1370) return;
+                if (ProcessName == msedge && ProcessTitle.Contains("抖音"))
+                {
+                    e.Handled = true;
+                    r_button_downing = true;
+                }
+                if (e.X != 0) return;
+                if (ProcessName2 != allow) return;
+                e.Handled = true;
+                start = Position;
+                downing = true;
+            }
+            else if (e.Msg == MouseMsg.WM_RBUTTONUP)
+            {
+                if (e.Y > 1370) return;
+                if (r_button_downing && ProcessName == msedge && ProcessTitle.Contains("抖音"))
+                {
+                    e.Handled = true;
+                    r_button_downing = false;
+                }
+                if (ProcessName2 != allow) return;
+                if (!downing) return;
+                e.Handled = true;
+                downing = false;
+            }
+            else if (e.Msg == MouseMsg.WM_MOUSEMOVE && downing == true)
+            {
+                int y = e.Y - start.Y;
+                if (Math.Abs(y) > threshold)
+                {
+                    if (y > 0)
+                        press(Keys.VolumeDown);
+                    if (y < 0)
+                        press(Keys.VolumeUp);
+                    start = Position;
+                }
+            }
+            else if (e.Msg == MouseMsg.WM_XBUTTONDOWN && is_douyin())
+            {
+                string dasad = Common.ProcessTitle;
+                string dasasssd = Common.ProcessName;
+
+                e.Handled = true;
+                x_button_dowing = true;
+                Task.Run(() =>
+                {
+                    if (e.Y == 0 && e.X == 0)
+                        press("2222,1410;100;2222,1120", 1);
+                    else if ((e.Y == 0 && e.X < screenWidth) || IsPointClose(e.Pos, new(1773, 843)))
+                        press("2462,843");
+                    else if ((e.Y + 1 == screenHeight && e.X < screenWidth) || IsPointClose(e.Pos, new(1773, 843)))
+                        press("2462,843");
+                    else if (IsPointClose(e.Pos, new(2462, 843)))
+                        press("1773,843;1333.1439");
+                    else if (IsFullScreen())
+                        press("2512, 1405", 1);
+                    else
+                        press("2411, 1312", 1);
+                });
+            }
+            else if (x_button_dowing && e.Msg == MouseMsg.WM_XBUTTONUP && is_douyin())
+            {
+                e.Handled = true;
+                x_button_dowing = false;
+            }
         }
 
         public void ACPhoenix(MouseKeyboardHook.MouseHookEventArgs e)
@@ -112,71 +187,6 @@ namespace keyupMusic3
                 listen_move = false;
             }
         }
-        bool current_conor_down_mouse = false;
-        bool in_ctrl = false;
-        public void Douyin(MouseKeyboardHook.MouseHookEventArgs e, string allow = Common.douyin)
-        {
-            if (ProcessName != allow) return;
-            if (e.Msg == MouseMsg.WM_MOUSEMOVE && !downing) { return; }
-
-
-            if (e.Msg == MouseMsg.WM_RBUTTONDOWN)
-            {
-                if (ProcessName == msedge && ProcessTitle.Contains("抖音"))
-                {
-                    //in_ctrl = is_ctrl();
-                    //if (in_ctrl) { e.Handled = true; return; }
-                    e.Handled = true;
-                    r_downing = true;
-                }
-                if (ProcessName2 != allow) return;
-                if (e.X != 0) return;
-                e.Handled = true;
-                start = Position;
-                downing = true;
-            }
-            else if (e.Msg == MouseMsg.WM_RBUTTONUP)
-            {
-                if (!r_downing && ProcessName == msedge && ProcessTitle.Contains("抖音"))
-                {
-                    //in_ctrl = is_ctrl();
-                    //if (in_ctrl) { e.Handled = true; return; }
-                    e.Handled = true;
-                    r_downing = false;
-                }
-                if (ProcessName2 != allow) return;
-                //if (current_conor == 3)
-                //{
-                //    var num = current_conor_down_mouse ? 5 : 1;
-                //    if (judge_color(2471, 657, Color.FromArgb(254, 44, 85)))
-                //        press("2236.1400;111;2226," + (1030 + (num * 50)), 101);
-                //    return;
-                //}
-                if (!downing) return;
-                e.Handled = true;
-                downing = false;
-            }
-            else if (e.Msg == MouseMsg.WM_MOUSEMOVE && downing == true)
-            {
-                int y = e.Y - start.Y;
-                if (Math.Abs(y) > threshold)
-                {
-                    if (y > 0)
-                        press(Keys.VolumeDown);
-                    if (y < 0)
-                        press(Keys.VolumeUp);
-                    start = Position;
-                }
-            }
-            //else if (e.Msg == MouseMsg.WM_XBUTTONDOWN)
-            //{
-            //    e.Handled = true;
-            //    //Task.Run(() =>
-            //    //{
-            //    //    press_hold(Keys.H, 300);
-            //    //});
-            //}
-        }
         public void Devenv()
         {
             //if (ProcessName != keyupMusic2.Common.devenv) return;
@@ -196,14 +206,16 @@ namespace keyupMusic3
             //    }
             //}
         }
-        bool left_left_click = false;
-        bool left_down_click = false;
-        bool right_up_click = false;
-        private static List<MousePositionWithTime> recentMousePositions = new List<MousePositionWithTime>();
-
         public void ScreenEdgeClick()
         {
-            if (e.Msg == MouseMsg.WM_MOUSEMOVE)
+            if (e.Msg == MouseMsg.WM_LBUTTONDOWN || cornor != 0)
+            {
+                left_left_click = false;
+                left_down_click = false;
+                right_up_click = false;
+                right_down_click = false;
+            }
+            else if (e.Msg == MouseMsg.WM_MOUSEMOVE)
             {
                 if (e.X > (2560 * screenWidth / 2560) / 4 && left_left_click == false)
                     left_left_click = true;
@@ -219,17 +231,17 @@ namespace keyupMusic3
                 if (left_left_click && e.X == 0)
                 {
                     //if (!not_allow && IsFullScreen()) return;
-                    //if (is_douyin() && IsFullScreen()) return;
+                    if (is_douyin() && IsFullScreen()) return;
                     left_left_click = false;
                     mouse_click2(400);
-                    if (is_douyin()
-                        && judge_color(1279, 684, Color.FromArgb(200, 200, 200), null, 60)
-                        && judge_color(1262, 713, Color.FromArgb(200, 200, 200), null, 60)
-                        && judge_color(1311, 685, Color.FromArgb(200, 200, 200), null, 60))
-                    {
-                        mouse_click2(10);
-                        press_middle_bottom();
-                    }
+                    //if (is_douyin()
+                    //    && judge_color(1279, 684, Color.FromArgb(200, 200, 200), null, 60)
+                    //    && judge_color(1262, 713, Color.FromArgb(200, 200, 200), null, 60)
+                    //    && judge_color(1311, 685, Color.FromArgb(200, 200, 200), null, 60))
+                    //{
+                    //    mouse_click2(10);
+                    //    press_middle_bottom();
+                    //}
                 }
                 else if (left_down_click && e.Y == (screenHeight - 1) && e.X < screenWidth)
                 {
@@ -243,22 +255,16 @@ namespace keyupMusic3
                 {
                     right_up_click = false;
                     mouse_click2(0);
-                    //if (e.X > screenWidth) press(Keys.F);
+                    press_dump(Keys.Escape, 111);
                 }
             }
-            else if (e.Msg == MouseMsg.WM_LBUTTONDOWN)
-            {
-                left_left_click = false;
-                left_down_click = false;
-                right_up_click = false;
-            }
         }
-        int current_conor = 0;
+        int cornor = 0;
         public void UnderLine()
         {
-            if (e.Msg == MouseMsg.WM_RBUTTONDOWN)
+            if (e.Msg == MouseMsg.WM_RBUTTONUP)
             {
-                if (e.Y + 1 == screenHeight)
+                if (e.Y + 1 == screenHeight && !IsFullScreen())
                 {
                     Sleep(322);
                     mouse_move_to(0, 1325 - screenHeight);
@@ -267,42 +273,50 @@ namespace keyupMusic3
             }
         }
         int ffff = 0;
-        public void Conor()
+        public void Cornor()
         {
             lock (_lockObject_handing2)
             {
+                FreshProcessName();
                 if (handing2) { handing2 = false; return; }
                 handing2 = true;
                 if (ffff != 10) ffff++;
                 if (ffff < 10) { handing2 = false; return; }
                 if (e.Msg != MouseMsg.WM_MOUSEMOVE) { handing2 = false; return; }
-                current_conor = 0;
-                if (e.X == 0 && e.Y == 0) current_conor = 1;
-                else if (e.X == 0 && e.Y == 1439) current_conor = 2;
-                else if (e.X == 2559 && e.Y == 0) current_conor = 3;
-                else if (e.X == 2559 && e.Y == 1439) current_conor = 4;
+                cornor = 0;
+                if (e.X == 0 && e.Y == 0) cornor = 1;
+                else if (e.X == 0 && e.Y == 1439) cornor = 2;
+                else if (e.X == 2559 && e.Y == 0) cornor = 3;
+                else if (e.X == 2559 && e.Y == 1439) cornor = 4;
                 else { handing2 = false; return; }
 
-                if (current_conor == 3 && ProcessName == ApplicationFrameHost) mouse_click_not_repeat();
-                else if (current_conor == 3 && ProcessName == explorer) mouse_click_not_repeat();
-                else if (current_conor == 3 && ProcessName == vlc) mouse_click_not_repeat();
+                //if (cornor == 3 && ProcessName == ApplicationFrameHost) mouse_click_not_repeat();
+                //else if (cornor == 3 && ProcessName == explorer) mouse_click_not_repeat();
+                //else if (cornor == 3 && ProcessName == vlc) mouse_click_not_repeat();
+                //else if (cornor == 3 && ProcessName == v2rayN) mouse_click_not_repeat();
+                //else if (cornor == 3 && ProcessName == Common.devenv && ProcessTitle.Contains("正在运行"))
+                //    press([Keys.LShiftKey, Keys.F5]);
+                //else if (cornor == 3 && ProcessName == Common.devenv) HideProcess(Common.devenv);
 
-                if (current_conor == 3)
+                if (cornor == 3)
                 {
-                    if (ProcessName == ApplicationFrameHost)
-                        mouse_click_not_repeat();
-                    if (ProcessName == explorer)
-                        mouse_click_not_repeat();
-                    if (ProcessName == vlc)
-                        mouse_click_not_repeat();
-                    ffff = 0;
-                    ProcessName = "";
-                    
-                }
+                    var list = new[] { ApplicationFrameHost, explorer, vlc, v2rayN, Common.QQMusic };
 
-                //else
-                //    ProcessName = "";
-                   handing2 = false;
+                    if (list.Contains(Common.ProcessName))
+                        mouse_click_not_repeat();
+                    else if (ProcessName == Common.devenv && ProcessTitle.Contains("正在运行"))
+                        press([Keys.LShiftKey, Keys.F5]);
+                    else if (ProcessName == Common.devenv)
+                        HideProcess(Common.devenv);
+
+                    ffff = 0;
+                    Common.ProcessName = "";
+                }
+                //if (cornor == 4)
+                //{
+                //    if (is_douyin()) press("2462,843");
+                //}
+                handing2 = false;
             }
         }
 
@@ -321,57 +335,13 @@ namespace keyupMusic3
                 if (ProcessName == keyupMusic2.Common.msedge && (e.Y == (screenHeight - 1)))
                     press(Keys.PageDown, 0);
             }
-            else if (e.Msg == MouseMsg.WM_LBUTTONUP)
-            {
-                if (e.X == 6719 || e.Y == 1619)
-                {
-                    HideProcess(keyupMusic2.Common.chrome); return;
-                };
-            }
-            //else if (e.Msg == MouseMsg.WM_MOUSEMOVE)
+            //else if (e.Msg == MouseMsg.WM_LBUTTONUP)
             //{
-            //    if (IsDrawingCircle(e.X, e.Y))
+            //    if (e.X == 6719 || e.Y == 1619)
             //    {
-            //        mouse_click(0);
-            //        recentMousePositions = new List<MousePositionWithTime>();
+            //        HideProcess(keyupMusic2.Common.chrome); return;
             //    };
             //}
-        }
-        private static bool IsDrawingCircle(int x, int y)
-        {
-            // 假设圆心坐标为 (centerX, centerY)，半径为 radius
-            int centerX = x;
-            int centerY = y;
-            int radius = 100;
-
-            // 维护一个最近一段时间（比如 1 秒内）的鼠标位置列表
-            DateTime now = DateTime.Now;
-            recentMousePositions.RemoveAll(pos => (now - pos.When).TotalSeconds > 1);
-            recentMousePositions.Add(new MousePositionWithTime { X = x, Y = y, When = now });
-            int totalCount = recentMousePositions.Count;
-
-            if (totalCount < 33) return false;
-
-            // 判断最近一段时间内的位置是否大致形成一个圆
-            int countInCircle = recentMousePositions.Count(pos =>
-            {
-                var a = (pos.X - centerX) * (pos.X - centerX) + (pos.Y - centerY) * (pos.Y - centerY);
-                return a >= 52 * 52 && a <= radius * radius;
-            });
-            double ratio = (double)countInCircle / totalCount;
-
-            // 根据圆的方程判断点是否在圆上或圆内
-            bool inCircle = (x - centerX) * (x - centerX) + (y - centerY) * (y - centerY) <= radius * radius;
-
-            return inCircle && ratio > 0.5; // 可以根据实际情况调整这个比例阈值
-        }
-
-        // 辅助结构体存储鼠标位置和时间
-        private struct MousePositionWithTime
-        {
-            public int X;
-            public int Y;
-            public DateTime When;
         }
     }
 }

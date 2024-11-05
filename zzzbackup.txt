@@ -2365,6 +2365,347 @@ namespace keyupMusic3
         }
     }
 }
+using keyupMusic2;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+using WGestures.Core.Impl.Windows;
+using static keyupMusic2.Common;
+
+namespace keyupMusic3
+{
+    public class biu
+    {
+        public biu(Form parentForm)
+        {
+            huan = (Form2)parentForm;
+        }
+        public Form2 huan;
+        bool listen_move = false;
+        bool downing = false;
+        bool downing2 = false;
+        private Point start = Point.Empty;
+        private int threshold = 10;
+        bool handing = false;
+        bool handing2 = false;
+        private static readonly object _lockObject_handing2 = new object();
+        bool handing3 = false;
+        bool r_downing = false;
+        MouseKeyboardHook.MouseHookEventArgs e = null;
+        bool left_left_click = false;
+        bool left_down_click = false;
+        bool right_up_click = false;
+
+
+        public void MouseHookProc(MouseKeyboardHook.MouseHookEventArgs e)
+        {
+            if (hooked_mouse) return;
+            if (handing3) return;
+            if (handing) return;
+            hooked_mouse = true;
+            handing = true;
+            handing3 = true;
+            this.e = e;
+            if (e.Msg != MouseMsg.WM_MOUSEMOVE) Task.Run(() => { FreshProcessName(); });
+
+            Task.Run(() => { ACPhoenix(e); });
+            Douyin(e);
+            Douyin(e, Common.msedge);
+            Task.Run(Devenv);
+            Task.Run(() => { ScreenEdgeClick(); handing3 = false; });
+            Task.Run(Cornor);
+            Task.Run(UnderLine);
+            Task.Run(QQMusic);
+            Task.Run(Other);
+
+            handing = false;
+            hooked_mouse = false;
+        }
+
+        public void ACPhoenix(MouseKeyboardHook.MouseHookEventArgs e)
+        {
+            if (ProcessName != keyupMusic2.Common.ACPhoenix) return;
+
+            if (e.Msg == MouseMsg.WM_LBUTTONDOWN)
+            {
+                listen_move = true;
+                if (e.Y == 0 || e.Y == screenHeight - 1) { press(Keys.Space); }
+                if (e.X == 0) { press(Keys.Tab); }
+            }
+            else if (e.Msg == MouseMsg.WM_LBUTTONUP)
+            {
+                listen_move = false;
+            }
+            else if (e.Msg == MouseMsg.WM_RBUTTONDOWN)
+            {
+                downing2 = true;
+                if (!(e.Y == 0 && (e.X <= screenWidth - 1 && e.X > screenWidth - 120)))
+                    Task.Run(() =>
+                    {
+                        mouse_click2(50);
+                        mouse_click2(50);
+                        Thread.Sleep(50);
+                        for (var i = 0; i < 50; i++)
+                        {
+                            if (!downing2) break;
+                            mouse_click2(50);
+                        }
+                    });
+            }
+            else if (e.Msg == MouseMsg.WM_RBUTTONUP)
+            {
+                downing2 = false;
+                if ((e.Y < (493 * screenHeight / 1440) && e.Y > (190 * screenHeight / 1440)) && e.X < (2066 * screenWidth / 2560))
+                    press(Keys.Space);
+                if (try_press(1433, 1072, Color.FromArgb(245, 194, 55), () => { }))
+                { }
+                //退出观战
+                if ((e.Y == 0 && (e.X <= screenWidth - 1 && e.X > screenWidth - 120)))
+                {
+                    //press("111"); press(Keys.F4); press("1625.1078");
+                    if (is_alt()) return;
+                    press("2478,51;2492,1299;1625.1078", 200);
+                }
+            }
+            if (!listen_move) { return; }
+
+            if (e.Msg == MouseMsg.WM_MOUSEMOVE)
+            {
+                //var aaa = 1430 * 2160 / 1440;
+                if (!listen_move || (e.Y < screenHeight - 10) || (e.X > screenWidth)) { return; }
+                if (ProcessName2 == keyupMusic2.Common.ACPhoenix) { press(Keys.S, 0); ; }
+                listen_move = false;
+            }
+        }
+        bool current_conor_down_mouse = false;
+        bool in_ctrl = false;
+        public void Douyin(MouseKeyboardHook.MouseHookEventArgs e, string allow = Common.douyin)
+        {
+            if (ProcessName != allow && !is_douyin()) return;
+            if (e.Msg == MouseMsg.WM_MOUSEMOVE && !downing) { return; }
+
+
+            if (e.Msg == MouseMsg.WM_RBUTTONDOWN)
+            {
+                if (e.X != 0) return;
+                if (ProcessName == msedge && ProcessTitle.Contains("抖音"))
+                {
+                    //in_ctrl = is_ctrl();
+                    //if (in_ctrl) { e.Handled = true; return; }
+                    e.Handled = true;
+                    r_downing = true;
+                }
+                if (ProcessName2 != allow) return;
+                e.Handled = true;
+                start = Position;
+                downing = true;
+            }
+            else if (e.Msg == MouseMsg.WM_RBUTTONUP)
+            {
+                if (r_downing && ProcessName == msedge && ProcessTitle.Contains("抖音"))
+                {
+                    e.Handled = true;
+                    r_downing = false;
+                }
+                if (ProcessName2 != allow) return;
+                if (!downing) return;
+                e.Handled = true;
+                downing = false;
+            }
+            else if (e.Msg == MouseMsg.WM_MOUSEMOVE && downing == true)
+            {
+                int y = e.Y - start.Y;
+                if (Math.Abs(y) > threshold)
+                {
+                    if (y > 0)
+                        press(Keys.VolumeDown);
+                    if (y < 0)
+                        press(Keys.VolumeUp);
+                    start = Position;
+                }
+            }
+            else if (e.Msg == MouseMsg.WM_XBUTTONDOWN && is_douyin())
+            {
+                Task.Run(() =>
+                {
+                    if (IsFullScreen()) press("2512, 1405", 1);
+                    else press("2411, 1312", 1);
+                });
+                //if (judge_color(2469, 646, Color.FromArgb(254, 44, 85)) || judge_color(1996, 1400, Color.FromArgb(254, 21, 89)) || !IsFullScreen())
+                //{
+                //    //down_press(Keys.Right);
+                //    KeyboardInput.SendString2("h");
+                //    //Common.press_hold(Keys.H, 100);
+                //}
+            }
+            //else if (e.Msg == MouseMsg.WM_XBUTTONUP && is_douyin())
+            //{
+            //    if (judge_color(2469, 646, Color.FromArgb(254, 44, 85)) || judge_color(1996, 1400, Color.FromArgb(254, 21, 89)) || !IsFullScreen())
+            //    {
+            //        up_press(Keys.Right);
+            //        //Common.press_hold(Keys.H, 100);
+            //        //Common.press_hold(Keys.H, 100);
+            //        //Common.press_hold(Keys.H, 100);
+            //    }
+            //}
+        }
+        public void Devenv()
+        {
+            //if (ProcessName != keyupMusic2.Common.devenv) return;
+
+            //if (e.Msg == MouseMsg.WM_LBUTTONDOWN)
+            //{
+            //    if ((e.Y == 0) && (e.X < (2560 / 2)))
+            //    {
+            //        if (judge_color(82, 68, Color.FromArgb(189, 64, 77)))
+            //            press([Keys.LControlKey, Keys.LShiftKey, Keys.F5]);
+            //        else
+            //            press([Keys.F5]);
+            //    }
+            //    else if ((e.Y == 0) && (e.X < 2560))
+            //    {
+            //        press([Keys.LShiftKey, Keys.F5]);
+            //    }
+            //}
+        }
+        public void ScreenEdgeClick()
+        {
+            if (e.Msg == MouseMsg.WM_MOUSEMOVE)
+            {
+                if (e.X > (2560 * screenWidth / 2560) / 4 && left_left_click == false)
+                    left_left_click = true;
+                else if (e.Y < (1440 * screenHeight / 1440) / 4 * 3 && left_down_click == false)
+                    left_down_click = true;
+                else if (e.X < (2560 * screenWidth / 2560) / 1 && right_up_click == false)
+                    right_up_click = true;
+                if (Math.Abs(e.X - (1333 * screenWidth / 2560)) < 2 && e.Y == screenHeight - 1)
+                    left_down_click = false;
+
+                var not_allow = (ProcessName != keyupMusic2.Common.ACPhoenix) && (ProcessName != msedge);
+
+                if (left_left_click && e.X == 0)
+                {
+                    //if (!not_allow && IsFullScreen()) return;
+                    if (is_douyin() && IsFullScreen()) return;
+                    left_left_click = false;
+                    mouse_click2(400);
+                    //if (is_douyin()
+                    //    && judge_color(1279, 684, Color.FromArgb(200, 200, 200), null, 60)
+                    //    && judge_color(1262, 713, Color.FromArgb(200, 200, 200), null, 60)
+                    //    && judge_color(1311, 685, Color.FromArgb(200, 200, 200), null, 60))
+                    //{
+                    //    mouse_click2(10);
+                    //    press_middle_bottom();
+                    //}
+                }
+                else if (left_down_click && e.Y == (screenHeight - 1) && e.X < screenWidth)
+                {
+                    if (!not_allow && IsFullScreen()) return;
+                    if (is_douyin() && IsFullScreen()) return;
+                    if (judge_color(Color.FromArgb(210, 27, 70))) { return; }
+                    left_down_click = false;
+                    mouse_click2(0);
+                }
+                else if (right_up_click && e.Y == 0 && e.X > screenWidth)
+                {
+                    right_up_click = false;
+                    mouse_click2(0);
+                    //if (e.X > screenWidth) press(Keys.F);
+                }
+            }
+            else if (e.Msg == MouseMsg.WM_LBUTTONDOWN)
+            {
+                left_left_click = false;
+                left_down_click = false;
+                right_up_click = false;
+            }
+        }
+        int current_cornor = 0;
+        public void UnderLine()
+        {
+            if (e.Msg == MouseMsg.WM_RBUTTONDOWN)
+            {
+                if (e.Y + 1 == screenHeight)
+                {
+                    Sleep(322);
+                    mouse_move_to(0, 1325 - screenHeight);
+                    mouse_click();
+                }
+            }
+        }
+        int ffff = 0;
+        public void Cornor()
+        {
+            lock (_lockObject_handing2)
+            {
+                if (handing2) { handing2 = false; return; }
+                handing2 = true;
+                if (ffff != 10) ffff++;
+                if (ffff < 10) { handing2 = false; return; }
+                if (e.Msg != MouseMsg.WM_MOUSEMOVE) { handing2 = false; return; }
+                current_cornor = 0;
+                if (e.X == 0 && e.Y == 0) current_cornor = 1;
+                else if (e.X == 0 && e.Y == 1439) current_cornor = 2;
+                else if (e.X == 2559 && e.Y == 0) current_cornor = 3;
+                else if (e.X == 2559 && e.Y == 1439) current_cornor = 4;
+                else { handing2 = false; return; }
+
+                if (current_cornor == 3 && ProcessName == ApplicationFrameHost) mouse_click_not_repeat();
+                else if (current_cornor == 3 && ProcessName == explorer) mouse_click_not_repeat();
+                else if (current_cornor == 3 && ProcessName == vlc) mouse_click_not_repeat();
+                else if (current_cornor == 3 && ProcessName == v2rayN) mouse_click_not_repeat();
+                else if (current_cornor == 3 && ProcessName == Common.devenv)
+                {
+                    if (ProcessTitle.Contains("正在运行")) press([Keys.LShiftKey, Keys.F5]);
+                    else HideProcess(Common.devenv);
+                }
+
+                if (current_cornor == 3)
+                {
+                    if (ProcessName == ApplicationFrameHost)
+                        mouse_click_not_repeat();
+                    if (ProcessName == explorer)
+                        mouse_click_not_repeat();
+                    if (ProcessName == vlc)
+                        mouse_click_not_repeat();
+                    ffff = 0;
+                    ProcessName = "";
+
+                }
+
+                //else
+                //    ProcessName = "";
+                handing2 = false;
+            }
+        }
+
+        private void QQMusic()
+        {
+            if (ProcessName != keyupMusic2.Common.QQMusic) return;
+            if (e.Msg == MouseMsg.WM_LBUTTONDOWN)
+            {
+                ctrl_shift(true);
+            }
+        }
+        public void Other()
+        {
+            if (e.Msg == MouseMsg.WM_LBUTTONDOWN)
+            {
+                if (ProcessName == keyupMusic2.Common.msedge && (e.Y == (screenHeight - 1)))
+                    press(Keys.PageDown, 0);
+            }
+            else if (e.Msg == MouseMsg.WM_LBUTTONUP)
+            {
+                if (e.X == 6719 || e.Y == 1619)
+                {
+                    HideProcess(keyupMusic2.Common.chrome); return;
+                };
+            }
+        }
+    }
+}
 using System;
 using System.Collections.Generic;
 using System.Linq;

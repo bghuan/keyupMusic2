@@ -96,6 +96,7 @@ namespace keyupMusic2
         public const string ApplicationFrameHost = "ApplicationFrameHost";
         public const string QQLive = "QQLive";
         public const string vlc = "vlc";
+        public const string v2rayN = "v2rayN";
 
         public static string[] list = {
         keyupMusic2,
@@ -116,7 +117,7 @@ namespace keyupMusic2
         QQLive,
         vlc,
         keyupMusic3,
-        QQMusic,
+        v2rayN,
         QQMusic,
         QQMusic,
         };
@@ -157,13 +158,20 @@ namespace keyupMusic2
             return ProcessName == douyin || ProcessTitle.Contains("抖音");
         }
         static IntPtr old_hwnd = 0;
-        [DllImport("user32.dll ", EntryPoint = "FindWindow")]
-        static extern IntPtr FindWindow_AppFormHandle(string lpClassName, string lpWindowName);
+
+        static Dictionary<IntPtr, string> ProcessMap = new Dictionary<IntPtr, string>();
         public static string FreshProcessName()
         {
-            IntPtr ptr = FindWindow_AppFormHandle("WeChatMainWndForPC", "微信");
             IntPtr hwnd = GetForegroundWindow(); // 获取当前活动窗口的句柄
-            if (hwnd == old_hwnd) return Common.ProcessName;
+            if (ProcessMap.ContainsKey(hwnd))
+            {
+                Common.ProcessName = ProcessMap[hwnd].Split(";;;;")[0];
+                ProcessTitle = ProcessMap[hwnd].Split(";;;;")[1];
+                if (Common.ProcessName == msedge)
+                    ProcessTitle = GetWindowText(hwnd); ;
+                return Common.ProcessName;
+            }
+            //if (hwnd == old_hwnd) return Common.ProcessName;
             old_hwnd = hwnd;
 
             string windowTitle = GetWindowText(hwnd);
@@ -193,6 +201,8 @@ namespace keyupMusic2
 
             //log(DateTime.Now.ToString("") + " " + windowTitle + " " + fildsadsePath + module_nasme + "\n");
             Common.ProcessName = ProcessName;
+            if (!ProcessMap.ContainsKey(hwnd))
+                ProcessMap.Add(hwnd, ProcessName + ";;;;" + ProcessTitle);
             return ProcessName;
         }
         public static string GetWindowText()
@@ -207,16 +217,15 @@ namespace keyupMusic2
         static string proc_info = "";
         public static string log_process(string key = "")
         {
-            IntPtr hwnd = GetForegroundWindow(); // 获取当前活动窗口的句柄
-            string a = "";
-
-            string windowTitle = GetWindowText(hwnd);
-            //a += ("当前活动窗口名称: " + windowTitle);
+            IntPtr hwnd = GetForegroundWindow();
+            string Title = GetWindowText(hwnd);
+            bool IsFull = IsFullScreen(hwnd);
 
             var filePath = "a.txt";
-            var fildsadsePath = "err";
+
+            var Path = "err";
             var module_name = "err";
-            var ProcessName = "err";
+            var Name = "err";
 
             try
             {
@@ -224,22 +233,24 @@ namespace keyupMusic2
                 GetWindowThreadProcessId(hwnd, out processId);
                 using (Process process = Process.GetProcessById((int)processId))
                 {
-                    fildsadsePath = process.MainModule.FileName;
+                    Path = process.MainModule.FileName;
                     module_name = process.MainModule.ModuleName;
-                    ProcessName = process.ProcessName;
+                    Name = process.ProcessName;
                 }
             }
             catch (System.Exception ex)
             {
-                fildsadsePath = ex.Message;
+                Path = ex.Message;
             }
-            var curr_proc_info = ProcessName + " " + windowTitle + " " + fildsadsePath;
-            a = key;
-            if (proc_info != curr_proc_info) a = key + " " + curr_proc_info;
-            proc_info = ProcessName + " " + windowTitle + " " + fildsadsePath;
-            log(a);
+
+            string txt = key;
+            var curr_proc_info = new { key, Name, Title, Path, IsFull }.ToString();
+            if (proc_info != curr_proc_info) txt = curr_proc_info;
+            proc_info = curr_proc_info;
+
+            log(txt);
             //log(DateTime.Now.ToString("") + " " + windowTitle + " " + fildsadsePath + module_nasme + "\n");
-            return ProcessName;
+            return Name;
         }
         public static void log(string message)
         {
@@ -292,7 +303,7 @@ namespace keyupMusic2
         {
             return Native.GetAsyncKeyState(Keys.ShiftKey) < 0;
         }
-        public static void cmd(string cmd, Action action = null)
+        public static void cmd(string cmd, Action action = null, int tick = 10)
         {
             ProcessStartInfo startInfo = new ProcessStartInfo
             {
@@ -305,8 +316,9 @@ namespace keyupMusic2
 
             using (Process process = Process.Start(startInfo))
             {
-                if (action != null)
-                    action();
+                if (action == null) return;
+                Sleep(tick);
+                action();
             }
         }
 
@@ -454,10 +466,10 @@ namespace keyupMusic2
         {
             {
                 HideProcess(keyupMusic3);
-                var _po = Position;
-                press("2467.220", 110);
-                if (judge_color(2467, 220, Color.FromArgb(196, 43, 28))) { press("2352,226", 10); }
-                press(_po.X + "." + _po.Y, 0);
+                //var _po = Position;
+                //press("2467.220", 110);
+                //if (judge_color(2467, 220, Color.FromArgb(196, 43, 28))) { press("2352,226", 10); }
+                //press(_po.X + "." + _po.Y, 0);
             }
         }
         public static bool ExsitProcess(string procName)
@@ -518,18 +530,26 @@ namespace keyupMusic2
             }
         }
         public static bool _Not_F10_F11_F12_Delete = true;
-        public static bool Not_F10_F11_F12_Delete(bool refresh = false)
+        public static bool Not_F10_F11_F12_Delete(bool refresh = false, Keys current_key = new Keys())
         {
             if (refresh)
             {
-                //var keys = new []{ Keys.F10, Keys.F11, Keys.F12, Keys.Delete, Keys.LControlKey, Keys.RControlKey };
-                //var sss=false;
-                //foreach (Keys key in keys) { if(!is_down(Keys.F10))}
-                _Not_F10_F11_F12_Delete = !is_down(Keys.F10) && !is_down(Keys.F11) && !is_down(Keys.Delete);
+                var keys = new[] { Keys.F10, Keys.F11, Keys.F12, Keys.Delete, Keys.LControlKey, Keys.RControlKey };
+                var sss = false;
+                var filteredKeys = keys.Where(key => key != current_key).ToArray();
+                foreach (Keys key in filteredKeys)
+                {
+                    if (is_down(key))
+                    {
+                        sss = true;
+                    }
+                }
+                _Not_F10_F11_F12_Delete = !sss;
+                //_Not_F10_F11_F12_Delete = !is_down(Keys.F10) && !is_down(Keys.F11) && !is_down(Keys.Delete);
             }
             return _Not_F10_F11_F12_Delete;
         }
-        public static void close()
+        public static void press_close()
         {
             press([Keys.LMenu, Keys.F4]);
         }
@@ -571,10 +591,6 @@ namespace keyupMusic2
         }
         static Point mousePosition;
         public static Point lastPosition;
-        public static void press_hold(Keys keys, int tick = 800)
-        {
-            _press_hold(keys, tick);
-        }
         public static void press_middle_bottom()
         {
             press("1333.1439", 0);
@@ -617,7 +633,7 @@ namespace keyupMusic2
             if (!is_zh && !zh) return;
             press([Keys.LControlKey, Keys.LShiftKey]);
         }
-        public static void press(string str, int tick = 800, bool force = false)
+        public static void press(string str, int tick = 100, bool force = false)
         {
             if (is_down(Keys.Delete) && !force) return;
             //KeyboardHook.stop_next = false;
@@ -696,12 +712,6 @@ namespace keyupMusic2
         }
         public static void up_press(Keys keys)
         {
-            keybd_event((byte)keys, 0, 2, 0);
-        }
-        public static void _press_hold(Keys keys, int tick)
-        {
-            keybd_event((byte)keys, 0, 0, 0);
-            Thread.Sleep(tick);
             keybd_event((byte)keys, 0, 2, 0);
         }
 
@@ -812,18 +822,6 @@ namespace keyupMusic2
                 dragonest_notity_click(true);
             }
         }
-        //占内存
-        public static void copy_screen()
-        {
-            Screen secondaryScreen = Screen.PrimaryScreen;
-            Bitmap bmpScreenshot = new Bitmap(secondaryScreen.Bounds.Width, secondaryScreen.Bounds.Height, PixelFormat.Format32bppArgb);
-            Graphics gfxScreenshot = Graphics.FromImage(bmpScreenshot);
-            gfxScreenshot.CopyFromScreen(new Point(0, 0), Point.Empty, secondaryScreen.Bounds.Size);
-            gfxScreenshot.Dispose();
-            string aaa = "C:\\Users\\bu\\Pictures\\Screenshots\\";
-            if (ProcessName == Common.ACPhoenix) aaa += "dd\\";
-            bmpScreenshot.Save(aaa + DateTime.Now.ToString("yyyyMMddHHmmss") + ".png", ImageFormat.Png);
-        }
         static string mmapName = "Global\\MyMemoryMappedFile";
         static long mmapSize = 1024;
         public static string share_string = "";
@@ -873,8 +871,23 @@ namespace keyupMusic2
                 return "";
             }
         }
+        //占内存
+        public static void copy_screen()
+        {
+            play_sound_di();
+            Screen secondaryScreen = Screen.PrimaryScreen;
+            Bitmap bmpScreenshot = new Bitmap(secondaryScreen.Bounds.Width, secondaryScreen.Bounds.Height, PixelFormat.Format32bppArgb);
+            Graphics gfxScreenshot = Graphics.FromImage(bmpScreenshot);
+            gfxScreenshot.CopyFromScreen(new Point(0, 0), Point.Empty, secondaryScreen.Bounds.Size);
+            gfxScreenshot.Dispose();
+            string aaa = "C:\\Users\\bu\\Pictures\\Screenshots\\";
+            if (ProcessName == Common.ACPhoenix) aaa += "dd\\";
+            bmpScreenshot.Save(aaa + DateTime.Now.ToString("yyyyMMddHHmmss") + ".png", ImageFormat.Png);
+            TaskRun(() => play_sound_di(), 80);
+        }
         public static void copy_secoed_screen(string path = "")
         {
+            play_sound_di();
             Screen secondaryScreen = Screen.AllScreens.FirstOrDefault(scr => !scr.Primary);
             int start_x = 2560;
             if (secondaryScreen == null) { return; }
@@ -885,6 +898,8 @@ namespace keyupMusic2
             gfxScreenshot.CopyFromScreen(new Point(start_x, 0), Point.Empty, secondaryScreen.Bounds.Size);
             bmpScreenshot.Save("image\\encode\\" + path + DateTime.Now.ToString("yyyyMMddHHmmss") + ".png" + "g", ImageFormat.Png);
             gfxScreenshot.Dispose();
+            bmpScreenshot.Dispose();
+            TaskRun(() => play_sound_di(), 80);
         }
         public static void copy_ddzzq_screen()
         {
@@ -980,9 +995,10 @@ namespace keyupMusic2
         private const int SM_CXSCREEN = 0;
         private const int SM_CYSCREEN = 1;
 
-        public static bool IsFullScreen()
+        public static bool IsFullScreen(IntPtr hWnd = 0)
         {
-            IntPtr hWnd = GetForegroundWindow();
+            if (hWnd == 0)
+                hWnd = GetForegroundWindow();
             if (hWnd == IntPtr.Zero)
             {
                 // No foreground window found  
@@ -1086,6 +1102,10 @@ namespace keyupMusic2
                     Console.Read();
                 }
             }
+        }
+        public static bool IsPointClose(Point point1, Point point2, int diff = 100)
+        {
+            return Math.Abs(point1.X - point2.X) + Math.Abs(point1.Y - point2.Y) < 2 * diff;
         }
 
     }

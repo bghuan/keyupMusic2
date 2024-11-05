@@ -13,7 +13,7 @@ namespace keyupMusic2
     public class Other : Default
     {
         string[] list = Common.list;
-        string[] list_wechat_visualstudio = { Common.WeChat, Common.ACPhoenix, explorer, Common.keyupMusic2, Common.douyin, Common.devenv, Common.QQMusic, Common.SearchHost, Common.ApplicationFrameHost, Common.vlc, Common.keyupMusic3, Common.msedge, Common.chrome };
+        string[] list_wechat_visualstudio = { Common.WeChat, Common.ACPhoenix, explorer, Common.keyupMusic2, Common.douyin, Common.devenv, Common.QQMusic, Common.SearchHost, Common.ApplicationFrameHost, Common.vlc, Common.keyupMusic3,  Common.v2rayN };
         string[] list_volume = { Common.douyin, Common.msedge };
         static bool flag_special = false;
 
@@ -23,7 +23,7 @@ namespace keyupMusic2
             //flag_special = is_down(Keys.Delete);
             if (!list.Contains(module_name) || flag_special) return;
             Common.hooked = true;
-            Not_F10_F11_F12_Delete(true);
+            Not_F10_F11_F12_Delete(true, e.key);
             handling_keys = e.key;
 
             switch (e.key)
@@ -39,6 +39,10 @@ namespace keyupMusic2
                     else if (Common.devenv == module_name)
                     {
                         HideProcess(module_name);
+                    }
+                    else if (Common.msedge == module_name&&is_douyin())
+                    {
+                        press_close();
                     }
                     else if (list_wechat_visualstudio.Contains(module_name) || flag_special)
                     {
@@ -107,7 +111,7 @@ namespace keyupMusic2
 
         private static void run_vis()
         {
-            press("LWin;VIS;100;Apps;100;Enter;", 100, flag_special);
+            press("LWin;VISUAL;100;Apps;100;Enter;", 100, flag_special);
             TaskRun(() => { press("Tab;Down;Enter;", 100); }, 1600);
         }
     }
