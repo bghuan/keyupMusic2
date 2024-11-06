@@ -72,7 +72,7 @@ namespace keyupMusic3
         }
         private void TextBox1_TextChanged(object sender, EventArgs e)
         {
-            TcpServer.socket_write(label1.Text);
+            //TcpServer.socket_write(label1.Text);
         }
         private void Form2_Resize(object sender, EventArgs e)
         {

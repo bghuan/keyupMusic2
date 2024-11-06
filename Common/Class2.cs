@@ -629,6 +629,15 @@ namespace keyupMusic2
     #region 鼠标键盘所用到的Window API
     internal static class NativeMethods
     {
+        /// <summary>
+        /// Used to find the keyboard input scan code for single key input. Some applications do not receive the input when scan is not set.
+        /// </summary>
+        /// <param name="uCode"></param>
+        /// <param name="uMapType"></param>
+        /// <returns></returns>
+        [DllImport("user32.dll")]
+        public static extern uint MapVirtualKey(UInt32 uCode, UInt32 uMapType);
+
         [DllImport("User32.dll", CharSet = CharSet.Auto, SetLastError = false)]
         internal static extern IntPtr GetWindowLong(IntPtr hWnd, int nIndex);
 

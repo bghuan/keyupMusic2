@@ -48,7 +48,8 @@ namespace keyupMusic3
         public void MouseHookProcDouyin(MouseKeyboardHook.MouseHookEventArgs e)
         {
             //if (ProcessName != douyin && ProcessName != ApplicationFrameHost && ProcessName != explorer) return;
-            if (ProcessName != douyin && ProcessName != ApplicationFrameHost && !ProcessTitle.Contains("抖音")) return;
+            if (keyupMusic2.Common.ProcessTitle == null) return;
+            if (ProcessName != douyin && ProcessName != ApplicationFrameHost && !keyupMusic2.Common.ProcessTitle.Contains("抖音")) return;
             //if (e.Msg == MouseMsg.WM_MOUSEMOVE) return;
             int x = e.X - point_start.X;
             int y = -(e.Y - point_start.Y);

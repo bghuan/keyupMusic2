@@ -5,6 +5,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using WGestures.Core.Impl.Windows;
+using WindowsInput.Native;
 using static keyupMusic2.Common;
 
 namespace keyupMusic3
@@ -111,18 +112,13 @@ namespace keyupMusic3
                 x_button_dowing = true;
                 Task.Run(() =>
                 {
-                    if (e.Y == 0 && e.X == 0)
-                        press("2222,1410;100;2222,1120", 1);
-                    else if ((e.Y == 0 && e.X < screenWidth) || IsPointClose(e.Pos, new(1773, 843)))
-                        press("2462,843");
-                    else if ((e.Y + 1 == screenHeight && e.X < screenWidth) || IsPointClose(e.Pos, new(1773, 843)))
-                        press("2462,843");
-                    else if (IsPointClose(e.Pos, new(2462, 843)))
-                        press("1773,843;1333.1439");
-                    else if (IsFullScreen())
-                        press("2512, 1405", 1);
-                    else
-                        press("2411, 1312", 1);
+                    //if (e.Y == 0 && e.X == 0)
+                    //    press("2222,1410;100;2222,1120", 1);
+                    //else if ((e.Y == 0 || e.Y + 1 == screenHeight) && e.X < screenWidth)
+                    KeyboardInput.PressKey(Keys.X);
+                    //else
+                    //    KeyboardInput.PressKey(Keys.H);
+                    mouse_move(2221, 1407);
                 });
             }
             else if (x_button_dowing && e.Msg == MouseMsg.WM_XBUTTONUP && is_douyin())
@@ -231,7 +227,7 @@ namespace keyupMusic3
                 if (left_left_click && e.X == 0)
                 {
                     //if (!not_allow && IsFullScreen()) return;
-                    if (is_douyin() && IsFullScreen()) return;
+                    if (is_douyin()) return;
                     left_left_click = false;
                     mouse_click2(400);
                     //if (is_douyin()
@@ -255,7 +251,10 @@ namespace keyupMusic3
                 {
                     right_up_click = false;
                     mouse_click2(0);
-                    press_dump(Keys.Escape, 111);
+                    press(Keys.Escape, 111);
+                    //press(Keys.PageDown, 111);
+                    //if (!judge_color(5534, 696, Color.FromArgb(0, 0, 0)))
+                        new SendKeyboardMouse().MouseWhell(-120 * 7);
                 }
             }
         }
@@ -284,8 +283,8 @@ namespace keyupMusic3
                 if (ffff < 10) { handing2 = false; return; }
                 if (e.Msg != MouseMsg.WM_MOUSEMOVE) { handing2 = false; return; }
                 cornor = 0;
-                if (e.X == 0 && e.Y == 0) cornor = 1;
-                else if (e.X == 0 && e.Y == 1439) cornor = 2;
+                if (e.X == 0 && e.Y == 1439) cornor = 1;
+                else if (e.X == 0 && e.Y == 0) cornor = 2;
                 else if (e.X == 2559 && e.Y == 0) cornor = 3;
                 else if (e.X == 2559 && e.Y == 1439) cornor = 4;
                 else { handing2 = false; return; }
@@ -298,7 +297,22 @@ namespace keyupMusic3
                 //    press([Keys.LShiftKey, Keys.F5]);
                 //else if (cornor == 3 && ProcessName == Common.devenv) HideProcess(Common.devenv);
 
-                if (cornor == 3)
+                if (cornor == 2)
+                {
+                    if (mouse_click_not_repeat_time.AddSeconds(1) > DateTime.Now) return;
+
+                    var list = new[] { msedge, chrome };
+
+                    if (is_douyin())
+                        KeyboardInput.PressKey(Keys.H);
+                    else if (list.Contains(Common.ProcessName))
+                        press([Keys.F11]);
+
+                    mouse_click_not_repeat_time = DateTime.Now;
+                    ffff = 0;
+                    Common.ProcessName = "";
+                }
+                else if (cornor == 3)
                 {
                     var list = new[] { ApplicationFrameHost, explorer, vlc, v2rayN, Common.QQMusic };
 

@@ -1,13 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using static keyupMusic2.Common;
 using static WGestures.Core.Impl.Windows.MouseKeyboardHook;
-
-using static keyupMusic2.Common;
-using System.Media;
-using System.Windows.Forms;
 
 namespace keyupMusic2
 {
@@ -53,6 +45,7 @@ namespace keyupMusic2
             string module_name = ProcessName;
             if (not_in_class) return;
             if (is_down(Keys.LWin)) return;
+            if (e.Handled && e.key == Keys.PageDown) return;
             //if (!handling) return;
             Common.hooked = true;
             handling_keys = e.key;
@@ -67,15 +60,15 @@ namespace keyupMusic2
                     break;
             }
             douyin_game_key(e, is_string_cmd);
-            if (e.key == Keys.Right)
-            {
-                if (e.X < 800)
-                {
-                    press(Keys.X);
-                }
-                if (e.X < 1600) { }
-                if (e.X < 2600) { }
-            }
+            //if (e.key == Keys.Right)
+            //{
+            //    if (e.X < 800)
+            //    {
+            //        press(Keys.X);
+            //    }
+            //    if (e.X < 1600) { }
+            //    if (e.X < 2600) { }
+            //}
 
             Common.hooked = false;
             if (!handling) handling = true;
@@ -181,7 +174,7 @@ namespace keyupMusic2
             if (num1222 == 2) num = 5;
             else if (num1222 == 3) num = 6;
             else num = 1;
-            if (judge_color(2469, 646, Color.FromArgb(254, 44, 85))|| judge_color(1996, 1400, Color.FromArgb(254, 21, 89)))
+            if (judge_color(2469, 646, Color.FromArgb(254, 44, 85)) || judge_color(1996, 1400, Color.FromArgb(254, 21, 89)))
                 press("2290.1400;2290," + (1030 + (num * 50)), 101);
         }
 

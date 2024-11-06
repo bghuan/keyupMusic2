@@ -4,8 +4,10 @@ using System.Linq;
 using System.Runtime.InteropServices;
 using System.Text;
 using System.Threading.Tasks;
+using System.Windows.Input;
 using static System.Net.Mime.MediaTypeNames;
 using static System.Runtime.CompilerServices.RuntimeHelpers;
+using static Win32.User32;
 
 namespace keyupMusic2
 {
@@ -98,8 +100,8 @@ namespace keyupMusic2
                         ki = new InputUnion.KEYBDINPUT
                         {
                             wVk = virtualKey,
-                            wScan = 0,
-                            dwFlags = 0, // 0 for key press  
+                            wScan = (ushort)(NativeMethods.MapVirtualKey(virtualKey, 0) & 0xFFU),
+                            dwFlags = (0x0004), // 0 for key press  
                             time = 0,
                             dwExtraInfo = IntPtr.Zero
                         }
@@ -107,6 +109,42 @@ namespace keyupMusic2
                 };
             }
 
+            public static INPUT CreateKeyUpString(ushort virtualKey)
+            {
+                return new INPUT
+                {
+                    type = 1, // INPUT_KEYBOARD  
+                    U = new InputUnion
+                    {
+                        ki = new InputUnion.KEYBDINPUT
+                        {
+                            wVk = 0,
+                            wScan = virtualKey,
+                            dwFlags = 0x0004, // KEYEVENTF_KEYUP  
+                            time = 0,
+                            dwExtraInfo = IntPtr.Zero
+                        }
+                    }
+                };
+            }
+            public static INPUT CreateKeyUpString2(ushort virtualKey)
+            {
+                return new INPUT
+                {
+                    type = 1, // INPUT_KEYBOARD  
+                    U = new InputUnion
+                    {
+                        ki = new InputUnion.KEYBDINPUT
+                        {
+                            wVk = 0,
+                            wScan = virtualKey,
+                            dwFlags = 0x0004 | 0x0002, // KEYEVENTF_KEYUP  
+                            time = 0,
+                            dwExtraInfo = IntPtr.Zero
+                        }
+                    }
+                };
+            }
             public static INPUT CreateKeyUp(ushort virtualKey)
             {
                 return new INPUT
@@ -117,7 +155,25 @@ namespace keyupMusic2
                         ki = new InputUnion.KEYBDINPUT
                         {
                             wVk = virtualKey,
-                            wScan = 0,
+                            wScan = (ushort)(NativeMethods.MapVirtualKey(virtualKey, 0) & 0xFFU),
+                            dwFlags = 2, // KEYEVENTF_KEYUP  
+                            time = 0,
+                            dwExtraInfo = IntPtr.Zero
+                        }
+                    }
+                };
+            }
+            public static INPUT CreateKey(ushort virtualKey, int dwFlags)
+            {
+                return new INPUT
+                {
+                    type = 1, // INPUT_KEYBOARD  
+                    U = new InputUnion
+                    {
+                        ki = new InputUnion.KEYBDINPUT
+                        {
+                            wVk = virtualKey,
+                            wScan = (ushort)(NativeMethods.MapVirtualKey(virtualKey, 0) & 0xFFU),
                             dwFlags = 2, // KEYEVENTF_KEYUP  
                             time = 0,
                             dwExtraInfo = IntPtr.Zero
@@ -128,36 +184,29 @@ namespace keyupMusic2
         }
 
         //使用SendInput发送字符串
-        public static void SendString2(string text)
+        public static void PressKey(Keys key)
+        {
+            var inputs = new INPUT[2];
+
+            inputs[0] = KeyboardInput.INPUT.CreateKeyDown((ushort)key);
+            inputs[1] = KeyboardInput.INPUT.CreateKeyUp((ushort)key);
+
+            SendInput((uint)inputs.Length, ref inputs[0], KeyboardInput.INPUT.Size);
+        }
+
+        //使用SendInput发送字符串
+        public static void SendString(string text)
         {
             var inputs = new INPUT[text.Length * 2];
 
             for (int i = 0; i < text.Length; i++)
             {
-                ushort vk = VirtualKeyFromChar(text[i]);
-                inputs[i * 2] = KeyboardInput.INPUT.CreateKeyDown(vk);
-                inputs[i * 2 + 1] = KeyboardInput.INPUT.CreateKeyUp(vk);
+                inputs[i * 2] = KeyboardInput.INPUT.CreateKeyUpString(text[i]);
+                inputs[i * 2 + 1] = KeyboardInput.INPUT.CreateKeyUpString2(text[i]);
             }
 
             SendInput((uint)inputs.Length, ref inputs[0], KeyboardInput.INPUT.Size);
         }
-        public static void SendString(string text)
-        {
-            var keyDownInputs = new INPUT[text.Length];
-            var keyUpInputs = new INPUT[text.Length];
-
-            for (int i = 0; i < text.Length; i++)
-            {
-                ushort vk = VirtualKeyFromChar(text[i]);
-                keyDownInputs[i] = KeyboardInput.INPUT.CreateKeyDown(vk);
-                keyUpInputs[i] = KeyboardInput.INPUT.CreateKeyUp(vk);
-            }
-
-            SendInput((uint)keyDownInputs.Length, ref keyDownInputs[0], KeyboardInput.INPUT.Size);
-            Thread.Sleep(107);
-            SendInput((uint)keyUpInputs.Length, ref keyUpInputs[0], KeyboardInput.INPUT.Size);
-        }
-
         //public unsafe static void SendString2(string text)
         //{
         //    var inputs = new INPUT[text.Length * 2];
@@ -176,7 +225,7 @@ namespace keyupMusic2
 
 
         // 辅助函数：从字符到虚拟键码的映射（这里仅处理ASCII字符）  
-        private static ushort VirtualKeyFromChar(char c)
+        public static ushort VirtualKeyFromChar(char c)
         {
             if (c >= 'a' && c <= 'z') return (ushort)(c - 'a' + 0x41);
             if (c >= 'A' && c <= 'Z') return (ushort)(c - 'A' + 0x41);

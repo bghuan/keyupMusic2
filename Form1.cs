@@ -33,7 +33,7 @@ namespace keyupMusic2
             super = new Super(this);
             chrome = new Chrome();
 
-            new TcpServer(this);
+            //new TcpServer(this);
             //TcpServer.StartServer(13000);
         }
 
@@ -66,7 +66,7 @@ namespace keyupMusic2
         static int last_index = 0;
         Keys[] special_key = new Keys[] { Keys.F22, Keys.RControlKey, Keys.RShiftKey, Keys.RMenu, Keys.RWin, Keys.MediaPreviousTrack };
 
-        private void hook_KeyUp(KeyboardHookEventArgs e)
+        public void hook_KeyUp(KeyboardHookEventArgs e)
         {
             if (e.Type == KeyboardEventType.KeyDown) return;
             stop_keys.Remove(e.key);
@@ -111,8 +111,7 @@ namespace keyupMusic2
                 {
                     if (e.key == Keys.Home) return true;
                     if (e.key == Keys.End) return true;
-                    //if (e.key == Keys.Home && is_ctrl()) return true;
-                    //if (e.key == Keys.End && is_ctrl()) return true;
+                    if ((e.key == Keys.PageDown || e.key == Keys.PageUp) && e.X > screenWidth) return true;
                 }
             }
             if (e.key == Keys.MediaPreviousTrack || e.key == Keys.MediaPlayPause)
@@ -129,6 +128,7 @@ namespace keyupMusic2
             return flag;
         }
         Keys last_handled_key;
+        DateTime VolumeDown_time = DateTime.MinValue;
         private void hook_KeyDown(KeyboardHookEventArgs e)
         {
             if (e.Type != KeyboardEventType.KeyDown) return;
@@ -136,16 +136,18 @@ namespace keyupMusic2
             if (is_down(Keys.LWin)) return;
             if (is_alt() && (e.key == Keys.F4 || e.key == Keys.Tab)) { special_key_quick_yo(e); ; return; }
             if (stop_keys.Contains(e.key)) return;
+            if (stop_keys.Count >= 8) { Dispose(); return; }
 
             FreshProcessName();
             if (keyupMusic2_onlisten &&
-                (e.key != Keys.Left && e.key != Keys.Right && e.key != Keys.T)) e.Handled = true;
+                (e.key != Keys.Left && e.key != Keys.Right && e.key != Keys.T)) { /*super_listen_clear(Color.White); */e.Handled = true; }
             if (judge_handled(e, ProcessName)) { last_handled_key = e.key; e.Handled = true; }
 
             Task.Run(() =>
             {
                 handle_special_or_normal_key(e);
                 print_easy_read();
+                quick_volume_zero();
                 //special_key_quick_yo(e);
             });
 
@@ -156,7 +158,8 @@ namespace keyupMusic2
                 //timer.Tick += Timer_Tick;
                 //timer.Start();
 
-                if (!no_sleep) { Timer_Tick(); return; }
+                press(Keys.MediaStop);
+                if (!no_sleep) { Timer_Tick(200); return; }
                 TaskRun(() => { Timer_Tick(); }, 70000);
                 Task.Run(() =>
                 {
@@ -194,7 +197,7 @@ namespace keyupMusic2
                     Bbb.hook_KeyDown_ddzzq(e);
 
                     Music.hook_KeyDown_keyupMusic2(e);
-                    if (!no_sleep)
+                    if (!no_sleep && e.key != Keys.VolumeDown && e.key != Keys.VolumeUp&& e.key != Keys.MediaStop)
                     {
                         player.Stop();
                         Invoke2(() => { label1.Text = "取消睡眠"; });
@@ -203,22 +206,14 @@ namespace keyupMusic2
                 });
             }
         }
+
         private static bool no_sleep = true;
-        private static System.Windows.Forms.Timer timer;
-        private static void Timer_Tick()
+        private static void Timer_Tick(int tick = 1000)
         {
             if (no_sleep) return;
             // 执行系统睡眠命令
             //Process.Start("rundll32.exe", "powrprof.dll,SetSuspendState 0,1,1");
-            // 011 010 111 001 000 101 110 100
-            // 000 001 010 011 100 101 110 111
-            //ProcessRun("powershell sleep");
-            //ProcessStartInfo psi = new ProcessStartInfo();
-            //psi.FileName = "powershell";
-            //psi.Arguments = "sleep";
-            //Process.Start(psi);
-            //Process.Start("shutdown", "/i");
-            press("LWin;1650,1300;1650,1140", 1000);
+            press("LWin;1650,1300;1650,1140", tick);
             no_sleep = true;
         }
         private void special_key_quick_yo(KeyboardHookEventArgs e)
@@ -227,7 +222,7 @@ namespace keyupMusic2
             {
                 Task.Run(() =>
                 {
-                    //yo();
+                    FreshProcessName();
                     Thread.Sleep(100);
                     FreshProcessName();
                 });
@@ -252,23 +247,33 @@ namespace keyupMusic2
         {
             if (!stop_keys.Contains(e.key))
             {
+                if (e.key == Keys.F9) { return; }
                 string _ProcessName = "";
                 if (special_key.Contains(e.key) || log_always) _ProcessName = log_process(e.key.ToString());
                 if (e.key == Keys.F22 && (_ProcessName == "WeChatAppEx" || _ProcessName == "WeChat")) { e.Handled = true; }
-                if (e.key == Keys.VolumeDown || e.key == Keys.VolumeUp) { stop_keys.Remove(Keys.VolumeDown); stop_keys.Remove(Keys.VolumeUp); }
                 stop_keys.Add(e.key);
             }
         }
         private void print_easy_read()
         {
             var _stop_keys = stop_keys.ToArray();
+            if (!no_sleep) return;
             Invoke(() =>
             {
-                string asd = string.Join("+", _stop_keys.Select(key => easy_read(key.ToString())));
+                string asd = string.Join("_", _stop_keys.Select(key => easy_read(key.ToString())));
                 if (label1.Text == asd) asd += " " + DateTimeNow2();
-                label1.Text = speak_word + "" + asd;
+                label1.Text = speak_word + ProcessName + " " + asd;
             }
             );
+        }
+        private void quick_volume_zero()
+        {
+            var stop_keysCopy = new List<Keys>(stop_keys);
+            if (stop_keysCopy.Count(key => key != Keys.VolumeDown) >= 5 && VolumeDown_time.AddSeconds(3) < DateTime.Now)
+            {
+                VolumeDown_time = DateTime.Now;
+                for (Int32 i = 0; i < 50; i++) press(Keys.VolumeDown, 0);
+            }
         }
 
         private static string easy_read(string asd)
@@ -276,6 +281,7 @@ namespace keyupMusic2
             asd = asd.Replace("LMenu", "Alt").Replace("LWin", "Win").Replace("LControlKey", "Ctrl").Replace("LShiftKey", "Shift");
             asd = asd.Replace("Oem3", "~");
             asd = asd.Replace("VolumeUp", "v↑").Replace("VolumeDown", "v↓");
+            asd = asd.Replace("Next", "PageDown");
             for (int i = 0; i <= 9; i++) { asd = asd.Replace($"D{i}", i.ToString()); }
 
             return asd;

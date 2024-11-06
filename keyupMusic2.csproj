@@ -10,6 +10,17 @@
     <ApplicationIcon>ztemp\b (5).ico</ApplicationIcon>
     <PackageIcon></PackageIcon>
     <AllowUnsafeBlocks>False</AllowUnsafeBlocks>
+    <UseWPF>False</UseWPF>
+    <EnableNETAnalyzers>True</EnableNETAnalyzers>
+    <SignAssembly>True</SignAssembly>
+  </PropertyGroup>
+
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
+    <Optimize>False</Optimize>
+  </PropertyGroup>
+
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
+    <Optimize>False</Optimize>
   </PropertyGroup>
 
   <ItemGroup>
@@ -32,6 +43,10 @@
     <PackageReference Include="org.k2fsa.sherpa.ncnn" Version="2.1.6" />
     <PackageReference Include="PortAudioSharp2" Version="1.0.3" />
     <PackageReference Include="System.Management" Version="8.0.0" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\WindowsInput\WindowsInput\WindowsInput.csproj" />
   </ItemGroup>
 
   <ItemGroup>

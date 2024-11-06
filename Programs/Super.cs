@@ -1,14 +1,11 @@
-﻿using System;
-using System.Diagnostics;
+﻿using System.Diagnostics;
+using System.Drawing.Imaging;
 using System.Management;
-using System.Media;
 using System.Runtime.InteropServices;
-using System.Text;
-using System.Windows.Forms;
+using WindowsInput;
+using WindowsInput.Events;
 using static keyupMusic2.Common;
 using static keyupMusic2.Huan;
-using static System.Net.Mime.MediaTypeNames;
-using static System.Windows.Forms.VisualStyles.VisualStyleElement.TrackBar;
 using static WGestures.Core.Impl.Windows.MouseKeyboardHook;
 
 namespace keyupMusic2
@@ -33,6 +30,10 @@ namespace keyupMusic2
             var e = new KeyboardHookEventArgs(WGestures.Core.Impl.Windows.KeyboardEventType.KeyDown, keys, 0, new WGestures.Common.OsSpecific.Windows.Native.keyboardHookStruct());
             new Super().hook_KeyDown_keyupMusic2(e);
         }
+        EventBuilder aaaddsdsa = Simulate.Events()
+                         .ClickChord(KeyCode.LWin).Wait(100)
+                         .Click("我dsads").Wait(100)
+                         .Click(KeyCode.Return).Wait(500);
         public void hook_KeyDown_keyupMusic2(KeyboardHookEventArgs e)
         {
             //if (ProcessName != Common.keyupMusic2) return;
@@ -45,7 +46,18 @@ namespace keyupMusic2
             switch (e.key)
             {
                 case Keys.Q:
-                    press("LWin;OPEN;Enter;500;", 101);
+                    //InputSimulator InputSimulator2=new InputSimulator();
+                    //InputSimulator2.Keyboard.KeyPress(VirtualKeyCode.SPACE);
+
+                    aaaddsdsa.Invoke();
+
+                    //Sim.KeyPress(VirtualKeyCode.LWIN);
+                    //Sleep(100);
+                    //Sim.TextEntry("open");
+                    //Sleep(100);
+                    //Sim.KeyPress(VirtualKeyCode.RETURN);
+                    //Sleep(500);
+                    //press("LWin;OPEN;Enter;500;", 101);
                     if (judge_color(1493, 1109, Color.FromArgb(237, 127, 34)))
                         press("1056, 411;1563, 191", 101);
                     break;
@@ -152,7 +164,7 @@ namespace keyupMusic2
                     ////KeyboardInput3.SendString("Hello, World!");
                     ////SendKeyboardMouse sendKeyMouse = new SendKeyboardMouse();
                     ////sendKeyMouse.SendKeyPress(VKCODE.VK_A);
-                    if (ProcessName == Common.devenv && ProcessTitle.Contains("正在运行"))
+                    if (ProcessName == Common.devenv && ProcessTitle.Contains("在运行") && is_ctrl())
                     {
                         var txt = "Common.";
                         Invoke(() => Clipboard.SetText(txt));
@@ -171,8 +183,25 @@ namespace keyupMusic2
                     notify();
                     break;
                 case Keys.M:
-                    //FocusProcess(Common.chrome);
-                    KeyboardInput.SendString("f");
+                    TaskRun(() =>
+                    {
+                        FocusProcess(Common.chrome);
+                        KeyboardInput.PressKey(Keys.F);
+                        Sleep(100);
+                        altab();
+                    }, 100);
+                    //KeyboardInput.SendString("我mmmmmdsads;dsa;d;>>>;'sd^%&*%");
+                    //IntPtr id = GetProcessID(Common.chrome);
+                    //if (id != nint.Zero)
+                    //    waveOutSetVolume(id, 0);
+                    //asd();
+                    //new InputSimulator().Keyboard.KeyPress(VirtualKeyCode.VK_F);
+                    //WGestures.Core.Commands.Impl.Sim.KeyDown(VirtualKeyCode.VK_F);
+                    //WGestures.Core.Commands.Impl.Sim.TextEntry("sadsdDSDSADSADSAds打撒都是");
+                    //KeyboardInput.SendString("xiexielaoban");
+                    //Simulate.Events()
+                    //    .Click(KeyCode.F).Wait(500)
+                    //    .Invoke();
                     break;
 
                 case Keys.F1:
@@ -238,6 +267,28 @@ namespace keyupMusic2
             Common.hooked = false;
         }
 
+        //private void asd()
+        //{
+        //    unsafe
+        //    {
+        //        var text = "f";
+        //        var input = stackalloc KeyboardInput.INPUT[1];
+        //        var inputs = new KeyboardInput.INPUT[text.Length * 2];
+
+        //        for (int i = 0; i < text.Length; i++)
+        //        {
+        //            ushort vk = KeyboardInput.VirtualKeyFromChar(text[i]);
+        //            inputs[i * 2] = KeyboardInput.INPUT.CreateKeyDown(vk);
+        //            inputs[i * 2 + 1] = KeyboardInput.INPUT.CreateKeyUp(vk);
+        //            input[0] = KeyboardInput.INPUT.CreateKeyDown(vk);
+        //        }
+        //        SendInput((uint)inputs.Length, input, Marshal.SizeOf(typeof(KeyboardInput.INPUT)));
+
+        //    }
+        //}
+        //[DllImport("user32.dll", SetLastError = true)]
+        //public unsafe static extern UInt32 SendInput(UInt32 numberOfInputs, KeyboardInput.INPUT* inputs, Int32 sizeOfInputStructure);
+
         private static void notify()
         {
             NotifyIcon notifyIcon = new NotifyIcon();
@@ -275,8 +326,8 @@ namespace keyupMusic2
             {
                 huan.Invoke(() => { huan.label1.Text = DateTimeNow2(); });
                 mo.MouseWhell(-120 * 10);
-                return (judge_color(775, 1265, Color.FromArgb(26, 26, 25))) 
-                     && judge_color(2124, 1327, Color.FromArgb(242, 242, 249), null, 2);
+                return (judge_color(775, 1265, Color.FromArgb(26, 26, 25)))
+                     && judge_color(2124, 1327, Color.FromArgb(243, 243, 243), null, 2);
             };
             var run = () => { press("200;2220,1070", 10); };
             var action2 = () =>
@@ -289,16 +340,33 @@ namespace keyupMusic2
         private void get_point_color(KeyboardHookEventArgs e)
         {
             Point mousePosition = Cursor.Position;
-            if (start_record)
+            var last_x = Cursor.Position.X;
+            var last_y = Cursor.Position.Y;
+            if (last_x > screenWidth)
             {
-                commnd_record += $"{mousePosition.X},{mousePosition.Y};";
+                Screen currentScreen = Screen.FromPoint(mousePosition);
+                int relativeX = (mousePosition.X - currentScreen.Bounds.X) * 1920 / currentScreen.Bounds.Width;
+                int relativeY = (mousePosition.Y - currentScreen.Bounds.Y) * 1080 / currentScreen.Bounds.Height;
+                Console.WriteLine($"相对坐标：({relativeX}, {relativeY})");
+                last_x = screenWidth + relativeX;
+                last_y = screenHeight + relativeY;
+
+                Bitmap bmpScreenshot = new Bitmap(1920, 1080, PixelFormat.Format32bppArgb);
+                Graphics gfxScreenshot = Graphics.FromImage(bmpScreenshot);
+                gfxScreenshot.CopyFromScreen(new Point(screenWidth, 0), Point.Empty, currentScreen.Bounds.Size);
+
+                var color = bmpScreenshot.GetPixel(relativeX, relativeY);
+                string asd = $"({mousePosition.X},{mousePosition.Y}, Color.FromArgb({color.R},{color.G},{color.B}))";
+                log(ProcessName + asd);
+                log_process(e.key.ToString());
+                Invoke(() => Clipboard.SetText(asd));
+                return;
             }
             using (Bitmap bitmap = new Bitmap(1, 1))
             {
                 using (Graphics g = Graphics.FromImage(bitmap))
                 {
-                    g.CopyFromScreen(mousePosition.X, mousePosition.Y, 0, 0, new Size(1, 1));
-                    //(1470, 1213, Color.FromArgb(245, 139, 0))
+                    g.CopyFromScreen(last_x, last_y, 0, 0, new System.Drawing.Size(1, 1));
                     var color = bitmap.GetPixel(0, 0);
                     string asd = $"({mousePosition.X},{mousePosition.Y}, Color.FromArgb({color.R},{color.G},{color.B}))";
                     log(ProcessName + asd);

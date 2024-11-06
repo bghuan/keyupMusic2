@@ -14,68 +14,6 @@ namespace keyupMusic2
 {
     public class Common
     {
-        public static int[] deal_size_x_y(int x, int y, bool puls_one = true)
-        {
-            if (puls_one)
-            {
-                x = x + 1;
-                y = y + 1;
-            }
-            x = x * screenWidth / 2560;
-            y = y * screenHeight / 1440;
-            return new int[] { x, y };
-        }
-        public static void mouse_move(int x, int y, int tick = 0)
-        {
-            x = deal_size_x_y(x, y)[0];
-            y = deal_size_x_y(x, y)[1];
-            mouse_event(MOUSEEVENTF_ABSOLUTE | MOUSEEVENTF_MOVE, x * 65536 / screenWidth, y * 65536 / screenHeight, 0, 0);
-            Thread.Sleep(tick);
-        }
-        public static void mouse_move_to(int x, int y, int tick = 0)
-        {
-            var Pos = Position;
-            x += Pos.X;
-            y += Pos.Y;
-
-            x = deal_size_x_y(x, y)[0];
-            y = deal_size_x_y(x, y)[1];
-            mouse_event(MOUSEEVENTF_ABSOLUTE | MOUSEEVENTF_MOVE, x * 65536 / screenWidth, y * 65536 / screenHeight, 0, 0);
-            Thread.Sleep(tick);
-        }
-        public static bool judge_color(Color color, Action action = null, int similar = 50)
-        {
-            int x = Position.X;
-            int y = Position.Y;
-            var asd = get_mouse_postion_color(new Point(x, y));
-            var flag = AreColorsSimilar(asd, color, similar);
-            if (flag && action != null) action();
-            return flag;
-        }
-        public static bool judge_color(int x, int y, Color color, Action action = null, int similar = 50)
-        {
-            x = deal_size_x_y(x, y, false)[0];
-            y = deal_size_x_y(x, y, false)[1];
-            var asd = get_mouse_postion_color(new Point(x, y));
-            var flag = AreColorsSimilar(asd, color, similar);
-            if (flag && action != null) action();
-            return flag;
-        }
-        public static bool try_press(int x, int y, Color color, Action action = null)
-        {
-            x = deal_size_x_y(x, y)[0];
-            y = deal_size_x_y(x, y)[1];
-            var asd = get_mouse_postion_color(new Point(x, y));
-            var flag = AreColorsSimilar(asd, color);
-            if (flag)
-            {
-                var flag2 = action != null;
-                press(x + "," + y, flag2 ? 100 : 101);
-                if (flag2) action();
-                else lastPosition = Position;
-            }
-            return flag;
-        }
         public const string keyupMusic2 = "keyupMusic2";
         public const string keyupMusic3 = "keyupMusic3";
         public const string keyupMusic3exe = "C:\\Users\\bu\\source\\repos\\keyupMusic2\\keyupMusic3\\bin\\Debug\\net8.0-windows\\keyupMusic3.exe";
@@ -121,8 +59,6 @@ namespace keyupMusic2
         QQMusic,
         QQMusic,
         };
-        public static List<string> list2 = new List<string> { };
-
 
         public static SoundPlayer player = new SoundPlayer();
         public static bool hooked = false;
@@ -137,7 +73,6 @@ namespace keyupMusic2
         {
             get
             {
-                //ProcessName = yo();
                 FreshProcessName();
                 return ProcessName;
             }
@@ -256,27 +191,74 @@ namespace keyupMusic2
         {
             Log.log(message);
         }
+        public static int[] deal_size_x_y(int x, int y, bool puls_one = true)
+        {
+            if (puls_one)
+            {
+                x = x + 1;
+                y = y + 1;
+            }
+            x = x * screenWidth / 2560;
+            y = y * screenHeight / 1440;
+            return new int[] { x, y };
+        }
+        [DllImport("user32.dll")]
+        static extern bool SetCursorPos(int X, int Y);
+        public static void mouse_move(int x, int y, int tick = 0)
+        {
+            x = deal_size_x_y(x, y)[0];
+            y = deal_size_x_y(x, y)[1];
 
-        //private static readonly object _lockObject = new object();
-        //private static readonly object _lockObject2 = new object();
-        //public static void log(string message)
-        //{
-        //    lock (_lockObject)
-        //    {
-        //        try
-        //        {
-        //            File.AppendAllText("log.txt", "\r" + DateTime.Now.ToString("") + " " + message);
-        //        }
-        //        catch (Exception e)
-        //        {
-        //            string msg = e.Message;
-        //        }
-        //        finally
-        //        {
-        //            string fff = "ffs";
-        //        }
-        //    }
-        //}
+            if (x < screenWidth)
+                mouse_event(MOUSEEVENTF_ABSOLUTE | MOUSEEVENTF_MOVE, x * 65536 / screenWidth, y * 65536 / screenHeight, 0, 0);
+            else
+                SetCursorPos(x, y);
+            Thread.Sleep(tick);
+        }
+        public static void mouse_move_to(int x, int y, int tick = 0)
+        {
+            var Pos = Position;
+            x += Pos.X;
+            y += Pos.Y;
+
+            x = deal_size_x_y(x, y, false)[0];
+            y = deal_size_x_y(x, y, false)[1];
+            mouse_event(MOUSEEVENTF_ABSOLUTE | MOUSEEVENTF_MOVE, x * 65536 / screenWidth, y * 65536 / screenHeight, 0, 0);
+            Thread.Sleep(tick);
+        }
+        public static bool judge_color(Color color, Action action = null, int similar = 50)
+        {
+            int x = Position.X;
+            int y = Position.Y;
+            var asd = get_mouse_postion_color(new Point(x, y));
+            var flag = AreColorsSimilar(asd, color, similar);
+            if (flag && action != null) action();
+            return flag;
+        }
+        public static bool judge_color(int x, int y, Color color, Action action = null, int similar = 50)
+        {
+            x = deal_size_x_y(x, y, false)[0];
+            y = deal_size_x_y(x, y, false)[1];
+            var asd = get_mouse_postion_color(new Point(x, y));
+            var flag = AreColorsSimilar(asd, color, similar);
+            if (flag && action != null) action();
+            return flag;
+        }
+        public static bool try_press(int x, int y, Color color, Action action = null)
+        {
+            x = deal_size_x_y(x, y)[0];
+            y = deal_size_x_y(x, y)[1];
+            var asd = get_mouse_postion_color(new Point(x, y));
+            var flag = AreColorsSimilar(asd, color);
+            if (flag)
+            {
+                var flag2 = action != null;
+                press(x + "," + y, flag2 ? 100 : 101);
+                if (flag2) action();
+                else lastPosition = Position;
+            }
+            return flag;
+        }
         public static bool is_down(Keys key)
         {
             return Native.GetAsyncKeyState(key) < 0;
@@ -296,7 +278,7 @@ namespace keyupMusic2
         }
         public static bool is_alt()
         {
-            return Native.GetAsyncKeyState(Keys.LMenu) < 0;
+            return Native.GetAsyncKeyState(Keys.LMenu) < 0 || Native.GetAsyncKeyState(Keys.RMenu) < 0;
         }
 
         public static bool is_shift()
@@ -427,7 +409,7 @@ namespace keyupMusic2
         {
             mouse_event(MOUSEEVENTF_LEFTDOWN | MOUSEEVENTF_LEFTUP, 0, 0, 0, 0);
         }
-        static DateTime mouse_click_not_repeat_time = DateTime.Now;
+        public static DateTime mouse_click_not_repeat_time = DateTime.Now;
         public static void mouse_click_not_repeat()
         {
             if (mouse_click_not_repeat_time.AddSeconds(1) > DateTime.Now) return;
@@ -446,11 +428,14 @@ namespace keyupMusic2
         }
         public static bool FocusProcess(string procName)
         {
+            IntPtr current_hwnd = GetForegroundWindow(); // 获取当前活动窗口的句柄
             Process[] objProcesses = Process.GetProcessesByName(procName);
             if (objProcesses.Length > 0)
             {
                 IntPtr hWnd = IntPtr.Zero;
                 hWnd = objProcesses[0].MainWindowHandle;
+                if (current_hwnd==hWnd)
+                    return true;
                 ShowWindow((hWnd), SW.SW_RESTORE);
                 if (procName != Dragonest && procName != chrome && procName != devenv)
                     ShowWindowAsync(new HandleRef(null, hWnd), SW_RESTORE);
@@ -461,6 +446,13 @@ namespace keyupMusic2
                 return true;
             }
             return false;
+        }
+        public static IntPtr GetProcessID(string procName)
+        {
+            Process[] objProcesses = Process.GetProcessesByName(procName);
+            if (objProcesses.Length > 0)
+                return objProcesses[0].MainWindowHandle;
+            return nint.Zero;
         }
         public static void hide_keyupmusic3()
         {
@@ -527,6 +519,18 @@ namespace keyupMusic2
                 //if (flag) MouseKeyboardHook.handling = true;
                 press([num], tick);
                 //if (flag) MouseKeyboardHook.handling = false;
+            }
+        }
+        public static void press(Keys num, int times, int tick = 0)
+        {
+            if (is_down(Keys.Delete)) return;
+            lock (_lockObject2)
+            {
+                for (global::System.Int32 i = 0; i < times; i++)
+                {
+                    _press(num);
+                    Thread.Sleep(tick);
+                }
             }
         }
         public static bool _Not_F10_F11_F12_Delete = true;
@@ -601,7 +605,8 @@ namespace keyupMusic2
         //3 跳过delete return
         public static void ctrl_shift(bool zh = true)
         {
-            var _zh = (judge_color(2289, 1411, Color.FromArgb(202, 202, 202)));
+            //var _zh = (judge_color(2289, 1411, Color.FromArgb(202, 202, 202)));
+            var _zh = (judge_color(2290, 1411, Color.FromArgb(242, 242, 242)));
             //var _en = judge_color(2288, 1413, Color.FromArgb(255, 255, 255));
             var _en = !_zh;
             if (zh && _en)
@@ -650,7 +655,10 @@ namespace keyupMusic2
                 if (item == "LWin")
                 {
                     if (ProcessName == "SearchHost")
-                        press([Keys.LControlKey, Keys.A, Keys.Back]);
+                    {
+                        press([Keys.LControlKey, Keys.A]);
+                        press([Keys.Back]);
+                    }
                     else
                         press(Keys.LWin);
                     Thread.Sleep(100);
@@ -747,6 +755,19 @@ namespace keyupMusic2
         }
         public static Color get_mouse_postion_color(Point point)
         {
+            if (point.X > screenWidth)
+            {
+                Screen currentScreen = Screen.FromPoint(point);
+                int relativeX = (point.X - currentScreen.Bounds.X) * 1920 / currentScreen.Bounds.Width;
+                int relativeY = (point.Y - currentScreen.Bounds.Y) * 1080 / currentScreen.Bounds.Height;
+                Console.WriteLine($"相对坐标：({relativeX}, {relativeY})");
+
+                Bitmap bmpScreenshot = new Bitmap(1920, 1080, PixelFormat.Format32bppArgb);
+                Graphics gfxScreenshot = Graphics.FromImage(bmpScreenshot);
+                gfxScreenshot.CopyFromScreen(new Point(screenWidth, 0), Point.Empty, currentScreen.Bounds.Size);
+
+                return bmpScreenshot.GetPixel(relativeX, relativeY);
+            }
             using (Bitmap bitmap = new Bitmap(1, 1))
             {
                 using (Graphics g = Graphics.FromImage(bitmap))
@@ -1107,6 +1128,15 @@ namespace keyupMusic2
         {
             return Math.Abs(point1.X - point2.X) + Math.Abs(point1.Y - point2.Y) < 2 * diff;
         }
+        [DllImport("user32.dll")]
+        public static extern IntPtr SendMessageW(IntPtr hWnd, uint Msg, IntPtr wParam, IntPtr lParam);
 
+        public const int APPCOMMAND_VOLUME_MUTE = 0x80000;
+        public const int WM_APPCOMMAND = 0x319;
+        public const uint MAX_VOLUME = 0xFFFF;
+        public const int APPCOMMAND_VOLUME_UNMUTE = 0x80000;
+
+        [DllImport("winmm.dll")]
+        public static extern uint waveOutSetVolume(IntPtr hwo, uint dwVolume);
     }
 }

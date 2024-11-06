@@ -13,7 +13,7 @@ namespace keyupMusic2
     public class Other : Default
     {
         string[] list = Common.list;
-        string[] list_wechat_visualstudio = { Common.WeChat, Common.ACPhoenix, explorer, Common.keyupMusic2, Common.douyin, Common.devenv, Common.QQMusic, Common.SearchHost, Common.ApplicationFrameHost, Common.vlc, Common.keyupMusic3,  Common.v2rayN };
+        string[] list_wechat_visualstudio = { Common.WeChat, Common.ACPhoenix, explorer, Common.keyupMusic2, Common.douyin, Common.devenv, Common.QQMusic, Common.SearchHost, Common.ApplicationFrameHost, Common.vlc, Common.keyupMusic3, Common.v2rayN };
         string[] list_volume = { Common.douyin, Common.msedge };
         static bool flag_special = false;
 
@@ -40,7 +40,7 @@ namespace keyupMusic2
                     {
                         HideProcess(module_name);
                     }
-                    else if (Common.msedge == module_name&&is_douyin())
+                    else if (Common.msedge == module_name && is_douyin())
                     {
                         press_close();
                     }
@@ -73,28 +73,41 @@ namespace keyupMusic2
                     if (module_name == HuyaClient) press("587,152", 1); break;
                 case Keys.PageDown:
                     if (module_name == QyClient) press("563, 894", 1); break;
-                case Keys.Oem3:
-                case Keys.D1:
-                    if (module_name == QQLive) press("2431.1404;2431.1406;2431.1408;100;2343,923", 101); break;
-                case Keys.D2:
-                    if (module_name == QQLive) press("2431.1404;2431.1406;2431.1408;100;2269,959", 101); break;
-                case Keys.D3:
-                    if (module_name == QQLive) press("2431.1404;2431.1406;2431.1408;100;2475,957", 101); break;
             }
-            //switch (module_name)
-            //{
-            //    case QQLive:
-            //        switch (e.key)
-            //        {
-            //            case Keys.D1:
-            //                press("2431.1404;2431.1406;2431.1408;100;2343,923", 101); break;
-            //            case Keys.D2:
-            //                press("2431.1404;2431.1406;2431.1408;100;2269,959", 101); break;
-            //            case Keys.D3:
-            //                press("2431.1404;2431.1406;2431.1408;100;2475,957", 101); break;
-            //        }
-            //        break;
-            //}
+            switch (module_name)
+            {
+                case QQLive:
+                    switch (e.key)
+                    {
+                        case Keys.Oem3:
+                        case Keys.D1:
+                            press("2431.1404;2431.1406;2431.1408;100;2343,923", 101); break;
+                        case Keys.D2:
+                            press("2431.1404;2431.1406;2431.1408;100;2269,959", 101); break;
+                        case Keys.D3:
+                            press("2431.1404;2431.1406;2431.1408;100;2475,957", 101); break;
+                    }
+                    break;
+                case Common.msedge:
+                    switch (e.key)
+                    {
+                        case Keys.PageDown:
+                            if (e.X > screenWidth) press(Keys.VolumeDown, 5, 0); break;
+                        case Keys.PageUp:
+                            if (e.X > screenWidth) press(Keys.VolumeUp, 5, 0); break;
+                    }
+                    break;
+                //case Common.chrome:
+                //    switch (e.key)
+                //    {
+                //        case Keys.M:
+                //            if (!is_alt()) break;
+                //            FocusProcess(Common.chrome);
+                //            KeyboardInput.PressKey(Keys.M);
+                //            break;
+                //    }
+                //    break;
+            }
 
 
 
