@@ -5,6 +5,7 @@ using static keyupMusic2.Common;
 using static keyupMusic2.Huan;
 using static WGestures.Core.Impl.Windows.MouseKeyboardHook;
 using static keyupMusic2.Simulate;
+using WGestures.Common.OsSpecific.Windows;
 
 namespace keyupMusic2
 {
@@ -189,12 +190,13 @@ namespace keyupMusic2
                     //huan.last_visiable = false;
                     break;
                 case Keys.F2:
-                case Keys.S:
-                    if (!FocusProcess("keyupMusic3"))
-                    {
-                        ProcessRun(Common.keyupMusic3exe);
-                        HideProcess("keyupMusic3");
-                    }
+                    //case Keys.S:
+                    //if (!FocusProcess("keyupMusic3"))
+                    //{
+                    //    ProcessRun(Common.keyupMusic3exe);
+                    //    HideProcess("keyupMusic3");
+                    //}
+                    huan._mouseKbdHook.ChangeMouseHooks();
                     break;
                 case Keys.F5:
                 case Keys.A:
@@ -209,8 +211,8 @@ namespace keyupMusic2
                     break;
                 case Keys.F6:
                     Process[] processes = Process.GetProcessesByName(keyupMusic2.Common.keyupMusic2);
-                    Process[] processes2 = Process.GetProcessesByName(keyupMusic2.Common.keyupMusic3);
-                    processes2[0].Kill();
+                    //Process[] processes2 = Process.GetProcessesByName(keyupMusic2.Common.keyupMusic3);
+                    //processes2[0].Kill();
                     processes[0].Kill();
                     break;
                 case Keys.Up:

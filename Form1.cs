@@ -17,9 +17,12 @@ namespace keyupMusic2
         Super super;
         Chrome chrome;
 
+        bool not_init_show = is_ctrl() || Position.Y == 0;
+        bool not_mouse_hook = !is_ctrl() && Position.Y != 1439;
+
         public Huan()
         {
-            Task.Run(() => { if (!Debugger.IsAttached) copy_secoed_screen("_"); });
+            Task.Run(() => { if (!Debugger.IsAttached && IsAdministrator()) copy_secoed_screen("_"); });
             InitializeComponent();
 
             try_restart_in_admin();
@@ -34,7 +37,6 @@ namespace keyupMusic2
             chrome = new Chrome();
 
             //new TcpServer(this);
-            //TcpServer.StartServer(13000);
         }
 
         private void Form1_Load(object sender, EventArgs e)
@@ -45,7 +47,7 @@ namespace keyupMusic2
                 if (process.Id != currentProcessId)
                     process.Kill();
 
-            if (is_ctrl() || Position.X == 0 || Position.Y == 0 || Position.Y == 1439)
+            if (not_init_show)
             {
                 Common.FocusProcess(Common.douyin);
                 Common.FocusProcess(Common.ACPhoenix);
@@ -413,6 +415,11 @@ namespace keyupMusic2
             _mouseKbdHook = new MouseKeyboardHook();
             _mouseKbdHook.KeyboardHookEvent += hook_KeyDown;
             _mouseKbdHook.KeyboardHookEvent += hook_KeyUp;
+            if (not_mouse_hook)
+            {
+                _mouseKbdHook.MouseHookEvent += new biu(this).MouseHookProc;
+                _mouseKbdHook.MouseHookEvent += new Douyin_game(this).MouseHookProc;
+            }
             _mouseKbdHook.Install();
         }
         public void stopListen()
@@ -442,11 +449,6 @@ namespace keyupMusic2
         private void notifyIcon1_DoubleClick(object sender, EventArgs e)
         {
             Dispose();
-        }
-        protected override void SetVisibleCore(bool value)
-        {
-            base.SetVisibleCore(value);
-            if (!value) hide_keyupmusic3();
         }
         private void contextMenuStrip1_ItemClicked(object sender, ToolStripItemClickedEventArgs e)
         {
@@ -526,11 +528,11 @@ namespace keyupMusic2
             {
                 Text = Text + "(非管理员)";
             }
-            if (!ExsitProcess(keyupMusic3))
-            {
-                ProcessRun(keyupMusic3exe);
-                Focus();
-            }
+            //if (!ExsitProcess(keyupMusic3))
+            //{
+            //    ProcessRun(keyupMusic3exe);
+            //    Focus();
+            //}
         }
         public void Invoke(Action method)
         {

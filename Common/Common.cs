@@ -15,8 +15,8 @@ namespace keyupMusic2
     public class Common
     {
         public const string keyupMusic2 = "keyupMusic2";
-        public const string keyupMusic3 = "keyupMusic3";
-        public const string keyupMusic3exe = "C:\\Users\\bu\\source\\repos\\keyupMusic2\\keyupMusic3\\bin\\Debug\\net8.0-windows\\keyupMusic3.exe";
+        //public const string keyupMusic3 = "keyupMusic3";
+        //public const string keyupMusic3exe = "C:\\Users\\bu\\source\\repos\\keyupMusic2\\keyupMusic3\\bin\\Debug\\net8.0-windows\\keyupMusic3.exe";
         public const string ACPhoenix = "ACPhoenix";
         public const string Dragonest = "DragonestGameLauncher";
         public const string devenv = "devenv";
@@ -54,7 +54,7 @@ namespace keyupMusic2
         QyClient,
         QQLive,
         vlc,
-        keyupMusic3,
+        //keyupMusic3,
         v2rayN,
         QQMusic,
         QQMusic,
@@ -304,6 +304,8 @@ namespace keyupMusic2
 
         public static int screenWidth = Screen.PrimaryScreen.Bounds.Width;
         public static int screenHeight = Screen.PrimaryScreen.Bounds.Height;
+        public static int screenWidth1 = Screen.PrimaryScreen.Bounds.Width-1;
+        public static int screenHeight1 = Screen.PrimaryScreen.Bounds.Height - 1;
         public static int screenWidth2 = Screen.PrimaryScreen.Bounds.Width / 2;
         public static int screenHeight2 = Screen.PrimaryScreen.Bounds.Height / 2;
 
@@ -424,16 +426,16 @@ namespace keyupMusic2
                 return objProcesses[0].MainWindowHandle;
             return nint.Zero;
         }
-        public static void hide_keyupmusic3()
-        {
-            {
-                HideProcess(keyupMusic3);
-                //var _po = Position;
-                //press("2467.220", 110);
-                //if (judge_color(2467, 220, Color.FromArgb(196, 43, 28))) { press("2352,226", 10); }
-                //press(_po.X + "." + _po.Y, 0);
-            }
-        }
+        //public static void hide_keyupmusic3()
+        //{
+        //    {
+        //        HideProcess(keyupMusic3);
+        //        //var _po = Position;
+        //        //press("2467.220", 110);
+        //        //if (judge_color(2467, 220, Color.FromArgb(196, 43, 28))) { press("2352,226", 10); }
+        //        //press(_po.X + "." + _po.Y, 0);
+        //    }
+        //}
         public static bool ExsitProcess(string procName)
         {
             Process[] objProcesses = Process.GetProcessesByName(procName);
@@ -957,7 +959,7 @@ namespace keyupMusic2
         }
         public static void play_sound_di()
         {
-            string wav = "wav\\d.wav";
+            string wav = "wav\\d2.wav";
             if (!File.Exists(wav)) return;
 
             player = new SoundPlayer(wav);

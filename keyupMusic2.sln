@@ -5,11 +5,7 @@ VisualStudioVersion = 17.8.34330.188
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "keyupMusic2", "keyupMusic2.csproj", "{829C2FBB-9DC7-407C-AD20-DAAE8AD0A4AF}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "keyupMusic3", "keyupMusic3\keyupMusic3.csproj", "{D12F97FB-B470-4F1B-9A56-62AE687B484F}"
-EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "keyupmusic2_test", "keyupmusic2_test\keyupmusic2_test.csproj", "{0CB97F3D-19FD-4AC5-8F59-8C6755235530}"
-EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "mouse_hook_douyin_game", "mouse_hook_douyin_game\mouse_hook_douyin_game.csproj", "{36E714E2-4204-4FD0-9C42-851FDDB32C82}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{8C7099CD-E7D8-468F-8770-A14B5676983A}"
 	ProjectSection(SolutionItems) = preProject
@@ -28,18 +24,10 @@ Global
 		{829C2FBB-9DC7-407C-AD20-DAAE8AD0A4AF}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{829C2FBB-9DC7-407C-AD20-DAAE8AD0A4AF}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{829C2FBB-9DC7-407C-AD20-DAAE8AD0A4AF}.Release|Any CPU.Build.0 = Release|Any CPU
-		{D12F97FB-B470-4F1B-9A56-62AE687B484F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{D12F97FB-B470-4F1B-9A56-62AE687B484F}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{D12F97FB-B470-4F1B-9A56-62AE687B484F}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{D12F97FB-B470-4F1B-9A56-62AE687B484F}.Release|Any CPU.Build.0 = Release|Any CPU
 		{0CB97F3D-19FD-4AC5-8F59-8C6755235530}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{0CB97F3D-19FD-4AC5-8F59-8C6755235530}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{0CB97F3D-19FD-4AC5-8F59-8C6755235530}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{0CB97F3D-19FD-4AC5-8F59-8C6755235530}.Release|Any CPU.Build.0 = Release|Any CPU
-		{36E714E2-4204-4FD0-9C42-851FDDB32C82}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{36E714E2-4204-4FD0-9C42-851FDDB32C82}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{36E714E2-4204-4FD0-9C42-851FDDB32C82}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{36E714E2-4204-4FD0-9C42-851FDDB32C82}.Release|Any CPU.Build.0 = Release|Any CPU
 		{32FC79CC-08C9-48F7-BECF-4821865A04B6}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{32FC79CC-08C9-48F7-BECF-4821865A04B6}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{32FC79CC-08C9-48F7-BECF-4821865A04B6}.Release|Any CPU.ActiveCfg = Release|Any CPU

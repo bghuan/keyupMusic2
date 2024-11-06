@@ -106,6 +106,11 @@ namespace keyupMusic2
                     FreshProcessName(); break;
                 case Keys.F4:
                     Sleep(100); FreshProcessName(); break;
+                case Keys.LWin:
+                case Keys.M:
+                case Keys.Oem1:
+                case Keys.D9:
+                    play_sound_di(); break;
             }
 
             Common.hooked = false;

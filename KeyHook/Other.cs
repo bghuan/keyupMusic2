@@ -13,7 +13,7 @@ namespace keyupMusic2
     public class Other : Default
     {
         string[] list = Common.list;
-        string[] list_wechat_visualstudio = { Common.WeChat, Common.ACPhoenix, explorer, Common.keyupMusic2, Common.douyin, Common.devenv, Common.QQMusic, Common.SearchHost, Common.ApplicationFrameHost, Common.vlc, Common.keyupMusic3, Common.v2rayN };
+        string[] list_wechat_visualstudio = { Common.WeChat, Common.ACPhoenix, explorer, Common.keyupMusic2, Common.douyin, Common.devenv, Common.QQMusic, Common.SearchHost, Common.ApplicationFrameHost, Common.vlc, Common.v2rayN };
         string[] list_volume = { Common.douyin, Common.msedge };
         static bool flag_special = false;
 

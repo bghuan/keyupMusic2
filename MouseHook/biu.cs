@@ -2,15 +2,15 @@
 using WGestures.Core.Impl.Windows;
 using static keyupMusic2.Common;
 
-namespace keyupMusic3
+namespace keyupMusic2
 {
     public class biu
     {
         public biu(Form parentForm)
         {
-            huan = (Form2)parentForm;
+            huan = (Huan)parentForm;
         }
-        public Form2 huan;
+        public Huan huan;
         bool listen_move = false;
         bool downing = false;
         bool downing2 = false;
@@ -27,7 +27,6 @@ namespace keyupMusic3
         private int threshold = 10;
         bool r_button_downing = false;
         bool x_button_dowing = false;
-
 
         public void MouseHookProc(MouseKeyboardHook.MouseHookEventArgs e)
         {

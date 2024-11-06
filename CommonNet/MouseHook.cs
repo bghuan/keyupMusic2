@@ -4,7 +4,7 @@ namespace WGestures.Core.Impl.Windows
 {
     public class MouseKeyboardHook : IDisposable
     {
-        public static Dictionary<Keys,string> stop_keys = new Dictionary<Keys, string>();
+        public static Dictionary<Keys, string> stop_keys = new Dictionary<Keys, string>();
         public static bool mouse_downing = false;
         public static bool handling = false;
         protected virtual int KeyboardHookProc(int code, int wParam, ref Native.keyboardHookStruct lParam)
@@ -21,7 +21,7 @@ namespace WGestures.Core.Impl.Windows
                 {
                     type = KeyboardEventType.KeyUp;
                 }
-                else return Native.CallNextHookEx(_hookId, code, wParam, ref lParam);
+                else return Native.CallNextHookEx(_key_hookId, code, wParam, ref lParam);
 
                 var args = new KeyboardHookEventArgs(type, key, wParam, lParam);
                 if (stop_keys.Count == 0 || !stop_keys.ContainsKey(key) || type == KeyboardEventType.KeyUp || key == Keys.VolumeDown || key == Keys.VolumeUp)
@@ -31,12 +31,12 @@ namespace WGestures.Core.Impl.Windows
                     return 1;
             }
 
-            return Native.CallNextHookEx(_hookId, code, wParam, ref lParam);
+            return Native.CallNextHookEx(_key_hookId, code, wParam, ref lParam);
         }
         const int WM_HOOK_TIMEOUT = 0x0400 + 1;
 
-        private IntPtr _hookId;
-        private IntPtr _kbdHookId;
+        private IntPtr _key_hookId = IntPtr.Zero;
+        public IntPtr _mouse_hookId = IntPtr.Zero;
         private uint _hookThreadNativeId;
         private Thread _hookThread;
 
@@ -96,27 +96,37 @@ namespace WGestures.Core.Impl.Windows
         public event KeyboardHookEventHandler KeyboardHookEvent;
         public MouseKeyboardHook()
         {
-            _mouseHookProc = MouseHookProc;
             _kbdHookProc = KeyboardHookProc;
+            _mouseHookProc = MouseHookProc;
         }
         public void Install()
         {
-            if (_hookThread != null) throw new InvalidOperationException("钩子已经安装了");
-
-            if (MouseHookEvent != null)
-                _hookId = Native.SetMouseHook(_mouseHookProc);
-            if (KeyboardHookEvent != null)
-                _kbdHookId = Native.SetKeyboardHook(_kbdHookProc);
+            if (_key_hookId == IntPtr.Zero && KeyboardHookEvent != null)
+                _key_hookId = Native.SetKeyboardHook(_kbdHookProc);
+            if (_mouse_hookId == IntPtr.Zero && MouseHookEvent != null)
+                _mouse_hookId = Native.SetMouseHook(_mouseHookProc);
         }
 
         public void Uninstall()
         {
-            if (_hookId != IntPtr.Zero)
-                Native.UnhookWindowsHookEx(_hookId);
-            if (_kbdHookId != IntPtr.Zero)
-                Native.UnhookWindowsHookEx(_kbdHookId);
-            _hookId = IntPtr.Zero;
-            _kbdHookId = IntPtr.Zero;
+            if (_key_hookId != IntPtr.Zero)
+                Native.UnhookWindowsHookEx(_key_hookId);
+            if (_mouse_hookId != IntPtr.Zero)
+                Native.UnhookWindowsHookEx(_mouse_hookId);
+            _key_hookId = IntPtr.Zero;
+            _mouse_hookId = IntPtr.Zero;
+        }
+        public void ChangeMouseHooks()
+        {
+            if (_mouse_hookId == IntPtr.Zero && MouseHookEvent != null)
+            {
+                _mouse_hookId = Native.SetMouseHook(_mouseHookProc);
+            }
+            else if (_mouse_hookId != IntPtr.Zero)
+            {
+                Native.UnhookWindowsHookEx(_mouse_hookId);
+                _mouse_hookId = IntPtr.Zero;
+            }
         }
         protected virtual IntPtr MouseHookProc(int nCode, IntPtr wParam, IntPtr lParam)
         {
@@ -127,7 +137,7 @@ namespace WGestures.Core.Impl.Windows
             if (MouseHookEvent != null)
                 MouseHookEvent(args);
 
-            return args.Handled ? new IntPtr(-1) : Native.CallNextHookEx(_hookId, nCode, wParam, lParam);
+            return args.Handled ? new IntPtr(-1) : Native.CallNextHookEx(_mouse_hookId, nCode, wParam, lParam);
         }
 
         protected virtual void Dispose(bool disposing)
