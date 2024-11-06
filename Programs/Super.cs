@@ -1,12 +1,10 @@
 ﻿using System.Diagnostics;
 using System.Drawing.Imaging;
 using System.Management;
-using System.Runtime.InteropServices;
-using WindowsInput;
-using WindowsInput.Events;
 using static keyupMusic2.Common;
 using static keyupMusic2.Huan;
 using static WGestures.Core.Impl.Windows.MouseKeyboardHook;
+using static keyupMusic2.Simulate;
 
 namespace keyupMusic2
 {
@@ -30,10 +28,6 @@ namespace keyupMusic2
             var e = new KeyboardHookEventArgs(WGestures.Core.Impl.Windows.KeyboardEventType.KeyDown, keys, 0, new WGestures.Common.OsSpecific.Windows.Native.keyboardHookStruct());
             new Super().hook_KeyDown_keyupMusic2(e);
         }
-        EventBuilder aaaddsdsa = Simulate.Events()
-                         .ClickChord(KeyCode.LWin).Wait(100)
-                         .Click("我dsads").Wait(100)
-                         .Click(KeyCode.Return).Wait(500);
         public void hook_KeyDown_keyupMusic2(KeyboardHookEventArgs e)
         {
             //if (ProcessName != Common.keyupMusic2) return;
@@ -46,20 +40,13 @@ namespace keyupMusic2
             switch (e.key)
             {
                 case Keys.Q:
-                    //InputSimulator InputSimulator2=new InputSimulator();
-                    //InputSimulator2.Keyboard.KeyPress(VirtualKeyCode.SPACE);
-
-                    aaaddsdsa.Invoke();
-
-                    //Sim.KeyPress(VirtualKeyCode.LWIN);
-                    //Sleep(100);
-                    //Sim.TextEntry("open");
-                    //Sleep(100);
-                    //Sim.KeyPress(VirtualKeyCode.RETURN);
-                    //Sleep(500);
+                    //Sim.KeyPress([Keys.LControlKey, Keys.V]);
+                    Sim.KeyPress(Keys.LWin).Wait(100)
+                       .SendString("openvpn").Wait(100)
+                       .KeyPress(Keys.Enter).Wait(500);
                     //press("LWin;OPEN;Enter;500;", 101);
-                    if (judge_color(1493, 1109, Color.FromArgb(237, 127, 34)))
-                        press("1056, 411;1563, 191", 101);
+                    //if (judge_color(1493, 1109, Color.FromArgb(237, 127, 34)))
+                    //    press("1056, 411;1563, 191", 101);
                     break;
                 case Keys.W:
                     start_listen_to_word();
@@ -101,12 +88,11 @@ namespace keyupMusic2
                     change_file_last(false);
                     break;
                 case Keys.D:
-                    //KeyboardInput.SimulateMouseWheel(120);
                     new Other().hook_KeyDown_ddzzq(new KeyboardHookEventArgs(WGestures.Core.Impl.Windows.KeyboardEventType.KeyDown, Keys.F11, 0, new WGestures.Common.OsSpecific.Windows.Native.keyboardHookStruct()));
                     break;
                 case Keys.F:
-                    new SendKeyboardMouse().SendKeyDown(VKCODE.VK_F);
-                    new SendKeyboardMouse().MouseWhell(120);
+                    Sim.KeyPress(Keys.F);
+                    Sim.MouseWhell(120);
                     break;
                 case Keys.H:
                     press(Keys.F11);
@@ -177,7 +163,7 @@ namespace keyupMusic2
                     break;
                 case Keys.B:
                     Invoke(() => { Clipboard.Clear(); });
-                    stop_keys = new List<Keys>();
+                    stop_keys = new Dictionary<Keys,string>();
                     break;
                 case Keys.N:
                     notify();
@@ -186,22 +172,11 @@ namespace keyupMusic2
                     TaskRun(() =>
                     {
                         FocusProcess(Common.chrome);
-                        KeyboardInput.PressKey(Keys.F);
+                        Sim.KeyPress(Keys.M);
+                        play_sound_di();
                         Sleep(100);
                         altab();
                     }, 100);
-                    //KeyboardInput.SendString("我mmmmmdsads;dsa;d;>>>;'sd^%&*%");
-                    //IntPtr id = GetProcessID(Common.chrome);
-                    //if (id != nint.Zero)
-                    //    waveOutSetVolume(id, 0);
-                    //asd();
-                    //new InputSimulator().Keyboard.KeyPress(VirtualKeyCode.VK_F);
-                    //WGestures.Core.Commands.Impl.Sim.KeyDown(VirtualKeyCode.VK_F);
-                    //WGestures.Core.Commands.Impl.Sim.TextEntry("sadsdDSDSADSADSAds打撒都是");
-                    //KeyboardInput.SendString("xiexielaoban");
-                    //Simulate.Events()
-                    //    .Click(KeyCode.F).Wait(500)
-                    //    .Invoke();
                     break;
 
                 case Keys.F1:
@@ -321,11 +296,10 @@ namespace keyupMusic2
 
         private static void sound_setting()
         {
-            var mo = new SendKeyboardMouse();
             var judge = () =>
             {
                 huan.Invoke(() => { huan.label1.Text = DateTimeNow2(); });
-                mo.MouseWhell(-120 * 10);
+                Sim.MouseWhell(-120 * 10);
                 return (judge_color(775, 1265, Color.FromArgb(26, 26, 25)))
                      && judge_color(2124, 1327, Color.FromArgb(243, 243, 243), null, 2);
             };

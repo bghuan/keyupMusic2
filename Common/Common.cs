@@ -7,8 +7,8 @@ using System.Runtime.InteropServices;
 using System.Security.Principal;
 using System.Text;
 using WGestures.Common.OsSpecific.Windows;
-using static Win32.User32;
 using Point = System.Drawing.Point;
+using static WGestures.Common.OsSpecific.Windows.Native;
 
 namespace keyupMusic2
 {
@@ -97,7 +97,7 @@ namespace keyupMusic2
         static Dictionary<IntPtr, string> ProcessMap = new Dictionary<IntPtr, string>();
         public static string FreshProcessName()
         {
-            IntPtr hwnd = GetForegroundWindow(); // 获取当前活动窗口的句柄
+            IntPtr hwnd = Native.GetForegroundWindow(); // 获取当前活动窗口的句柄
             if (ProcessMap.ContainsKey(hwnd))
             {
                 Common.ProcessName = ProcessMap[hwnd].Split(";;;;")[0];
@@ -121,7 +121,7 @@ namespace keyupMusic2
             try
             {
                 uint processId;
-                GetWindowThreadProcessId(hwnd, out processId);
+                Native.GetWindowThreadProcessId(hwnd, out processId);
                 using (Process process = Process.GetProcessById((int)processId))
                 {
                     fildsadsePath = process.MainModule.FileName;
@@ -142,7 +142,7 @@ namespace keyupMusic2
         }
         public static string GetWindowText()
         {
-            IntPtr hwnd = GetForegroundWindow(); // 获取当前活动窗口的句柄
+            IntPtr hwnd = Native.GetForegroundWindow(); // 获取当前活动窗口的句柄
 
             string windowTitle = GetWindowText(hwnd);
             //Console.WriteLine("当前活动窗口名称: " + windowTitle);
@@ -152,7 +152,7 @@ namespace keyupMusic2
         static string proc_info = "";
         public static string log_process(string key = "")
         {
-            IntPtr hwnd = GetForegroundWindow();
+            IntPtr hwnd = Native.GetForegroundWindow();
             string Title = GetWindowText(hwnd);
             bool IsFull = IsFullScreen(hwnd);
 
@@ -165,7 +165,7 @@ namespace keyupMusic2
             try
             {
                 uint processId;
-                GetWindowThreadProcessId(hwnd, out processId);
+                Native.GetWindowThreadProcessId(hwnd, out processId);
                 using (Process process = Process.GetProcessById((int)processId))
                 {
                     Path = process.MainModule.FileName;
@@ -202,8 +202,6 @@ namespace keyupMusic2
             y = y * screenHeight / 1440;
             return new int[] { x, y };
         }
-        [DllImport("user32.dll")]
-        static extern bool SetCursorPos(int X, int Y);
         public static void mouse_move(int x, int y, int tick = 0)
         {
             x = deal_size_x_y(x, y)[0];
@@ -309,34 +307,6 @@ namespace keyupMusic2
         public static int screenWidth2 = Screen.PrimaryScreen.Bounds.Width / 2;
         public static int screenHeight2 = Screen.PrimaryScreen.Bounds.Height / 2;
 
-        const int MOUSEEVENTF_MOVE = 0x0001;
-        const int MOUSEEVENTF_LEFTDOWN = 0x0002;
-        const int MOUSEEVENTF_LEFTUP = 0x0004;
-        const int MOUSEEVENTF_RIGHTDOWN = 0x0008;
-        const int MOUSEEVENTF_RIGHTUP = 0x0010;
-        const int MOUSEEVENTF_MIDDLEDOWN = 0x0020;
-        const int MOUSEEVENTF_MIDDLEUP = 0x0040;
-        const int MOUSEEVENTF_ABSOLUTE = 0x8000;
-        // 定义 MOUSEEVENTF_WHEEL 标志  
-        public const int MOUSEEVENTF_WHEEL = 0x0800;
-        public const int SW_RESTORE = 9;
-
-
-        [DllImport("user32.dll", EntryPoint = "keybd_event", SetLastError = true)]
-        public static extern void keybd_event(byte bVk, byte bScan, uint dwFlags, uint dwExtraInfo);
-
-        [System.Runtime.InteropServices.DllImport("user32")]
-        public static extern int mouse_event(int dwFlags, int dx, int dy, int cButtons, int dwExtraInfo);
-
-        //// 声明 mouse_event 函数  
-        //[DllImport("user32.dll", CharSet = CharSet.Auto, CallingConvention = CallingConvention.StdCall)]
-        //public static extern void mouse_event(uint dwFlags, uint dx, uint dy, uint cButtons, uint dwExtraInfo);
-
-
-        [DllImport("user32.dll")]
-        public static extern bool ShowWindowAsync(HandleRef hWnd, int nCmdShow);
-        [DllImport("user32.dll")]
-        public static extern bool SetForegroundWindow(IntPtr WindowHandle);
 
         public static void mouse_move(int x, int y, int x2, int y2)
         {
@@ -428,7 +398,7 @@ namespace keyupMusic2
         }
         public static bool FocusProcess(string procName)
         {
-            IntPtr current_hwnd = GetForegroundWindow(); // 获取当前活动窗口的句柄
+            IntPtr current_hwnd = Native.GetForegroundWindow(); // 获取当前活动窗口的句柄
             Process[] objProcesses = Process.GetProcessesByName(procName);
             if (objProcesses.Length > 0)
             {
@@ -436,7 +406,7 @@ namespace keyupMusic2
                 hWnd = objProcesses[0].MainWindowHandle;
                 if (current_hwnd==hWnd)
                     return true;
-                ShowWindow((hWnd), SW.SW_RESTORE);
+                Native.ShowWindow((hWnd), Native.SW.SW_RESTORE);
                 if (procName != Dragonest && procName != chrome && procName != devenv)
                     ShowWindowAsync(new HandleRef(null, hWnd), SW_RESTORE);
                 //ShowWindow((hWnd), SW.SW_SHOWMAXIMIZED);
@@ -480,13 +450,10 @@ namespace keyupMusic2
             if (objProcesses.Length > 0)
             {
                 IntPtr hWnd = objProcesses[0].MainWindowHandle;
-                ShowWindow(hWnd, SW.SW_MINIMIZE);
+                Native.ShowWindow(hWnd, Native.SW.SW_MINIMIZE);
             }
         }
 
-        private const int WM_CLOSE = 0x0010;
-        [DllImport("user32.dll")]
-        private static extern bool PostMessage(IntPtr hWnd, uint Msg, IntPtr wParam, IntPtr lParam);
         public static void CloseProcess(string procName)
         {
             Process[] objProcesses = Process.GetProcessesByName(procName);
@@ -600,44 +567,19 @@ namespace keyupMusic2
             press("1333.1439", 0);
         }
 
-        //1 返回原来鼠标位置
-        //2
-        //3 跳过delete return
         public static void ctrl_shift(bool zh = true)
         {
-            //var _zh = (judge_color(2289, 1411, Color.FromArgb(202, 202, 202)));
             var _zh = (judge_color(2290, 1411, Color.FromArgb(242, 242, 242)));
-            //var _en = judge_color(2288, 1413, Color.FromArgb(255, 255, 255));
             var _en = !_zh;
             if (zh && _en)
                 press(Keys.LShiftKey, 10);
             else if (!zh && !_en)
                 press(Keys.LShiftKey, 10);
             return;
-            if (zh)
-                press([Keys.LControlKey, Keys.LShiftKey, Keys.D1]);
-            else
-                press([Keys.LControlKey, Keys.LShiftKey, Keys.D2]);
-            return;
-
-            //不准确
-            var is_zh = InputLanguage.CurrentInputLanguage.Culture.Name == "zh-CH";
-            foreach (InputLanguage lang in InputLanguage.InstalledInputLanguages)
-            {
-                if (zh && lang.Equals(InputLanguage.DefaultInputLanguage))
-                {
-                    InputLanguage.CurrentInputLanguage = lang; return;
-                }
-                if (!zh && !lang.Equals(InputLanguage.DefaultInputLanguage))
-                {
-                    InputLanguage.CurrentInputLanguage = lang; return;
-                }
-            }
-
-            if (is_zh && zh) return;
-            if (!is_zh && !zh) return;
-            press([Keys.LControlKey, Keys.LShiftKey]);
         }
+        //1 返回原来鼠标位置
+        //2
+        //3 跳过delete return
         public static void press(string str, int tick = 100, bool force = false)
         {
             if (is_down(Keys.Delete) && !force) return;
@@ -723,23 +665,11 @@ namespace keyupMusic2
             keybd_event((byte)keys, 0, 2, 0);
         }
 
-        [DllImport("user32.dll", SetLastError = true)]
-        public static extern uint GetWindowThreadProcessId(IntPtr hWnd, out uint lpdwProcessId);
-
-        // 导入user32.dll中的GetForegroundWindow函数
-        [DllImport("user32.dll")]
-        public static extern IntPtr GetForegroundWindow();
-
-        // 导入user32.dll中的GetWindowText函数
-        [DllImport("user32.dll", SetLastError = true, CharSet = CharSet.Auto)]
-        public static extern int GetWindowText(IntPtr hWnd, StringBuilder lpString, int nMaxCount);
-
-        // 获取窗口标题的辅助方法
         public static string GetWindowText(IntPtr hWnd)
         {
             const int nChars = 256;
             StringBuilder Buff = new StringBuilder(nChars);
-            if (GetWindowText(hWnd, Buff, nChars) > 0)
+            if (Native.GetWindowText(hWnd, Buff, nChars) > 0)
             {
                 return Buff.ToString();
             }
@@ -843,56 +773,6 @@ namespace keyupMusic2
                 dragonest_notity_click(true);
             }
         }
-        static string mmapName = "Global\\MyMemoryMappedFile";
-        static long mmapSize = 1024;
-        public static string share_string = "";
-        public static string share(string msg = "")
-        {
-            return "";
-            if (string.IsNullOrEmpty(msg))
-            {
-                return share_string;
-            }
-            else
-            {
-                share_string = msg;
-                return "";
-            }
-
-            if (string.IsNullOrEmpty(msg))
-            {
-                using (var mmf = MemoryMappedFile.CreateOrOpen(mmapName, mmapSize))
-                {
-                    using (var accessor = mmf.CreateViewAccessor())
-                    {
-                        byte[] buffer = new byte[mmapSize];
-                        accessor.ReadArray(0, buffer, 0, buffer.Length);
-                        string asd = Encoding.UTF8.GetString(buffer).TrimEnd('\0'); // 去除字符串末尾的null字符  
-                        if (asd.Length > 0) share_string = asd;
-                        return asd;
-                    }
-                }
-            }
-            else
-            {
-                Task.Run(() =>
-                {
-                    using (var mmf = MemoryMappedFile.CreateOrOpen(mmapName, mmapSize))
-                    {
-                        using (var accessor = mmf.CreateViewAccessor())
-                        {
-
-                            byte[] data = Encoding.UTF8.GetBytes(msg);
-                            accessor.WriteArray(0, data, 0, data.Length);
-                            Thread.Sleep(5000);
-                            return "";
-                        }
-                    }
-                });
-                return "";
-            }
-        }
-        //占内存
         public static void copy_screen()
         {
             play_sound_di();
@@ -900,10 +780,11 @@ namespace keyupMusic2
             Bitmap bmpScreenshot = new Bitmap(secondaryScreen.Bounds.Width, secondaryScreen.Bounds.Height, PixelFormat.Format32bppArgb);
             Graphics gfxScreenshot = Graphics.FromImage(bmpScreenshot);
             gfxScreenshot.CopyFromScreen(new Point(0, 0), Point.Empty, secondaryScreen.Bounds.Size);
-            gfxScreenshot.Dispose();
             string aaa = "C:\\Users\\bu\\Pictures\\Screenshots\\";
             if (ProcessName == Common.ACPhoenix) aaa += "dd\\";
             bmpScreenshot.Save(aaa + DateTime.Now.ToString("yyyyMMddHHmmss") + ".png", ImageFormat.Png);
+            gfxScreenshot.Dispose();
+            bmpScreenshot.Dispose();
             TaskRun(() => play_sound_di(), 80);
         }
         public static void copy_secoed_screen(string path = "")
@@ -912,8 +793,6 @@ namespace keyupMusic2
             Screen secondaryScreen = Screen.AllScreens.FirstOrDefault(scr => !scr.Primary);
             int start_x = 2560;
             if (secondaryScreen == null) { return; }
-            //if (secondaryScreen == null) { secondaryScreen = Screen.PrimaryScreen; start_x = 0; }
-            //Bitmap bmpScreenshot = new Bitmap(secondaryScreen.Bounds.Width, secondaryScreen.Bounds.Height, PixelFormat.Format32bppArgb);
             Bitmap bmpScreenshot = new Bitmap(1920, 1080, PixelFormat.Format32bppArgb);
             Graphics gfxScreenshot = Graphics.FromImage(bmpScreenshot);
             gfxScreenshot.CopyFromScreen(new Point(start_x, 0), Point.Empty, secondaryScreen.Bounds.Size);
@@ -988,53 +867,29 @@ namespace keyupMusic2
             WindowsPrincipal principal = new WindowsPrincipal(identity);
             return principal.IsInRole(WindowsBuiltInRole.Administrator);
         }
-        [DllImport("imm32.dll", CharSet = CharSet.Auto)]
-        public static extern IntPtr ImmGetContext(IntPtr hWnd);
-
         public static void Sleep(int tick)
         {
             Thread.Sleep(tick);
         }
-
-        [DllImport("user32.dll", SetLastError = true)]
-        private static extern bool GetWindowRect(IntPtr hWnd, out RECT lpRect);
-
-        [DllImport("user32.dll")]
-        private static extern int GetSystemMetrics(int nIndex);
-
-        // Structure to hold window rectangle  
-        [StructLayout(LayoutKind.Sequential)]
-        private struct RECT
-        {
-            public int Left;
-            public int Top;
-            public int Right;
-            public int Bottom;
-        }
-
-        // Constants for GetSystemMetrics  
-        private const int SM_CXSCREEN = 0;
-        private const int SM_CYSCREEN = 1;
-
         public static bool IsFullScreen(IntPtr hWnd = 0)
         {
             if (hWnd == 0)
-                hWnd = GetForegroundWindow();
+                hWnd = Native.GetForegroundWindow();
             if (hWnd == IntPtr.Zero)
             {
                 // No foreground window found  
                 return false;
             }
 
-            RECT windowRect;
-            if (!GetWindowRect(hWnd, out windowRect))
+            Native.RECT windowRect;
+            if (!Native.GetWindowRect(hWnd, out windowRect))
             {
                 // Failed to get window rectangle  
                 return false;
             }
 
-            int screenWidth = GetSystemMetrics(SM_CXSCREEN);
-            int screenHeight = GetSystemMetrics(SM_CYSCREEN);
+            int screenWidth = Native.GetSystemMetrics(Native.SM_CXSCREEN);
+            int screenHeight = Native.GetSystemMetrics(Native.SM_CYSCREEN);
 
             //Thread.Sleep(1000); 
             // Check if the window covers the entire screen  
@@ -1128,15 +983,5 @@ namespace keyupMusic2
         {
             return Math.Abs(point1.X - point2.X) + Math.Abs(point1.Y - point2.Y) < 2 * diff;
         }
-        [DllImport("user32.dll")]
-        public static extern IntPtr SendMessageW(IntPtr hWnd, uint Msg, IntPtr wParam, IntPtr lParam);
-
-        public const int APPCOMMAND_VOLUME_MUTE = 0x80000;
-        public const int WM_APPCOMMAND = 0x319;
-        public const uint MAX_VOLUME = 0xFFFF;
-        public const int APPCOMMAND_VOLUME_UNMUTE = 0x80000;
-
-        [DllImport("winmm.dll")]
-        public static extern uint waveOutSetVolume(IntPtr hwo, uint dwVolume);
     }
 }

@@ -90,21 +90,21 @@ namespace keyupMusic2
                     //press(Keys.Space);
                     //break;
                     press("Back;", 0);
-                    KeyboardInput.SendString("x");
-                    Thread.Sleep(200);
-                    if (judge_color(1076, 1416, Color.FromArgb(249, 249, 249), () => { }))
-                    {
-                        KeyboardInput.SendString("iexielaoban");
-                        press(Keys.Space);
-                    }
-                    else
-                    {
-                        press("Back;", 0);
-                        press(Keys.LShiftKey);
-                        KeyboardInput.SendString("xiexielaoban");
-                        press(Keys.Space);
-                    }
-
+                    Simulate.Sim.SendString("谢谢老板");
+                    //Simulate.SendString2("x");
+                    //Thread.Sleep(200);
+                    //if (judge_color(1076, 1416, Color.FromArgb(249, 249, 249), () => { }))
+                    //{
+                    //    Simulate.SendString2("iexielaoban");
+                    //    press(Keys.Space);
+                    //}
+                    //else
+                    //{
+                    //    press("Back;", 0);
+                    //    press(Keys.LShiftKey);
+                    //    Simulate.Sim.SendString("xiexielaoban");
+                    //    press(Keys.Space);
+                    //}
                     break;
                 case Keys.Z:
                     if (judge_color(2141, 214, Color.FromArgb(215, 214, 216), null, 10)) { press(Keys.E); break; }

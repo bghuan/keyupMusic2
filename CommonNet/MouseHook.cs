@@ -1,13 +1,10 @@
-﻿using System.ComponentModel;
-using System.Diagnostics;
-using WGestures.Common.OsSpecific.Windows;
-using Win32;
+﻿using WGestures.Common.OsSpecific.Windows;
 
 namespace WGestures.Core.Impl.Windows
 {
     public class MouseKeyboardHook : IDisposable
     {
-        public static List<Keys> stop_keys = new List<Keys>();
+        public static Dictionary<Keys,string> stop_keys = new Dictionary<Keys, string>();
         public static bool mouse_downing = false;
         public static bool handling = false;
         protected virtual int KeyboardHookProc(int code, int wParam, ref Native.keyboardHookStruct lParam)
@@ -16,18 +13,18 @@ namespace WGestures.Core.Impl.Windows
             {
                 KeyboardEventType type;
 
-                if ((wParam == (int)User32.WM.WM_KEYDOWN || wParam == (int)User32.WM.WM_SYSKEYDOWN))
+                if ((wParam == 0x0100 || wParam == 0x0104))
                 {
                     type = KeyboardEventType.KeyDown;
                 }
-                else if ((wParam == (int)User32.WM.WM_KEYUP || wParam == (int)User32.WM.WM_SYSKEYUP))
+                else if ((wParam == 0x0101 || wParam == 0x0105))
                 {
                     type = KeyboardEventType.KeyUp;
                 }
                 else return Native.CallNextHookEx(_hookId, code, wParam, ref lParam);
 
                 var args = new KeyboardHookEventArgs(type, key, wParam, lParam);
-                if (stop_keys.Count == 0 || !stop_keys.Contains(key) || type == KeyboardEventType.KeyUp || key == Keys.VolumeDown || key == Keys.VolumeUp)
+                if (stop_keys.Count == 0 || !stop_keys.ContainsKey(key) || type == KeyboardEventType.KeyUp || key == Keys.VolumeDown || key == Keys.VolumeUp)
                     KeyboardHookEvent(args);
 
                 if (args.Handled)
@@ -36,7 +33,7 @@ namespace WGestures.Core.Impl.Windows
 
             return Native.CallNextHookEx(_hookId, code, wParam, ref lParam);
         }
-        const int WM_HOOK_TIMEOUT = (int)User32.WM.WM_USER + 1;
+        const int WM_HOOK_TIMEOUT = 0x0400 + 1;
 
         private IntPtr _hookId;
         private IntPtr _kbdHookId;
@@ -97,7 +94,6 @@ namespace WGestures.Core.Impl.Windows
 
         public event MouseHookEventHandler MouseHookEvent;
         public event KeyboardHookEventHandler KeyboardHookEvent;
-        public event Func<Native.MSG, bool> GotMessage;
         public MouseKeyboardHook()
         {
             _mouseHookProc = MouseHookProc;
@@ -124,9 +120,9 @@ namespace WGestures.Core.Impl.Windows
         }
         protected virtual IntPtr MouseHookProc(int nCode, IntPtr wParam, IntPtr lParam)
         {
-            Native.POINT curPos;
+            Point curPos;
             Native.GetCursorPos(out curPos);
-            var args = new MouseHookEventArgs((MouseMsg)wParam, curPos.x, curPos.y, wParam, lParam);
+            var args = new MouseHookEventArgs((MouseMsg)wParam, curPos.X, curPos.Y, wParam, lParam);
 
             if (MouseHookEvent != null)
                 MouseHookEvent(args);

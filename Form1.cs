@@ -135,7 +135,7 @@ namespace keyupMusic2
             if (Common.hooked) return;
             if (is_down(Keys.LWin)) return;
             if (is_alt() && (e.key == Keys.F4 || e.key == Keys.Tab)) { special_key_quick_yo(e); ; return; }
-            if (stop_keys.Contains(e.key)) return;
+            if (stop_keys.ContainsKey(e.key)) return;
             if (stop_keys.Count >= 8) { Dispose(); return; }
 
             FreshProcessName();
@@ -197,7 +197,7 @@ namespace keyupMusic2
                     Bbb.hook_KeyDown_ddzzq(e);
 
                     Music.hook_KeyDown_keyupMusic2(e);
-                    if (!no_sleep && e.key != Keys.VolumeDown && e.key != Keys.VolumeUp&& e.key != Keys.MediaStop)
+                    if (!no_sleep && e.key != Keys.VolumeDown && e.key != Keys.VolumeUp && e.key != Keys.MediaStop)
                     {
                         player.Stop();
                         Invoke2(() => { label1.Text = "取消睡眠"; });
@@ -245,13 +245,13 @@ namespace keyupMusic2
 
         private void handle_special_or_normal_key(KeyboardHookEventArgs e)
         {
-            if (!stop_keys.Contains(e.key))
+            if (!stop_keys.ContainsKey(e.key))
             {
                 if (e.key == Keys.F9) { return; }
                 string _ProcessName = "";
                 if (special_key.Contains(e.key) || log_always) _ProcessName = log_process(e.key.ToString());
                 if (e.key == Keys.F22 && (_ProcessName == "WeChatAppEx" || _ProcessName == "WeChat")) { e.Handled = true; }
-                stop_keys.Add(e.key);
+                stop_keys.Add(e.key, ProcessName);
             }
         }
         private void print_easy_read()
@@ -260,16 +260,16 @@ namespace keyupMusic2
             if (!no_sleep) return;
             Invoke(() =>
             {
-                string asd = string.Join("_", _stop_keys.Select(key => easy_read(key.ToString())));
+                string asd = string.Join("", _stop_keys.Select(key => easy_read(key.ToString())));
                 if (label1.Text == asd) asd += " " + DateTimeNow2();
-                label1.Text = speak_word + ProcessName + " " + asd;
+                label1.Text = speak_word + "" + asd;
             }
             );
         }
         private void quick_volume_zero()
         {
-            var stop_keysCopy = new List<Keys>(stop_keys);
-            if (stop_keysCopy.Count(key => key != Keys.VolumeDown) >= 5 && VolumeDown_time.AddSeconds(3) < DateTime.Now)
+            var stop_keysCopy = new Dictionary<Keys, string>(stop_keys);
+            if (stop_keysCopy.Count(key => key.Key != Keys.VolumeDown) >= 5 && VolumeDown_time.AddSeconds(3) < DateTime.Now)
             {
                 VolumeDown_time = DateTime.Now;
                 for (Int32 i = 0; i < 50; i++) press(Keys.VolumeDown, 0);

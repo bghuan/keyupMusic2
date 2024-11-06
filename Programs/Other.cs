@@ -97,16 +97,6 @@ namespace keyupMusic2
                             if (e.X > screenWidth) press(Keys.VolumeUp, 5, 0); break;
                     }
                     break;
-                //case Common.chrome:
-                //    switch (e.key)
-                //    {
-                //        case Keys.M:
-                //            if (!is_alt()) break;
-                //            FocusProcess(Common.chrome);
-                //            KeyboardInput.PressKey(Keys.M);
-                //            break;
-                //    }
-                //    break;
             }
 
 
@@ -118,6 +108,7 @@ namespace keyupMusic2
             if (!Common.ExsitProcess(Common.WeChat))
             {
                 press("LWin;100;WEI;100;Enter;", 50, flag_special);
+                return;
             }
             press([Keys.LControlKey, Keys.LMenu, Keys.W]);
         }

@@ -22,7 +22,7 @@ namespace keyupMusic2
         {
             not_in_class = ProcessName != ClassName()
                 && ProcessName != ApplicationFrameHost
-                && ProcessTitle.IndexOf("抖音") < 0;
+                && ProcessTitle?.IndexOf("抖音") < 0;
             if (not_in_class) return false;
             //if (judge_handled_key.Contains(e.key)) return true;
             if (is_down(Keys.F2)) return true;

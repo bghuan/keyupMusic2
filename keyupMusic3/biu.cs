@@ -1,11 +1,5 @@
 ﻿using keyupMusic2;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using WGestures.Core.Impl.Windows;
-using WindowsInput.Native;
 using static keyupMusic2.Common;
 
 namespace keyupMusic3
@@ -115,7 +109,7 @@ namespace keyupMusic3
                     //if (e.Y == 0 && e.X == 0)
                     //    press("2222,1410;100;2222,1120", 1);
                     //else if ((e.Y == 0 || e.Y + 1 == screenHeight) && e.X < screenWidth)
-                    KeyboardInput.PressKey(Keys.X);
+                    Simulate.Sim.KeyPress(Keys.X);
                     //else
                     //    KeyboardInput.PressKey(Keys.H);
                     mouse_move(2221, 1407);
@@ -202,6 +196,7 @@ namespace keyupMusic3
             //    }
             //}
         }
+        int expect_cornor_edge = 50;
         public void ScreenEdgeClick()
         {
             if (e.Msg == MouseMsg.WM_LBUTTONDOWN || cornor != 0)
@@ -224,22 +219,22 @@ namespace keyupMusic3
 
                 var not_allow = (ProcessName != keyupMusic2.Common.ACPhoenix) && (ProcessName != msedge);
 
-                if (left_left_click && e.X == 0)
+                if (left_left_click && e.X == 0 && (e.Y < expect_cornor_edge || e.Y > screenHeight - expect_cornor_edge))
+                {
+                    left_left_click = false;
+                }
+                else if (left_left_click && e.X == 0)
                 {
                     //if (!not_allow && IsFullScreen()) return;
                     if (is_douyin()) return;
                     left_left_click = false;
                     mouse_click2(400);
-                    //if (is_douyin()
-                    //    && judge_color(1279, 684, Color.FromArgb(200, 200, 200), null, 60)
-                    //    && judge_color(1262, 713, Color.FromArgb(200, 200, 200), null, 60)
-                    //    && judge_color(1311, 685, Color.FromArgb(200, 200, 200), null, 60))
-                    //{
-                    //    mouse_click2(10);
-                    //    press_middle_bottom();
-                    //}
                 }
-                else if (left_down_click && e.Y == (screenHeight - 1) && e.X < screenWidth)
+                else if ((left_down_click && e.Y + 1 == screenHeight && e.X < screenWidth) && (e.X < expect_cornor_edge))
+                {
+                    left_down_click = false;
+                }
+                else if (left_down_click && e.Y + 1 == screenHeight && e.X < screenWidth)
                 {
                     if (!not_allow && IsFullScreen()) return;
                     if (is_douyin() && IsFullScreen()) return;
@@ -251,10 +246,11 @@ namespace keyupMusic3
                 {
                     right_up_click = false;
                     mouse_click2(0);
-                    press(Keys.Escape, 111);
+                    //press(Keys.Escape, 111);
+                    Simulate.Sim.KeyPress(Keys.F);
                     //press(Keys.PageDown, 111);
                     //if (!judge_color(5534, 696, Color.FromArgb(0, 0, 0)))
-                        new SendKeyboardMouse().MouseWhell(-120 * 7);
+                    //new SendKeyboardMouse().MouseWhell(-120 * 7);
                 }
             }
         }
@@ -304,7 +300,7 @@ namespace keyupMusic3
                     var list = new[] { msedge, chrome };
 
                     if (is_douyin())
-                        KeyboardInput.PressKey(Keys.H);
+                        Simulate.Sim.KeyPress(Keys.H);
                     else if (list.Contains(Common.ProcessName))
                         press([Keys.F11]);
 

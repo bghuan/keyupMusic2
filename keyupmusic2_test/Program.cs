@@ -1,18 +1,24 @@
-﻿using NAudio.Wave;
-class Program
+﻿class Program
 {
     static void Main()
     {
-        string filePath = "wav\\3.wav";
-        using (var audioFile = new AudioFileReader(filePath))
-        using (var outputDevice = new WaveOutEvent())
+        KeyPress(new string[] { "a", "s", "d" });
+        Console.ReadLine();
+    }
+    public static void KeyPress(string[] key)
+    {
+        var inputs = new string[key.Length * 2];
+
+        for (int i = 0; i < key.Length; i++)
         {
-            outputDevice.Init(audioFile);
-            outputDevice.Play();
-            while (outputDevice.PlaybackState == PlaybackState.Playing)
-            {
-                System.Threading.Thread.Sleep(100);
-            }
+            inputs[i] = key[i];
+            Console.WriteLine(inputs[i]);
         }
+        for (int i = 0; i < key.Length; i++)
+        {
+            inputs[i + key.Length] = key[key.Length - 1 - i];
+            Console.WriteLine(inputs[i + key.Length]);
+        }
+        Console.WriteLine(inputs);
     }
 }
