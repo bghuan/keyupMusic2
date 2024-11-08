@@ -4,7 +4,34 @@ namespace keyupMusic2
 {
     public class Simulate
     {
-        public static Simulate Sim = new Simulate();
+        public Simulate(int tick = 100)
+        {
+            this.tick = tick;
+        }
+        public int tick = 0;
+
+        public Simulate KeyPress(params object[] inputs)
+            => inputs.Aggregate(this, (sim, input)
+            => input is Keys key ? sim.KeyPress(key) :
+               input is Keys[] keys ? sim.KeyPress(keys) :
+               input is string str ? sim.KeyPress(str) :
+               sim);
+
+        public Simulate KeyPress(string text)
+        {
+            var inputs = new KeyboardInput.INPUT[text.Length * 2];
+
+            for (int i = 0; i < text.Length; i++)
+            {
+                inputs[i * 2] = KeyboardInput.INPUT.CreateStringDown(text[i]);
+                inputs[i * 2 + 1] = KeyboardInput.INPUT.CreateStringUp(text[i]);
+            }
+
+            KeyboardInput.SendInput((uint)inputs.Length, ref inputs[0], KeyboardInput.INPUT.Size);
+
+            if (tick > 0) Thread.Sleep(tick);
+            return this;
+        }
         public Simulate KeyPress(Keys key)
         {
             var inputs = new KeyboardInput.INPUT[2];
@@ -13,7 +40,9 @@ namespace keyupMusic2
             inputs[1] = KeyboardInput.INPUT.CreateKeyUp((ushort)key);
 
             KeyboardInput.SendInput((uint)inputs.Length, ref inputs[0], KeyboardInput.INPUT.Size);
-            return Sim;
+
+            if (tick > 0) Thread.Sleep(tick);
+            return this;
         }
         public Simulate KeyPress(Keys[] key)
         {
@@ -29,16 +58,19 @@ namespace keyupMusic2
             }
 
             KeyboardInput.SendInput((uint)inputs.Length, ref inputs[0], KeyboardInput.INPUT.Size);
-            return Sim;
-        }
 
+            if (tick > 0) Thread.Sleep(tick);
+            return this;
+        }
         public Simulate KeyDown(Keys key)
         {
             var inputs = new KeyboardInput.INPUT[1];
             inputs[0] = KeyboardInput.INPUT.CreateKeyDown((ushort)key);
 
             KeyboardInput.SendInput((uint)inputs.Length, ref inputs[0], KeyboardInput.INPUT.Size);
-            return Sim;
+
+            if (tick > 0) Thread.Sleep(tick);
+            return this;
         }
 
         public Simulate KeyUp(Keys key)
@@ -47,35 +79,11 @@ namespace keyupMusic2
             inputs[0] = KeyboardInput.INPUT.CreateKeyUp((ushort)key);
 
             KeyboardInput.SendInput((uint)inputs.Length, ref inputs[0], KeyboardInput.INPUT.Size);
-            return Sim;
+
+            if (tick > 0) Thread.Sleep(tick);
+            return this;
         }
 
-        public Simulate SendString(string text)
-        {
-            var inputs = new KeyboardInput.INPUT[text.Length * 2];
-
-            for (int i = 0; i < text.Length; i++)
-            {
-                inputs[i * 2] = KeyboardInput.INPUT.CreateStringDown(text[i]);
-                inputs[i * 2 + 1] = KeyboardInput.INPUT.CreateStringUp(text[i]);
-            }
-
-            KeyboardInput.SendInput((uint)inputs.Length, ref inputs[0], KeyboardInput.INPUT.Size);
-            return Sim;
-        }
-        public static Simulate SendString2(string text)
-        {
-            var inputs = new KeyboardInput.INPUT[text.Length * 2];
-
-            for (int i = 0; i < text.Length; i++)
-            {
-                inputs[i * 2] = KeyboardInput.INPUT.CreateStringDown(text[i]);
-                inputs[i * 2 + 1] = KeyboardInput.INPUT.CreateStringUp(text[i]);
-            }
-
-            KeyboardInput.SendInput((uint)inputs.Length, ref inputs[0], KeyboardInput.INPUT.Size);
-            return Sim;
-        }
         public Simulate MouseWhell(int delta)
         {
             var input = new KeyboardInput.INPUT[1];
@@ -86,12 +94,18 @@ namespace keyupMusic2
             input[0].Data.Mouse.time = (uint)KeyboardInput.GetTickCount();
 
             KeyboardInput.SendInput((uint)input.Length, ref input[0], Marshal.SizeOf(input[0]));
-            return Sim;
+
+            if (tick > 0) Thread.Sleep(tick);
+            return this;
         }
-        public Simulate Wait(int milliseconds)
+        public Simulate Wait(int tick)
         {
-            Thread.Sleep(milliseconds);
-            return Sim;
+            Thread.Sleep(tick);
+            return this;
+        }
+        public Simulate Sleep(int tick)
+        {
+            return Wait(tick);
         }
     }
     public class KeyboardInput

@@ -1,14 +1,12 @@
 ﻿using System.Diagnostics;
 using System.Drawing.Imaging;
-using System.IO.MemoryMappedFiles;
 using System.Media;
 using System.Net;
 using System.Runtime.InteropServices;
 using System.Security.Principal;
 using System.Text;
-using WGestures.Common.OsSpecific.Windows;
+using static keyupMusic2.Native;
 using Point = System.Drawing.Point;
-using static WGestures.Common.OsSpecific.Windows.Native;
 
 namespace keyupMusic2
 {
@@ -35,6 +33,7 @@ namespace keyupMusic2
         public const string QQLive = "QQLive";
         public const string vlc = "vlc";
         public const string v2rayN = "v2rayN";
+        public const string Thunder = "Thunder";
 
         public static string[] list = {
         keyupMusic2,
@@ -56,11 +55,24 @@ namespace keyupMusic2
         vlc,
         //keyupMusic3,
         v2rayN,
+        Thunder,
+        QQMusic,
+        QQMusic,
+        QQMusic,
+        QQMusic,
+        QQMusic,
+        QQMusic,
+        QQMusic,
+        QQMusic,
+        QQMusic,
+        QQMusic,
+        QQMusic,
         QQMusic,
         QQMusic,
         };
 
         public static SoundPlayer player = new SoundPlayer();
+        public static SoundPlayer player2 = new SoundPlayer();
         public static bool hooked = false;
         public static bool hooked_mouse = false;
         public static bool stop_listen = false;
@@ -90,7 +102,7 @@ namespace keyupMusic2
         }
         public static bool is_douyin()
         {
-            return ProcessName == douyin || ProcessTitle.Contains("抖音");
+            return ProcessName == douyin || ProcessTitle?.IndexOf("抖音") >= 0 || (ProcessName == msedge && ProcessTitle?.IndexOf("多多自走棋") >= 0);
         }
         static IntPtr old_hwnd = 0;
 
@@ -136,8 +148,11 @@ namespace keyupMusic2
 
             //log(DateTime.Now.ToString("") + " " + windowTitle + " " + fildsadsePath + module_nasme + "\n");
             Common.ProcessName = ProcessName;
-            if (!ProcessMap.ContainsKey(hwnd))
-                ProcessMap.Add(hwnd, ProcessName + ";;;;" + ProcessTitle);
+            lock (ProcessMap)
+            {
+                if (!ProcessMap.ContainsKey(hwnd))
+                    ProcessMap.Add(hwnd, ProcessName + ";;;;" + ProcessTitle);
+            }
             return ProcessName;
         }
         public static string GetWindowText()
@@ -304,7 +319,7 @@ namespace keyupMusic2
 
         public static int screenWidth = Screen.PrimaryScreen.Bounds.Width;
         public static int screenHeight = Screen.PrimaryScreen.Bounds.Height;
-        public static int screenWidth1 = Screen.PrimaryScreen.Bounds.Width-1;
+        public static int screenWidth1 = Screen.PrimaryScreen.Bounds.Width - 1;
         public static int screenHeight1 = Screen.PrimaryScreen.Bounds.Height - 1;
         public static int screenWidth2 = Screen.PrimaryScreen.Bounds.Width / 2;
         public static int screenHeight2 = Screen.PrimaryScreen.Bounds.Height / 2;
@@ -384,9 +399,14 @@ namespace keyupMusic2
         public static DateTime mouse_click_not_repeat_time = DateTime.Now;
         public static void mouse_click_not_repeat()
         {
-            if (mouse_click_not_repeat_time.AddSeconds(1) > DateTime.Now) return;
             mouse_event(MOUSEEVENTF_LEFTDOWN | MOUSEEVENTF_LEFTUP, 0, 0, 0, 0);
             mouse_click_not_repeat_time = DateTime.Now;
+        }
+        public static bool not_repeat()
+        {
+            if (mouse_click_not_repeat_time.AddSeconds(1) > DateTime.Now) return false;
+            mouse_click_not_repeat_time = DateTime.Now;
+            return true;
         }
         public static void down_mouse(int tick = 0)
         {
@@ -406,7 +426,7 @@ namespace keyupMusic2
             {
                 IntPtr hWnd = IntPtr.Zero;
                 hWnd = objProcesses[0].MainWindowHandle;
-                if (current_hwnd==hWnd)
+                if (current_hwnd == hWnd)
                     return true;
                 Native.ShowWindow((hWnd), Native.SW.SW_RESTORE);
                 if (procName != Dragonest && procName != chrome && procName != devenv)
@@ -498,9 +518,9 @@ namespace keyupMusic2
                 for (global::System.Int32 i = 0; i < times; i++)
                 {
                     _press(num);
-                    Thread.Sleep(tick);
                 }
             }
+            Thread.Sleep(tick);
         }
         public static bool _Not_F10_F11_F12_Delete = true;
         public static bool Not_F10_F11_F12_Delete(bool refresh = false, Keys current_key = new Keys())
@@ -524,6 +544,7 @@ namespace keyupMusic2
         }
         public static void press_close()
         {
+            if (!not_repeat()) return;
             press([Keys.LMenu, Keys.F4]);
         }
         public static void altab(int tick = 0)
@@ -962,8 +983,10 @@ namespace keyupMusic2
             string wav = "wav\\d2.wav";
             if (!File.Exists(wav)) return;
 
-            player = new SoundPlayer(wav);
-            player.Play();
+            player2 = new SoundPlayer(wav);
+            Thread t2 = new Thread(() => player2.Play());
+            t2.Start();
+            //player2.Play();
         }
         public static void HttpGet(string url)
         {
@@ -985,5 +1008,28 @@ namespace keyupMusic2
         {
             return Math.Abs(point1.X - point2.X) + Math.Abs(point1.Y - point2.Y) < 2 * diff;
         }
+        public static Simulate SSSS { get { return new Simulate(100); } }
+        public static Simulate S10 { get { return new Simulate(10); } }
+        public static Simulate S100 { get { return new Simulate(100); } }
+        public static Simulate Simm = new Simulate(0);
+        public static Simulate SS(int tick = 100)
+        {
+            return new Simulate(tick);
+        }
+        public static Dictionary<string, DateTime> KeyTime = new Dictionary<string, DateTime>();
+        public static IEnumerable<Keys> GetPressedKeys()
+        {
+            var keys = new List<Keys>();
+            for (int i = 0; i < 256; i++)
+            {
+                if (Native.GetAsyncKeyState(i) < 0)
+                {
+                    keys.Add((Keys)i);
+                }
+            }
+            return keys;
+        }
+
+
     }
 }

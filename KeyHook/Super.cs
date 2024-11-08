@@ -2,10 +2,8 @@
 using System.Drawing.Imaging;
 using System.Management;
 using static keyupMusic2.Common;
-using static keyupMusic2.Huan;
-using static WGestures.Core.Impl.Windows.MouseKeyboardHook;
 using static keyupMusic2.Simulate;
-using WGestures.Common.OsSpecific.Windows;
+using static keyupMusic2.MouseKeyboardHook;
 
 namespace keyupMusic2
 {
@@ -20,13 +18,13 @@ namespace keyupMusic2
         }
         public static Huan huan;
         Keys[] keys = { Keys.D0, Keys.D1, Keys.D2, Keys.D3, Keys.D4, Keys.D5, Keys.D6, Keys.D7, Keys.D8, Keys.D9, Keys.PageUp, Keys.Next, Keys.Home, Keys.End, Keys.Space };
-        bool start_record = false;
+        public static bool start_record = false;
         string commnd_record = "";
 
         public static void hook_KeyDown(Keys keys)
         {
             huan.keyupMusic2_onlisten = true;
-            var e = new KeyboardHookEventArgs(WGestures.Core.Impl.Windows.KeyboardEventType.KeyDown, keys, 0, new WGestures.Common.OsSpecific.Windows.Native.keyboardHookStruct());
+            var e = new KeyboardHookEventArgs(KeyboardEventType.KeyDown, keys, 0, new Native.keyboardHookStruct());
             new Super().hook_KeyDown_keyupMusic2(e);
         }
         public void hook_KeyDown_keyupMusic2(KeyboardHookEventArgs e)
@@ -41,13 +39,7 @@ namespace keyupMusic2
             switch (e.key)
             {
                 case Keys.Q:
-                    //Sim.KeyPress([Keys.LControlKey, Keys.V]);
-                    Sim.KeyPress(Keys.LWin).Wait(100)
-                       .SendString("openvpn").Wait(100)
-                       .KeyPress(Keys.Enter).Wait(500);
-                    //press("LWin;OPEN;Enter;500;", 101);
-                    //if (judge_color(1493, 1109, Color.FromArgb(237, 127, 34)))
-                    //    press("1056, 411;1563, 191", 101);
+                    SSSS.KeyPress(Keys.LWin, "openvpn", Keys.Enter);
                     break;
                 case Keys.W:
                     start_listen_to_word();
@@ -60,15 +52,8 @@ namespace keyupMusic2
                     if (key_sound) player.Stop();
                     key_sound = !key_sound;
                     break;
-                //case Keys.T:
-                //    if (start_record && !string.IsNullOrEmpty(commnd_record))
-                //    {
-                //        Common.log(commnd_record);
-                //        Invoke(() => Clipboard.SetText(commnd_record));
-                //    }
-                //    start_record = !start_record;
-                //    commnd_record = "";
-                //    break;
+                case Keys.T:
+                    break;
                 case Keys.Y:
                     Common.cmd($"/c start ms-settings:taskbar");
                     press("200;978,1042;907,1227;2500,32;", 801);
@@ -88,52 +73,44 @@ namespace keyupMusic2
                     paly_sound(Keys.D3);
                     change_file_last(false);
                     break;
+                case Keys.A:
+                    start_record = !start_record;
+                    break;
+                case Keys.S:
+                    break;
                 case Keys.D:
-                    new Other().hook_KeyDown_ddzzq(new KeyboardHookEventArgs(WGestures.Core.Impl.Windows.KeyboardEventType.KeyDown, Keys.F11, 0, new WGestures.Common.OsSpecific.Windows.Native.keyboardHookStruct()));
+                    new Other().hook_KeyDown(new KeyboardHookEventArgs(KeyboardEventType.KeyDown, Keys.F11, 0, new Native.keyboardHookStruct()));
                     break;
                 case Keys.F:
-                    Sim.KeyPress(Keys.F);
-                    Sim.MouseWhell(120);
+                    Simm.KeyPress(Keys.F);
+                    Simm.MouseWhell(120);
+                    break;
+                case Keys.G:
                     break;
                 case Keys.H:
                     press(Keys.F11);
                     break;
                 case Keys.J:
                     if (!is_ctrl()) if (Common.FocusProcess(Common.chrome)) break;
-                    press("LWin;CHR;Enter;", 100);
+                    //press("LWin;CHR;Enter;", 100);
+                    SS().KeyPress(Keys.LWin)
+                        .KeyPress("chrome")
+                        .KeyPress(Keys.Enter);
                     break;
                 case Keys.K:
-                    ManagementObjectSearcher searcher = new ManagementObjectSearcher(
-                "SELECT * FROM Win32_PnPEntity");
-
-                    ManagementObjectCollection collection = searcher.Get();
-
-                    foreach (ManagementObject mo in collection)
+                    TaskRun(() =>
                     {
-                        Console.WriteLine("Device ID: " + mo["DeviceID"]);
-                        Console.WriteLine("Name: " + mo["Name"]);
-                        Console.WriteLine("PNPDeviceID: " + mo["PNPDeviceID"]);
-                        Console.WriteLine("PNPClass: " + mo["PNPClass"]);
-                        Console.WriteLine("Caption: " + mo["Caption"]);
-                        Console.WriteLine("----------------------------------");
-                    }
+                        var pressedKeys = GetPressedKeys();
+                        if (pressedKeys.Any())
+                            huan.Invoke2(() => { huan.label1.Text = string.Join(", ", pressedKeys); });
+                        foreach (var key in pressedKeys)
+                        {
+                            SSSS.KeyUp(key);
+                        }
+                    }, 1000);
                     break;
                 case Keys.L:
-                    string imagePath = @"C:\Users\bu\Pictures\Screenshots\屏幕截图 2024-10-15 204332.png";
-                    try
-                    {
-                        ProcessStartInfo startInfo = new ProcessStartInfo
-                        {
-                            FileName = "explorer.exe",
-                            Arguments = $"\"{imagePath}\"",
-                            UseShellExecute = true
-                        };
-                        Process.Start(startInfo);
-                    }
-                    catch (Exception ex)
-                    {
-                        Console.WriteLine($"Error opening image: {ex.Message}");
-                    }
+                    quick_dir_file();
                     break;
                 case Keys.Z:
                     press("100;LWin;KK;Enter;", 110);
@@ -147,73 +124,39 @@ namespace keyupMusic2
                     press_middle_bottom();
                     break;
                 case Keys.V:
-                    ////KeyboardInput2.SendString("Hello, World!");
-                    ////KeyboardInput3.SendString("Hello, World!");
-                    ////SendKeyboardMouse sendKeyMouse = new SendKeyboardMouse();
-                    ////sendKeyMouse.SendKeyPress(VKCODE.VK_A);
-                    if (ProcessName == Common.devenv && ProcessTitle.Contains("在运行") && is_ctrl())
-                    {
-                        var txt = "Common.";
-                        Invoke(() => Clipboard.SetText(txt));
-                        press([Keys.LControlKey, Keys.V]);
-                        break;
-                    }
-
-                    Invoke(() => { try { press(Clipboard.GetText()); } catch { } });
-                    paly_sound(Keys.D1);
+                    cmd_v();
                     break;
                 case Keys.B:
-                    Invoke(() => { Clipboard.Clear(); });
-                    stop_keys = new Dictionary<Keys,string>();
+                    stop_keys = new Dictionary<Keys, string>();
+                    break;
+                case Keys.M:
                     break;
                 case Keys.N:
                     notify();
                     break;
-                case Keys.M:
-                    TaskRun(() =>
-                    {
-                        FocusProcess(Common.chrome);
-                        Sim.KeyPress(Keys.M);
-                        play_sound_di();
-                        Sleep(100);
-                        altab();
-                    }, 100);
-                    break;
-
                 case Keys.F1:
-                case Keys.G:
-                    paly_sound(Keys.D4);
                     get_point_color(e);
                     break;
-                    //Invoke(() => { huan.SetVisibleCore2(huan.last_visiable); });
-                    ////hide_keyupmusic3();
-                    //huan.last_visiable = false;
-                    break;
                 case Keys.F2:
-                    //case Keys.S:
-                    //if (!FocusProcess("keyupMusic3"))
-                    //{
-                    //    ProcessRun(Common.keyupMusic3exe);
-                    //    HideProcess("keyupMusic3");
-                    //}
                     huan._mouseKbdHook.ChangeMouseHooks();
                     break;
                 case Keys.F5:
-                case Keys.A:
                     paly_sound(Keys.D2);
                     if (ProcessName == Common.ACPhoenix) { Common.HideProcess(Common.ACPhoenix); break; }
                     if (Common.FocusProcess(Common.ACPhoenix)) break;
                     dragonest();
                     break;
                 case Keys.F4:
-                    //log_always = !log_always;
                     press(Keys.MediaPlayPause);
                     break;
                 case Keys.F6:
-                    Process[] processes = Process.GetProcessesByName(keyupMusic2.Common.keyupMusic2);
-                    //Process[] processes2 = Process.GetProcessesByName(keyupMusic2.Common.keyupMusic3);
-                    //processes2[0].Kill();
-                    processes[0].Kill();
+                    TaskRun(() =>
+                    {
+                        if (!FocusProcess(Common.chrome)) return;
+                        play_sound_di();
+                        Simm.KeyPress(Keys.M).Sleep(100);
+                        altab();
+                    }, 100);
                     break;
                 case Keys.Up:
                     Invoke(() => huan.Opacity = huan.Opacity >= 1 ? 1 : huan.Opacity + 0.1);
@@ -223,9 +166,11 @@ namespace keyupMusic2
                     break;
                 case Keys.Escape:
                     if (is_ctrl() && is_shift()) { Process.Start(new ProcessStartInfo("taskmgr.exe")); break; }
-                    //press("LWin;1957,1015");
                     press_middle_bottom();
-                    Special_Input = false; DaleyRun_stop = true; special_delete_key_time = DateTime.Now; player.Stop();
+                    break;
+                case Keys.F12:
+                    string dfsadd = "taskkill /f /im explorer.exe & start explorer.exe";
+                    ProcessRun(dfsadd);
                     break;
 
                 default:
@@ -244,28 +189,37 @@ namespace keyupMusic2
             Common.hooked = false;
         }
 
-        //private void asd()
-        //{
-        //    unsafe
-        //    {
-        //        var text = "f";
-        //        var input = stackalloc KeyboardInput.INPUT[1];
-        //        var inputs = new KeyboardInput.INPUT[text.Length * 2];
+        private void cmd_v()
+        {
+            if (ProcessName == Common.devenv && ProcessTitle.Contains("在运行") && (is_ctrl() || Position.X == 0))
+            {
+                var txt = "Common.";
+                Invoke(() => Clipboard.SetText(txt));
+                press([Keys.LControlKey, Keys.V]);
+                return;
+            }
+            Invoke(() => { try { press(Clipboard.GetText()); } catch { } });
+            paly_sound(Keys.D1);
+        }
 
-        //        for (int i = 0; i < text.Length; i++)
-        //        {
-        //            ushort vk = KeyboardInput.VirtualKeyFromChar(text[i]);
-        //            inputs[i * 2] = KeyboardInput.INPUT.CreateKeyDown(vk);
-        //            inputs[i * 2 + 1] = KeyboardInput.INPUT.CreateKeyUp(vk);
-        //            input[0] = KeyboardInput.INPUT.CreateKeyDown(vk);
-        //        }
-        //        SendInput((uint)inputs.Length, input, Marshal.SizeOf(typeof(KeyboardInput.INPUT)));
-
-        //    }
-        //}
-        //[DllImport("user32.dll", SetLastError = true)]
-        //public unsafe static extern UInt32 SendInput(UInt32 numberOfInputs, KeyboardInput.INPUT* inputs, Int32 sizeOfInputStructure);
-
+        private static void quick_dir_file()
+        {
+            string imagePath = @"C:\Users\bu\Pictures\Screenshots\屏幕截图 2024-10-15 204332.png";
+            try
+            {
+                ProcessStartInfo startInfo = new ProcessStartInfo
+                {
+                    FileName = "explorer.exe",
+                    Arguments = $"\"{imagePath}\"",
+                    UseShellExecute = true
+                };
+                Process.Start(startInfo);
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Error opening image: {ex.Message}");
+            }
+        }
         private static void notify()
         {
             NotifyIcon notifyIcon = new NotifyIcon();
@@ -301,7 +255,7 @@ namespace keyupMusic2
             var judge = () =>
             {
                 huan.Invoke(() => { huan.label1.Text = DateTimeNow2(); });
-                Sim.MouseWhell(-120 * 10);
+                Simm.MouseWhell(-120 * 10);
                 return (judge_color(775, 1265, Color.FromArgb(26, 26, 25)))
                      && judge_color(2124, 1327, Color.FromArgb(243, 243, 243), null, 2);
             };
@@ -356,9 +310,9 @@ namespace keyupMusic2
         {
             Listen.is_listen = !Listen.is_listen;
             Invoke(() => huan.SetVisibleCore2(Listen.is_listen));
-            Listen.aaaEvent += huan.handle_word;
+            //Listen.aaaEvent += huan.handle_word;
             if (Listen.is_listen) Task.Run(() => Listen.listen_word(new string[] { }, (string asd, int a) => { }));
-            speak_word = "";
+            Listen.speak_word = "";
         }
 
         private static void dragonest_run()

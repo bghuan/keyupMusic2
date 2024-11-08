@@ -1,16 +1,104 @@
 ﻿using PortAudioSharp;
-using System;
-using System.Collections.Generic;
-using System.Linq;
+using System.Diagnostics;
 using System.Runtime.InteropServices;
-using System.Text;
-using System.Threading.Tasks;
-using static WGestures.Core.Impl.Windows.MouseKeyboardHook;
+using static keyupMusic2.Common;
+using static keyupMusic2.MouseKeyboardHook;
 
 namespace keyupMusic2
 {
     public class Listen
     {
+        static string lastText = "";
+        public static string speak_word = "";
+        public static int sssssegmentIndex;
+        public static void handle_word(string text, int segmentIndex, bool show = true)
+        {
+            if (segmentIndex == sssssegmentIndex) { return; }
+            speak_word = text + "_";
+            //if (text == "UP") { press(Keys.PageUp, 0); return; }
+            press(Keys.PageDown, 0);
+            sssssegmentIndex = segmentIndex;
+            return;
+            ////if (show) this.Invoke(new MethodInvoker(() => { label1.Text = text; }));
+            //if (ProcessName == msedge)
+
+            string text_backup = text;
+
+            string a = "", b = "", b1 = "", b2 = "", b3 = "", b4 = "", c = "";
+
+            a = lastText;
+            if (!string.IsNullOrEmpty(a))
+                b = text.Replace(a, "");
+            else
+                b = text;
+            if (b.Length >= 1) b1 = b.Substring(0, 1);
+            if (b.Length >= 2) b2 = b.Substring(0, 2);
+            if (b.Length >= 3) b3 = b.Substring(0, 3);
+            if (b.Length >= 4) b4 = b.Substring(0, 4);
+            c = text;
+            //log($"{a}    {b}    {c}");
+
+            lastText = text;
+
+            if (KeyMap.TryGetValue(b, out Keys[] keys))
+            {
+                press(keys, 100);
+            }
+            else if (KeyMap.TryGetValue(b1, out Keys[] keysb1))
+            {
+                press(keysb1, 100);
+            }
+            else if (KeyMap.TryGetValue(b2, out Keys[] keysb2))
+            {
+                press(keysb2, 100);
+            }
+            else if (KeyMap.TryGetValue(b3, out Keys[] keysb3))
+            {
+                press(keysb3, 100);
+            }
+            else if (KeyMap.TryGetValue(b4, out Keys[] keysb4))
+            {
+                press(keysb4, 100);
+            }
+            else if (c.Length > 2 && c.IndexOf("打开") >= 0 && !string.IsNullOrEmpty(b))
+            {
+                //Invoke(() => Clipboard.SetText(b1));
+                //press([Keys.ControlKey, Keys.V]);
+
+                //press(Keys.Enter);
+            }
+            else if (c.Length > 2 && c.IndexOf("输入") >= 0 && !string.IsNullOrEmpty(b))
+            {
+                //Invoke(() => Clipboard.SetText(b1));
+                //press([Keys.ControlKey, Keys.V]);
+            }
+            else if (KeyMap.TryGetValue(c, out Keys[] keys3))
+            {
+                press(keys3, 100);
+            }
+            else if (c == "显示")
+            {
+                Common.FocusProcess(Process.GetCurrentProcess().ProcessName);
+                ////Invoke(() => SetVisibleCore(true));
+            }
+            else if (c == "连接")
+            {
+                press("LWin;OPEN;Enter;500;1056, 411;1563, 191", 101);
+            }
+            else if (c == "隐藏")
+            {
+                ////Invoke(() => SetVisibleCore(false));
+            }
+            else if (c == "边框")
+            {
+                ////Invoke(() => FormBorderStyle = FormBorderStyle == FormBorderStyle.None ? FormBorderStyle.Sizable : FormBorderStyle.None);
+            }
+            else if (c == "下" || c == "NEXT")
+            {
+                if (ProcessName == msedge)
+                    press(Keys.PageDown, 0);
+            }
+        }
         public static Dictionary<string, Keys[]> KeyMap = new Dictionary<string, Keys[]>
         {
             { "打开",     [Keys.LWin]},
@@ -196,8 +284,9 @@ namespace keyupMusic2
                     Console.Write($"\r{segmentIndex}: {lastText}");
 
                     //Common.log($"{segmentIndex}-{lastText}" + "--------" + time_last.ToString("yyyy-MM-dd HH:mm:ss.fff") + "--------" + time_last.AddMilliseconds(2000).ToString("yyyy-MM-dd HH:mm:ss.fff") + "-----" + DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss.fff"));
-                    action(lastText, segmentIndex);
-                    aaaEvent(lastText, segmentIndex);
+                    //action(lastText, segmentIndex);
+                    //aaaEvent(lastText, segmentIndex);
+                    handle_word(lastText, segmentIndex);
 
                     time_last = DateTime.Now;
                 }

@@ -1,9 +1,6 @@
 using System.Diagnostics;
-using System.Security.Principal;
-using WGestures.Common.OsSpecific.Windows;
-using WGestures.Core.Impl.Windows;
 using static keyupMusic2.Common;
-using static WGestures.Core.Impl.Windows.MouseKeyboardHook;
+using static keyupMusic2.MouseKeyboardHook;
 
 namespace keyupMusic2
 {
@@ -16,9 +13,8 @@ namespace keyupMusic2
         All Bbb;
         Super super;
         Chrome chrome;
-
-        bool not_init_show = is_ctrl() || Position.Y == 0;
-        bool not_mouse_hook = !is_ctrl() && Position.Y != 1439;
+        bool not_init_show = (is_ctrl() && !is_shift()) || Position.Y == 0;
+        bool not_mouse_hook = !((is_ctrl() && !is_shift()) || Position.Y == 1439);
 
         public Huan()
         {
@@ -26,6 +22,7 @@ namespace keyupMusic2
             InitializeComponent();
 
             try_restart_in_admin();
+            releas_self_restart_keyup_lost();
             startListen();
 
             aCPhoenix = new ACPhoenix();
@@ -35,38 +32,14 @@ namespace keyupMusic2
             Bbb = new All();
             super = new Super(this);
             chrome = new Chrome();
-
-            //new TcpServer(this);
         }
 
-        private void Form1_Load(object sender, EventArgs e)
-        {
-            int currentProcessId = Process.GetCurrentProcess().Id;
-            Process[] processes = Process.GetProcessesByName(Common.keyupMusic2);
-            foreach (Process process in processes)
-                if (process.Id != currentProcessId)
-                    process.Kill();
-
-            if (not_init_show)
-            {
-                Common.FocusProcess(Common.douyin);
-                Common.FocusProcess(Common.ACPhoenix);
-                SetVisibleCore(false);
-                TaskRun(() => { Invoke(() => SetVisibleCore(false)); }, 200);
-            }
-            Location = new Point(Screen.PrimaryScreen.Bounds.Width - 310, 100);
-
-            startPoint = new Point(Location.X - 300, Location.Y);
-            endPoint = Location;
-        }
         public bool keyupMusic2_onlisten = false;
         DateTime super_listen_time = new DateTime();
         static int super_listen_tick = 144 * 14;
         Double timerMove_Tick_tick = super_listen_tick;
         public MouseKeyboardHook _mouseKbdHook;
-        static string lastText = "";
-        static int last_index = 0;
-        Keys[] special_key = new Keys[] { Keys.F22, Keys.RControlKey, Keys.RShiftKey, Keys.RMenu, Keys.RWin, Keys.MediaPreviousTrack };
+        Keys[] special_key = { Keys.F22, Keys.RControlKey, Keys.RShiftKey, Keys.RMenu, Keys.RWin, Keys.MediaPreviousTrack };
 
         public void hook_KeyUp(KeyboardHookEventArgs e)
         {
@@ -79,8 +52,6 @@ namespace keyupMusic2
         public bool judge_handled(KeyboardHookEventArgs e, string ProcessName)
         {
             if (is_alt() && is_down(Keys.Tab)) return false;
-            //if (e.key == Keys.D1 && is_down(Keys.LWin)) return true;
-            //if (e.key == Keys.D2 && is_down(Keys.LWin)) return true;
             if (e.key == Keys.F3) return true;
             if (e.key == Keys.F9) return true;
 
@@ -91,11 +62,6 @@ namespace keyupMusic2
                     var list = new List<string>() { Common.devenv, Common.explorer };
                     if (list.Contains(ProcessName)) return true;
                 }
-                //if (Not_F10_F11_F12_Delete(true))
-                //{
-                //    var list = new List<string>() { Common.msedge, Common.chrome };
-                //    if (list.Contains(ProcessName)) return true;
-                //}
             }
             if (ProcessName == Common.ACPhoenix)
             {
@@ -136,13 +102,13 @@ namespace keyupMusic2
             if (e.Type != KeyboardEventType.KeyDown) return;
             if (Common.hooked) return;
             if (is_down(Keys.LWin)) return;
-            if (is_alt() && (e.key == Keys.F4 || e.key == Keys.Tab)) { special_key_quick_yo(e); ; return; }
+            if (is_alt() && (e.key == Keys.F4 || e.key == Keys.Tab)) { return; }
             if (stop_keys.ContainsKey(e.key)) return;
             if (stop_keys.Count >= 8) { Dispose(); return; }
 
             FreshProcessName();
             if (keyupMusic2_onlisten &&
-                (e.key != Keys.Left && e.key != Keys.Right && e.key != Keys.T)) { /*super_listen_clear(Color.White); */e.Handled = true; }
+                (e.key != Keys.Left && e.key != Keys.Right && e.key != Keys.T && e.key != Keys.F5)) { /*super_listen_clear(Color.White); */e.Handled = true; }
             if (judge_handled(e, ProcessName)) { last_handled_key = e.key; e.Handled = true; }
 
             Task.Run(() =>
@@ -150,16 +116,12 @@ namespace keyupMusic2
                 handle_special_or_normal_key(e);
                 print_easy_read();
                 quick_volume_zero();
+                start_record(e);
                 //special_key_quick_yo(e);
             });
 
             if (e.key == Keys.F9)
             {
-                //timer = new System.Windows.Forms.Timer();
-                //timer.Interval = 3000;
-                //timer.Tick += Timer_Tick;
-                //timer.Start();
-
                 press(Keys.MediaStop);
                 if (!no_sleep) { Timer_Tick(200); return; }
                 TaskRun(() => { Timer_Tick(); }, 70000);
@@ -175,9 +137,10 @@ namespace keyupMusic2
             {
                 if (keyupMusic2_onlisten)
                 {
-                    Invoke(() => { SetVisibleCore2(last_visiable); });
-                    last_visiable = false;
+                    var aa = temp_visiable;
+                    temp_visiable = false;
                     keyupMusic2_onlisten = false;
+                    Invoke(() => { SetVisibleCore(aa); });
                     return;
                 }
                 form_move();
@@ -195,7 +158,7 @@ namespace keyupMusic2
                     Douyin.hook_KeyDown_ddzzq(e);
                     chrome.handlehandle(e);
 
-                    Aaa.hook_KeyDown_ddzzq(e);
+                    Aaa.hook_KeyDown(e);
                     Bbb.hook_KeyDown_ddzzq(e);
 
                     Music.hook_KeyDown_keyupMusic2(e);
@@ -209,6 +172,14 @@ namespace keyupMusic2
             }
         }
 
+        private void start_record(KeyboardHookEventArgs e)
+        {
+            if (Super.start_record)
+            {
+                log_process(e.key.ToString());
+            }
+        }
+
         private static bool no_sleep = true;
         private static void Timer_Tick(int tick = 1000)
         {
@@ -218,43 +189,17 @@ namespace keyupMusic2
             press("LWin;1650,1300;1650,1140", tick);
             no_sleep = true;
         }
-        private void special_key_quick_yo(KeyboardHookEventArgs e)
-        {
-            if (e.key == Keys.F4 || e.key == Keys.LMenu || e.key == Keys.Tab)
-            {
-                Task.Run(() =>
-                {
-                    FreshProcessName();
-                    Thread.Sleep(100);
-                    FreshProcessName();
-                });
-            }
-        }
-        public bool last_visiable = false;
-        private void form_move()
-        {
-            Invoke2(() =>
-            {
-                if (Opacity == 0) { return; }
-                if (!Visible) { SetVisibleCore(true); last_visiable = true; }
-                timerMove.Interval = 1;
-                timerMove.Tick += timerMove_Tick;
-                timerMove.Start();
-                Location = startPoint;
-                startTime = DateTime.Now;
-            });
-        }
-
         private void handle_special_or_normal_key(KeyboardHookEventArgs e)
         {
-            if (!stop_keys.ContainsKey(e.key))
-            {
-                if (e.key == Keys.F9) { return; }
-                string _ProcessName = "";
-                if (special_key.Contains(e.key) || log_always) _ProcessName = log_process(e.key.ToString());
-                if (e.key == Keys.F22 && (_ProcessName == "WeChatAppEx" || _ProcessName == "WeChat")) { e.Handled = true; }
-                stop_keys.Add(e.key, ProcessName);
-            }
+            lock (stop_keys)
+                if (!stop_keys.ContainsKey(e.key))
+                {
+                    if (e.key == Keys.F9) { return; }
+                    string _ProcessName = "";
+                    if (special_key.Contains(e.key) || log_always) _ProcessName = log_process(e.key.ToString());
+                    if (e.key == Keys.F22 && (_ProcessName == "WeChatAppEx" || _ProcessName == "WeChat")) { e.Handled = true; }
+                    stop_keys.Add(e.key, ProcessName);
+                }
         }
         private void print_easy_read()
         {
@@ -264,7 +209,7 @@ namespace keyupMusic2
             {
                 string asd = string.Join("", _stop_keys.Select(key => easy_read(key.ToString())));
                 if (label1.Text == asd) asd += " " + DateTimeNow2();
-                label1.Text = speak_word + "" + asd;
+                label1.Text = Listen.speak_word + "" + asd;
             }
             );
         }
@@ -274,7 +219,7 @@ namespace keyupMusic2
             if (stop_keysCopy.Count(key => key.Key != Keys.VolumeDown) >= 5 && VolumeDown_time.AddSeconds(3) < DateTime.Now)
             {
                 VolumeDown_time = DateTime.Now;
-                for (Int32 i = 0; i < 50; i++) press(Keys.VolumeDown, 0);
+                press(Keys.VolumeDown, 50, 0);
             }
         }
 
@@ -291,6 +236,21 @@ namespace keyupMusic2
         private static string easy_read(Keys asd)
         {
             return easy_read(asd.ToString());
+        }
+
+        public bool temp_visiable = false;
+        private void form_move()
+        {
+            Invoke2(() =>
+            {
+                if (Opacity == 0) { return; }
+                if (!Visible) { temp_visiable = true; SetVisibleCore(true); }
+                timerMove.Interval = 1;
+                timerMove.Tick += timerMove_Tick;
+                timerMove.Start();
+                Location = startPoint;
+                startTime = DateTime.Now;
+            });
         }
 
         private void super_listen()
@@ -312,101 +272,32 @@ namespace keyupMusic2
             keyupMusic2_onlisten = false;
             BackColor = color;
         }
-        public static string speak_word = "";
-        public static int sssssegmentIndex;
-        public void handle_word(string text, int segmentIndex, bool show = true)
+
+        private Point startPoint = new Point(1510, 100);
+        private Point endPoint = new Point(2250, 100);
+        private DateTime startTime;
+        public static bool log_always;
+
+        private void timerMove_Tick(object sender, EventArgs e)
         {
-            if (segmentIndex == sssssegmentIndex) { return; }
-            speak_word = text + "_";
-            //if (text == "UP") { press(Keys.PageUp, 0); return; }
-            press(Keys.PageDown, 0);
-            sssssegmentIndex = segmentIndex;
-            return;
-            if (show) this.Invoke(new MethodInvoker(() => { label1.Text = text; }));
-            //if (ProcessName == msedge)
+            TimeSpan elapsed = DateTime.Now - startTime;
 
-            string text_backup = text;
-
-            string a = "", b = "", b1 = "", b2 = "", b3 = "", b4 = "", c = "";
-
-            a = lastText;
-            if (!string.IsNullOrEmpty(a))
-                b = text.Replace(a, "");
+            if (elapsed.TotalMilliseconds <= timerMove_Tick_tick)
+            {
+                int currentX = (int)(startPoint.X + (endPoint.X - startPoint.X) * (elapsed.TotalMilliseconds / timerMove_Tick_tick));
+                int currentY = startPoint.Y;
+                Location = new Point(currentX, currentY);
+            }
             else
-                b = text;
-            if (b.Length >= 1) b1 = b.Substring(0, 1);
-            if (b.Length >= 2) b2 = b.Substring(0, 2);
-            if (b.Length >= 3) b3 = b.Substring(0, 3);
-            if (b.Length >= 4) b4 = b.Substring(0, 4);
-            c = text;
-            //log($"{a}    {b}    {c}");
-
-            lastText = text;
-
-            if (KeyMap.TryGetValue(b, out Keys[] keys))
             {
-                press(keys, 100);
-            }
-            else if (KeyMap.TryGetValue(b1, out Keys[] keysb1))
-            {
-                press(keysb1, 100);
-            }
-            else if (KeyMap.TryGetValue(b2, out Keys[] keysb2))
-            {
-                press(keysb2, 100);
-            }
-            else if (KeyMap.TryGetValue(b3, out Keys[] keysb3))
-            {
-                press(keysb3, 100);
-            }
-            else if (KeyMap.TryGetValue(b4, out Keys[] keysb4))
-            {
-                press(keysb4, 100);
-            }
-            else if (c.Length > 2 && c.IndexOf("打开") >= 0 && !string.IsNullOrEmpty(b))
-            {
-                Invoke(() => Clipboard.SetText(b1));
-                press([Keys.ControlKey, Keys.V]);
-
-                //press(Keys.Enter);
-            }
-            else if (c.Length > 2 && c.IndexOf("输入") >= 0 && !string.IsNullOrEmpty(b))
-            {
-                Invoke(() => Clipboard.SetText(b1));
-                press([Keys.ControlKey, Keys.V]);
-            }
-            else if (KeyMap.TryGetValue(c, out Keys[] keys3))
-            {
-                press(keys3, 100);
-            }
-            else if (c == "显示")
-            {
-                Common.FocusProcess(Process.GetCurrentProcess().ProcessName);
-                Invoke(() => SetVisibleCore(true));
-            }
-            else if (c == "连接")
-            {
-                press("LWin;OPEN;Enter;500;1056, 411;1563, 191", 101);
-            }
-            else if (c == "隐藏")
-            {
-                Invoke(() => SetVisibleCore(false));
-            }
-            else if (c == "边框")
-            {
-                Invoke(() => FormBorderStyle = FormBorderStyle == FormBorderStyle.None ? FormBorderStyle.Sizable : FormBorderStyle.None);
-            }
-            else if (c == "下" || c == "NEXT")
-            {
-                if (ProcessName == msedge)
-                    press(Keys.PageDown, 0);
+                Location = endPoint;
+                timerMove.Stop();
+                if (temp_visiable) { temp_visiable = false; SetVisibleCore(false); }
+                temp_visiable = false;
             }
         }
-        public static Dictionary<string, Keys[]> KeyMap = Listen.KeyMap;
         private void label1_Click(object sender, EventArgs e)
         {
-            //Point cursorPos = Cursor.Position;
-            //contextMenuStrip1.Show(cursorPos);
         }
         public void startListen()
         {
@@ -418,7 +309,7 @@ namespace keyupMusic2
             if (not_mouse_hook)
             {
                 _mouseKbdHook.MouseHookEvent += new biu(this).MouseHookProc;
-                _mouseKbdHook.MouseHookEvent += new Douyin_game(this).MouseHookProc;
+                //_mouseKbdHook.MouseHookEvent += new Douyin_game(this).MouseHookProc;
             }
             _mouseKbdHook.Install();
         }
@@ -480,7 +371,13 @@ namespace keyupMusic2
                 SetVisibleCore(false);
             }
         }
-
+        protected override void SetVisibleCore(bool value)
+        {
+            base.SetVisibleCore(value);
+            key_sound = value;
+            if (temp_visiable) key_sound = false;
+            if (!value) player.Stop();
+        }
         public void SetVisibleCore2(bool a)
         {
             SetVisibleCore(a);
@@ -488,29 +385,6 @@ namespace keyupMusic2
         public void Invoke2(Action action, int tick = 0)
         {
             Task.Run(() => { Thread.Sleep(tick); this.Invoke(action); });
-        }
-
-        private Point startPoint = new Point(1510, 100);
-        private Point endPoint = new Point(2250, 100);
-        private DateTime startTime;
-        public static bool log_always;
-
-        private void timerMove_Tick(object sender, EventArgs e)
-        {
-            TimeSpan elapsed = DateTime.Now - startTime;
-
-            if (elapsed.TotalMilliseconds <= timerMove_Tick_tick)
-            {
-                int currentX = (int)(startPoint.X + (endPoint.X - startPoint.X) * (elapsed.TotalMilliseconds / timerMove_Tick_tick));
-                int currentY = startPoint.Y;
-                Location = new Point(currentX, currentY);
-            }
-            else
-            {
-                Location = endPoint;
-                timerMove.Stop();
-                if (last_visiable) { SetVisibleCore(false); last_visiable = false; }
-            }
         }
         private void try_restart_in_admin()
         {
@@ -528,11 +402,27 @@ namespace keyupMusic2
             {
                 Text = Text + "(非管理员)";
             }
-            //if (!ExsitProcess(keyupMusic3))
-            //{
-            //    ProcessRun(keyupMusic3exe);
-            //    Focus();
-            //}
+        }
+
+        private void Form1_Load(object sender, EventArgs e)
+        {
+            int currentProcessId = Process.GetCurrentProcess().Id;
+            Process[] processes = Process.GetProcessesByName(Common.keyupMusic2);
+            foreach (Process process in processes)
+                if (process.Id != currentProcessId)
+                    process.Kill();
+
+            if (not_init_show)
+            {
+                Common.FocusProcess(Common.douyin);
+                Common.FocusProcess(Common.ACPhoenix);
+                SetVisibleCore(false);
+                TaskRun(() => { Invoke(() => SetVisibleCore(false)); }, 200);
+            }
+            Location = new Point(Screen.PrimaryScreen.Bounds.Width - 310, 100);
+
+            startPoint = new Point(Location.X - 300, Location.Y);
+            endPoint = Location;
         }
         public void Invoke(Action method)
         {
@@ -542,5 +432,19 @@ namespace keyupMusic2
                 log(ex.Message);
             }
         }
+
+        private void releas_self_restart_keyup_lost()
+        {
+            TaskRun(() =>
+            {
+                if (is_down(Keys.RControlKey))
+                    SSSS.KeyUp(Keys.RControlKey);
+                if (is_down(Keys.RShiftKey))
+                    SSSS.KeyUp(Keys.RShiftKey);
+                if (is_down(Keys.F5))
+                    SSSS.KeyUp(Keys.F5);
+            }, 1000);
+        }
+
     }
 }

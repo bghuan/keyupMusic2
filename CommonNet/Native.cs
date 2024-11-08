@@ -2,7 +2,7 @@
 using System.Runtime.InteropServices;
 using System.Text;
 
-namespace WGestures.Common.OsSpecific.Windows
+namespace keyupMusic2
 {
     public static class Native
     {
@@ -49,7 +49,8 @@ namespace WGestures.Common.OsSpecific.Windows
 
         [DllImport("user32.dll")]
         public static extern int CallNextHookEx(IntPtr idHook, int nCode, int wParam, ref keyboardHookStruct lParam);
-
+        public static int VK_LBUTTON = 0x01;
+        public static int VK_RBUTTON = 0x02;
 
         [DllImport("user32.dll")]
         public static extern short GetAsyncKeyState(Keys vKey);

@@ -1,12 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using static WGestures.Core.Impl.Windows.MouseKeyboardHook;
-
-using static keyupMusic2.Common;
-using System.Diagnostics;
+﻿using static keyupMusic2.Common;
+using static keyupMusic2.MouseKeyboardHook;
 
 namespace keyupMusic2
 {
@@ -17,7 +10,7 @@ namespace keyupMusic2
         string[] list_volume = { Common.douyin, Common.msedge };
         static bool flag_special = false;
 
-        public void hook_KeyDown_ddzzq(KeyboardHookEventArgs e)
+        public void hook_KeyDown(KeyboardHookEventArgs e)
         {
             string module_name = ProcessName;
             //flag_special = is_down(Keys.Delete);
@@ -39,10 +32,6 @@ namespace keyupMusic2
                     else if (Common.devenv == module_name)
                     {
                         HideProcess(module_name);
-                    }
-                    else if (Common.msedge == module_name && is_douyin())
-                    {
-                        press_close();
                     }
                     else if (list_wechat_visualstudio.Contains(module_name) || flag_special)
                     {
@@ -92,9 +81,17 @@ namespace keyupMusic2
                     switch (e.key)
                     {
                         case Keys.PageDown:
-                            if (e.X > screenWidth) press(Keys.VolumeDown, 5, 0); break;
+                            if (e.X > screenWidth||is_down(Native.VK_RBUTTON))
+                                press(Keys.VolumeDown, 5, 0); break;
                         case Keys.PageUp:
-                            if (e.X > screenWidth) press(Keys.VolumeUp, 5, 0); break;
+                            if (e.X > screenWidth)
+                                press(Keys.VolumeUp, 5, 0); break;
+                        case Keys.Right:
+                            if (ProcessTitle?.IndexOf("起点中文网") >= 0)
+                                press(Keys.PageDown, 0); break;
+                        case Keys.Left:
+                            if (ProcessTitle?.IndexOf("起点中文网") >= 0)
+                                press(Keys.PageUp, 0); break;
                     }
                     break;
             }

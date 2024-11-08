@@ -1,10 +1,9 @@
-﻿using keyupMusic2;
-using WGestures.Core.Impl.Windows;
-using static keyupMusic2.Common;
+﻿using static keyupMusic2.Common;
+using static keyupMusic2.Simulate;
 
 namespace keyupMusic2
 {
-    public class biu
+    public partial class biu
     {
         public biu(Form parentForm)
         {
@@ -20,6 +19,7 @@ namespace keyupMusic2
         bool left_left_click = false;
         bool left_down_click = false;
         bool right_up_click = false;
+        bool right_up_f = false;
         bool right_down_click = false;
         private static readonly object _lockObject_handing2 = new object();
         MouseKeyboardHook.MouseHookEventArgs e = null;
@@ -105,21 +105,14 @@ namespace keyupMusic2
                 x_button_dowing = true;
                 Task.Run(() =>
                 {
-                    //if (e.Y == 0 && e.X == 0)
-                    //    press("2222,1410;100;2222,1120", 1);
-                    //else if ((e.Y == 0 || e.Y + 1 == screenHeight) && e.X < screenWidth)
-                    //Simulate.Sim.KeyPress(Keys.X);
-                    //else
-                    //    KeyboardInput.PressKey(Keys.H);
-                    //mouse_move(2221, 1407);
-                    if (e.X < screenWidth1 && e.Y == 0) 
-                        Simulate.Sim.KeyPress(Keys.H);
+                    if (e.X < screenWidth1 && e.Y == 0)
+                        SS().KeyPress(Keys.H);
                     else if (e.X == screenWidth1 && e.Y == 0)
                         press("2222,1410;100;2222,1120", 1);
                     else if (e.X == screenWidth1 && e.Y == screenHeight1)
-                        Simulate.Sim.KeyPress(Keys.R);
-                    else 
-                        Simulate.Sim.KeyPress(Keys.X);
+                    { SS().KeyPress(Keys.R); mouse_move(2384, 1237); }
+                    else
+                        SS().KeyPress(Keys.X);
                 });
             }
             else if (x_button_dowing && e.Msg == MouseMsg.WM_XBUTTONUP && is_douyin())
@@ -186,22 +179,18 @@ namespace keyupMusic2
         }
         public void Devenv()
         {
-            //if (ProcessName != keyupMusic2.Common.devenv) return;
+            if (ProcessName != keyupMusic2.Common.devenv) return;
 
-            //if (e.Msg == MouseMsg.WM_LBUTTONDOWN)
-            //{
-            //    if ((e.Y == 0) && (e.X < (2560 / 2)))
-            //    {
-            //        if (judge_color(82, 68, Color.FromArgb(189, 64, 77)))
-            //            press([Keys.LControlKey, Keys.LShiftKey, Keys.F5]);
-            //        else
-            //            press([Keys.F5]);
-            //    }
-            //    else if ((e.Y == 0) && (e.X < 2560))
-            //    {
-            //        press([Keys.LShiftKey, Keys.F5]);
-            //    }
-            //}
+            if (e.Msg == MouseMsg.WM_RBUTTONUP)
+            {
+                if ((e.Y != 0)) return;
+                if (ProcessTitle?.IndexOf("正在运行") >= 0)
+                    press([Keys.RControlKey, Keys.RShiftKey, Keys.F5]);
+                //Task.Run(() => Sim.KeyPress([Keys.RControlKey, Keys.RShiftKey, Keys.F5]));
+                //press("115, 69",101);
+                else
+                    press([Keys.F5]);
+            }
         }
         int expect_cornor_edge = 50;
         public void ScreenEdgeClick()
@@ -234,8 +223,10 @@ namespace keyupMusic2
                 {
                     //if (!not_allow && IsFullScreen()) return;
                     if (is_douyin()) return;
+                    if (right_up_f && ProcessName == Common.chrome) SS().KeyPress(Keys.F);
+                    right_up_f = false;
                     left_left_click = false;
-                    mouse_click2(400);
+                    mouse_click2(0);
                 }
                 else if ((left_down_click && e.Y + 1 == screenHeight && e.X < screenWidth) && (e.X < expect_cornor_edge))
                 {
@@ -246,18 +237,20 @@ namespace keyupMusic2
                     if (!not_allow && IsFullScreen()) return;
                     if (is_douyin() && IsFullScreen()) return;
                     if (judge_color(Color.FromArgb(210, 27, 70))) { return; }
+                    if (right_up_f && ProcessName == Common.chrome) SS().KeyPress(Keys.F);
+                    right_up_f = false;
                     left_down_click = false;
                     mouse_click2(0);
                 }
                 else if (right_up_click && e.Y == 0 && e.X > screenWidth)
                 {
                     right_up_click = false;
+                    right_up_f = true;
                     mouse_click2(0);
-                    //press(Keys.Escape, 111);
-                    Simulate.Sim.KeyPress(Keys.F);
-                    //press(Keys.PageDown, 111);
+                    SS().KeyPress(Keys.F);
                     //if (!judge_color(5534, 696, Color.FromArgb(0, 0, 0)))
-                    //new SendKeyboardMouse().MouseWhell(-120 * 7);
+                    if (e.X > 5106)
+                        SS().MouseWhell(-120 * 7);
                 }
             }
         }
@@ -275,67 +268,7 @@ namespace keyupMusic2
             }
         }
         int ffff = 0;
-        public void Cornor()
-        {
-            lock (_lockObject_handing2)
-            {
-                FreshProcessName();
-                if (handing2) { handing2 = false; return; }
-                handing2 = true;
-                if (ffff != 10) ffff++;
-                if (ffff < 10) { handing2 = false; return; }
-                if (e.Msg != MouseMsg.WM_MOUSEMOVE) { handing2 = false; return; }
-                cornor = 0;
-                if (e.X == 0 && e.Y == 1439) cornor = 1;
-                else if (e.X == 0 && e.Y == 0) cornor = 2;
-                else if (e.X == 2559 && e.Y == 0) cornor = 3;
-                else if (e.X == 2559 && e.Y == 1439) cornor = 4;
-                else { handing2 = false; return; }
 
-                //if (cornor == 3 && ProcessName == ApplicationFrameHost) mouse_click_not_repeat();
-                //else if (cornor == 3 && ProcessName == explorer) mouse_click_not_repeat();
-                //else if (cornor == 3 && ProcessName == vlc) mouse_click_not_repeat();
-                //else if (cornor == 3 && ProcessName == v2rayN) mouse_click_not_repeat();
-                //else if (cornor == 3 && ProcessName == Common.devenv && ProcessTitle.Contains("正在运行"))
-                //    press([Keys.LShiftKey, Keys.F5]);
-                //else if (cornor == 3 && ProcessName == Common.devenv) HideProcess(Common.devenv);
-
-                if (cornor == 2)
-                {
-                    if (mouse_click_not_repeat_time.AddSeconds(1) > DateTime.Now) return;
-
-                    var list = new[] { msedge, chrome };
-
-                    if (is_douyin())
-                        Simulate.Sim.KeyPress(Keys.H);
-                    else if (list.Contains(Common.ProcessName))
-                        press([Keys.F11]);
-
-                    mouse_click_not_repeat_time = DateTime.Now;
-                    ffff = 0;
-                    Common.ProcessName = "";
-                }
-                else if (cornor == 3)
-                {
-                    var list = new[] { ApplicationFrameHost, explorer, vlc, v2rayN, Common.QQMusic };
-
-                    if (list.Contains(Common.ProcessName))
-                        mouse_click_not_repeat();
-                    else if (ProcessName == Common.devenv && ProcessTitle.Contains("正在运行"))
-                        press([Keys.LShiftKey, Keys.F5]);
-                    else if (ProcessName == Common.devenv)
-                        HideProcess(Common.devenv);
-
-                    ffff = 0;
-                    Common.ProcessName = "";
-                }
-                //if (cornor == 4)
-                //{
-                //    if (is_douyin()) press("2462,843");
-                //}
-                handing2 = false;
-            }
-        }
 
         private void QQMusic()
         {

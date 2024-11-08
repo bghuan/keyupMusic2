@@ -1,11 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using static WGestures.Core.Impl.Windows.MouseKeyboardHook;
-using static keyupMusic2.Common;
-using KeyEvent = WGestures.Core.Impl.Windows.MouseKeyboardHook.KeyboardHookEventArgs;
+﻿using static keyupMusic2.Common;
+using KeyEvent = keyupMusic2.MouseKeyboardHook.KeyboardHookEventArgs;
 
 namespace keyupMusic2
 {

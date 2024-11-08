@@ -1,5 +1,5 @@
 ﻿using static keyupMusic2.Common;
-using static WGestures.Core.Impl.Windows.MouseKeyboardHook;
+using static keyupMusic2.MouseKeyboardHook;
 
 namespace keyupMusic2
 {
@@ -21,8 +21,10 @@ namespace keyupMusic2
         public override bool judge_handled(KeyboardHookEventArgs e)
         {
             not_in_class = ProcessName != ClassName()
-                && ProcessName != ApplicationFrameHost
-                && ProcessTitle?.IndexOf("抖音") < 0;
+                && (ProcessName != ApplicationFrameHost || ProcessTitle?.IndexOf("照片") < 0)
+                && ProcessTitle?.IndexOf("抖音") < 0 
+                //&& (ProcessName == msedge && ProcessTitle?.IndexOf("多多自走棋") < 0)
+                ;
             if (not_in_class) return false;
             //if (judge_handled_key.Contains(e.key)) return true;
             if (is_down(Keys.F2)) return true;
@@ -58,8 +60,11 @@ namespace keyupMusic2
                 case Keys.Left:
                     click_double_speed(e, num1222);
                     break;
+                case Keys.F11:
+                    press_close();
+                    break;
             }
-            douyin_game_key(e, is_string_cmd);
+            //douyin_game_key(e, is_string_cmd);
             //if (e.key == Keys.Right)
             //{
             //    if (e.X < 800)
@@ -174,8 +179,10 @@ namespace keyupMusic2
             if (num1222 == 2) num = 5;
             else if (num1222 == 3) num = 6;
             else num = 1;
-            if (judge_color(2469, 646, Color.FromArgb(254, 44, 85)) || judge_color(1996, 1400, Color.FromArgb(254, 21, 89)))
-                press("2290.1400;2290," + (1030 + (num * 50)), 101);
+            //if (judge_color(2469, 646, Color.FromArgb(254, 44, 85)) 
+            //    || judge_color(1996, 1400, Color.FromArgb(254, 21, 89))
+            //    || judge_color(1996, 1400, Color.FromArgb(117, 46, 66)))
+            press("2290.1400;2290," + (1030 + (num * 50)), 101);
         }
 
         static string last_clip = "";

@@ -22,9 +22,10 @@
 1 mouse jump middle bottom
 1 mouse click run vs
 1 中文判断
-super zh
+0 super zh
 1 music judge mouse postion paly
 1 single log 
 1 qqmusic zh
 1 douyin_game location save file
-douyin_game input location
+1 douyin_game input location
+动态链接语音识别dll

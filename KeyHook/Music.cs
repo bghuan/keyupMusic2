@@ -1,13 +1,11 @@
-﻿using System.Media;
-using System.Runtime.InteropServices.JavaScript;
-using static keyupMusic2.Common;
-using static WGestures.Core.Impl.Windows.MouseKeyboardHook;
+﻿using static keyupMusic2.Common;
+using static keyupMusic2.MouseKeyboardHook;
 
 namespace keyupMusic2
 {
     public class Music
     {
-        static Keys[] keys = { Keys.D1, Keys.D2, Keys.D3, Keys.D4, Keys.D5, Keys.D6, Keys.D7, Keys.D8, Keys.D9, Keys.PageUp, Keys.Next, Keys.Home, Keys.End, Keys.Space };
+        static Keys[] keys = { Keys.D1, Keys.D2, Keys.D3, Keys.D4, Keys.D5, Keys.D6, Keys.D7, Keys.D8, Keys.D9, Keys.PageUp, Keys.Home, Keys.End, Keys.Space };
         static Keys last_key_sound = new Keys();
         static DateTime last_key_sound_time = DateTime.Now.AddDays(-1);
         static DateTime last_key_sound_time2 = DateTime.Now.AddDays(-1);

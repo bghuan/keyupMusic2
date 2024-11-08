@@ -1,12 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using static WGestures.Core.Impl.Windows.MouseKeyboardHook;
-
-using static keyupMusic2.Common;
-using System.Diagnostics;
+﻿using static keyupMusic2.Common;
+using static keyupMusic2.MouseKeyboardHook;
 
 namespace keyupMusic2
 {
@@ -100,17 +93,18 @@ namespace keyupMusic2
                 case Keys.Delete:
                 case Keys.Escape:
                     Special_Input = false; DaleyRun_stop = true; special_delete_key_time = DateTime.Now; player.Stop(); break;
-                //case Keys.LControlKey:
-                //    player.Stop(); break;
                 case Keys.LMenu:
-                    FreshProcessName(); break;
+                case Keys.Tab:
                 case Keys.F4:
                     Sleep(100); FreshProcessName(); break;
-                case Keys.LWin:
-                case Keys.M:
-                case Keys.Oem1:
-                case Keys.D9:
-                    play_sound_di(); break;
+                //case Keys.LWin:
+                //case Keys.M:
+                //case Keys.B:
+                //case Keys.Oem1:
+                //case Keys.D9:
+                //    play_sound_di(); break;
+                case Keys.Oem2:
+                    if (is_ctrl()) SS().KeyPress(Keys.Apps); break;
             }
 
             Common.hooked = false;

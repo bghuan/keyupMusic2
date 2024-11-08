@@ -1,12 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Diagnostics;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using static WGestures.Core.Impl.Windows.MouseKeyboardHook;
-
-using static keyupMusic2.Common;
+﻿using static keyupMusic2.Common;
+using static keyupMusic2.MouseKeyboardHook;
 
 namespace keyupMusic2
 {
@@ -21,14 +14,12 @@ namespace keyupMusic2
             switch (e.key)
             {
                 case Keys.F4:
-                    press([Keys.LShiftKey, Keys.F5]);
+                    if (ProcessTitle?.IndexOf("正在运行") >= 0)
+                        press([Keys.RShiftKey, Keys.F5]);
                     break;
                 case Keys.F5:
-                    if (judge_color(82, 68, Color.FromArgb(189, 64, 77)))
-                        press([Keys.LControlKey, Keys.LShiftKey, Keys.F5]);
-                    break;
-                case Keys.F6:
-                    press([Keys.LControlKey, Keys.LShiftKey, Keys.F5]);
+                    if (ProcessTitle?.IndexOf("正在运行") >= 0)
+                        press([Keys.RControlKey, Keys.RShiftKey, Keys.F5]);
                     break;
                     //case Keys.F11:
                     //    ProcessStartInfo startInfo = new ProcessStartInfo("taskmgr.exe");

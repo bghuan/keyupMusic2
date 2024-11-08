@@ -1,6 +1,4 @@
-﻿using static WGestures.Core.Impl.Windows.MouseKeyboardHook;
-using static keyupMusic2.Common;
-using KeyEvent = WGestures.Core.Impl.Windows.MouseKeyboardHook.KeyboardHookEventArgs;
+﻿using KeyEvent = keyupMusic2.MouseKeyboardHook.KeyboardHookEventArgs;
 
 namespace keyupMusic2
 {

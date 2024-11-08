@@ -1,6 +1,4 @@
-﻿using WGestures.Common.OsSpecific.Windows;
-
-namespace WGestures.Core.Impl.Windows
+﻿namespace keyupMusic2
 {
     public class MouseKeyboardHook : IDisposable
     {
@@ -21,7 +19,8 @@ namespace WGestures.Core.Impl.Windows
                 {
                     type = KeyboardEventType.KeyUp;
                 }
-                else return Native.CallNextHookEx(_key_hookId, code, wParam, ref lParam);
+                else 
+                    return Native.CallNextHookEx(_key_hookId, code, wParam, ref lParam);
 
                 var args = new KeyboardHookEventArgs(type, key, wParam, lParam);
                 if (stop_keys.Count == 0 || !stop_keys.ContainsKey(key) || type == KeyboardEventType.KeyUp || key == Keys.VolumeDown || key == Keys.VolumeUp)
@@ -33,6 +32,18 @@ namespace WGestures.Core.Impl.Windows
 
             return Native.CallNextHookEx(_key_hookId, code, wParam, ref lParam);
         }
+        protected virtual IntPtr MouseHookProc(int nCode, IntPtr wParam, IntPtr lParam)
+        {
+            Point curPos;
+            Native.GetCursorPos(out curPos);
+            var args = new MouseHookEventArgs((MouseMsg)wParam, curPos.X, curPos.Y, wParam, lParam);
+
+            if (MouseHookEvent != null)
+                MouseHookEvent(args);
+
+            return args.Handled ? new IntPtr(-1) : Native.CallNextHookEx(_mouse_hookId, nCode, wParam, lParam);
+        }
+
         const int WM_HOOK_TIMEOUT = 0x0400 + 1;
 
         private IntPtr _key_hookId = IntPtr.Zero;
@@ -128,18 +139,6 @@ namespace WGestures.Core.Impl.Windows
                 _mouse_hookId = IntPtr.Zero;
             }
         }
-        protected virtual IntPtr MouseHookProc(int nCode, IntPtr wParam, IntPtr lParam)
-        {
-            Point curPos;
-            Native.GetCursorPos(out curPos);
-            var args = new MouseHookEventArgs((MouseMsg)wParam, curPos.X, curPos.Y, wParam, lParam);
-
-            if (MouseHookEvent != null)
-                MouseHookEvent(args);
-
-            return args.Handled ? new IntPtr(-1) : Native.CallNextHookEx(_mouse_hookId, nCode, wParam, lParam);
-        }
-
         protected virtual void Dispose(bool disposing)
         {
             Uninstall();

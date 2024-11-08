@@ -1,7 +1,4 @@
-﻿using keyupMusic2;
-using System.Net;
-using System.Text.RegularExpressions;
-using WGestures.Core.Impl.Windows;
+﻿using System.Text.RegularExpressions;
 using static keyupMusic2.Common;
 
 namespace keyupMusic2
@@ -49,7 +46,7 @@ namespace keyupMusic2
         public void MouseHookProcDouyin(MouseKeyboardHook.MouseHookEventArgs e)
         {
             //if (ProcessName != douyin && ProcessName != ApplicationFrameHost && ProcessName != explorer) return;
-            if (ProcessName != Common.douyin && ProcessName != ApplicationFrameHost && ProcessTitle?.IndexOf("抖音") < 0) return;
+            if (ProcessName != Common.douyin && (ProcessName != ApplicationFrameHost|| ProcessTitle?.IndexOf("照片") < 0) && ProcessTitle?.IndexOf("抖音") < 0) return;
             //if (e.Msg == MouseMsg.WM_MOUSEMOVE) return;
             int x = e.X - point_start.X;
             int y = -(e.Y - point_start.Y);

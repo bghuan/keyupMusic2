@@ -1,13 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Windows.Forms;
-using WGestures.Core.Impl.Windows;
-using static WGestures.Core.Impl.Windows.MouseKeyboardHook;
-
-using static keyupMusic2.Common;
+﻿using static keyupMusic2.Common;
+using static keyupMusic2.MouseKeyboardHook;
 
 namespace keyupMusic2
 {
@@ -64,6 +56,12 @@ namespace keyupMusic2
                     break;
                 case Keys.Escape:
                     if (judge_color(2487, 936, Color.FromArgb(49, 218, 255))) break;
+                    if (judge_color(967, 114, Color.FromArgb(19, 62, 165))
+                        && judge_color(1741, 110, Color.FromArgb(19, 62, 165)))
+                    {
+                        press("2407,186");
+                        break;
+                    }
                     if (try_press(870, 1243, Color.FromArgb(26, 125, 222), () => { press("2452,185;2452,185;" + nothing, 100); })) break;
                     break;
                 case Keys.Oem3:
@@ -72,39 +70,11 @@ namespace keyupMusic2
                     down_mouse();
                     break;
                 case Keys.Enter:
-                    //if (is_ctrl()) { Clipboard.SetText("谢谢老板"); }
-                    //(135,1152, Color.FromArgb(212,29,14)
-                    //bug 向上滑动
                     if (try_press(138, 1149, Color.FromArgb(222, 35, 10), () => { press("200,710", 101); })) break;
-                    //if (try_press(0, 1439, Color.FromArgb(79, 122, 238), () => { }) && !judge_color(1110, 1414, Color.FromArgb(249, 249, 249)))
-                    //{
-                    //    press(nothing4);
-                    //    break;
-                    //}
                     break;
                 case Keys.Oem7:
-                    //if (!judge_color(1353, 1407, Color.FromArgb(255, 162, 16), () => { })) break;
-                    //press("Back;", 0);
-                    ////ctrl_shift(true);
-                    //KeyboardInput.SendString("xiexielaoban");
-                    //press(Keys.Space);
-                    //break;
-                    press("Back;", 0);
-                    Simulate.Sim.SendString("谢谢老板");
-                    //Simulate.SendString2("x");
-                    //Thread.Sleep(200);
-                    //if (judge_color(1076, 1416, Color.FromArgb(249, 249, 249), () => { }))
-                    //{
-                    //    Simulate.SendString2("iexielaoban");
-                    //    press(Keys.Space);
-                    //}
-                    //else
-                    //{
-                    //    press("Back;", 0);
-                    //    press(Keys.LShiftKey);
-                    //    Simulate.Sim.SendString("xiexielaoban");
-                    //    press(Keys.Space);
-                    //}
+                    if (!judge_color(1353, 1407, Color.FromArgb(255, 162, 16), () => { })) break;
+                    SS(10).KeyPress(new Keys[] { Keys.LControlKey, Keys.A }, "谢谢老板");
                     break;
                 case Keys.Z:
                     if (judge_color(2141, 214, Color.FromArgb(215, 214, 216), null, 10)) { press(Keys.E); break; }
@@ -113,6 +83,7 @@ namespace keyupMusic2
                     if (!is_ctrl() && !is_alt()) break;
                     press("2473,50;2472,50;1115,324;", 100);
                     press("_;272.700;272.600;272.400;272.330;100;-;272,330", 100);
+                    //Ssss.MouseWhell(-120 * 10);
                     break;
                 case Keys.X:
                     if (judge_color(2141, 214, Color.FromArgb(215, 214, 216), null, 10)) { press(Keys.E); break; }
@@ -128,7 +99,6 @@ namespace keyupMusic2
                 case Keys.D7:
                 case Keys.D8:
                     int num = int.Parse(e.key.ToString().Replace("D", ""));
-                    //if (judge_color(515, 25, Color.FromArgb(9, 72, 177), () => { press("800," + (num * 170 + 510 - 170) + ";Space", 1); })) break;
                     if (!is_ctrl() && !is_alt()) break;
                     press("300," + (num * 104 + 100), 1);
                     break;
@@ -145,18 +115,6 @@ namespace keyupMusic2
                     if (is_ctrl() || is_alt()) { mouse_move(2139, 336); }
                     raw_press();
                     break;
-                //case Keys.S:
-                //    if (is_ctrl()) { down_mouse(); press("10;S;10", 0); up_mouse(); break; }
-                //    break;
-                //case Keys.W:
-                //    //if (is_ctrl()) { down_mouse(); press("60;S", 0); up_mouse(); break; }
-                //    //if (judge_color(170, 892, Color.FromArgb(185, 194, 205), () => { raw_press(); })) break;
-                //    //if (judge_color(2202, 644, Color.FromArgb(239, 116, 108), () => { press("963,946"); })) break;//装备2
-                //    if (judge_color(0, 1439, Color.FromArgb(79, 122, 238), () => { })) break;
-                //    if (is_ctrl() || is_alt()) { mouse_click(); mouse_click(); break; }
-                //    mouse_downing = true;
-                //    down_mouse();
-                //    break;
                 case Keys.R:
                     //if (judge_color(2202, 644, Color.FromArgb(239, 116, 108), () => { press("2220,938"); })) break;//装备4
                     //(2413,1089, Color.FromArgb(231,125,8)(1807,1125, Color.FromArgb(32,52,75)(2002,349, Color.FromArgb(255,139,0)
@@ -195,7 +153,6 @@ namespace keyupMusic2
                     }
                     break;
                 case Keys.PageDown:
-                    HideProcess(chrome);
                     var altTabProcess = AltTabProcess();
                     switch (altTabProcess)
                     {
