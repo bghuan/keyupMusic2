@@ -978,15 +978,14 @@ namespace keyupMusic2
                 player.Play();
             }
         }
-        public static void play_sound_di()
+        public static void play_sound_di(int tick = 0)
         {
             string wav = "wav\\d2.wav";
             if (!File.Exists(wav)) return;
 
-            player2 = new SoundPlayer(wav);
-            Thread t2 = new Thread(() => player2.Play());
-            t2.Start();
-            //player2.Play();
+            player = new SoundPlayer(wav);
+            player.Play();
+            Sleep(tick);
         }
         public static void HttpGet(string url)
         {
@@ -1029,7 +1028,6 @@ namespace keyupMusic2
             }
             return keys;
         }
-
 
     }
 }

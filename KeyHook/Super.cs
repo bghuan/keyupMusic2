@@ -53,6 +53,7 @@ namespace keyupMusic2
                     key_sound = !key_sound;
                     break;
                 case Keys.T:
+                    SSSS.KeyPress("多发发发大");
                     break;
                 case Keys.Y:
                     Common.cmd($"/c start ms-settings:taskbar");

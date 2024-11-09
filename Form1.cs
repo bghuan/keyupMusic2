@@ -32,6 +32,8 @@ namespace keyupMusic2
             Bbb = new All();
             super = new Super(this);
             chrome = new Chrome();
+
+            new TcpServer(this);
         }
 
         public bool keyupMusic2_onlisten = false;
@@ -123,7 +125,7 @@ namespace keyupMusic2
             if (e.key == Keys.F9)
             {
                 press(Keys.MediaStop);
-                if (!no_sleep) { Timer_Tick(200); return; }
+                if (!no_sleep) { Task.Run(() => Timer_Tick(200)); return; }
                 TaskRun(() => { Timer_Tick(); }, 70000);
                 Task.Run(() =>
                 {
@@ -183,11 +185,15 @@ namespace keyupMusic2
         private static bool no_sleep = true;
         private static void Timer_Tick(int tick = 1000)
         {
-            if (no_sleep) return;
             // 执行系统睡眠命令
             //Process.Start("rundll32.exe", "powrprof.dll,SetSuspendState 0,1,1");
-            press("LWin;1650,1300;1650,1140", tick);
+            if (no_sleep) return;
             no_sleep = true;
+            Task.Run(() => press("LWin;1650,1300;1650,1140", tick));
+            for (int i = 0; i < 10; i++)
+            {
+                play_sound_di(1000);
+            }
         }
         private void handle_special_or_normal_key(KeyboardHookEventArgs e)
         {
@@ -414,11 +420,10 @@ namespace keyupMusic2
 
             if (not_init_show)
             {
-                Common.FocusProcess(Common.douyin);
-                Common.FocusProcess(Common.ACPhoenix);
                 SetVisibleCore(false);
                 TaskRun(() => { Invoke(() => SetVisibleCore(false)); }, 200);
             }
+            Common.FocusProcess(Common.ACPhoenix);
             Location = new Point(Screen.PrimaryScreen.Bounds.Width - 310, 100);
 
             startPoint = new Point(Location.X - 300, Location.Y);

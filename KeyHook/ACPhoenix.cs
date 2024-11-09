@@ -73,8 +73,9 @@ namespace keyupMusic2
                     if (try_press(138, 1149, Color.FromArgb(222, 35, 10), () => { press("200,710", 101); })) break;
                     break;
                 case Keys.Oem7:
-                    if (!judge_color(1353, 1407, Color.FromArgb(255, 162, 16), () => { })) break;
-                    SS(10).KeyPress(new Keys[] { Keys.LControlKey, Keys.A }, "谢谢老板");
+                    //if (!judge_color(1353, 1407, Color.FromArgb(255, 162, 16), () => { })) break;
+                    //SS(100).KeyPress(new Keys[] { Keys.LControlKey, Keys.A }, "谢谢老板");
+                    SS(100).KeyPress("谢谢老板");
                     break;
                 case Keys.Z:
                     if (judge_color(2141, 214, Color.FromArgb(215, 214, 216), null, 10)) { press(Keys.E); break; }

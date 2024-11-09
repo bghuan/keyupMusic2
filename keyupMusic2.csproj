@@ -7,7 +7,7 @@
     <UseWindowsForms>true</UseWindowsForms>
     <ImplicitUsings>enable</ImplicitUsings>
     <StartupObject>keyupMusic2.Program</StartupObject>
-    <ApplicationIcon>ztemp\b (5).ico</ApplicationIcon>
+    <ApplicationIcon>Other\b.ico</ApplicationIcon>
     <PackageIcon></PackageIcon>
     <AllowUnsafeBlocks>False</AllowUnsafeBlocks>
     <UseWPF>False</UseWPF>
@@ -40,7 +40,12 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Content Include="ztemp\b (5).ico" />
+    <None Remove=".gitattributes" />
+    <None Remove=".gitignore" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Content Include="Other\b.ico" />
   </ItemGroup>
 
   <ItemGroup>

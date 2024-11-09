@@ -8,6 +8,7 @@ namespace keyupMusic2
     public class TcpServer
     {
         private const string Hostname = "127.0.0.1";
+        private const int pport = 13000;
         public static Huan huan;
 
         static TcpListener listener;
@@ -19,7 +20,7 @@ namespace keyupMusic2
             huan = (Huan)parentForm;
             StartServer();
         }
-        public static void StartServer(int port = 13000)
+        public static void StartServer(int port = pport)
         {
             Task.Run(() =>
             {
@@ -55,7 +56,7 @@ namespace keyupMusic2
 
                     byte[] bytes = new byte[256];
                     int i;
-                    while ((i = stream.Read(bytes, 0, bytes.Length)) > 0||15>4)
+                    while ((i = stream.Read(bytes, 0, bytes.Length)) > 0)
                     {
                         string dataReceived = Encoding.UTF8.GetString(bytes, 0, i);
                         Invoke(dataReceived);
@@ -92,7 +93,11 @@ namespace keyupMusic2
         }
         public static void Invoke(string msg)
         {
-            huan.Invoke(() => { huan.label2.Text = msg; });
+            if (!string.IsNullOrEmpty(msg))
+            {
+                if (Band.band_handle(msg)) { Band.Button1(); return; }
+                huan.Invoke(() => { huan.label1.Text = msg; });
+            }
         }
         private static DateTime lastSendTime = DateTime.MinValue;
         public static string lastMessageToSend;
@@ -109,7 +114,7 @@ namespace keyupMusic2
                     if (client == null || stream == null || client.Connected == false)
                     {
                         restart_times++;
-                        client = new TcpClient(Hostname, 13000);
+                        client = new TcpClient(Hostname, pport);
                         stream = client.GetStream();
                         Thread.Sleep(1000);
                     }
@@ -128,11 +133,11 @@ namespace keyupMusic2
                     Console.WriteLine("发送数据时发生错误：" + ex.Message);
                 }
             });
-            }   
+        }
         public static void CheckAndSendPendingMessage(string txt)
         {
             var now = DateTime.Now;
-            if ((now.Subtract(lastSendTime).TotalMilliseconds > 100 || lastSendTime == DateTime.MinValue)&& txt!= lastMessageToSend)
+            if ((now.Subtract(lastSendTime).TotalMilliseconds > 100 || lastSendTime == DateTime.MinValue) && txt != lastMessageToSend)
             {
                 try
                 {
