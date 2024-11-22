@@ -29,6 +29,11 @@ namespace keyupMusic2
                         press("500;", 100);
                         run_vis();
                     }
+                    //else if (is_douyin())
+                    //{
+                    //    if (Common.FocusProcess(Common.devenv)) break;
+                    //    run_vis();
+                    //}
                     else if (Common.devenv == module_name)
                     {
                         HideProcess(module_name);
@@ -42,6 +47,14 @@ namespace keyupMusic2
                 case Keys.F12:
                     if (is_ctrl()) break;
                     if (!Not_F10_F11_F12_Delete()) break;
+                    // if (is_douyin())
+                    //{
+                    //    Common.FocusProcess(Common.WeChat);
+                    //    Thread.Sleep(10);
+                    //    if (ProcessName2 == Common.WeChat) break;
+                    //    run_wei();
+                    //}
+                    //else 
                     if (Common.WeChat == module_name)
                     {
                         CloseProcess(module_name);
@@ -62,6 +75,8 @@ namespace keyupMusic2
                     if (module_name == HuyaClient) press("587,152", 1); break;
                 case Keys.PageDown:
                     if (module_name == QyClient) press("563, 894", 1); break;
+                case Keys.F4:
+                    if (module_name == vlc) CloseProcess(vlc); break;
             }
             switch (module_name)
             {

@@ -15,6 +15,7 @@ namespace keyupMusic2
         Chrome chrome;
         bool not_init_show = (is_ctrl() && !is_shift()) || Position.Y == 0;
         bool not_mouse_hook = !((is_ctrl() && !is_shift()) || Position.Y == 1439);
+        bool not_not_sleep = Position.X == screenWidth1 && Position.Y == screenHeight1;
 
         public Huan()
         {
@@ -57,6 +58,11 @@ namespace keyupMusic2
             if (e.key == Keys.F3) return true;
             if (e.key == Keys.F9) return true;
 
+            if (ProcessName == Common.devenv)
+            {
+                if (e.key == Keys.F && is_shift() && is_alt())
+                    return true;
+            }
             if (e.key == Keys.F11 || e.key == Keys.F12)
             {
                 if (!is_ctrl())
@@ -77,12 +83,9 @@ namespace keyupMusic2
             }
             if (ProcessName == Common.msedge)
             {
-                if (Default.handling)
-                {
-                    if (e.key == Keys.Home) return true;
-                    if (e.key == Keys.End) return true;
-                    if ((e.key == Keys.PageDown || e.key == Keys.PageUp) && e.X > screenWidth) return true;
-                }
+                if (e.key == Keys.Home) return true;
+                if (e.key == Keys.End) return true;
+                if ((e.key == Keys.PageDown || e.key == Keys.PageUp) && e.X > screenWidth) return true;
             }
             if (e.key == Keys.MediaPreviousTrack || e.key == Keys.MediaPlayPause)
             {
@@ -94,7 +97,7 @@ namespace keyupMusic2
                 if (number_button.Contains(e.key))
                     return true;
             }
-            var flag = chrome.judge_handled(e) || Douyin.judge_handled(e);
+            var flag = chrome.judge_handled(e) || Douyin.judge_handled(e) || Super.judge_handled(e);
             return flag;
         }
         Keys last_handled_key;
@@ -103,7 +106,7 @@ namespace keyupMusic2
         {
             if (e.Type != KeyboardEventType.KeyDown) return;
             if (Common.hooked) return;
-            if (is_down(Keys.LWin)) return;
+            //if (is_down(Keys.LWin)) return;
             if (is_alt() && (e.key == Keys.F4 || e.key == Keys.Tab)) { return; }
             if (stop_keys.ContainsKey(e.key)) return;
             if (stop_keys.Count >= 8) { Dispose(); return; }
@@ -124,18 +127,12 @@ namespace keyupMusic2
 
             if (e.key == Keys.F9)
             {
-                press(Keys.MediaStop);
-                if (!no_sleep) { Task.Run(() => Timer_Tick(200)); return; }
-                TaskRun(() => { Timer_Tick(); }, 70000);
-                Task.Run(() =>
-                {
-                    paly_sound(Keys.D0);
-                    Invoke(() => { label1.Text = "系统即将进入睡眠状态"; });
-                });
-                no_sleep = false;
+                system_sleep();
             }
-            else if (e.key == Keys.F3 || (e.key == Keys.LControlKey && is_shift())
-           || (e.key == Keys.LShiftKey && is_ctrl()))
+            else if (e.key == Keys.F3 
+                || (e.key == Keys.LControlKey && is_shift())
+                || (e.key == Keys.LShiftKey && is_ctrl())
+                || (e.key == Keys.Space && is_down(Keys.LWin)))
             {
                 if (keyupMusic2_onlisten)
                 {
@@ -174,6 +171,21 @@ namespace keyupMusic2
             }
         }
 
+        private void system_sleep()
+        {
+            press(Keys.MediaStop);
+            if (!Visible)
+                Invoke(() => { SetVisibleCore(true); });
+            if (!no_sleep) { Task.Run(() => Timer_Tick(200)); return; }
+            TaskRun(() => { Timer_Tick(); }, 70000);
+            Task.Run(() =>
+            {
+                paly_sound(Keys.D0);
+                Invoke(() => { label1.Text = "系统即将进入睡眠状态"; });
+            });
+            no_sleep = false;
+        }
+
         private void start_record(KeyboardHookEventArgs e)
         {
             if (Super.start_record)
@@ -183,16 +195,18 @@ namespace keyupMusic2
         }
 
         private static bool no_sleep = true;
-        private static void Timer_Tick(int tick = 1000)
+        private void Timer_Tick(int tick = 1000)
         {
             // 执行系统睡眠命令
             //Process.Start("rundll32.exe", "powrprof.dll,SetSuspendState 0,1,1");
             if (no_sleep) return;
             no_sleep = true;
-            Task.Run(() => press("LWin;1650,1300;1650,1140", tick));
+            Task.Run(() => press("100;LWin;1650,1300;1650,1140", tick));
             for (int i = 0; i < 10; i++)
             {
-                play_sound_di(1000);
+                if (ProcessName2 == StartMenuExperienceHost) { return; }
+                log_process("F9");
+                play_sound_di(tick);
             }
         }
         private void handle_special_or_normal_key(KeyboardHookEventArgs e)
@@ -203,7 +217,8 @@ namespace keyupMusic2
                     if (e.key == Keys.F9) { return; }
                     string _ProcessName = "";
                     if (special_key.Contains(e.key) || log_always) _ProcessName = log_process(e.key.ToString());
-                    if (e.key == Keys.F22 && (_ProcessName == "WeChatAppEx" || _ProcessName == "WeChat")) { e.Handled = true; }
+                    //if (e.key == Keys.F22 && (_ProcessName == "WeChatAppEx" || _ProcessName == "WeChat")) { e.Handled = true; }
+                    if (e.key == Keys.F22 && (_ProcessName == "WeChatAppEx" || _ProcessName == "WeChat")) { return; }
                     stop_keys.Add(e.key, ProcessName);
                 }
         }
@@ -213,8 +228,8 @@ namespace keyupMusic2
             if (!no_sleep) return;
             Invoke(() =>
             {
-                string asd = string.Join("", _stop_keys.Select(key => easy_read(key.ToString())));
-                if (label1.Text == asd) asd += " " + DateTimeNow2();
+                string asd = string.Join(" ", _stop_keys.Select(key => easy_read(key.Key.ToString())));
+                if (label1.Text.ToLower() == asd.ToLower()) asd += " " + DateTimeNow2();
                 label1.Text = Listen.speak_word + "" + asd;
             }
             );
@@ -314,7 +329,10 @@ namespace keyupMusic2
             _mouseKbdHook.KeyboardHookEvent += hook_KeyUp;
             if (not_mouse_hook)
             {
-                _mouseKbdHook.MouseHookEvent += new biu(this).MouseHookProc;
+                var b = new biu(this);
+                _mouseKbdHook.MouseHookEvent += b.MouseHookProc;
+                //Invoke(() => { b.MoveStopClickListen(); }); 
+                b.MoveStopClickListen();
                 //_mouseKbdHook.MouseHookEvent += new Douyin_game(this).MouseHookProc;
             }
             _mouseKbdHook.Install();
@@ -410,25 +428,6 @@ namespace keyupMusic2
             }
         }
 
-        private void Form1_Load(object sender, EventArgs e)
-        {
-            int currentProcessId = Process.GetCurrentProcess().Id;
-            Process[] processes = Process.GetProcessesByName(Common.keyupMusic2);
-            foreach (Process process in processes)
-                if (process.Id != currentProcessId)
-                    process.Kill();
-
-            if (not_init_show)
-            {
-                SetVisibleCore(false);
-                TaskRun(() => { Invoke(() => SetVisibleCore(false)); }, 200);
-            }
-            Common.FocusProcess(Common.ACPhoenix);
-            Location = new Point(Screen.PrimaryScreen.Bounds.Width - 310, 100);
-
-            startPoint = new Point(Location.X - 300, Location.Y);
-            endPoint = Location;
-        }
         public void Invoke(Action method)
         {
             try { base.Invoke(method); }
@@ -451,5 +450,29 @@ namespace keyupMusic2
             }, 1000);
         }
 
+        private void Form1_Load(object sender, EventArgs e)
+        {
+            int currentProcessId = Process.GetCurrentProcess().Id;
+            Process[] processes = Process.GetProcessesByName(Common.keyupMusic2);
+            foreach (Process process in processes)
+                if (process.Id != currentProcessId)
+                    process.Kill();
+
+            if (not_init_show)
+            {
+                SetVisibleCore(false);
+                TaskRun(() => { Invoke(() => SetVisibleCore(false)); }, 200);
+            }
+            if (not_not_sleep)
+            {
+                TaskRun(() => { press(Keys.F9); }, 1000);
+            }
+            Common.FocusProcess(Common.ACPhoenix);
+            Location = new Point(Screen.PrimaryScreen.Bounds.Width - 310, 100);
+
+            startPoint = new Point(Location.X - 300, Location.Y);
+            endPoint = Location;
+            SetWindowTitle(Common.devenv, "");
+        }
     }
 }

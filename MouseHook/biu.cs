@@ -38,10 +38,11 @@ namespace keyupMusic2
             handing3 = true;
             this.e = e;
             if (e.Msg != MouseMsg.WM_MOUSEMOVE) Task.Run(() => { FreshProcessName(); });
+            if (e.Msg == MouseMsg.WM_LBUTTONDOWN && e.X < screenHeight && e.X > screenHeight - 200 && e.Y < 100) TaskRun(() => { FreshProcessName(); }, 500);
 
-            Task.Run(() => { ACPhoenix(e); });
             //Douyin(e);
             Douyin(e, Common.msedge);
+            Task.Run(ACPhoenix);
             Task.Run(Devenv);
             Task.Run(Cornor);
             Task.Run(ScreenLine);
@@ -51,6 +52,7 @@ namespace keyupMusic2
 
             handing = false;
             hooked_mouse = false;
+
         }
         public void Douyin(MouseKeyboardHook.MouseHookEventArgs e, string allow = Common.douyin)
         {
@@ -122,69 +124,14 @@ namespace keyupMusic2
             }
         }
 
-        public void ACPhoenix(MouseKeyboardHook.MouseHookEventArgs e)
-        {
-            if (ProcessName != keyupMusic2.Common.ACPhoenix) return;
-
-            if (e.Msg == MouseMsg.WM_LBUTTONDOWN)
-            {
-                listen_move = true;
-                if (e.Y == 0 || e.Y == screenHeight - 1) { press(Keys.Space); }
-                else if (e.X == 0) { press(Keys.Tab); }
-            }
-            else if (e.Msg == MouseMsg.WM_LBUTTONUP)
-            {
-                listen_move = false;
-            }
-            else if (e.Msg == MouseMsg.WM_RBUTTONDOWN)
-            {
-                downing2 = true;
-                if (!(e.Y == 0 && (e.X <= screenWidth - 1 && e.X > screenWidth - 120)))
-                    Task.Run(() =>
-                    {
-                        mouse_click2(50);
-                        mouse_click2(50);
-                        Thread.Sleep(50);
-                        for (var i = 0; i < 50; i++)
-                        {
-                            if (!downing2) break;
-                            mouse_click2(50);
-                        }
-                    });
-            }
-            else if (e.Msg == MouseMsg.WM_RBUTTONUP)
-            {
-                downing2 = false;
-                if ((e.Y < (493 * screenHeight / 1440) && e.Y > (190 * screenHeight / 1440)) && e.X < (2066 * screenWidth / 2560))
-                    press(Keys.Space);
-                if (try_press(1433, 1072, Color.FromArgb(245, 194, 55), () => { }))
-                { }
-                //退出观战
-                if ((e.Y == 0 && (e.X <= screenWidth - 1 && e.X > screenWidth - 120)))
-                {
-                    //press("111"); press(Keys.F4); press("1625.1078");
-                    if (is_alt()) return;
-                    press("2478,51;2492,1299;1625.1078", 200);
-                }
-            }
-            if (!listen_move) { return; }
-
-            if (e.Msg == MouseMsg.WM_MOUSEMOVE)
-            {
-                //var aaa = 1430 * 2160 / 1440;
-                if (!listen_move || (e.Y < screenHeight - 10) || (e.X > screenWidth)) { return; }
-                if (ProcessName2 == keyupMusic2.Common.ACPhoenix) { press(Keys.S, 0); ; }
-                listen_move = false;
-            }
-        }
         public void Devenv()
         {
             if (ProcessName != keyupMusic2.Common.devenv) return;
 
-            if (e.Msg == MouseMsg.WM_RBUTTONUP)
+            if (e.Msg == MouseMsg.WM_RBUTTONDOWN)
             {
                 if ((e.Y != 0)) return;
-                if (ProcessTitle?.IndexOf("正在运行") >= 0)
+                if (Deven_runing())
                     press([Keys.RControlKey, Keys.RShiftKey, Keys.F5]);
                 //Task.Run(() => Sim.KeyPress([Keys.RControlKey, Keys.RShiftKey, Keys.F5]));
                 //press("115, 69",101);

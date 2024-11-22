@@ -42,8 +42,8 @@ namespace keyupMusic2
                 if (mouse_click_not_repeat_time.AddMilliseconds(600) > DateTime.Now) { handing2 = false; return; }
                 if (cornor == 1)
                 {
-                    //if (Common.ACPhoenix.Equals(Common.ProcessName))
-                    //    press([Keys.Tab]);
+                    if (Common.ACPhoenix.Equals(Common.ProcessName))
+                        press([Keys.E]);
                 }
                 else if (cornor == 2)
                 {
@@ -58,22 +58,33 @@ namespace keyupMusic2
                 }
                 else if (cornor == 3)
                 {
-                    var list = new[] { ApplicationFrameHost, explorer, vlc, v2rayN, Common.QQMusic };
+                    var list = new[] { ApplicationFrameHost, explorer, vlc, v2rayN, Common.QQMusic, VSCode, AIoT, RadeonSoftware };
+
                     var list2 = new[] { Thunder };
 
                     if (list.Contains(Common.ProcessName))
                         mouse_click_not_repeat();
                     else if (list2.Contains(Common.ProcessName))
                         press_close();
-                    else if (ProcessName == Common.devenv && ProcessTitle.Contains("正在运行"))
-                        press("80, 69", 101);
+                    else if (ProcessName == Common.devenv && Deven_runing())
+                    {
+                        mouse_click();
+                        press(Keys.Enter);
+                    }
                     else if (ProcessName == Common.devenv)
                         HideProcess(Common.devenv);
+                    else if (Common.ACPhoenix.Equals(Common.ProcessName))
+                        press([Keys.Space]);
+                }
+                else if (cornor == 4)
+                {
+                    if (Common.ACPhoenix.Equals(Common.ProcessName))
+                        press([Keys.Escape]);
                 }
                 else if (cornor == 5)
                 {
                     if (ProcessName == Common.chrome)
-                        press("20;4070,44");
+                        press("20;4070.44;4070,45");
                 }
                 else
                     return;

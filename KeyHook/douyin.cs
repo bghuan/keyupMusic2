@@ -22,7 +22,7 @@ namespace keyupMusic2
         {
             not_in_class = ProcessName != ClassName()
                 && (ProcessName != ApplicationFrameHost || ProcessTitle?.IndexOf("照片") < 0)
-                && ProcessTitle?.IndexOf("抖音") < 0 
+                && ProcessTitle?.IndexOf("抖音") < 0
                 //&& (ProcessName == msedge && ProcessTitle?.IndexOf("多多自走棋") < 0)
                 ;
             if (not_in_class) return false;
@@ -62,6 +62,17 @@ namespace keyupMusic2
                     break;
                 case Keys.F11:
                     press_close();
+                    break;
+                case Keys.LControlKey:
+                    {
+                        var k = "douyin_space";
+                        if (KeyTime.ContainsKey(k) && DateTime.Now - KeyTime[k] < TimeSpan.FromMilliseconds(300))
+                        {
+                            mouse_click();
+                        }
+
+                        KeyTime[k] = DateTime.Now;
+                    }
                     break;
             }
             //douyin_game_key(e, is_string_cmd);

@@ -9,7 +9,7 @@
             {
                 try
                 {
-                    File.AppendAllText("log.txt", "\r" + DateTime.Now.ToString("") + " " + message);
+                    File.AppendAllText("log\\log.txt", "\r" + DateTime.Now.ToString("") + " " + message);
                 }
                 catch (Exception e)
                 {

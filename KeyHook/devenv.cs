@@ -13,18 +13,29 @@ namespace keyupMusic2
 
             switch (e.key)
             {
-                case Keys.F4:
-                    if (ProcessTitle?.IndexOf("正在运行") >= 0)
-                        press([Keys.RShiftKey, Keys.F5]);
-                    break;
+                //case Keys.F4:
+                //    if (ProcessTitle?.IndexOf("正在运行") >= 0)
+                //        press([Keys.RShiftKey, Keys.F5]);
+                //    break;
                 case Keys.F5:
-                    if (ProcessTitle?.IndexOf("正在运行") >= 0)
+                    if (Deven_runing())
                         press([Keys.RControlKey, Keys.RShiftKey, Keys.F5]);
                     break;
-                    //case Keys.F11:
-                    //    ProcessStartInfo startInfo = new ProcessStartInfo("taskmgr.exe");
-                    //    Process.Start(startInfo);
-                    //    break;
+                //case Keys.F11:
+                //    ProcessStartInfo startInfo = new ProcessStartInfo("taskmgr.exe");
+                //    Process.Start(startInfo);
+                //    break;
+
+                case Keys.F:
+                    if (is_alt() && is_shift())
+                    {
+                        TaskRun(() =>
+                        {
+                            press([Keys.RControlKey, Keys.K]);
+                            press([Keys.RControlKey, Keys.D]);
+                        }, 300);
+                    }
+                    break;
             }
             Common.hooked = false;
         }

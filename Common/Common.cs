@@ -10,11 +10,9 @@ using Point = System.Drawing.Point;
 
 namespace keyupMusic2
 {
-    public class Common
+    public partial class Common
     {
         public const string keyupMusic2 = "keyupMusic2";
-        //public const string keyupMusic3 = "keyupMusic3";
-        //public const string keyupMusic3exe = "C:\\Users\\bu\\source\\repos\\keyupMusic2\\keyupMusic3\\bin\\Debug\\net8.0-windows\\keyupMusic3.exe";
         public const string ACPhoenix = "ACPhoenix";
         public const string Dragonest = "DragonestGameLauncher";
         public const string devenv = "devenv";
@@ -34,6 +32,10 @@ namespace keyupMusic2
         public const string vlc = "vlc";
         public const string v2rayN = "v2rayN";
         public const string Thunder = "Thunder";
+        public const string VSCode = "Code";
+        public const string AIoT = "AIoT IDE";
+        public const string StartMenuExperienceHost = "StartMenuExperienceHost";
+        public const string RadeonSoftware = "RadeonSoftware";
 
         public static string[] list = {
         keyupMusic2,
@@ -53,12 +55,11 @@ namespace keyupMusic2
         QyClient,
         QQLive,
         vlc,
-        //keyupMusic3,
         v2rayN,
         Thunder,
-        QQMusic,
-        QQMusic,
-        QQMusic,
+        VSCode,
+        AIoT,
+        RadeonSoftware,
         QQMusic,
         QQMusic,
         QQMusic,
@@ -206,39 +207,6 @@ namespace keyupMusic2
         {
             Log.log(message);
         }
-        public static int[] deal_size_x_y(int x, int y, bool puls_one = true)
-        {
-            if (puls_one)
-            {
-                x = x + 1;
-                y = y + 1;
-            }
-            x = x * screenWidth / 2560;
-            y = y * screenHeight / 1440;
-            return new int[] { x, y };
-        }
-        public static void mouse_move(int x, int y, int tick = 0)
-        {
-            x = deal_size_x_y(x, y)[0];
-            y = deal_size_x_y(x, y)[1];
-
-            if (x < screenWidth)
-                mouse_event(MOUSEEVENTF_ABSOLUTE | MOUSEEVENTF_MOVE, x * 65536 / screenWidth, y * 65536 / screenHeight, 0, 0);
-            else
-                SetCursorPos(x, y);
-            Thread.Sleep(tick);
-        }
-        public static void mouse_move_to(int x, int y, int tick = 0)
-        {
-            var Pos = Position;
-            x += Pos.X;
-            y += Pos.Y;
-
-            x = deal_size_x_y(x, y, false)[0];
-            y = deal_size_x_y(x, y, false)[1];
-            mouse_event(MOUSEEVENTF_ABSOLUTE | MOUSEEVENTF_MOVE, x * 65536 / screenWidth, y * 65536 / screenHeight, 0, 0);
-            Thread.Sleep(tick);
-        }
         public static bool judge_color(Color color, Action action = null, int similar = 50)
         {
             int x = Position.X;
@@ -272,32 +240,6 @@ namespace keyupMusic2
             }
             return flag;
         }
-        public static bool is_down(Keys key)
-        {
-            return Native.GetAsyncKeyState(key) < 0;
-        }
-        public static bool is_down(int key)
-        {
-            return Native.GetAsyncKeyState(key) < 0;
-        }
-
-        public static bool is_ctrl()
-        {
-            return Native.GetAsyncKeyState(Keys.ControlKey) < 0;
-        }
-        public static bool is_esc()
-        {
-            return Native.GetAsyncKeyState(Keys.Escape) < 0;
-        }
-        public static bool is_alt()
-        {
-            return Native.GetAsyncKeyState(Keys.LMenu) < 0 || Native.GetAsyncKeyState(Keys.RMenu) < 0;
-        }
-
-        public static bool is_shift()
-        {
-            return Native.GetAsyncKeyState(Keys.ShiftKey) < 0;
-        }
         public static void cmd(string cmd, Action action = null, int tick = 10)
         {
             ProcessStartInfo startInfo = new ProcessStartInfo
@@ -315,108 +257,6 @@ namespace keyupMusic2
                 Sleep(tick);
                 action();
             }
-        }
-
-        public static int screenWidth = Screen.PrimaryScreen.Bounds.Width;
-        public static int screenHeight = Screen.PrimaryScreen.Bounds.Height;
-        public static int screenWidth1 = Screen.PrimaryScreen.Bounds.Width - 1;
-        public static int screenHeight1 = Screen.PrimaryScreen.Bounds.Height - 1;
-        public static int screenWidth2 = Screen.PrimaryScreen.Bounds.Width / 2;
-        public static int screenHeight2 = Screen.PrimaryScreen.Bounds.Height / 2;
-
-
-        public static void mouse_move(int x, int y, int x2, int y2)
-        {
-            mouse_move(x, y);
-            down_mouse();
-
-            int times = 20;
-            int all_times = 20;
-            for (int i = 1; i < times + 1; i++)
-            {
-                int xx = 1;
-                int yy = 1;
-                if (x == x2) xx = 0;
-                else xx = (x2 - x) / times * i;
-                if (y == y2) yy = 0;
-                else yy = (y2 - y) / times * i;
-
-                mouse_move(x + xx, y + yy, all_times / times);
-            }
-
-            mouse_move(x2, y2);
-            up_mouse();
-        }
-        public static void mouse_move_center(int tick = 0)
-        {
-            int x = screenWidth / 2;
-            int y = screenHeight / 2;
-            Thread.Sleep(tick);
-            mouse_event(MOUSEEVENTF_ABSOLUTE | MOUSEEVENTF_MOVE, x * 65536 / screenWidth, y * 65536 / screenHeight, 0, 0);
-        }
-        public static void mouse_move(Point point, int tick = 0)
-        {
-            Thread.Sleep(tick);
-            mouse_event(MOUSEEVENTF_ABSOLUTE | MOUSEEVENTF_MOVE, point.X * 65536 / screenWidth, point.Y * 65536 / screenHeight, 0, 0);
-        }
-        public static void mouse_move2(int x, int y, int tick = 0)
-        {
-            x += Cursor.Position.X;
-            y += Cursor.Position.Y;
-            Thread.Sleep(tick);
-            mouse_event(MOUSEEVENTF_ABSOLUTE | MOUSEEVENTF_MOVE, x * 65536 / screenWidth, y * 65536 / screenHeight, 0, 0);
-        }
-        public static void mouse_click(int tick = 10)
-        {
-            if (tick > 0)
-            {
-                down_mouse(tick);
-                up_mouse(tick);
-                return;
-            }
-            mouse_event(MOUSEEVENTF_LEFTDOWN | MOUSEEVENTF_LEFTUP, 0, 0, 0, 0);
-        }
-        public static void mouse_click(int x, int y, int tick = 10)
-        {
-            mouse_move(x, y);
-            if (tick > 0)
-            {
-                down_mouse(tick);
-                up_mouse(tick);
-                return;
-            }
-            mouse_event(MOUSEEVENTF_LEFTDOWN | MOUSEEVENTF_LEFTUP, 0, 0, 0, 0);
-        }
-        public static void mouse_click2(int tick = 0)
-        {
-            mouse_event(MOUSEEVENTF_LEFTDOWN | MOUSEEVENTF_LEFTUP, 0, 0, 0, 0);
-            Thread.Sleep(tick);
-        }
-        public static void mouse_click3()
-        {
-            mouse_event(MOUSEEVENTF_LEFTDOWN | MOUSEEVENTF_LEFTUP, 0, 0, 0, 0);
-        }
-        public static DateTime mouse_click_not_repeat_time = DateTime.Now;
-        public static void mouse_click_not_repeat()
-        {
-            mouse_event(MOUSEEVENTF_LEFTDOWN | MOUSEEVENTF_LEFTUP, 0, 0, 0, 0);
-            mouse_click_not_repeat_time = DateTime.Now;
-        }
-        public static bool not_repeat()
-        {
-            if (mouse_click_not_repeat_time.AddSeconds(1) > DateTime.Now) return false;
-            mouse_click_not_repeat_time = DateTime.Now;
-            return true;
-        }
-        public static void down_mouse(int tick = 0)
-        {
-            mouse_event(MOUSEEVENTF_LEFTDOWN, 0, 0, 0, 0);
-            Thread.Sleep(tick);
-        }
-        public static void up_mouse(int tick = 0)
-        {
-            mouse_event(MOUSEEVENTF_LEFTUP, 0, 0, 0, 0);
-            Thread.Sleep(tick);
         }
         public static bool FocusProcess(string procName)
         {
@@ -446,16 +286,13 @@ namespace keyupMusic2
                 return objProcesses[0].MainWindowHandle;
             return nint.Zero;
         }
-        //public static void hide_keyupmusic3()
-        //{
-        //    {
-        //        HideProcess(keyupMusic3);
-        //        //var _po = Position;
-        //        //press("2467.220", 110);
-        //        //if (judge_color(2467, 220, Color.FromArgb(196, 43, 28))) { press("2352,226", 10); }
-        //        //press(_po.X + "." + _po.Y, 0);
-        //    }
-        //}
+        public static bool SetWindowTitle(string window, string title)
+        {
+            string targetClassName = window;
+            IntPtr hWnd = GetProcessID(targetClassName);
+            bool result = SetWindowText(hWnd, title);
+            return result;
+        }
         public static bool ExsitProcess(string procName)
         {
             Process[] objProcesses = Process.GetProcessesByName(procName);
@@ -485,6 +322,11 @@ namespace keyupMusic2
                 PostMessage(hWnd, (uint)WM_CLOSE, IntPtr.Zero, IntPtr.Zero);
             }
         }
+        public static void CloseProcess()
+        {
+            IntPtr hwnd = Native.GetForegroundWindow();
+            PostMessage(hwnd, (uint)WM_CLOSE, IntPtr.Zero, IntPtr.Zero);
+        }
         public static string AltTabProcess()
         {
             altab(100);
@@ -498,195 +340,7 @@ namespace keyupMusic2
             int y = int.Parse(point.Split(',')[1]);
             //points[0] = new Point(x, y);
         }
-        private static readonly object _lockObject2 = new object();
-        public static void press(Keys num, int tick = 0)
-        {
-            if (is_down(Keys.Delete)) return;
-            lock (_lockObject2)
-            {
-                //bool flag = tick > 0 && tick % 10 == 2;
-                //if (flag) MouseKeyboardHook.handling = true;
-                press([num], tick);
-                //if (flag) MouseKeyboardHook.handling = false;
-            }
-        }
-        public static void press(Keys num, int times, int tick = 0)
-        {
-            if (is_down(Keys.Delete)) return;
-            lock (_lockObject2)
-            {
-                for (global::System.Int32 i = 0; i < times; i++)
-                {
-                    _press(num);
-                }
-            }
-            Thread.Sleep(tick);
-        }
-        public static bool _Not_F10_F11_F12_Delete = true;
-        public static bool Not_F10_F11_F12_Delete(bool refresh = false, Keys current_key = new Keys())
-        {
-            if (refresh)
-            {
-                var keys = new[] { Keys.F10, Keys.F11, Keys.F12, Keys.Delete, Keys.LControlKey, Keys.RControlKey };
-                var sss = false;
-                var filteredKeys = keys.Where(key => key != current_key).ToArray();
-                foreach (Keys key in filteredKeys)
-                {
-                    if (is_down(key))
-                    {
-                        sss = true;
-                    }
-                }
-                _Not_F10_F11_F12_Delete = !sss;
-                //_Not_F10_F11_F12_Delete = !is_down(Keys.F10) && !is_down(Keys.F11) && !is_down(Keys.Delete);
-            }
-            return _Not_F10_F11_F12_Delete;
-        }
-        public static void press_close()
-        {
-            if (!not_repeat()) return;
-            press([Keys.LMenu, Keys.F4]);
-        }
-        public static void altab(int tick = 0)
-        {
-            press([Keys.LMenu, Keys.Tab]);
-            Thread.Sleep(tick);
-        }
-        public static void press(Keys[] keys, int tick = 10)
-        {
-            if (keys == null || keys.Length == 0 || keys.Length > 100)
-                return;
-            if (keys.Length == 1)
-            {
-                _press(keys[0]);
-            }
-            else if (keys.Length > 1 && keys[0] == keys[1])
-            {
-                foreach (var key in keys)
-                {
-                    _press(key);
-                };
-            }
-            else
-            {
-                foreach (var item in keys)
-                {
-                    //Thread.Sleep(10);
-                    keybd_event((byte)item, 0, 0, 0);
-                }
-                Array.Reverse(keys);
-                foreach (var item in keys)
-                {
-                    //Thread.Sleep(10);
-                    keybd_event((byte)item, 0, 2, 0);
-                }
-            }
-            Thread.Sleep(tick);
-        }
-        static Point mousePosition;
-        public static Point lastPosition;
-        public static void press_middle_bottom()
-        {
-            press("1333.1439", 0);
-        }
 
-        public static void ctrl_shift(bool zh = true)
-        {
-            var _zh = (judge_color(2290, 1411, Color.FromArgb(242, 242, 242)));
-            var _en = !_zh;
-            if (zh && _en)
-                press(Keys.LShiftKey, 10);
-            else if (!zh && !_en)
-                press(Keys.LShiftKey, 10);
-            return;
-        }
-        //1 返回原来鼠标位置
-        //2
-        //3 跳过delete return
-        public static void press(string str, int tick = 100, bool force = false)
-        {
-            if (is_down(Keys.Delete) && !force) return;
-            //KeyboardHook.stop_next = false;
-            bool isLastDigitOne = (tick % 10) == 1;
-            if (isLastDigitOne) mousePosition = Cursor.Position;
-            var list = str.Split(";");
-            list = list.Where(s => s != null && s != "").ToArray();
-            if (list.Length == 0) return;
-            foreach (var item in list)
-            {
-                var click = item.IndexOf(',');
-                var move = item.IndexOf('.');
-
-                if (item == "LWin")
-                {
-                    if (ProcessName == "SearchHost")
-                    {
-                        press([Keys.LControlKey, Keys.A]);
-                        press([Keys.Back]);
-                    }
-                    else
-                        press(Keys.LWin);
-                    Thread.Sleep(100);
-                    ctrl_shift(false);
-                }
-                else if (item == "zh")
-                {
-                    ctrl_shift(true);
-                }
-                else if (item == "en")
-                {
-                    ctrl_shift(false);
-                }
-                else if (item == "_") down_mouse();
-                else if (item == "-") up_mouse();
-                //else if (click > 0 && item.Substring(0, click + 1).IndexOf(",") > 0)
-                //{ }
-                else if (click > 0 || move > 0)
-                {
-
-                    var x = int.Parse(item.Substring(0, click + move + 1));
-                    var y = int.Parse(item.Substring(click + move + 1 + 1));
-                    mouse_move(x, y, 10);
-                    if (click > 0) mouse_click(30);
-                }
-                else if ((int.TryParse(item, out int number)))
-                {
-                    Thread.Sleep(number);
-                }
-                else if (Enum.TryParse(typeof(Keys), item, out object asd))
-                {
-                    press((Keys)asd);
-                }
-                else if (item.Length > 1)
-                {
-                    press(item.Substring(0, 1), 10);
-                    press(item.Substring(1), 10);
-                }
-                if (!ReferenceEquals(item, list.Last()) || list.Length == 1)
-                    Thread.Sleep(tick);
-            }
-            if (isLastDigitOne && mousePosition.X < 2560)
-                mouse_move(mousePosition.X, mousePosition.Y, 100);
-        }
-        public static void _press(Keys keys)
-        {
-            keybd_event((byte)keys, 0, 0, 0);
-            keybd_event((byte)keys, 0, 2, 0);
-        }
-        public static void press_dump(Keys keys, int tick = 500)
-        {
-            keybd_event((byte)keys, 0, 0, 0);
-            Thread.Sleep(tick);
-            keybd_event((byte)keys, 0, 2, 0);
-        }
-        public static void down_press(Keys keys)
-        {
-            keybd_event((byte)keys, 0, 0, 0);
-        }
-        public static void up_press(Keys keys)
-        {
-            keybd_event((byte)keys, 0, 2, 0);
-        }
 
         public static string GetWindowText(IntPtr hWnd)
         {
@@ -806,9 +460,9 @@ namespace keyupMusic2
             string aaa = "C:\\Users\\bu\\Pictures\\Screenshots\\";
             if (ProcessName == Common.ACPhoenix) aaa += "dd\\";
             bmpScreenshot.Save(aaa + DateTime.Now.ToString("yyyyMMddHHmmss") + ".png", ImageFormat.Png);
+            TaskRun(() => play_sound_di(), 80);
             gfxScreenshot.Dispose();
             bmpScreenshot.Dispose();
-            TaskRun(() => play_sound_di(), 80);
         }
         public static void copy_secoed_screen(string path = "")
         {
@@ -820,9 +474,9 @@ namespace keyupMusic2
             Graphics gfxScreenshot = Graphics.FromImage(bmpScreenshot);
             gfxScreenshot.CopyFromScreen(new Point(start_x, 0), Point.Empty, secondaryScreen.Bounds.Size);
             bmpScreenshot.Save("image\\encode\\" + path + DateTime.Now.ToString("yyyyMMddHHmmss") + ".png" + "g", ImageFormat.Png);
+            TaskRun(() => play_sound_di(), 80);
             gfxScreenshot.Dispose();
             bmpScreenshot.Dispose();
-            TaskRun(() => play_sound_di(), 80);
         }
         public static void copy_ddzzq_screen()
         {
@@ -1028,6 +682,16 @@ namespace keyupMusic2
             }
             return keys;
         }
-
+        public static bool Deven_runing()
+        {
+            return (ProcessTitle?.IndexOf("正在运行") >= 0 || ProcessTitle == "");
+        }
+        public static bool IsMouseStopClick = true;
+        public static bool isMouseStopped = true;
+        public static bool QTCheck(DateTime dateTime, int ms)
+        {
+            var flag = DateTime.Now - dateTime < TimeSpan.FromMilliseconds(ms);
+            return flag;
+        }
     }
 }

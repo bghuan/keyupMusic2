@@ -72,6 +72,13 @@ namespace keyupMusic2
 
         [DllImport("user32.dll")]
         public static extern IntPtr SetWindowsHookEx(int idHook, LowLevelkeyboardHookProc callback, IntPtr hInstance, uint threadId);
+        // 引入FindWindow函数
+        [DllImport("user32.dll", CharSet = CharSet.Unicode)]
+        public static extern IntPtr FindWindow(string lpClassName, string lpWindowName);
+
+        // 引入SetWindowText函数
+        [DllImport("user32.dll", CharSet = CharSet.Unicode)]
+        public static extern bool SetWindowText(IntPtr hWnd, string text);
         public enum SW
         {
             SW_HIDE = 0,

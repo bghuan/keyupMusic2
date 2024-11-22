@@ -1,0 +1,473 @@
+﻿plugins {
+    alias(libs.plugins.android.application)
+}
+
+android {
+    signingConfigs {
+    debug {
+        storeFile file('C:\\Users\\bu\\keystore.jks')
+        storePassword 'xmswearable'
+        keyAlias 'xmswearable'
+        keyPassword 'xmswearable'
+    }
+    release {
+        storeFile file('C:\\Users\\bu\\keystore.jks')
+        storePassword 'xmswearable'
+        keyAlias 'xmswearable'
+        keyPassword 'xmswearable'
+    }
+}
+    namespace 'com.xiaomi.xms.wearable.demo'
+    compileSdk 34
+
+    defaultConfig {
+        applicationId "com.xiaomi.xms.wearable.demo"
+        minSdk 30
+        targetSdk 34
+        versionCode 1
+        versionName "1.0"
+
+        testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
+    }
+
+    buildTypes {
+        release {
+            minifyEnabled false
+            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+        }
+    }
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_1_8
+        targetCompatibility JavaVersion.VERSION_1_8
+    }
+    buildFeatures {
+        viewBinding true
+    }
+}
+
+dependencies {
+
+    implementation fileTree(dir: "libs", include: ["*.jar", "*.aar"])
+    implementation libs.appcompat
+    implementation libs.material
+    implementation libs.constraintlayout
+    implementation libs.navigation.fragment
+    implementation libs.navigation.ui
+    testImplementation libs.junit
+    androidTestImplementation libs.ext.junit
+    androidTestImplementation libs.espresso.core
+}<?xml version="1.0" encoding="utf-8"?>
+<androidx.coordinatorlayout.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:fitsSystemWindows="true"
+    tools:context=".MainActivity">
+
+    <com.google.android.material.appbar.AppBarLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:fitsSystemWindows="true">
+
+        <com.google.android.material.appbar.MaterialToolbar
+            android:id="@+id/toolbar"
+            android:layout_width="match_parent"
+            android:layout_height="?attr/actionBarSize" />
+
+    </com.google.android.material.appbar.AppBarLayout>
+
+    <com.google.android.material.floatingactionbutton.FloatingActionButton
+        android:id="@+id/fab"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="bottom|end"
+        android:layout_marginEnd="50dp"
+        android:layout_marginBottom="16dp"
+        app:srcCompat="@android:drawable/ic_dialog_email" />
+
+    <com.google.android.material.floatingactionbutton.FloatingActionButton
+        android:id="@+id/fab2"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="bottom|end"
+        android:layout_marginEnd="150dp"
+        android:layout_marginBottom="16dp"
+        app:srcCompat="@android:drawable/ic_dialog_email" />
+
+    <com.google.android.material.floatingactionbutton.FloatingActionButton
+        android:id="@+id/fab3"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="bottom|end"
+        android:layout_marginEnd="250dp"
+        android:layout_marginBottom="16dp"
+        app:srcCompat="@android:drawable/ic_dialog_email" />
+
+    <TextView
+        android:id="@+id/textView2"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="TextView" />
+
+</androidx.coordinatorlayout.widget.CoordinatorLayout><?xml version="1.0" encoding="utf-8"?>
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <application
+        android:allowBackup="true"
+        android:dataExtractionRules="@xml/data_extraction_rules"
+        android:fullBackupContent="@xml/backup_rules"
+        android:icon="@mipmap/ic_launcher"
+        android:networkSecurityConfig="@xml/network_security_config"
+        android:label="@string/app_name"
+        android:roundIcon="@mipmap/ic_launcher_round"
+        android:supportsRtl="true"
+        android:theme="@style/Theme.Asdaaaa"
+        tools:targetApi="31">
+        <activity
+            android:name=".MainActivity"
+            android:exported="true"
+            android:theme="@style/Theme.Asdaaaa">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
+    </application>
+    <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
+
+</manifest>package com.xiaomi.xms.wearable.demo;
+
+import static android.content.ContentValues.TAG;
+
+import android.os.AsyncTask;
+import android.os.Bundle;
+
+import com.google.android.material.snackbar.Snackbar;
+
+import androidx.annotation.NonNull;
+import androidx.appcompat.app.AppCompatActivity;
+
+import android.util.Log;
+import android.view.View;
+
+import androidx.navigation.ui.AppBarConfiguration;
+
+import com.xiaomi.xms.wearable.Status;
+import com.xiaomi.xms.wearable.Wearable;
+import com.xiaomi.xms.wearable.auth.AuthApi;
+import com.xiaomi.xms.wearable.auth.Permission;
+import com.xiaomi.xms.wearable.demo.databinding.ActivityMainBinding;
+import com.xiaomi.xms.wearable.message.MessageApi;
+import com.xiaomi.xms.wearable.message.OnMessageReceivedListener;
+import com.xiaomi.xms.wearable.node.Node;
+import com.xiaomi.xms.wearable.node.NodeApi;
+import com.xiaomi.xms.wearable.notify.NotifyApi;
+import com.xiaomi.xms.wearable.tasks.OnFailureListener;
+import com.xiaomi.xms.wearable.tasks.OnSuccessListener;
+
+import org.jetbrains.annotations.NotNull;
+
+import java.io.IOException;
+import java.io.OutputStream;
+import java.net.InetAddress;
+import java.net.Socket;
+import java.util.Date;
+import java.util.List;
+import java.util.Objects;
+
+public class MainActivity extends AppCompatActivity {
+    private ActivityMainBinding binding;
+    static String band_id = "";
+    static String server_ip = "192.168.10.100";
+    static int server_port = 13000;
+    static String server_message = "";
+
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+
+        binding = ActivityMainBinding.inflate(getLayoutInflater());
+        setContentView(binding.getRoot());
+
+        setSupportActionBar(binding.toolbar);
+
+        binding.fab.setOnClickListener(view -> {
+            band_connnet();
+        });
+        binding.fab2.setOnClickListener(view -> {
+            NodeApi api = Wearable.getNodeApi(MainActivity.this);
+            api.launchWearApp(band_id,"index").addOnSuccessListener(var1 -> {
+            }).addOnFailureListener(var1 -> {
+            });
+        });
+        binding.fab3.setOnClickListener(view -> {
+            band_notify();
+        });
+    }
+
+    private class ConnectSocketTask extends AsyncTask<Void, Void, Void> {
+        @Override
+        protected Void doInBackground(Void... voids) {
+            try {
+                InetAddress serverAddress = InetAddress.getByName(server_ip);
+                Socket socket = new Socket(serverAddress, server_port);
+                OutputStream outputStream = socket.getOutputStream();
+                server_message += "," + System.currentTimeMillis();
+                outputStream.write(server_message.getBytes());
+                outputStream.close();
+                socket.close();
+            } catch (IOException e) {
+                Log.d(TAG, Objects.requireNonNull(e.getMessage()));
+                alert(e.getMessage());
+                e.printStackTrace();
+            }
+            return null;
+        }
+    }
+
+    private void alert(String str) {
+        Snackbar.make(binding.getRoot(), str, Snackbar.LENGTH_LONG)
+                .setAnchorView(R.id.fab)
+                .setAction("Action", null).show();
+    }
+    private void alert2(String str) {
+        Snackbar.make(binding.getRoot(), str, Snackbar.LENGTH_SHORT)
+                .setAnchorView(R.id.fab)
+                .setAction("Action", null).show();
+    }
+
+    private void band_notify() {
+        if (band_id.isEmpty()) return;
+        NotifyApi notifyApi = Wearable.getNotifyApi(MainActivity.this);
+        notifyApi.sendNotify(band_id, "biu", "biubiubiu")
+                .addOnSuccessListener(status -> {
+                }).addOnFailureListener(e -> {
+                    alert(e.getMessage());
+                });
+    }
+
+    private void band_listen() {
+        if (band_id.isEmpty()) return;
+        OnMessageReceivedListener onMessageReceivedListener = (nodeId, message) -> {
+            String str = new String(message);
+            str += System.currentTimeMillis();
+            server_message = str;
+            new ConnectSocketTask().execute();
+            alert2(str);
+        };
+        MessageApi messageApi = Wearable.getMessageApi(MainActivity.this);
+        messageApi.addListener(band_id, onMessageReceivedListener)
+                .addOnSuccessListener(var1 -> {
+                }).addOnFailureListener(e -> {
+                    alert(e.getMessage());
+                });
+
+    }
+
+    private void band_connnet() {
+        if (!band_id.isEmpty()) return;
+        NodeApi api = Wearable.getNodeApi(MainActivity.this);
+        api.getConnectedNodes().addOnSuccessListener(nodes -> {
+            band_id = nodes.get(0).id;
+            band_permission();
+            band_listen();
+        }).addOnFailureListener(e -> {
+        });
+    }
+
+    private void band_permission() {
+        AuthApi authApi = Wearable.getAuthApi(MainActivity.this);
+        authApi.requestPermission(band_id, Permission.DEVICE_MANAGER, Permission.NOTIFY)
+                .addOnSuccessListener(permissions -> {
+                }).addOnFailureListener(e -> {
+                    alert(e.getMessage());
+                });
+    }
+
+}<?xml version="1.0" encoding="utf-8"?>
+<network-security-config>
+    <domain-config cleartextTrafficPermitted="true">
+        <domain includeSubdomains="true">192.168.10.100</domain>
+    </domain-config>
+</network-security-config><template>
+	<div class="page" @click="msg(1)" @swipe="msg"></div>
+</template>
+
+<script>
+import interconnect from "@system.interconnect";
+import vibrator from "@system.vibrator";
+
+let conn = null;
+export default {
+	onReady() {
+		conn = interconnect.instance();
+		vibrator.vibrate({ mode: "long" });
+	},
+	msg(e) {
+		if (typeof e == "object") e = e.direction;
+		conn.send({ data: { msg: e, t: Date.now() } });
+		vibrator.vibrate({ mode: "short" });
+	},
+};
+</script>
+
+<style>
+.page {
+	background-color: black;
+}
+</style>
+
+<template>
+	<div class="page" @click="msg(1)" @longpress="msg(2)" @swipe="msg" @touchstart="msg(3)"></div>
+</template>
+
+<script>
+import interconnect from "@system.interconnect";
+import vibrator from "@system.vibrator";
+
+let conn = null;
+let can_click = false;
+let can_longpress = false;
+let can_swipe = false;
+let exit_num = 0;
+export default {
+	onReady() {
+		// conn = interconnect.instance()
+		conn = {};
+		conn.send = console.log;
+		vibrator.vibrate({ mode: "long" });
+	},
+	msg(e) {
+		this.exit_func(e);
+		if (typeof e == "object" && e.direction) e = e.direction;
+		if (!this.handle_paopao(e)) return;
+
+		conn.send({ data: { msg: e, t: Date.now() } });
+		vibrator.vibrate({ mode: "short" });
+	},
+	handle_paopao(e) { 
+		if (e == 3) {
+			can_click = true;
+			can_longpress = true;
+			can_swipe = true;
+			return false;
+		} else if (e == 1 && !can_click) {
+			return false;
+		} else if (e == 2 && can_longpress) { 
+			can_click = false;
+			can_swipe = false;
+			return true; 
+		} else if (typeof e == "string" && can_swipe) {
+			can_longpress = false;
+			return true;
+		}
+	},
+	exit_func(e) {
+		if (typeof e == "object" && e.direction) e = e.direction;
+		else return;
+		if (exit_num == 0 && e == "up") exit_num += 1;
+		else if (exit_num == 1 && e == "down") exit_num += 1;
+		else if (exit_num == 2 && e == "left") exit_num += 1;
+		else if (exit_num == 3 && e == "right") this.$app.exit();
+		else if (exit_num != 0) exit_num = 0;
+	},
+};
+</script>
+
+<style>
+.page {
+	background-color: black;
+}
+</style>
+
+
+<template>
+	<div class="page" @click="send(1)" @longpress="send(2)" @swipe="send" @touchstart="send(3)"></div>
+</template>
+
+<script>
+import interconnect from "@system.interconnect";
+import vibrator from "@system.vibrator";
+
+let conn = null;
+let can_contine = false;
+let exit_num = 0;
+export default {
+	onReady() {
+		// conn = { send: console.log };
+		conn = interconnect.instance();
+		vibrator.vibrate({ mode: "long" });
+	},
+	send(data) {
+		data = this.exit_arrow(data);
+		if (data == 3) return (can_contine = true);
+		if (!can_contine || (can_contine = false)) return;
+
+		conn.send({ data: { msg: data, t: Date.now() } });
+		vibrator.vibrate({ mode: "short" });
+	},
+	exit_arrow(data) {
+		if (!(typeof data == "object" && data.direction)) return data;
+		if (exit_num == 0 && data.direction == "up") exit_num += 1;
+		else if (exit_num == 1 && data.direction == "down") exit_num += 1;
+		else if (exit_num == 2 && data.direction == "left") exit_num += 1;
+		else if (exit_num == 3 && data.direction == "right") this.$app.exit();
+		else if (exit_num != 0) exit_num = 0;
+		return data.direction;
+	},
+};
+</script>
+
+<style>
+.page {
+	background-color: black;
+}
+</style>{
+  "package": "com.xiaomi.xms.wearable.demo",
+  "name": "幻",
+  "versionName": "1.0.0",
+  "versionCode": 1,
+  "minPlatformVersion": 1200,
+  "icon": "/common/c.png",
+  "simulationVersion": "default",
+  "deviceTypeList": [
+    "watch"
+  ],
+  "features": [
+    {
+      "name": "system.router"
+    },
+    {
+      "name": "system.interconnect"
+    },
+    {
+      "name": "system.vibrator"
+    },
+    {
+      "name": "system.network"
+    }
+  ],
+  "config": {
+    "logLevel": "log",
+    "designWidth": 480
+  },
+  "router": {
+    "entry": "pages/index",
+    "pages": {
+      "pages/index": {
+        "component": "index"
+      },
+      "pages/detail": {
+        "component": "detail"
+      }
+    }
+  },
+  "minAPILevel": 1
+}小米手环9应用开发
+https://iot.mi.com/vela/quickapp/zh/content/guide/start/use-ide.html
+https://iot.mi.com/vela/quickapp/zh/content/features/network/interconnect.html -参考附录
+https://www.bandbbs.cn/threads/9797/

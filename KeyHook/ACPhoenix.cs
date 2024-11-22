@@ -17,6 +17,7 @@ namespace keyupMusic2
             string nothing3 = "1280.634";
             string nothing4 = "1284.640";
             handling_keys = e.key;
+            isMouseStopped = true;
 
             switch (e.key)
             {
@@ -78,17 +79,18 @@ namespace keyupMusic2
                     SS(100).KeyPress("谢谢老板");
                     break;
                 case Keys.Z:
+                    if (is_alt()) break;
                     if (judge_color(2141, 214, Color.FromArgb(215, 214, 216), null, 10)) { press(Keys.E); break; }
                     //bug 滑动
                     //每次重置
-                    if (!is_ctrl() && !is_alt()) break;
+                    if (!is_ctrl()) break;
                     press("2473,50;2472,50;1115,324;", 100);
                     press("_;272.700;272.600;272.400;272.330;100;-;272,330", 100);
                     //Ssss.MouseWhell(-120 * 10);
                     break;
                 case Keys.X:
                     if (judge_color(2141, 214, Color.FromArgb(215, 214, 216), null, 10)) { press(Keys.E); break; }
-                    if (!is_ctrl() && !is_alt()) break;
+                    if (!is_ctrl()) break;
                     press("2325, 53", 101);
                     break;
                 case Keys.D1:
@@ -104,21 +106,14 @@ namespace keyupMusic2
                     press("300," + (num * 104 + 100), 1);
                     break;
                 case Keys.Q:
-                    //if (judge_color(2202, 644, Color.FromArgb(239, 116, 108), () => { press("334,944"); })) break;//装备1
-                    //if (try_press(1360, 1369, Color.FromArgb(255, 162, 16))) break;
-                    //if (!is_ctrl() && !is_alt()) break;
-                    //press("10;2134,1275;10", 101);
                     break;
                 case Keys.E:
-                    //if (judge_color(2202, 644, Color.FromArgb(239, 116, 108), () => { press("1580,932"); })) break;//装备3
                     if (Position.Y == 0) { press(Keys.MediaNextTrack); break; }
                     if ((is_ctrl() || is_alt()) && judge_color(2524, 210, Color.FromArgb(39, 61, 118), null, 10)) { mouse_move(2139, 336); break; }
                     if (is_ctrl() || is_alt()) { mouse_move(2139, 336); }
                     raw_press();
                     break;
                 case Keys.R:
-                    //if (judge_color(2202, 644, Color.FromArgb(239, 116, 108), () => { press("2220,938"); })) break;//装备4
-                    //(2413,1089, Color.FromArgb(231,125,8)(1807,1125, Color.FromArgb(32,52,75)(2002,349, Color.FromArgb(255,139,0)
                     if (judge_color(2007, 340, Color.FromArgb(255, 139, 0)))
                     {
                         if (judge_color(2103, 1130, Color.FromArgb(140, 255, 85))) break;
@@ -136,7 +131,7 @@ namespace keyupMusic2
                 case Keys.F4:
                     if (is_alt()) break;
                     if (ProcessName2 != keyupMusic2.Common.ACPhoenix) { break; }
-                    press("2478,51;2492,1299;", 201);
+                    press("2478,51;2492,1299;1625.1078", 201);
                     break;
                 case Keys.F5:
                     press("2450,73;2107,229;1302,253;2355,237;2408,1000;", 201);
@@ -153,19 +148,19 @@ namespace keyupMusic2
                         press("2094, 187;2219, 231;2074, 386;1555, 1150", 200);
                     }
                     break;
-                case Keys.PageDown:
-                    var altTabProcess = AltTabProcess();
-                    switch (altTabProcess)
-                    {
-                        case msedge:
-                            press(Keys.PageDown, 100);
-                            break;
-                        case QyClient:
-                            press(Keys.Space, 100);
-                            break;
-                    }
-                    altab();
-                    break;
+                //case Keys.PageDown:
+                //    var altTabProcess = AltTabProcess();
+                //    switch (altTabProcess)
+                //    {
+                //        case msedge:
+                //            press(Keys.PageDown, 100);
+                //            break;
+                //        case QyClient:
+                //            press(Keys.Space, 100);
+                //            break;
+                //    }
+                //    altab();
+                //    break;
                 case Keys.A:
                     if (is_ctrl()) { press(Keys.A); press(Keys.A); press(Keys.A); break; }
                     break;

@@ -4,10 +4,11 @@ using System.Management;
 using static keyupMusic2.Common;
 using static keyupMusic2.Simulate;
 using static keyupMusic2.MouseKeyboardHook;
+using System.Runtime.InteropServices;
 
 namespace keyupMusic2
 {
-    public class Super
+    public partial class Super
     {
         public Super(Form parentForm)
         {
@@ -29,13 +30,13 @@ namespace keyupMusic2
         }
         public void hook_KeyDown_keyupMusic2(KeyboardHookEventArgs e)
         {
+            hook(e);
             //if (ProcessName != Common.keyupMusic2) return;
             if (!huan.keyupMusic2_onlisten) return;
             //if (is_ctrl() && is_shift()) return;
             Common.hooked = true;
             //string label_backup = huan.label1.Text;
             bool catched = true;
-
             switch (e.key)
             {
                 case Keys.Q:
@@ -49,12 +50,12 @@ namespace keyupMusic2
                     winBinWallpaper.changeImg();
                     break;
                 case Keys.R:
-                    if (key_sound) player.Stop();
-                    key_sound = !key_sound;
+                    sound_setting();
+                    //if (key_sound) player.Stop();
+                    //key_sound = !key_sound;
                     break;
-                case Keys.T:
-                    SSSS.KeyPress("多发发发大");
-                    break;
+                //case Keys.T:
+                //    break;
                 case Keys.Y:
                     Common.cmd($"/c start ms-settings:taskbar");
                     press("200;978,1042;907,1227;2500,32;", 801);
@@ -64,7 +65,7 @@ namespace keyupMusic2
                     press("200;1056,588;2118,530;2031,585;2516,8;", 801);
                     break;
                 case Keys.I:
-                    sound_setting();
+                    IsMouseStopClick = !IsMouseStopClick;
                     break;
                 case Keys.O:
                     paly_sound(Keys.D5);
@@ -92,11 +93,7 @@ namespace keyupMusic2
                     press(Keys.F11);
                     break;
                 case Keys.J:
-                    if (!is_ctrl()) if (Common.FocusProcess(Common.chrome)) break;
-                    //press("LWin;CHR;Enter;", 100);
-                    SS().KeyPress(Keys.LWin)
-                        .KeyPress("chrome")
-                        .KeyPress(Keys.Enter);
+                    run_chrome();
                     break;
                 case Keys.K:
                     TaskRun(() =>
@@ -108,6 +105,7 @@ namespace keyupMusic2
                         {
                             SSSS.KeyUp(key);
                         }
+                        stop_keys = new Dictionary<Keys, string>();
                     }, 1000);
                     break;
                 case Keys.L:
@@ -141,13 +139,13 @@ namespace keyupMusic2
                 case Keys.F2:
                     huan._mouseKbdHook.ChangeMouseHooks();
                     break;
-                case Keys.F5:
+                case Keys.F4:
                     paly_sound(Keys.D2);
                     if (ProcessName == Common.ACPhoenix) { Common.HideProcess(Common.ACPhoenix); break; }
                     if (Common.FocusProcess(Common.ACPhoenix)) break;
                     dragonest();
                     break;
-                case Keys.F4:
+                case Keys.F5:
                     press(Keys.MediaPlayPause);
                     break;
                 case Keys.F6:
@@ -160,10 +158,10 @@ namespace keyupMusic2
                     }, 100);
                     break;
                 case Keys.Up:
-                    Invoke(() => huan.Opacity = huan.Opacity >= 1 ? 1 : huan.Opacity + 0.1);
+                    Invoke(() => huan.Opacity = huan.Opacity >= 1 ? 1 : huan.Opacity + 0.5);
                     break;
                 case Keys.Down:
-                    Invoke(() => huan.Opacity = huan.Opacity <= 0 ? 0 : huan.Opacity - 0.1);
+                    Invoke(() => huan.Opacity = huan.Opacity <= 0 ? 0 : huan.Opacity - 0.5);
                     break;
                 case Keys.Escape:
                     if (is_ctrl() && is_shift()) { Process.Start(new ProcessStartInfo("taskmgr.exe")); break; }
@@ -188,6 +186,15 @@ namespace keyupMusic2
                 //KeyboardHook.stop_next = true;
             }
             Common.hooked = false;
+        }
+
+        private static void run_chrome()
+        {
+            if (!is_ctrl()) if (Common.FocusProcess(Common.chrome)) return;
+            //press("LWin;CHR;Enter;", 100);
+            SS().KeyPress(Keys.LWin)
+                .KeyPress("chrome")
+                .KeyPress(Keys.Enter);
         }
 
         private void cmd_v()
@@ -268,7 +275,7 @@ namespace keyupMusic2
             Common.cmd($"/c start ms-settings:sound", action2, 200);
         }
 
-        private void get_point_color(KeyboardHookEventArgs e)
+        public void get_point_color(KeyboardHookEventArgs e)
         {
             Point mousePosition = Cursor.Position;
             var last_x = Cursor.Position.X;
@@ -289,7 +296,7 @@ namespace keyupMusic2
                 var color = bmpScreenshot.GetPixel(relativeX, relativeY);
                 string asd = $"({mousePosition.X},{mousePosition.Y}, Color.FromArgb({color.R},{color.G},{color.B}))";
                 log(ProcessName + asd);
-                log_process(e.key.ToString());
+                log_process(e?.key.ToString());
                 Invoke(() => Clipboard.SetText(asd));
                 return;
             }
@@ -301,7 +308,7 @@ namespace keyupMusic2
                     var color = bitmap.GetPixel(0, 0);
                     string asd = $"({mousePosition.X},{mousePosition.Y}, Color.FromArgb({color.R},{color.G},{color.B}))";
                     log(ProcessName + asd);
-                    log_process(e.key.ToString());
+                    log_process(e?.key.ToString());
                     Invoke(() => Clipboard.SetText(asd));
                 }
             }

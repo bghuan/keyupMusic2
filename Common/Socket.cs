@@ -95,7 +95,7 @@ namespace keyupMusic2
         {
             if (!string.IsNullOrEmpty(msg))
             {
-                if (Band.band_handle(msg)) { Band.Button1(); return; }
+                if (Band.band_handle(msg)) { Band.Button1(msg); return; }
                 huan.Invoke(() => { huan.label1.Text = msg; });
             }
         }
