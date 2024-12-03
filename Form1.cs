@@ -37,7 +37,7 @@ namespace keyupMusic2
             new TcpServer(this);
         }
 
-        public bool keyupMusic2_onlisten = false;
+        public static bool keyupMusic2_onlisten = false;
         DateTime super_listen_time = new DateTime();
         static int super_listen_tick = 144 * 14;
         Double timerMove_Tick_tick = super_listen_tick;
@@ -47,10 +47,18 @@ namespace keyupMusic2
         public void hook_KeyUp(KeyboardHookEventArgs e)
         {
             if (e.Type == KeyboardEventType.KeyDown) return;
-            stop_keys.Remove(e.key);
-            if (mouse_downing) { up_mouse(); mouse_downing = false; }
-            if (!no_sleep) return;
-            Invoke2(() => { label1.Text = label1.Text.Replace(easy_read(e.key), easy_read(e.key).ToLower()); });
+            lock (stop_keys)
+            {
+                var asdsads = stop_keys.Remove(e.key);
+                if (asdsads == false)
+                {
+                    string ddfd = "dsad";
+                }
+                if (mouse_downing) { up_mouse(); mouse_downing = false; }
+                if (!no_sleep) return;
+                Invoke2(() => { label1.Text = label1.Text.Replace(easy_read(e.key), easy_read(e.key).ToLower()); });
+                //log(e.key + "-" + asdsads + "-up" + string.Join(" ", stop_keys));
+            }
         }
         public bool judge_handled(KeyboardHookEventArgs e, string ProcessName)
         {
@@ -58,6 +66,14 @@ namespace keyupMusic2
             if (e.key == Keys.F3) return true;
             if (e.key == Keys.F9) return true;
 
+            if (ProcessName == Common.Kingdom)
+            {
+                if (Default.handling)
+                {
+                    if (e.key == Keys.Space)
+                        return true;
+                }
+            }
             if (ProcessName == Common.devenv)
             {
                 if (e.key == Keys.F && is_shift() && is_alt())
@@ -90,6 +106,7 @@ namespace keyupMusic2
             if (e.key == Keys.MediaPreviousTrack || e.key == Keys.MediaPlayPause)
             {
                 if (ProcessName == HuyaClient) return true;
+                if (ProcessName == steam) return true;
             }
             if (is_down(Keys.F1))
             {
@@ -105,7 +122,9 @@ namespace keyupMusic2
         private void hook_KeyDown(KeyboardHookEventArgs e)
         {
             if (e.Type != KeyboardEventType.KeyDown) return;
-            if (Common.hooked) return;
+            //if (Common.hooked) { e.Handled = true; return; }
+            if (e.key == Keys.F3) { e.Handled = true; }
+            if (Common.hooked) { return; }
             //if (is_down(Keys.LWin)) return;
             if (is_alt() && (e.key == Keys.F4 || e.key == Keys.Tab)) { return; }
             if (stop_keys.ContainsKey(e.key)) return;
@@ -113,12 +132,19 @@ namespace keyupMusic2
 
             FreshProcessName();
             if (keyupMusic2_onlisten &&
-                (e.key != Keys.Left && e.key != Keys.Right && e.key != Keys.T && e.key != Keys.F5)) { /*super_listen_clear(Color.White); */e.Handled = true; }
+                    !(e.key == Keys.Left
+                    //|| e.key == Keys.Right
+                    || e.key == Keys.T
+                    || e.key == Keys.F5))
+            {
+                /*super_listen_clear(Color.White); */
+                e.Handled = true;
+            }
             if (judge_handled(e, ProcessName)) { last_handled_key = e.key; e.Handled = true; }
 
+                handle_special_or_normal_key(e);
             Task.Run(() =>
             {
-                handle_special_or_normal_key(e);
                 print_easy_read();
                 quick_volume_zero();
                 start_record(e);
@@ -129,7 +155,7 @@ namespace keyupMusic2
             {
                 system_sleep();
             }
-            else if (e.key == Keys.F3 
+            else if (e.key == Keys.F3
                 || (e.key == Keys.LControlKey && is_shift())
                 || (e.key == Keys.LShiftKey && is_ctrl())
                 || (e.key == Keys.Space && is_down(Keys.LWin)))
@@ -332,7 +358,7 @@ namespace keyupMusic2
                 var b = new biu(this);
                 _mouseKbdHook.MouseHookEvent += b.MouseHookProc;
                 //Invoke(() => { b.MoveStopClickListen(); }); 
-                b.MoveStopClickListen();
+                //b.MoveStopClickListen();
                 //_mouseKbdHook.MouseHookEvent += new Douyin_game(this).MouseHookProc;
             }
             _mouseKbdHook.Install();
@@ -468,6 +494,8 @@ namespace keyupMusic2
                 TaskRun(() => { press(Keys.F9); }, 1000);
             }
             Common.FocusProcess(Common.ACPhoenix);
+            Common.FocusProcess(Common.Glass);
+            Common.FocusProcess(Common.Kingdom);
             Location = new Point(Screen.PrimaryScreen.Bounds.Width - 310, 100);
 
             startPoint = new Point(Location.X - 300, Location.Y);

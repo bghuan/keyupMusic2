@@ -18,13 +18,13 @@ namespace keyupMusic2
         {
         }
         public static Huan huan;
-        Keys[] keys = { Keys.D0, Keys.D1, Keys.D2, Keys.D3, Keys.D4, Keys.D5, Keys.D6, Keys.D7, Keys.D8, Keys.D9, Keys.PageUp, Keys.Next, Keys.Home, Keys.End, Keys.Space };
+        Keys[] keys = { Keys.D0, Keys.D1, Keys.D2, Keys.D3, Keys.D4, Keys.D5, Keys.D6, Keys.D7, Keys.D8, Keys.D9, Keys.PageUp, Keys.Home, Keys.End, Keys.Space };
         public static bool start_record = false;
         string commnd_record = "";
 
         public static void hook_KeyDown(Keys keys)
         {
-            huan.keyupMusic2_onlisten = true;
+            Huan.keyupMusic2_onlisten = true;
             var e = new KeyboardHookEventArgs(KeyboardEventType.KeyDown, keys, 0, new Native.keyboardHookStruct());
             new Super().hook_KeyDown_keyupMusic2(e);
         }
@@ -32,7 +32,7 @@ namespace keyupMusic2
         {
             hook(e);
             //if (ProcessName != Common.keyupMusic2) return;
-            if (!huan.keyupMusic2_onlisten) return;
+            if (!Huan.keyupMusic2_onlisten) return;
             //if (is_ctrl() && is_shift()) return;
             Common.hooked = true;
             //string label_backup = huan.label1.Text;
@@ -40,7 +40,8 @@ namespace keyupMusic2
             switch (e.key)
             {
                 case Keys.Q:
-                    SSSS.KeyPress(Keys.LWin, "openvpn", Keys.Enter);
+                    //SSSS.KeyPress(Keys.LWin, "openvpn", Keys.Enter);
+                    SSSS.KeyPress(Keys.LWin, "verge", Keys.Enter);
                     break;
                 case Keys.W:
                     start_listen_to_word();
@@ -79,6 +80,14 @@ namespace keyupMusic2
                     start_record = !start_record;
                     break;
                 case Keys.S:
+                    Invoke(() => {
+                        string ddd = Clipboard.GetText();
+                        string dddd = ddd.Substring(ddd.IndexOf("app/")+4, 8);
+                        string ddddd = dddd.Substring(0, dddd.IndexOf("/"));
+                        ProcessRun("C:\\Program Files\\other\\Onekey---v1.3.5.exe");
+                        Simm.Wait(2000).KeyPress(ddddd).KeyPress(Keys.Enter);
+                    });
+
                     break;
                 case Keys.D:
                     new Other().hook_KeyDown(new KeyboardHookEventArgs(KeyboardEventType.KeyDown, Keys.F11, 0, new Native.keyboardHookStruct()));
@@ -139,13 +148,13 @@ namespace keyupMusic2
                 case Keys.F2:
                     huan._mouseKbdHook.ChangeMouseHooks();
                     break;
-                case Keys.F4:
+                case Keys.F5:
                     paly_sound(Keys.D2);
                     if (ProcessName == Common.ACPhoenix) { Common.HideProcess(Common.ACPhoenix); break; }
                     if (Common.FocusProcess(Common.ACPhoenix)) break;
                     dragonest();
                     break;
-                case Keys.F5:
+                case Keys.F4:
                     press(Keys.MediaPlayPause);
                     break;
                 case Keys.F6:
@@ -157,12 +166,12 @@ namespace keyupMusic2
                         altab();
                     }, 100);
                     break;
-                case Keys.Up:
-                    Invoke(() => huan.Opacity = huan.Opacity >= 1 ? 1 : huan.Opacity + 0.5);
-                    break;
-                case Keys.Down:
-                    Invoke(() => huan.Opacity = huan.Opacity <= 0 ? 0 : huan.Opacity - 0.5);
-                    break;
+                //case Keys.Up:
+                //    Invoke(() => huan.Opacity = huan.Opacity >= 1 ? 1 : huan.Opacity + 0.5);
+                //    break;
+                //case Keys.Down:
+                //    Invoke(() => huan.Opacity = huan.Opacity <= 0 ? 0 : huan.Opacity - 0.5);
+                //    break;
                 case Keys.Escape:
                     if (is_ctrl() && is_shift()) { Process.Start(new ProcessStartInfo("taskmgr.exe")); break; }
                     press_middle_bottom();
@@ -170,6 +179,22 @@ namespace keyupMusic2
                 case Keys.F12:
                     string dfsadd = "taskkill /f /im explorer.exe & start explorer.exe";
                     ProcessRun(dfsadd);
+                    break;
+
+                case Keys.Left:
+                    press(Keys.MediaPreviousTrack);
+                    break;
+                case Keys.Right:
+                    press(Keys.MediaNextTrack);
+                    break;
+                case Keys.Down:
+                    press(Keys.VolumeDown, 2, 10);
+                    break;
+                case Keys.Up:
+                    press(Keys.VolumeUp,2,10);
+                    break;
+                case Keys.PageDown:
+                    press(Keys.MediaPlayPause);
                     break;
 
                 default:
@@ -181,7 +206,7 @@ namespace keyupMusic2
 
             if (catched)
             {
-                huan.Invoke2(() => { huan.keyupMusic2_onlisten = false; huan.BackColor = Color.White; /*huan.label1.Text = e.key.ToString();*/ }, 10);
+                huan.Invoke2(() => { Huan.keyupMusic2_onlisten = false; huan.BackColor = Color.White; /*huan.label1.Text = e.key.ToString();*/ }, 10);
                 //Invoke((() => { label1.Text = label_backup; }));
                 //KeyboardHook.stop_next = true;
             }

@@ -36,6 +36,9 @@ namespace keyupMusic2
         public const string AIoT = "AIoT IDE";
         public const string StartMenuExperienceHost = "StartMenuExperienceHost";
         public const string RadeonSoftware = "RadeonSoftware";
+        public const string Glass = "Glass Masquerade 3";
+        public const string steam = "steamwebhelper";
+        public const string Kingdom = "Kingdom Rush Vengeance";
 
         public static string[] list = {
         keyupMusic2,
@@ -60,9 +63,9 @@ namespace keyupMusic2
         VSCode,
         AIoT,
         RadeonSoftware,
-        QQMusic,
-        QQMusic,
-        QQMusic,
+        Glass,
+        steam,
+        Kingdom,
         QQMusic,
         QQMusic,
         QQMusic,
@@ -79,6 +82,7 @@ namespace keyupMusic2
         public static bool stop_listen = false;
         public static bool ACPhoenix_mouse_hook = false;
         public static DateTime special_delete_key_time;
+        public static bool handing4 = false;
 
         public static string ProcessName = "";
         public static string ProcessTitle = "";
@@ -350,7 +354,7 @@ namespace keyupMusic2
             {
                 return Buff.ToString();
             }
-            return null;
+            return "";
         }
         public static void TaskRun(Action action, int tick)
         {
@@ -579,6 +583,8 @@ namespace keyupMusic2
         {
             // 指定要处理的文件夹路径  
             string folderPath = "image\\encode\\";
+            string folderPath2 = "image\\encode\\2024\\";
+            string folderPath3 = "image\\encode\\2025\\";
 
             // 指定旧后缀和新后缀（不包含点号）  
             string oldExtension = "pngg";
@@ -592,8 +598,13 @@ namespace keyupMusic2
                 return;
             }
 
-            // 遍历文件夹下的所有文件  
-            foreach (string filePath in Directory.GetFiles(folderPath))
+            // 遍历文件夹下的所有文件
+            var a = Directory.GetFiles(folderPath);
+            var a2 = Directory.GetFiles(folderPath2);
+            var a3 = Directory.GetFiles(folderPath3);
+            var combinedArray = a.Concat(a2).Concat(a3).ToArray();
+
+            foreach (string filePath in combinedArray)
             {
                 // 检查文件是否匹配旧后缀  
                 if (Path.GetExtension(filePath)?.TrimStart('.') == oldExtension)
@@ -686,7 +697,7 @@ namespace keyupMusic2
         {
             return (ProcessTitle?.IndexOf("正在运行") >= 0 || ProcessTitle == "");
         }
-        public static bool IsMouseStopClick = true;
+        public static bool IsMouseStopClick = false;
         public static bool isMouseStopped = true;
         public static bool QTCheck(DateTime dateTime, int ms)
         {

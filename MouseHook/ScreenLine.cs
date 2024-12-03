@@ -42,6 +42,7 @@ namespace keyupMusic2
                 {
                     if (is_douyin()) return;
                     if (ProcessTitle.Contains("bilibili")) return;
+                    if (ProcessTitle.Contains("Psychonauts2")) return;
                     if (right_up_f && ProcessName == Common.chrome) SS().KeyPress(Keys.F);
                     right_up_f = false;
                     left_left_click = false;

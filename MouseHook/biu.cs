@@ -31,24 +31,28 @@ namespace keyupMusic2
         public void MouseHookProc(MouseKeyboardHook.MouseHookEventArgs e)
         {
             if (hooked_mouse) return;
+            if (handing4) return;
             if (handing3) return;
             if (handing) return;
             hooked_mouse = true;
             handing = true;
             handing3 = true;
+            //handing4 = true;
             this.e = e;
             if (e.Msg != MouseMsg.WM_MOUSEMOVE) Task.Run(() => { FreshProcessName(); });
             if (e.Msg == MouseMsg.WM_LBUTTONDOWN && e.X < screenHeight && e.X > screenHeight - 200 && e.Y < 100) TaskRun(() => { FreshProcessName(); }, 500);
 
             //Douyin(e);
             Douyin(e, Common.msedge);
-            Task.Run(ACPhoenix);
+            //Task.Run(ACPhoenix);
             Task.Run(Devenv);
             Task.Run(Cornor);
             Task.Run(ScreenLine);
             Task.Run(UnderLine);
             Task.Run(QQMusic);
             Task.Run(Other);
+            Task.Run(Glass);
+            Task.Run(Kingdom);
 
             handing = false;
             hooked_mouse = false;
@@ -62,6 +66,7 @@ namespace keyupMusic2
             if (e.Msg == MouseMsg.WM_RBUTTONDOWN)
             {
                 if (e.Y > 1370) return;
+                if (e.X > 2000 && e.Y < 200) return;
                 if (ProcessName == msedge && ProcessTitle.Contains("抖音"))
                 {
                     e.Handled = true;
@@ -76,6 +81,7 @@ namespace keyupMusic2
             else if (e.Msg == MouseMsg.WM_RBUTTONUP)
             {
                 if (e.Y > 1370) return;
+                if (e.X > 2000 && e.Y < 200) return;
                 if (r_button_downing && ProcessName == msedge && ProcessTitle.Contains("抖音"))
                 {
                     e.Handled = true;

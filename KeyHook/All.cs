@@ -104,7 +104,7 @@ namespace keyupMusic2
                 //case Keys.D9:
                 //    play_sound_di(); break;
                 case Keys.Oem2:
-                    if (is_ctrl()) SS().KeyPress(Keys.Apps); break;
+                    if (is_down(Keys.RControlKey)) SS().KeyPress(Keys.Apps); break;
                 case Keys.RControlKey:
                     log(DateTimeOffset.UtcNow.ToUnixTimeMilliseconds().ToString()); break;
             }

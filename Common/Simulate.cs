@@ -32,12 +32,12 @@ namespace keyupMusic2
             if (tick > 0) Thread.Sleep(tick);
             return this;
         }
-        public Simulate KeyPress(Keys key)
+        public Simulate KeyPress(Keys key, bool Extend = false)
         {
             var inputs = new KeyboardInput.INPUT[2];
 
-            inputs[0] = KeyboardInput.INPUT.CreateKeyDown((ushort)key);
-            inputs[1] = KeyboardInput.INPUT.CreateKeyUp((ushort)key);
+            inputs[0] = KeyboardInput.INPUT.CreateKeyDown((ushort)key, Extend);
+            inputs[1] = KeyboardInput.INPUT.CreateKeyUp((ushort)key, Extend);
 
             KeyboardInput.SendInput((uint)inputs.Length, ref inputs[0], KeyboardInput.INPUT.Size);
 
@@ -72,7 +72,6 @@ namespace keyupMusic2
             if (tick > 0) Thread.Sleep(tick);
             return this;
         }
-
         public Simulate KeyUp(Keys key)
         {
             var inputs = new KeyboardInput.INPUT[1];
@@ -142,7 +141,7 @@ namespace keyupMusic2
                     public IntPtr dwExtraInfo;
                 }
             }
-            public static INPUT CreateKeyDown(ushort virtualKey)
+            public static INPUT CreateKeyDown(ushort virtualKey, bool Extend = false)
             {
                 return new INPUT
                 {
@@ -153,14 +152,14 @@ namespace keyupMusic2
                         {
                             wVk = virtualKey,
                             ScanCode = (ushort)(MapVirtualKey(virtualKey, 0) & 0xFFU),
-                            Flags = KeyboardFlag.KeyDown,
+                            Flags = Extend ? KeyboardFlag.KeyDown | KeyboardFlag.ExtendedKey : KeyboardFlag.KeyDown,
                             time = 0,
                             dwExtraInfo = IntPtr.Zero
                         }
                     }
                 };
             }
-            public static INPUT CreateKeyUp(ushort virtualKey)
+            public static INPUT CreateKeyUp(ushort virtualKey, bool Extend=false)
             {
                 return new INPUT
                 {
@@ -171,7 +170,7 @@ namespace keyupMusic2
                         {
                             wVk = virtualKey,
                             ScanCode = (ushort)(MapVirtualKey(virtualKey, 0) & 0xFFU),
-                            Flags = KeyboardFlag.KeyUp,
+                            Flags = Extend ? KeyboardFlag.KeyUp | KeyboardFlag.ExtendedKey : KeyboardFlag.KeyUp,
                             time = 0,
                             dwExtraInfo = IntPtr.Zero
                         }

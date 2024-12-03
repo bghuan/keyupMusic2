@@ -28,6 +28,12 @@ namespace keyupMusic2
                 throw new Exception("handling_times>1000" + handling_times + handling_keys.ToString());
             }
         }
+        public void raw_press(Keys keys)
+        {
+            handling = false;
+            Common.press(keys);
+            handling = true;
+        }
         public void raw_press2()
         {
             if (handling_times < 20000)

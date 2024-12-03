@@ -8,7 +8,6 @@ namespace keyupMusic2
     {
         public static bool band_handle(string msg)
         {
-            //log(msg);
             return true;
         }
         public static void Button1(string msg)
@@ -38,15 +37,14 @@ namespace keyupMusic2
                 else if (key == Keys.F3)
                     key = Keys.X;
             }
-            else if (ProcessName == Common.msedge)
+            else if (ProcessName2 == Common.msedge)
             {
                 if (key == Keys.Up)
                     key = Keys.PageUp;
-                if (key == Keys.F3)
-                    key = Keys.MediaPlayPause;
             }
 
             Simm.KeyPress(key);
+            //log(msg + "-" + ProcessName2 + "-" + key);
         }
     }
 }

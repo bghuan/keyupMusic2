@@ -58,7 +58,7 @@ namespace keyupMusic2
                 }
                 else if (cornor == 3)
                 {
-                    var list = new[] { ApplicationFrameHost, explorer, vlc, v2rayN, Common.QQMusic, VSCode, AIoT, RadeonSoftware };
+                    var list = new[] { ApplicationFrameHost, explorer, vlc, v2rayN, Common.QQMusic, VSCode, AIoT, RadeonSoftware, steam };
 
                     var list2 = new[] { Thunder };
 

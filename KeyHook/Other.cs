@@ -72,7 +72,9 @@ namespace keyupMusic2
                     }
                     break;
                 case Keys.MediaPreviousTrack:
-                    if (module_name == HuyaClient) press("587,152", 1); break;
+                    if (module_name == HuyaClient) { press("587,152", 1); break; }
+                    if (module_name == steam) { press("36,70", 1); break; }
+                    break;
                 case Keys.PageDown:
                     if (module_name == QyClient) press("563, 894", 1); break;
                 case Keys.F4:
@@ -96,7 +98,7 @@ namespace keyupMusic2
                     switch (e.key)
                     {
                         case Keys.PageDown:
-                            if (e.X > screenWidth||is_down(Native.VK_RBUTTON))
+                            if (e.X > screenWidth || is_down(Native.VK_RBUTTON))
                                 press(Keys.VolumeDown, 5, 0); break;
                         case Keys.PageUp:
                             if (e.X > screenWidth)
@@ -107,6 +109,65 @@ namespace keyupMusic2
                         case Keys.Left:
                             if (ProcessTitle?.IndexOf("起点中文网") >= 0)
                                 press(Keys.PageUp, 0); break;
+                    }
+                    break;
+                case Common.Glass:
+                    switch (e.key)
+                    {
+                        case Keys.Left:
+                            //handing4 = true;
+                            var point = Position;
+                            mouse_click();
+                            mouse_click(297, 680);
+                            mouse_move(point, 10);
+                            //handing4 = false;
+                            break;
+                        case Keys.Right:
+                            //handing4 = true;
+                            var point2 = Position;
+                            mouse_click();
+                            mouse_click(2245, 680);
+                            mouse_move(point2, 10);
+                            //handing4 = false;
+                            break;
+                    }
+                    break;
+                case Common.Kingdom:
+                    switch (e.key)
+                    {
+                        case Keys.Oem3:
+                            mouse_click2();
+                            if (is_ctrl())
+                            {
+                                mouse_move(Position.X + 115, Position.Y + 30, 100);
+                                mouse_click2();
+                            }
+                            break;
+                        case Keys.Space:
+                            press(Keys.Return);
+                            break;
+                        case Keys.Tab:
+                            raw_press(Keys.Space);
+                            break;
+                        case Keys.Z:
+                            mouse_click2(10);
+                            press(Keys.Enter, 0);
+                            break;
+                        case Keys.X:
+                            mouse_click2(10);
+                            mouse_click2(10);
+                            mouse_click2(10);
+                            break;
+                            //case Keys.Q:
+                            //    //Simm.KeyFlag(Keys.Down);
+                            //    mouse_click2(10);
+                            //    S10.KeyPress(Keys.Down,true)
+                            //        .KeyPress(Keys.Down, true)
+                            //        .KeyPress(Keys.Down, true)
+                            //        .KeyPress(Keys.Down, true)
+                            //        .KeyPress(Keys.Right, true)
+                            //        .KeyPress(Keys.Return);
+                            //    break;
                     }
                     break;
             }
