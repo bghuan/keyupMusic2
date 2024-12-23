@@ -18,6 +18,7 @@ namespace keyupMusic2
         bool handing3 = false;
         bool left_left_click = false;
         bool left_down_click = false;
+        bool left_up_click = false;
         bool right_up_click = false;
         bool right_up_f = false;
         bool right_down_click = false;

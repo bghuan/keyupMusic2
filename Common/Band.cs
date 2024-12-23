@@ -43,6 +43,8 @@ namespace keyupMusic2
                     key = Keys.PageUp;
             }
 
+            if (key == Keys.None) return;
+
             Simm.KeyPress(key);
             //log(msg + "-" + ProcessName2 + "-" + key);
         }

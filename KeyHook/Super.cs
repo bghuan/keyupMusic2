@@ -90,7 +90,7 @@ namespace keyupMusic2
 
                     break;
                 case Keys.D:
-                    new Other().hook_KeyDown(new KeyboardHookEventArgs(KeyboardEventType.KeyDown, Keys.F11, 0, new Native.keyboardHookStruct()));
+                    new Other().hook_KeyDown(Keys.F11);
                     break;
                 case Keys.F:
                     Simm.KeyPress(Keys.F);
@@ -176,9 +176,11 @@ namespace keyupMusic2
                     if (is_ctrl() && is_shift()) { Process.Start(new ProcessStartInfo("taskmgr.exe")); break; }
                     press_middle_bottom();
                     break;
+                case Keys.F11:
                 case Keys.F12:
-                    string dfsadd = "taskkill /f /im explorer.exe & start explorer.exe";
-                    ProcessRun(dfsadd);
+                    new Other().hook_KeyDown(e.key);
+                    //string dfsadd = "taskkill /f /im explorer.exe & start explorer.exe";
+                    //ProcessRun(dfsadd);
                     break;
 
                 case Keys.Left:

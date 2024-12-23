@@ -39,6 +39,12 @@ namespace keyupMusic2
         public const string Glass = "Glass Masquerade 3";
         public const string steam = "steamwebhelper";
         public const string Kingdom = "Kingdom Rush Vengeance";
+        public const string Human = "Human";
+        public const string ItTakesTwo = "ItTakesTwo";
+        public const string Ghostrunner2 = "Ghostrunner2-Win64-Shipping";
+        public const string bilibili = "bilibili";
+        public const string UnlockingWindow = "UnlockingWindow";
+        public const string LockApp = "LockApp";
 
         public static string[] list = {
         keyupMusic2,
@@ -66,7 +72,11 @@ namespace keyupMusic2
         Glass,
         steam,
         Kingdom,
-        QQMusic,
+        ItTakesTwo,
+        Ghostrunner2,
+        bilibili,
+        UnlockingWindow,
+        LockApp,
         QQMusic,
         QQMusic,
         QQMusic,

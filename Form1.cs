@@ -49,11 +49,8 @@ namespace keyupMusic2
             if (e.Type == KeyboardEventType.KeyDown) return;
             lock (stop_keys)
             {
-                var asdsads = stop_keys.Remove(e.key);
-                if (asdsads == false)
-                {
-                    string ddfd = "dsad";
-                }
+                if (stop_keys.Remove(e.key) == false)
+                { string ddfd = "dsad"; }
                 if (mouse_downing) { up_mouse(); mouse_downing = false; }
                 if (!no_sleep) return;
                 Invoke2(() => { label1.Text = label1.Text.Replace(easy_read(e.key), easy_read(e.key).ToLower()); });
@@ -103,10 +100,11 @@ namespace keyupMusic2
                 if (e.key == Keys.End) return true;
                 if ((e.key == Keys.PageDown || e.key == Keys.PageUp) && e.X > screenWidth) return true;
             }
-            if (e.key == Keys.MediaPreviousTrack || e.key == Keys.MediaPlayPause)
+            if (e.key == Keys.MediaPreviousTrack || e.key == Keys.MediaNextTrack)
             {
                 if (ProcessName == HuyaClient) return true;
                 if (ProcessName == steam) return true;
+                if (ProcessName == Human) return true;
             }
             if (is_down(Keys.F1))
             {
@@ -142,7 +140,7 @@ namespace keyupMusic2
             }
             if (judge_handled(e, ProcessName)) { last_handled_key = e.key; e.Handled = true; }
 
-                handle_special_or_normal_key(e);
+            handle_special_or_normal_key(e);
             Task.Run(() =>
             {
                 print_easy_read();
@@ -150,16 +148,16 @@ namespace keyupMusic2
                 start_record(e);
                 //special_key_quick_yo(e);
             });
-
-            if (e.key == Keys.F9)
+            if (e.key == Keys.F3 || e.key == Keys.F9)
+            //|| (e.key == Keys.LControlKey && is_shift())
+            //|| (e.key == Keys.LShiftKey && is_ctrl())
+            //|| (e.key == Keys.Space && is_down(Keys.LWin)))
             {
-                system_sleep();
-            }
-            else if (e.key == Keys.F3
-                || (e.key == Keys.LControlKey && is_shift())
-                || (e.key == Keys.LShiftKey && is_ctrl())
-                || (e.key == Keys.Space && is_down(Keys.LWin)))
-            {
+                if (e.key == Keys.F9 && (keyupMusic2_onlisten || !no_sleep))
+                {
+                    system_sleep();
+                    return;
+                }
                 if (keyupMusic2_onlisten)
                 {
                     var aa = temp_visiable;
@@ -199,9 +197,17 @@ namespace keyupMusic2
 
         private void system_sleep()
         {
+            temp_visiable = false;
             press(Keys.MediaStop);
-            if (!Visible)
-                Invoke(() => { SetVisibleCore(true); });
+            Invoke(() => { SetVisibleCore(true); });
+
+            if (is_ctrl() || GetWindowText() == UnlockingWindow|| ProcessName == LockApp)
+            {
+                paly_sound(Keys.D0);
+                Process.Start("rundll32.exe", "powrprof.dll,SetSuspendState 0,1,1");
+                return;
+            }
+
             if (!no_sleep) { Task.Run(() => Timer_Tick(200)); return; }
             TaskRun(() => { Timer_Tick(); }, 70000);
             Task.Run(() =>
@@ -227,11 +233,12 @@ namespace keyupMusic2
             //Process.Start("rundll32.exe", "powrprof.dll,SetSuspendState 0,1,1");
             if (no_sleep) return;
             no_sleep = true;
+            Invoke(() => { SetVisibleCore(false); });
             Task.Run(() => press("100;LWin;1650,1300;1650,1140", tick));
             for (int i = 0; i < 10; i++)
             {
                 if (ProcessName2 == StartMenuExperienceHost) { return; }
-                log_process("F9");
+                //log_process("F9");
                 play_sound_di(tick);
             }
         }
@@ -263,7 +270,7 @@ namespace keyupMusic2
         private void quick_volume_zero()
         {
             var stop_keysCopy = new Dictionary<Keys, string>(stop_keys);
-            if (stop_keysCopy.Count(key => key.Key != Keys.VolumeDown) >= 5 && VolumeDown_time.AddSeconds(3) < DateTime.Now)
+            if (stop_keysCopy.Count(key => key.Key != Keys.VolumeDown) >= 6 && VolumeDown_time.AddSeconds(3) < DateTime.Now)
             {
                 VolumeDown_time = DateTime.Now;
                 press(Keys.VolumeDown, 50, 0);

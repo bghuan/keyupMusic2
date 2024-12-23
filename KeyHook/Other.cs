@@ -10,6 +10,10 @@ namespace keyupMusic2
         string[] list_volume = { Common.douyin, Common.msedge };
         static bool flag_special = false;
 
+        public void hook_KeyDown(Keys keys)
+        {
+            new Other().hook_KeyDown(new KeyboardHookEventArgs(KeyboardEventType.KeyDown, keys, 0, new Native.keyboardHookStruct()));
+        }
         public void hook_KeyDown(KeyboardHookEventArgs e)
         {
             string module_name = ProcessName;
@@ -22,6 +26,7 @@ namespace keyupMusic2
             switch (e.key)
             {
                 case Keys.F11:
+                    //if (is_down(Keys.Delete)) {run_vis(); break; }
                     if (is_ctrl()) break;
                     if (!Not_F10_F11_F12_Delete()) break;
                     if (is_shift())
@@ -38,7 +43,7 @@ namespace keyupMusic2
                     {
                         HideProcess(module_name);
                     }
-                    else if (list_wechat_visualstudio.Contains(module_name) || flag_special)
+                    else if (list_wechat_visualstudio.Contains(module_name) || flag_special || Huan.keyupMusic2_onlisten)
                     {
                         if (Common.FocusProcess(Common.devenv)) break;
                         run_vis();
@@ -63,7 +68,7 @@ namespace keyupMusic2
                     {
                         Super.hook_KeyDown(Keys.N);
                     }
-                    else if (list_wechat_visualstudio.Contains(module_name) || flag_special)
+                    else if (list_wechat_visualstudio.Contains(module_name) || flag_special || Huan.keyupMusic2_onlisten)
                     {
                         Common.FocusProcess(Common.WeChat);
                         Thread.Sleep(10);
@@ -115,20 +120,13 @@ namespace keyupMusic2
                     switch (e.key)
                     {
                         case Keys.Left:
-                            //handing4 = true;
+                        case Keys.Right:
+                            int asdsa = 2245;
+                            if (e.key == Keys.Left) asdsa = 297;
                             var point = Position;
                             mouse_click();
-                            mouse_click(297, 680);
+                            mouse_click(asdsa, 680);
                             mouse_move(point, 10);
-                            //handing4 = false;
-                            break;
-                        case Keys.Right:
-                            //handing4 = true;
-                            var point2 = Position;
-                            mouse_click();
-                            mouse_click(2245, 680);
-                            mouse_move(point2, 10);
-                            //handing4 = false;
                             break;
                     }
                     break;
@@ -158,16 +156,30 @@ namespace keyupMusic2
                             mouse_click2(10);
                             mouse_click2(10);
                             break;
-                            //case Keys.Q:
-                            //    //Simm.KeyFlag(Keys.Down);
-                            //    mouse_click2(10);
-                            //    S10.KeyPress(Keys.Down,true)
-                            //        .KeyPress(Keys.Down, true)
-                            //        .KeyPress(Keys.Down, true)
-                            //        .KeyPress(Keys.Down, true)
-                            //        .KeyPress(Keys.Right, true)
-                            //        .KeyPress(Keys.Return);
-                            //    break;
+                    }
+                    break;
+                case Common.ItTakesTwo:
+                    switch (e.key)
+                    {
+                        case Keys.Oem3:
+                        case Keys.J:
+                            mouse_click();
+                            break;
+                        case Keys.K:
+                            mouse_click_right();
+                            break;
+                        case Keys.L:
+                            press_dump(Keys.Space, 500);
+                            break;
+                    }
+                    break;
+                case Common.SearchHost:
+                    switch (e.key)
+                    {
+                        case Keys.MediaNextTrack:
+                        case Keys.MediaPreviousTrack:
+                            press(Keys.LWin);
+                            break;
                     }
                     break;
             }

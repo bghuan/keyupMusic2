@@ -105,6 +105,18 @@ namespace keyupMusic2
             }
             mouse_event(MOUSEEVENTF_LEFTDOWN | MOUSEEVENTF_LEFTUP, 0, 0, 0, 0);
         }
+        public static void mouse_click_right(int tick = 10)
+        {
+            if (tick > 0)
+            {
+                mouse_event(MOUSEEVENTF_RIGHTDOWN, 0, 0, 0, 0);
+                Thread.Sleep(tick);
+                mouse_event(MOUSEEVENTF_RIGHTUP, 0, 0, 0, 0);
+                Thread.Sleep(tick);
+                return;
+            }
+            mouse_event(MOUSEEVENTF_LEFTDOWN | MOUSEEVENTF_LEFTUP, 0, 0, 0, 0);
+        }
         public static void mouse_click(int x, int y, int tick = 10)
         {
             mouse_move(x, y);
