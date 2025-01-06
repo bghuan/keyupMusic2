@@ -3,7 +3,7 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.8.34330.188
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "keyupMusic2", "keyupMusic2.csproj", "{829C2FBB-9DC7-407C-AD20-DAAE8AD0A4AF}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "keyupMusic4", "keyupMusic4.csproj", "{829C2FBB-9DC7-407C-AD20-DAAE8AD0A4AF}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "keyupmusic2_test", "keyupmusic2_test\keyupmusic2_test.csproj", "{0CB97F3D-19FD-4AC5-8F59-8C6755235530}"
 EndProject

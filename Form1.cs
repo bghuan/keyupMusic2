@@ -63,7 +63,7 @@ namespace keyupMusic2
             if (e.key == Keys.F3) return true;
             if (e.key == Keys.F9) return true;
 
-            if (ProcessName == Common.Kingdom)
+            if (ProcessName == Common.Kingdom || ProcessName == Common.Kingdom5)
             {
                 if (Default.handling)
                 {
@@ -105,6 +105,7 @@ namespace keyupMusic2
                 if (ProcessName == HuyaClient) return true;
                 if (ProcessName == steam) return true;
                 if (ProcessName == Human) return true;
+                if (ProcessName == Kingdom5) return true;
             }
             if (is_down(Keys.F1))
             {
@@ -201,7 +202,7 @@ namespace keyupMusic2
             press(Keys.MediaStop);
             Invoke(() => { SetVisibleCore(true); });
 
-            if (is_ctrl() || GetWindowText() == UnlockingWindow|| ProcessName == LockApp)
+            if (is_ctrl() || GetWindowText() == UnlockingWindow || ProcessName == LockApp || ProcessName == err)
             {
                 paly_sound(Keys.D0);
                 Process.Start("rundll32.exe", "powrprof.dll,SetSuspendState 0,1,1");
@@ -503,6 +504,7 @@ namespace keyupMusic2
             Common.FocusProcess(Common.ACPhoenix);
             Common.FocusProcess(Common.Glass);
             Common.FocusProcess(Common.Kingdom);
+            Common.FocusProcess(Common.Kingdom5);
             Location = new Point(Screen.PrimaryScreen.Bounds.Width - 310, 100);
 
             startPoint = new Point(Location.X - 300, Location.Y);

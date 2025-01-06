@@ -22,7 +22,7 @@ namespace keyupMusic2
                 //mouse_click2(10);
                 //press(Keys.Enter, 0);
                 mouse_click2(10);
-                S10.KeyPress(Keys.Down, true)
+                SS(200).KeyPress(Keys.Down, true)
                     .KeyPress(Keys.Down, true)
                     .KeyPress(Keys.Down, true)
                     .KeyPress(Keys.Down, true)

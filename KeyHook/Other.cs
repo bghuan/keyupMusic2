@@ -64,7 +64,7 @@ namespace keyupMusic2
                     {
                         CloseProcess(module_name);
                     }
-                    else if (explorer.Equals(module_name) && (GetWindowText() == "UnlockingWindow"))
+                    else if (GetWindowText() == UnlockingWindow || ProcessName == LockApp|| ProcessName == err)
                     {
                         Super.hook_KeyDown(Keys.N);
                     }
@@ -131,6 +131,7 @@ namespace keyupMusic2
                     }
                     break;
                 case Common.Kingdom:
+                case Common.Kingdom5:
                     switch (e.key)
                     {
                         case Keys.Oem3:
@@ -141,21 +142,35 @@ namespace keyupMusic2
                                 mouse_click2();
                             }
                             break;
-                        case Keys.Space:
-                            press(Keys.Return);
-                            break;
+                        //case Keys.Space:
+                        //    WindowsInput.Simulate.Events().Click(KeyCode.Enter).Invoke();
+                        //    //S100.KeyPress(Keys.Return);
+                        //    break;
                         case Keys.Tab:
-                            raw_press(Keys.Space);
+                            S10.KeyPress(Keys.D4, true);
                             break;
-                        case Keys.Z:
-                            mouse_click2(10);
-                            press(Keys.Enter, 0);
+                        case Keys.Space:
+                            S10.KeyPress(Keys.D5, true);
                             break;
-                        case Keys.X:
-                            mouse_click2(10);
-                            mouse_click2(10);
-                            mouse_click2(10);
-                            break;
+                        //case Keys.MediaNextTrack:
+                        //    mouse_click2(10);
+                        //    //S100.KeyPress(Keys.Up, true)
+                        //    //    .KeyPress(Keys.Return);
+                        //    WindowsInput.Simulate.Events()
+                        //        .Click(KeyCode.Up)
+                        //        .Wait(200)
+                        //        .Click(KeyCode.Enter)
+                        //        .Invoke();
+                        //    break;
+                        //    //case Keys.Z:
+                        //    //    mouse_click2(10);
+                        //    //    press(Keys.Enter, 0);
+                        //    //    break;
+                        //    //case Keys.X:
+                        //    //    mouse_click2(10);
+                        //    //    mouse_click2(10);
+                        //    //    mouse_click2(10);
+                        //    //    break;
                     }
                     break;
                 case Common.ItTakesTwo:

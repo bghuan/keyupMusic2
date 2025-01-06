@@ -80,14 +80,14 @@ namespace keyupMusic2
                     start_record = !start_record;
                     break;
                 case Keys.S:
-                    Invoke(() => {
+                    Invoke(() =>
+                    {
                         string ddd = Clipboard.GetText();
-                        string dddd = ddd.Substring(ddd.IndexOf("app/")+4, 8);
+                        string dddd = ddd.Substring(ddd.IndexOf("app/") + 4, 8);
                         string ddddd = dddd.Substring(0, dddd.IndexOf("/"));
                         ProcessRun("C:\\Program Files\\other\\Onekey---v1.3.5.exe");
                         Simm.Wait(2000).KeyPress(ddddd).KeyPress(Keys.Enter);
                     });
-
                     break;
                 case Keys.D:
                     new Other().hook_KeyDown(Keys.F11);
@@ -150,21 +150,23 @@ namespace keyupMusic2
                     break;
                 case Keys.F5:
                     paly_sound(Keys.D2);
-                    if (ProcessName == Common.ACPhoenix) { Common.HideProcess(Common.ACPhoenix); break; }
-                    if (Common.FocusProcess(Common.ACPhoenix)) break;
-                    dragonest();
+                    //    if (ProcessName == Common.ACPhoenix) { Common.HideProcess(Common.ACPhoenix); break; }
+                    //    if (Common.FocusProcess(Common.ACPhoenix)) break;
+                    //    dragonest();
+                    ProcessRun("C:\\Program Files (x86)\\Steam\\steam.exe");
                     break;
                 case Keys.F4:
                     press(Keys.MediaPlayPause);
                     break;
                 case Keys.F6:
-                    TaskRun(() =>
-                    {
-                        if (!FocusProcess(Common.chrome)) return;
-                        play_sound_di();
-                        Simm.KeyPress(Keys.M).Sleep(100);
-                        altab();
-                    }, 100);
+                    //TaskRun(() =>
+                    //{
+                    //    if (!FocusProcess(Common.chrome)) return;
+                    //    play_sound_di();
+                    //    Simm.KeyPress(Keys.M).Sleep(100);
+                    //    altab();
+                    //}, 100);
+                    press("2411,95;2391,184;2393,35",200);
                     break;
                 //case Keys.Up:
                 //    Invoke(() => huan.Opacity = huan.Opacity >= 1 ? 1 : huan.Opacity + 0.5);
@@ -193,7 +195,7 @@ namespace keyupMusic2
                     press(Keys.VolumeDown, 2, 10);
                     break;
                 case Keys.Up:
-                    press(Keys.VolumeUp,2,10);
+                    press(Keys.VolumeUp, 2, 10);
                     break;
                 case Keys.PageDown:
                     press(Keys.MediaPlayPause);

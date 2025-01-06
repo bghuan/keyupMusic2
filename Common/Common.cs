@@ -12,7 +12,7 @@ namespace keyupMusic2
 {
     public partial class Common
     {
-        public const string keyupMusic2 = "keyupMusic2";
+        public const string keyupMusic2 = "keyupMusic4";
         public const string ACPhoenix = "ACPhoenix";
         public const string Dragonest = "DragonestGameLauncher";
         public const string devenv = "devenv";
@@ -45,6 +45,9 @@ namespace keyupMusic2
         public const string bilibili = "bilibili";
         public const string UnlockingWindow = "UnlockingWindow";
         public const string LockApp = "LockApp";
+        public const string Kingdom5 = "Kingdom Rush Alliance";
+        public const string err = "err";
+        public const string WeChatAppEx = "WeChatAppEx";
 
         public static string[] list = {
         keyupMusic2,
@@ -77,7 +80,7 @@ namespace keyupMusic2
         bilibili,
         UnlockingWindow,
         LockApp,
-        QQMusic,
+        Kingdom5,
         QQMusic,
         QQMusic,
         QQMusic,

@@ -44,6 +44,8 @@ namespace keyupMusic2
             if (tick > 0) Thread.Sleep(tick);
             return this;
         }
+        //[DllImport("user32.dll", SetLastError = true)]
+        //public static extern uint SendInput(UInt32 numberOfInputs, KeyboardInput.INPUT[] inputs, Int32 sizeOfInputStructure);
         public Simulate KeyPress(Keys[] key)
         {
             var inputs = new KeyboardInput.INPUT[key.Length * 2];
@@ -140,6 +142,14 @@ namespace keyupMusic2
                     public uint time;
                     public IntPtr dwExtraInfo;
                 }
+                //public struct KEYBDINPUT
+                //{
+                //    public int wVk;
+                //    public int ScanCode;
+                //    public KeyboardFlag Flags;
+                //    public int time;
+                //    public int dwExtraInfo;
+                //}
             }
             public static INPUT CreateKeyDown(ushort virtualKey, bool Extend = false)
             {
