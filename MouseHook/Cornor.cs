@@ -58,11 +58,13 @@ namespace keyupMusic2
                 }
                 else if (cornor == 3)
                 {
-                    var list = new[] { ApplicationFrameHost, explorer, vlc, v2rayN, Common.QQMusic, VSCode, AIoT, RadeonSoftware, steam, msedge, WeChatAppEx };
+                    var list = new[] { ApplicationFrameHost, explorer, vlc, v2rayN, Common.QQMusic, VSCode, AIoT, RadeonSoftware, steam, WeChatAppEx };
 
                     var list2 = new[] { Thunder };
 
-                    if (list.Contains(Common.ProcessName))
+                    if (is_douyin())
+                        mouse_click_not_repeat();
+                    else if (list.Contains(Common.ProcessName))
                         mouse_click_not_repeat();
                     else if (list2.Contains(Common.ProcessName))
                         press_close();
@@ -80,6 +82,19 @@ namespace keyupMusic2
                 {
                     if (Common.ACPhoenix.Equals(Common.ProcessName))
                         press([Keys.Escape]);
+                    if (Common.ExsitProcess(Common.PowerToysCropAndLock, true))
+                    {
+                        if (ProcessName == Common.chrome)
+                        {
+                            press(Keys.F11);
+                            altab();
+                        }
+                        else
+                        {
+                            FocusProcess(Common.chrome);
+                            press(Keys.F11);
+                        }
+                    }
                 }
                 else if (cornor == 5)
                 {

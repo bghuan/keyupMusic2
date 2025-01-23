@@ -280,7 +280,8 @@ namespace keyupMusic2
         public static void ctrl_shift(bool zh = true)
         {
             //var _zh = (judge_color(2290, 1411, Color.FromArgb(242, 242, 242)));
-            var _zh = (judge_color(2281, 1413, Color.FromArgb(242, 242, 242)));
+            //var _zh = (judge_color(2281, 1413, Color.FromArgb(242, 242, 242)));
+            var _zh = (judge_color(1397, 419, Color.FromArgb(255, 255, 255)));
             var _en = !_zh;
             if (zh && _en)
                 press(Keys.LShiftKey, 10);

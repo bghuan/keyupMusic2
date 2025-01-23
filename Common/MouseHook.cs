@@ -23,6 +23,7 @@
                     return Native.CallNextHookEx(_key_hookId, code, wParam, ref lParam);
 
                 //if (key == Keys.F22) return 1;
+                if (key == (Keys.LButton | Keys.XButton2)) return 1;
                 var args = new KeyboardHookEventArgs(type, key, wParam, lParam);
                 if (stop_keys.Count == 0 || !stop_keys.ContainsKey(key) || type == KeyboardEventType.KeyUp || key == Keys.VolumeDown || key == Keys.VolumeUp)
                     KeyboardHookEvent(args);

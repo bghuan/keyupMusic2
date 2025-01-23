@@ -18,7 +18,7 @@ namespace keyupMusic2
         {
         }
         public static Huan huan;
-        Keys[] keys = { Keys.D0, Keys.D1, Keys.D2, Keys.D3, Keys.D4, Keys.D5, Keys.D6, Keys.D7, Keys.D8, Keys.D9, Keys.PageUp, Keys.Home, Keys.End, Keys.Space };
+        Keys[] keys = { Keys.D0, Keys.D1, Keys.D2, Keys.D3, Keys.D4, Keys.D5, Keys.D6, Keys.D7, Keys.D8, Keys.D9, Keys.PageUp, Keys.Home, Keys.End };
         public static bool start_record = false;
         string commnd_record = "";
 
@@ -138,6 +138,16 @@ namespace keyupMusic2
                     stop_keys = new Dictionary<Keys, string>();
                     break;
                 case Keys.M:
+                case Keys.Space:
+                    Invoke(() =>
+                    {
+                        press([Keys.LControlKey, Keys.A]);
+                        press([Keys.LControlKey, Keys.C]);
+                        press([Keys.LShiftKey]);
+                        string ddd = Clipboard.GetText().ToUpper();
+                        if (ddd.Length < 20)
+                            press(ddd);
+                    });
                     break;
                 case Keys.N:
                     notify();
@@ -166,7 +176,7 @@ namespace keyupMusic2
                     //    Simm.KeyPress(Keys.M).Sleep(100);
                     //    altab();
                     //}, 100);
-                    press("2411,95;2391,184;2393,35",200);
+                    press("2411,95;2391,184;2393,35", 200);
                     break;
                 //case Keys.Up:
                 //    Invoke(() => huan.Opacity = huan.Opacity >= 1 ? 1 : huan.Opacity + 0.5);

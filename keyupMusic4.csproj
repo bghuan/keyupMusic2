@@ -70,7 +70,7 @@
   </ItemGroup>
 
   <Target Name="PreBuild" BeforeTargets="PreBuildEvent">
-    <Exec Command="taskkill /im keyupmusic2.exe /f" ContinueOnError="true" />
+    <Exec Command="taskkill /im keyupmusic4.exe /f" ContinueOnError="true" />
   </Target>
 
 </Project>

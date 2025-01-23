@@ -42,7 +42,7 @@ namespace keyupMusic2
         static int super_listen_tick = 144 * 14;
         Double timerMove_Tick_tick = super_listen_tick;
         public MouseKeyboardHook _mouseKbdHook;
-        Keys[] special_key = { Keys.F22, Keys.RControlKey, Keys.RShiftKey, Keys.RMenu, Keys.RWin, Keys.MediaPreviousTrack };
+        Keys[] special_key = { Keys.F22, Keys.RMenu, Keys.RWin };
 
         public void hook_KeyUp(KeyboardHookEventArgs e)
         {
@@ -63,14 +63,6 @@ namespace keyupMusic2
             if (e.key == Keys.F3) return true;
             if (e.key == Keys.F9) return true;
 
-            if (ProcessName == Common.Kingdom || ProcessName == Common.Kingdom5)
-            {
-                if (Default.handling)
-                {
-                    if (e.key == Keys.Space)
-                        return true;
-                }
-            }
             if (ProcessName == Common.devenv)
             {
                 if (e.key == Keys.F && is_shift() && is_alt())
@@ -84,28 +76,18 @@ namespace keyupMusic2
                     if (list.Contains(ProcessName)) return true;
                 }
             }
-            if (ProcessName == Common.ACPhoenix)
-            {
-                if (e.key == Keys.Oem3) return true;
-                if (e.key == Keys.F11 && !is_ctrl()) return true;
-                if (Default.handling)
-                {
-                    if (e.key == Keys.Space) return true;
-                    if (e.key == Keys.E) return true;
-                }
-            }
             if (ProcessName == Common.msedge)
             {
                 if (e.key == Keys.Home) return true;
                 if (e.key == Keys.End) return true;
-                if ((e.key == Keys.PageDown || e.key == Keys.PageUp) && e.X > screenWidth) return true;
+                //if ((e.key == Keys.PageDown || e.key == Keys.PageUp) && e.X > screenWidth) return true;
+                if (e.key == Keys.VolumeUp || e.key == Keys.VolumeDown)
+                    if (e.X == screenWidth1 || e.Y == screenHeight1)
+                        return true;
             }
             if (e.key == Keys.MediaPreviousTrack || e.key == Keys.MediaNextTrack)
             {
-                if (ProcessName == HuyaClient) return true;
                 if (ProcessName == steam) return true;
-                if (ProcessName == Human) return true;
-                if (ProcessName == Kingdom5) return true;
             }
             if (is_down(Keys.F1))
             {
@@ -146,7 +128,7 @@ namespace keyupMusic2
             {
                 print_easy_read();
                 quick_volume_zero();
-                start_record(e);
+                //start_record(e);
                 //special_key_quick_yo(e);
             });
             if (e.key == Keys.F3 || e.key == Keys.F9)
@@ -235,7 +217,9 @@ namespace keyupMusic2
             if (no_sleep) return;
             no_sleep = true;
             Invoke(() => { SetVisibleCore(false); });
-            Task.Run(() => press("100;LWin;1650,1300;1650,1140", tick));
+            Task.Run(
+                () =>
+            press("2200;LWin;1650,1300;1650,1140", tick));
             for (int i = 0; i < 10; i++)
             {
                 if (ProcessName2 == StartMenuExperienceHost) { return; }

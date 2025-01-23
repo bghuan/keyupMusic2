@@ -46,6 +46,7 @@ namespace keyupMusic2
                     else if (list_wechat_visualstudio.Contains(module_name) || flag_special || Huan.keyupMusic2_onlisten)
                     {
                         if (Common.FocusProcess(Common.devenv)) break;
+                        if (e.X == screenWidth) break;
                         run_vis();
                     }
                     break;
@@ -64,7 +65,7 @@ namespace keyupMusic2
                     {
                         CloseProcess(module_name);
                     }
-                    else if (GetWindowText() == UnlockingWindow || ProcessName == LockApp|| ProcessName == err)
+                    else if (GetWindowText() == UnlockingWindow || ProcessName == LockApp || ProcessName == err)
                     {
                         Super.hook_KeyDown(Keys.N);
                     }
@@ -102,17 +103,23 @@ namespace keyupMusic2
                 case Common.msedge:
                     switch (e.key)
                     {
-                        case Keys.PageDown:
-                            if (e.X > screenWidth || is_down(Native.VK_RBUTTON))
-                                press(Keys.VolumeDown, 5, 0); break;
-                        case Keys.PageUp:
-                            if (e.X > screenWidth)
-                                press(Keys.VolumeUp, 5, 0); break;
+                        //case Keys.PageDown:
+                        //    if (e.X > screenWidth || is_down(Native.VK_RBUTTON))
+                        //        press(Keys.VolumeDown, 5, 0); break;
+                        //case Keys.PageUp:
+                        //    if (e.X > screenWidth)
+                        //        press(Keys.VolumeUp, 5, 0); break;
                         case Keys.Right:
                             if (ProcessTitle?.IndexOf("起点中文网") >= 0)
                                 press(Keys.PageDown, 0); break;
                         case Keys.Left:
                             if (ProcessTitle?.IndexOf("起点中文网") >= 0)
+                                press(Keys.PageUp, 0); break;
+                        case Keys.VolumeDown:
+                            if (e.X == screenWidth1|| e.Y == screenHeight1)
+                                press(Keys.PageDown, 0); break;
+                        case Keys.VolumeUp:
+                            if (e.X == screenWidth1 || e.Y == screenHeight1)
                                 press(Keys.PageUp, 0); break;
                     }
                     break;
@@ -152,25 +159,25 @@ namespace keyupMusic2
                         case Keys.Space:
                             S10.KeyPress(Keys.D5, true);
                             break;
-                        //case Keys.MediaNextTrack:
-                        //    mouse_click2(10);
-                        //    //S100.KeyPress(Keys.Up, true)
-                        //    //    .KeyPress(Keys.Return);
-                        //    WindowsInput.Simulate.Events()
-                        //        .Click(KeyCode.Up)
-                        //        .Wait(200)
-                        //        .Click(KeyCode.Enter)
-                        //        .Invoke();
-                        //    break;
-                        //    //case Keys.Z:
-                        //    //    mouse_click2(10);
-                        //    //    press(Keys.Enter, 0);
-                        //    //    break;
-                        //    //case Keys.X:
-                        //    //    mouse_click2(10);
-                        //    //    mouse_click2(10);
-                        //    //    mouse_click2(10);
-                        //    //    break;
+                            //case Keys.MediaNextTrack:
+                            //    mouse_click2(10);
+                            //    //S100.KeyPress(Keys.Up, true)
+                            //    //    .KeyPress(Keys.Return);
+                            //    WindowsInput.Simulate.Events()
+                            //        .Click(KeyCode.Up)
+                            //        .Wait(200)
+                            //        .Click(KeyCode.Enter)
+                            //        .Invoke();
+                            //    break;
+                            //    //case Keys.Z:
+                            //    //    mouse_click2(10);
+                            //    //    press(Keys.Enter, 0);
+                            //    //    break;
+                            //    //case Keys.X:
+                            //    //    mouse_click2(10);
+                            //    //    mouse_click2(10);
+                            //    //    mouse_click2(10);
+                            //    //    break;
                     }
                     break;
                 case Common.ItTakesTwo:
@@ -194,6 +201,19 @@ namespace keyupMusic2
                         case Keys.MediaNextTrack:
                         case Keys.MediaPreviousTrack:
                             press(Keys.LWin);
+                            break;
+                    }
+                    break;
+                case Common.cs2:
+                    switch (e.key)
+                    {
+                        case Keys.F1:
+                        case Keys.F5:
+                            press("B;1193,927;B;");
+                            break;
+                        case Keys.F2:
+                        case Keys.F6:
+                            press("B;1241,692;B;");
                             break;
                     }
                     break;

@@ -50,7 +50,7 @@ namespace keyupMusic2
             Task.Run(Cornor);
             Task.Run(ScreenLine);
             Task.Run(UnderLine);
-            Task.Run(QQMusic);
+            //Task.Run(QQMusic);
             Task.Run(Other);
             Task.Run(Glass);
             Task.Run(Kingdom);
@@ -156,6 +156,12 @@ namespace keyupMusic2
                     mouse_move_to(0, 1325 - screenHeight);
                     mouse_click();
                 }
+                //if (e.Y < screenHeight - 60 && !IsFullScreen())
+                //{
+                //    Sleep(322);
+                //    mouse_move_to(0, 1325 - screenHeight);
+                //    mouse_click();
+                //}
             }
         }
         int ffff = 0;

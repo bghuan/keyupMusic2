@@ -48,6 +48,8 @@ namespace keyupMusic2
         public const string Kingdom5 = "Kingdom Rush Alliance";
         public const string err = "err";
         public const string WeChatAppEx = "WeChatAppEx";
+        public const string cs2 = "cs2";
+        public const string PowerToysCropAndLock = "PowerToys.CropAndLock";
 
         public static string[] list = {
         keyupMusic2,
@@ -81,8 +83,8 @@ namespace keyupMusic2
         UnlockingWindow,
         LockApp,
         Kingdom5,
-        QQMusic,
-        QQMusic,
+        cs2,
+        PowerToysCropAndLock,
         QQMusic,
         QQMusic,
         QQMusic,
@@ -292,6 +294,7 @@ namespace keyupMusic2
                 //ShowWindow((hWnd), SW.SW_SHOW);
                 //ShowWindow((hWnd), SW.SW_SHOWNA);
                 SetForegroundWindow(objProcesses[0].MainWindowHandle);
+                Common.ProcessName = objProcesses[0].ProcessName;
                 return true;
             }
             return false;
@@ -310,11 +313,13 @@ namespace keyupMusic2
             bool result = SetWindowText(hWnd, title);
             return result;
         }
-        public static bool ExsitProcess(string procName)
+        public static bool ExsitProcess(string procName, bool front = false)
         {
             Process[] objProcesses = Process.GetProcessesByName(procName);
             if (objProcesses.Length > 0)
             {
+                if (objProcesses[0].MainWindowHandle == 0 && front)
+                    return false;
                 return true;
             }
             return false;
