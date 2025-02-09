@@ -9,8 +9,8 @@ namespace keyupMusic2
         ACPhoenix aCPhoenix;
         devenv Devenv;
         douyin Douyin;
-        Other Aaa;
-        All Bbb;
+        Other Otherr;
+        All Alll;
         Super super;
         Chrome chrome;
         bool not_init_show = (is_ctrl() && !is_shift()) || Position.Y == 0;
@@ -29,8 +29,8 @@ namespace keyupMusic2
             aCPhoenix = new ACPhoenix();
             Devenv = new devenv();
             Douyin = new douyin(this);
-            Aaa = new Other();
-            Bbb = new All();
+            Otherr = new Other();
+            Alll = new All();
             super = new Super(this);
             chrome = new Chrome();
 
@@ -76,7 +76,7 @@ namespace keyupMusic2
                     if (list.Contains(ProcessName)) return true;
                 }
             }
-            if (ProcessName == Common.msedge)
+            if (ProcessName == Common.msedge && !is_douyin())
             {
                 if (e.key == Keys.Home) return true;
                 if (e.key == Keys.End) return true;
@@ -88,6 +88,8 @@ namespace keyupMusic2
             if (e.key == Keys.MediaPreviousTrack || e.key == Keys.MediaNextTrack)
             {
                 if (ProcessName == steam) return true;
+                if (ProcessName == cs2) return true;
+                if (ProcessName == Glass2) return true;
             }
             if (is_down(Keys.F1))
             {
@@ -109,7 +111,7 @@ namespace keyupMusic2
             //if (is_down(Keys.LWin)) return;
             if (is_alt() && (e.key == Keys.F4 || e.key == Keys.Tab)) { return; }
             if (stop_keys.ContainsKey(e.key)) return;
-            if (stop_keys.Count >= 8) { Dispose(); return; }
+            //if (stop_keys.Count >= 8) { Dispose(); return; }
 
             FreshProcessName();
             if (keyupMusic2_onlisten &&
@@ -127,7 +129,7 @@ namespace keyupMusic2
             Task.Run(() =>
             {
                 print_easy_read();
-                quick_volume_zero();
+                //quick_volume_zero();
                 //start_record(e);
                 //special_key_quick_yo(e);
             });
@@ -136,6 +138,7 @@ namespace keyupMusic2
             //|| (e.key == Keys.LShiftKey && is_ctrl())
             //|| (e.key == Keys.Space && is_down(Keys.LWin)))
             {
+                play_sound_di();
                 if (e.key == Keys.F9 && (keyupMusic2_onlisten || !no_sleep))
                 {
                     system_sleep();
@@ -164,8 +167,8 @@ namespace keyupMusic2
                     Douyin.hook_KeyDown_ddzzq(e);
                     chrome.handlehandle(e);
 
-                    Aaa.hook_KeyDown(e);
-                    Bbb.hook_KeyDown_ddzzq(e);
+                    Otherr.hook_KeyDown(e);
+                    Alll.hook_KeyDown_ddzzq(e);
 
                     Music.hook_KeyDown_keyupMusic2(e);
                     if (!no_sleep && e.key != Keys.VolumeDown && e.key != Keys.VolumeUp && e.key != Keys.MediaStop)
@@ -248,14 +251,14 @@ namespace keyupMusic2
             {
                 string asd = string.Join(" ", _stop_keys.Select(key => easy_read(key.Key.ToString())));
                 if (label1.Text.ToLower() == asd.ToLower()) asd += " " + DateTimeNow2();
-                label1.Text = Listen.speak_word + "" + asd;
+                //label1.Text = Listen.speak_word + "" + asd;
             }
             );
         }
         private void quick_volume_zero()
         {
             var stop_keysCopy = new Dictionary<Keys, string>(stop_keys);
-            if (stop_keysCopy.Count(key => key.Key != Keys.VolumeDown) >= 6 && VolumeDown_time.AddSeconds(3) < DateTime.Now)
+            if (stop_keysCopy.Count(key => key.Key != Keys.VolumeDown) >= 7 && VolumeDown_time.AddSeconds(3) < DateTime.Now)
             {
                 VolumeDown_time = DateTime.Now;
                 press(Keys.VolumeDown, 50, 0);
@@ -366,6 +369,18 @@ namespace keyupMusic2
         protected override void Dispose(bool disposing)
         {
             stopListen();
+            // 停止 TcpListener
+            if (TcpServer.listener != null && TcpServer.listener.Server.IsBound)
+            {
+                TcpServer.listener.Stop();
+            }
+
+            // 关闭 TcpClient 和相关的流
+            if (TcpServer.client != null && TcpServer.client.Connected)
+            {
+                TcpServer.stream?.Close();
+                TcpServer.client.Close();
+            }
 
             if (disposing && (components != null))
             {
@@ -483,10 +498,10 @@ namespace keyupMusic2
             }
             if (not_not_sleep)
             {
-                TaskRun(() => { press(Keys.F9); }, 1000);
+                TaskRun(() => { press(Keys.F9); press(Keys.F9); }, 1000);
             }
             Common.FocusProcess(Common.ACPhoenix);
-            Common.FocusProcess(Common.Glass);
+            Common.FocusProcess(Common.Glass3);
             Common.FocusProcess(Common.Kingdom);
             Common.FocusProcess(Common.Kingdom5);
             Location = new Point(Screen.PrimaryScreen.Bounds.Width - 310, 100);

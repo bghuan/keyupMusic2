@@ -14,7 +14,8 @@ namespace keyupMusic2
         public void Glass()
         {
             if (e.Msg == MouseMsg.WM_MOUSEMOVE) return;
-            if (ProcessName != keyupMusic2.Common.Glass) return;
+            var asdads = new string[] { Common.Glass, Common.Glass2, Common.Glass3, };
+            if (!asdads.Contains(ProcessName)) return;
 
             //const int VK_XBUTTON1 = 0x05; // 鼠标侧键前进键的虚拟键码
             //const int VK_XBUTTON2 = 0x06; // 鼠标侧键后退键的虚拟键码

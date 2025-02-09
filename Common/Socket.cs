@@ -11,34 +11,53 @@ namespace keyupMusic2
         private const int pport = 13000;
         public static Huan huan;
 
-        static TcpListener listener;
-        static TcpClient client;
-        static NetworkStream stream;
+        public static TcpListener listener;
+        public static TcpClient client;
+        public static NetworkStream stream;
         static int restart_times = 0;
         public TcpServer(Form parentForm)
         {
             huan = (Huan)parentForm;
             StartServer();
         }
+        private static int retryCount = 0;
+        private const int maxRetries = 5; // 最大重试次数
+
         public static void StartServer(int port = pport)
         {
             Task.Run(() =>
             {
                 try
                 {
-                    listener = new TcpListener(IPAddress.Any, port);
-                    listener.Start();
-
-                    while (true)
+                    using (listener = new TcpListener(IPAddress.Any, port))
                     {
-                        client = listener.AcceptTcpClient();
-                        stream = client.GetStream();
-                        _StartServer(port);
+                        listener.Start();
+                        retryCount = 0; // 重置重试次数
+
+                        while (true)
+                        {
+                            client = listener.AcceptTcpClient();
+                            stream = client.GetStream();
+                            _StartServer(port);
+                        }
                     }
                 }
                 catch (Exception ex)
                 {
-                    Console.WriteLine("服务器启动错误：" + ex.Message);
+                    retryCount++;
+                    if (retryCount <= maxRetries)
+                    {
+                        //huan.Invoke(() => { huan.label1.Text = $"服务器启动错误：{ex.Message}，重试中 ({retryCount}/{maxRetries})"; });
+                        Console.WriteLine($"服务器启动错误：{ex.Message}，重试中 ({retryCount}/{maxRetries})");
+
+                        Thread.Sleep(1000);
+                        StartServer(port); // 递归调用以重试
+                    }
+                    else
+                    {
+                        huan.Invoke(() => { huan.label1.Text = "服务器启动失败，已达到最大重试次数。"; });
+                        Console.WriteLine("服务器启动失败，已达到最大重试次数。");
+                    }
                 }
             });
         }
@@ -64,6 +83,7 @@ namespace keyupMusic2
                 }
                 catch (Exception ex)
                 {
+                    huan.Invoke(() => { huan.label1.Text = "读取数据时发生错误：" + ex.Message; });
                     Console.WriteLine("读取数据时发生错误：" + ex.Message);
                     if (ex.Message.Contains("远程主机强迫关闭了一个现有的连接。"))
                     {
@@ -88,7 +108,7 @@ namespace keyupMusic2
                         client.Dispose();
                     }
                 }
-                Thread.Sleep(100);
+                Thread.Sleep(10);
             }
         }
         public static void Invoke(string msg)

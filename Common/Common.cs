@@ -2,6 +2,7 @@
 using System.Drawing.Imaging;
 using System.Media;
 using System.Net;
+using System.Reflection;
 using System.Runtime.InteropServices;
 using System.Security.Principal;
 using System.Text;
@@ -18,7 +19,6 @@ namespace keyupMusic2
         public const string devenv = "devenv";
         public const string WeChat = "WeChat";
         public const string douyin = "douyin";
-        public const string douyinexe = "C:\\Program Files (x86)\\ByteDance\\douyin\\x64\\4.4.0\\douyin.exe";
         public const string msedge = "msedge";
         public const string chrome = "chrome";
         public const string Taskmgr = "Taskmgr";
@@ -36,7 +36,9 @@ namespace keyupMusic2
         public const string AIoT = "AIoT IDE";
         public const string StartMenuExperienceHost = "StartMenuExperienceHost";
         public const string RadeonSoftware = "RadeonSoftware";
-        public const string Glass = "Glass Masquerade 3";
+        public const string Glass = "Glass";
+        public const string Glass2 = "Illusions";
+        public const string Glass3 = "Glass Masquerade 3";
         public const string steam = "steamwebhelper";
         public const string Kingdom = "Kingdom Rush Vengeance";
         public const string Human = "Human";
@@ -50,45 +52,7 @@ namespace keyupMusic2
         public const string WeChatAppEx = "WeChatAppEx";
         public const string cs2 = "cs2";
         public const string PowerToysCropAndLock = "PowerToys.CropAndLock";
-
-        public static string[] list = {
-        keyupMusic2,
-        ACPhoenix,
-        Dragonest,
-        devenv,
-        WeChat,
-        douyin,
-        msedge,
-        chrome,
-        Taskmgr,
-        explorer,
-        SearchHost,
-        QQMusic,
-        HuyaClient,
-        ApplicationFrameHost,
-        QyClient,
-        QQLive,
-        vlc,
-        v2rayN,
-        Thunder,
-        VSCode,
-        AIoT,
-        RadeonSoftware,
-        Glass,
-        steam,
-        Kingdom,
-        ItTakesTwo,
-        Ghostrunner2,
-        bilibili,
-        UnlockingWindow,
-        LockApp,
-        Kingdom5,
-        cs2,
-        PowerToysCropAndLock,
-        QQMusic,
-        QQMusic,
-        QQMusic,
-        };
+        public const string Broforce_beta = "Broforce_beta";
 
         public static SoundPlayer player = new SoundPlayer();
         public static SoundPlayer player2 = new SoundPlayer();
@@ -721,6 +685,26 @@ namespace keyupMusic2
         {
             var flag = DateTime.Now - dateTime < TimeSpan.FromMilliseconds(ms);
             return flag;
+        }/// <summary>
+         /// 获取指定类型中所有 public const string 成员
+         /// </summary>
+         /// <param name="type">要检查的类型</param>
+         /// <returns>一个字典，键为常量名，值为常量值</returns>
+        public static Dictionary<string, string> GetPublicConstStrings(Type type)
+        {
+            var result = new Dictionary<string, string>();
+            // 获取该类型的所有公共字段
+            FieldInfo[] fields = type.GetFields(BindingFlags.Public | BindingFlags.Static);
+            foreach (FieldInfo field in fields)
+            {
+                // 检查字段是否为常量且类型为 string
+                if (field.IsLiteral && !field.IsInitOnly && field.FieldType == typeof(string))
+                {
+                    // 将常量名和值添加到结果字典中
+                    result[field.Name] = (string)field.GetValue(null);
+                }
+            }
+            return result;
         }
     }
 }

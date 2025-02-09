@@ -1,10 +1,5 @@
-﻿using System.Diagnostics;
-using System.Drawing.Imaging;
-using System.Management;
-using static keyupMusic2.Common;
-using static keyupMusic2.Simulate;
+﻿using static keyupMusic2.Common;
 using static keyupMusic2.MouseKeyboardHook;
-using System.Runtime.InteropServices;
 
 namespace keyupMusic2
 {

@@ -41,6 +41,7 @@ namespace keyupMusic2
             //handing4 = true;
             this.e = e;
             if (e.Msg != MouseMsg.WM_MOUSEMOVE) Task.Run(() => { FreshProcessName(); });
+            //if (Common.ProcessName == err) return;
             if (e.Msg == MouseMsg.WM_LBUTTONDOWN && e.X < screenHeight && e.X > screenHeight - 200 && e.Y < 100) TaskRun(() => { FreshProcessName(); }, 500);
 
             //Douyin(e);
@@ -150,13 +151,13 @@ namespace keyupMusic2
         {
             if (e.Msg == MouseMsg.WM_RBUTTONUP)
             {
-                if (e.Y + 1 == screenHeight && !IsFullScreen())
+                if (e.Y == screenHeight1 && !IsFullScreen())
                 {
                     Sleep(322);
                     mouse_move_to(0, 1325 - screenHeight);
                     mouse_click();
                 }
-                //if (e.Y < screenHeight - 60 && !IsFullScreen())
+                //if (e.Y > screenHeight - 20 && !IsFullScreen())
                 //{
                 //    Sleep(322);
                 //    mouse_move_to(0, 1325 - screenHeight);
@@ -167,14 +168,6 @@ namespace keyupMusic2
         int ffff = 0;
 
 
-        private void QQMusic()
-        {
-            if (ProcessName != keyupMusic2.Common.QQMusic) return;
-            if (e.Msg == MouseMsg.WM_LBUTTONDOWN)
-            {
-                ctrl_shift(true);
-            }
-        }
         public void Other()
         {
             if (e.Msg == MouseMsg.WM_LBUTTONDOWN)

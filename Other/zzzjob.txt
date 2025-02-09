@@ -3,12 +3,12 @@
 0 输入?
 1 时间间隔
 0 clean
-本地音频转文字
+0 本地音频转文字
 1 copy
 1 判断windows search 是否已经打开 win已打开则跳过
 
-语言识别限定词
-方法输出到lable1
+0 语言识别限定词
+0 方法输出到lable1
 1 ctrl shift f1 open close listen
 1 init close other
 1 已经有就只切换
@@ -28,4 +28,8 @@
 1 qqmusic zh
 1 douyin_game location save file
 1 douyin_game input location
-动态链接语音识别dll
+0 动态链接语音识别dll
+
+快捷记录设想任务
+快捷闹钟
+0 super时听语音

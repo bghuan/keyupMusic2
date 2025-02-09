@@ -1,10 +1,7 @@
 ﻿using System.Diagnostics;
 using System.Drawing.Imaging;
-using System.Management;
 using static keyupMusic2.Common;
-using static keyupMusic2.Simulate;
 using static keyupMusic2.MouseKeyboardHook;
-using System.Runtime.InteropServices;
 
 namespace keyupMusic2
 {
@@ -21,6 +18,7 @@ namespace keyupMusic2
         Keys[] keys = { Keys.D0, Keys.D1, Keys.D2, Keys.D3, Keys.D4, Keys.D5, Keys.D6, Keys.D7, Keys.D8, Keys.D9, Keys.PageUp, Keys.Home, Keys.End };
         public static bool start_record = false;
         string commnd_record = "";
+        private bool ddsadsad;
 
         public static void hook_KeyDown(Keys keys)
         {
@@ -138,6 +136,16 @@ namespace keyupMusic2
                     stop_keys = new Dictionary<Keys, string>();
                     break;
                 case Keys.M:
+                    //ddsadsad = !ddsadsad;
+                    //TaskRun(() =>
+                    //{
+                    //    while (ddsadsad)
+                    //    {
+                    //        mouse_click();
+                    //        Sleep(1000);
+                    //    }
+                    //}, 1000);
+                    break;
                 case Keys.Space:
                     Invoke(() =>
                     {
@@ -355,11 +363,11 @@ namespace keyupMusic2
 
         private void start_listen_to_word()
         {
-            Listen.is_listen = !Listen.is_listen;
-            Invoke(() => huan.SetVisibleCore2(Listen.is_listen));
-            //Listen.aaaEvent += huan.handle_word;
-            if (Listen.is_listen) Task.Run(() => Listen.listen_word(new string[] { }, (string asd, int a) => { }));
-            Listen.speak_word = "";
+            //Listen.is_listen = !Listen.is_listen;
+            //Invoke(() => huan.SetVisibleCore2(Listen.is_listen));
+            ////Listen.aaaEvent += huan.handle_word;
+            //if (Listen.is_listen) Task.Run(() => Listen.listen_word(new string[] { }, (string asd, int a) => { }));
+            //Listen.speak_word = "";
         }
 
         private static void dragonest_run()
