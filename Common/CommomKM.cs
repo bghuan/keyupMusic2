@@ -172,6 +172,10 @@ namespace keyupMusic2
         {
             return Native.GetAsyncKeyState(Keys.ControlKey) < 0;
         }
+        public static bool is_ctrl_shift_alt()
+        {
+            return is_ctrl() || is_shift() || is_alt();
+        }
         public static bool is_esc()
         {
             return Native.GetAsyncKeyState(Keys.Escape) < 0;
@@ -277,7 +281,7 @@ namespace keyupMusic2
             press("1333.1439", 0);
         }
 
-        public static void ctrl_shift(bool zh = true)
+        public static void ctrl_shift_win_search(bool zh = true)
         {
             //var _zh = (judge_color(2290, 1411, Color.FromArgb(242, 242, 242)));
             //var _zh = (judge_color(2281, 1413, Color.FromArgb(242, 242, 242)));
@@ -316,15 +320,15 @@ namespace keyupMusic2
                     else
                         press(Keys.LWin);
                     Thread.Sleep(100);
-                    ctrl_shift(false);
+                    //ctrl_shift(false);
                 }
                 else if (item == "zh")
                 {
-                    ctrl_shift(true);
+                    ctrl_shift_win_search(true);
                 }
                 else if (item == "en")
                 {
-                    ctrl_shift(false);
+                    ctrl_shift_win_search(false);
                 }
                 else if (item == "_") down_mouse();
                 else if (item == "-") up_mouse();
@@ -375,6 +379,10 @@ namespace keyupMusic2
         public static void up_press(Keys keys)
         {
             keybd_event((byte)keys, 0, 2, 0);
+        }
+        private static void keybd_event(byte bVk, byte bScan, uint dwFlags, uint dwExtraInfo)
+        {
+            Native.keybd_event(bVk, bScan, dwFlags, isVir);
         }
     }
 }

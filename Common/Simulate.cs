@@ -164,12 +164,12 @@ namespace keyupMusic2
                             ScanCode = (ushort)(MapVirtualKey(virtualKey, 0) & 0xFFU),
                             Flags = Extend ? KeyboardFlag.KeyDown | KeyboardFlag.ExtendedKey : KeyboardFlag.KeyDown,
                             time = 0,
-                            dwExtraInfo = IntPtr.Zero
+                            dwExtraInfo = (nint)Common.isVir
                         }
                     }
                 };
             }
-            public static INPUT CreateKeyUp(ushort virtualKey, bool Extend=false)
+            public static INPUT CreateKeyUp(ushort virtualKey, bool Extend = false)
             {
                 return new INPUT
                 {
@@ -182,7 +182,7 @@ namespace keyupMusic2
                             ScanCode = (ushort)(MapVirtualKey(virtualKey, 0) & 0xFFU),
                             Flags = Extend ? KeyboardFlag.KeyUp | KeyboardFlag.ExtendedKey : KeyboardFlag.KeyUp,
                             time = 0,
-                            dwExtraInfo = IntPtr.Zero
+                            dwExtraInfo = (nint)Common.isVir
                         }
                     }
                 };

@@ -44,8 +44,7 @@ namespace keyupMusic2
             //if (Common.ProcessName == err) return;
             if (e.Msg == MouseMsg.WM_LBUTTONDOWN && e.X < screenHeight && e.X > screenHeight - 200 && e.Y < 100) TaskRun(() => { FreshProcessName(); }, 500);
 
-            //Douyin(e);
-            Douyin(e, Common.msedge);
+            Douyin(e);
             //Task.Run(ACPhoenix);
             Task.Run(Devenv);
             Task.Run(Cornor);
@@ -60,75 +59,20 @@ namespace keyupMusic2
             hooked_mouse = false;
 
         }
-        public void Douyin(MouseKeyboardHook.MouseHookEventArgs e, string allow = Common.douyin)
+        public void Douyin(MouseKeyboardHook.MouseHookEventArgs e)
         {
-            if (ProcessName != allow && !is_douyin()) return;
-            if (e.Msg == MouseMsg.WM_MOUSEMOVE && !downing) { return; }
+            if (!is_douyin()) return;
 
-            if (e.Msg == MouseMsg.WM_RBUTTONDOWN)
+            if (e.Msg == MouseMsg.WM_XBUTTONDOWN)
             {
-                if (e.Y > 1370) return;
-                if (e.X > 2000 && e.Y < 200) return;
-                if (ProcessName == msedge && ProcessTitle.Contains("抖音"))
-                {
-                    e.Handled = true;
-                    r_button_downing = true;
-                }
-                if (e.X != 0) return;
-                if (ProcessName2 != allow) return;
-                e.Handled = true;
-                start = Position;
-                downing = true;
+                SS().KeyPress(Keys.X);
             }
-            else if (e.Msg == MouseMsg.WM_RBUTTONUP)
+            else if (e.Msg == MouseMsg.WM_LBUTTONUP)
             {
-                if (e.Y > 1370) return;
-                if (e.X > 2000 && e.Y < 200) return;
-                if (r_button_downing && ProcessName == msedge && ProcessTitle.Contains("抖音"))
-                {
-                    e.Handled = true;
-                    r_button_downing = false;
-                }
-                if (ProcessName2 != allow) return;
-                if (!downing) return;
-                e.Handled = true;
-                downing = false;
-            }
-            else if (e.Msg == MouseMsg.WM_MOUSEMOVE && downing == true)
-            {
-                int y = e.Y - start.Y;
-                if (Math.Abs(y) > threshold)
-                {
-                    if (y > 0)
-                        press(Keys.VolumeDown);
-                    if (y < 0)
-                        press(Keys.VolumeUp);
-                    start = Position;
-                }
-            }
-            else if (e.Msg == MouseMsg.WM_XBUTTONDOWN && is_douyin())
-            {
-                string dasad = Common.ProcessTitle;
-                string dasasssd = Common.ProcessName;
-
-                e.Handled = true;
-                x_button_dowing = true;
-                Task.Run(() =>
-                {
-                    if (e.X < screenWidth1 && e.Y == 0)
-                        SS().KeyPress(Keys.H);
-                    else if (e.X == screenWidth1 && e.Y == 0)
-                        press("2222,1410;100;2222,1120", 1);
-                    else if (e.X == screenWidth1 && e.Y == screenHeight1)
-                    { SS().KeyPress(Keys.R); mouse_move(2384, 1237); }
-                    else
-                        SS().KeyPress(Keys.X);
-                });
-            }
-            else if (x_button_dowing && e.Msg == MouseMsg.WM_XBUTTONUP && is_douyin())
-            {
-                e.Handled = true;
-                x_button_dowing = false;
+                if (e.Y == screenHeight1 && e.X < screenWidth2)
+                    SS().KeyPress(Keys.PageUp);
+                else if (e.Y == screenHeight1 && e.X < screenWidth1)
+                    SS().KeyPress(Keys.PageDown);
             }
         }
 
@@ -170,11 +114,11 @@ namespace keyupMusic2
 
         public void Other()
         {
-            if (e.Msg == MouseMsg.WM_LBUTTONDOWN)
-            {
-                if (ProcessName == keyupMusic2.Common.msedge && (e.Y == (screenHeight - 1)))
-                    press(Keys.PageDown, 0);
-            }
+            //if (e.Msg == MouseMsg.WM_LBUTTONDOWN)
+            //{
+            //    if (ProcessName == keyupMusic2.Common.msedge && (e.Y == (screenHeight - 1)))
+            //        press(Keys.PageDown, 0);
+            //}
             //else if (e.Msg == MouseMsg.WM_LBUTTONUP)
             //{
             //    if (e.X == 6719 || e.Y == 1619)

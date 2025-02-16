@@ -65,6 +65,7 @@ namespace keyupMusic2
 
         public static string ProcessName = "";
         public static string ProcessTitle = "";
+        public static string ProcessPath = "";
         public static string ProcessName2
         {
             get
@@ -88,6 +89,10 @@ namespace keyupMusic2
         {
             return ProcessName == douyin || ProcessTitle?.IndexOf("抖音") >= 0 || (ProcessName == msedge && ProcessTitle?.IndexOf("多多自走棋") >= 0);
         }
+        public static bool is_steam_game()
+        {
+            return ProcessPath != null && ProcessPath.Contains("steam");
+        }
         static IntPtr old_hwnd = 0;
 
         static Dictionary<IntPtr, string> ProcessMap = new Dictionary<IntPtr, string>();
@@ -98,6 +103,7 @@ namespace keyupMusic2
             {
                 Common.ProcessName = ProcessMap[hwnd].Split(";;;;")[0];
                 ProcessTitle = ProcessMap[hwnd].Split(";;;;")[1];
+                ProcessPath = ProcessMap[hwnd].Split(";;;;")[2];
                 if (Common.ProcessName == msedge)
                     ProcessTitle = GetWindowText(hwnd); ;
                 return Common.ProcessName;
@@ -121,6 +127,7 @@ namespace keyupMusic2
                 using (Process process = Process.GetProcessById((int)processId))
                 {
                     fildsadsePath = process.MainModule.FileName;
+                    ProcessPath = fildsadsePath;
                     module_name = process.MainModule.ModuleName;
                     ProcessName = process.ProcessName;
                 }
@@ -135,7 +142,7 @@ namespace keyupMusic2
             lock (ProcessMap)
             {
                 if (!ProcessMap.ContainsKey(hwnd))
-                    ProcessMap.Add(hwnd, ProcessName + ";;;;" + ProcessTitle);
+                    ProcessMap.Add(hwnd, ProcessName + ";;;;" + ProcessTitle + ";;;;" + ProcessPath);
             }
             return ProcessName;
         }
@@ -443,9 +450,13 @@ namespace keyupMusic2
             Bitmap bmpScreenshot = new Bitmap(secondaryScreen.Bounds.Width, secondaryScreen.Bounds.Height, PixelFormat.Format32bppArgb);
             Graphics gfxScreenshot = Graphics.FromImage(bmpScreenshot);
             gfxScreenshot.CopyFromScreen(new Point(0, 0), Point.Empty, secondaryScreen.Bounds.Size);
-            string aaa = "C:\\Users\\bu\\Pictures\\Screenshots\\";
-            if (ProcessName == Common.ACPhoenix) aaa += "dd\\";
-            bmpScreenshot.Save(aaa + DateTime.Now.ToString("yyyyMMddHHmmss") + ".png", ImageFormat.Png);
+            string user_path = "C:\\Users\\bu\\Pictures\\Screenshots\\";
+            string file_date_name = DateTime.Now.ToString("yyyyMMddHHmmss") + ".png";
+            string path = "";
+            if (ProcessName == Common.ACPhoenix) path = user_path + "dd\\" + file_date_name;
+            else if (ProcessName == Common.chrome) path = "image\\encode\\" + file_date_name + "g";
+            else path = user_path + file_date_name; ;
+            bmpScreenshot.Save(path, ImageFormat.Png);
             TaskRun(() => play_sound_di(), 80);
             gfxScreenshot.Dispose();
             bmpScreenshot.Dispose();
@@ -706,5 +717,32 @@ namespace keyupMusic2
             }
             return result;
         }
+        public static void quick_max_chrome()
+        {
+            if (Common.ExsitProcess(Common.PowerToysCropAndLock, true))
+            {
+                if (ProcessName2 == Common.chrome)
+                {
+                   press(Keys.F11);
+                    Sleep(20);
+                    altab();
+                }
+                else
+                {
+                    FocusProcess(Common.chrome);
+                    Sleep(50);
+                    press(Keys.F11);
+                    Sleep(100);
+                    if (ProcessName2 == Common.chrome && !IsFullScreen())
+                    {
+                        mouse_click(2559, 722, 0);
+                        if (ProcessName2 == Common.chrome)
+                            press(Keys.F11);
+                    }
+                }
+                FreshProcessName();
+            }
+        }
+        public const uint isVir = 3;
     }
 }

@@ -103,17 +103,7 @@ namespace keyupMusic2
                     run_chrome();
                     break;
                 case Keys.K:
-                    TaskRun(() =>
-                    {
-                        var pressedKeys = GetPressedKeys();
-                        if (pressedKeys.Any())
-                            huan.Invoke2(() => { huan.label1.Text = string.Join(", ", pressedKeys); });
-                        foreach (var key in pressedKeys)
-                        {
-                            SSSS.KeyUp(key);
-                        }
-                        stop_keys = new Dictionary<Keys, string>();
-                    }, 1000);
+                    huan.release_all_keydown(1000);
                     break;
                 case Keys.L:
                     quick_dir_file();
@@ -198,9 +188,10 @@ namespace keyupMusic2
                     break;
                 case Keys.F11:
                 case Keys.F12:
-                    new Other().hook_KeyDown(e.key);
-                    //string dfsadd = "taskkill /f /im explorer.exe & start explorer.exe";
-                    //ProcessRun(dfsadd);
+                    //new Other().hook_KeyDown(e.key);
+                    ////string dfsadd = "taskkill /f /im explorer.exe & start explorer.exe";
+                    ////ProcessRun(dfsadd);
+                    press(e.key);
                     break;
 
                 case Keys.Left:

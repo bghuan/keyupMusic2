@@ -82,19 +82,7 @@ namespace keyupMusic2
                 {
                     if (Common.ACPhoenix.Equals(Common.ProcessName))
                         press([Keys.Escape]);
-                    if (Common.ExsitProcess(Common.PowerToysCropAndLock, true))
-                    {
-                        if (ProcessName == Common.chrome)
-                        {
-                            press(Keys.F11);
-                            altab();
-                        }
-                        else
-                        {
-                            FocusProcess(Common.chrome);
-                            press(Keys.F11);
-                        }
-                    }
+                    quick_max_chrome();
                 }
                 else if (cornor == 5)
                 {

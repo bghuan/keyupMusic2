@@ -13,7 +13,7 @@ namespace keyupMusic2
             {
                 list.Add(constant.Value.ToString());
             }
-            this.list =list.ToArray();
+            this.list = list.ToArray();
         }
         string[] list = new string[200];
         string[] list_wechat_visualstudio = { Common.WeChat, Common.ACPhoenix, explorer, Common.keyupMusic2, Common.douyin, Common.devenv, Common.QQMusic, Common.SearchHost, Common.ApplicationFrameHost, Common.vlc, Common.v2rayN, Common.cs2 };
@@ -35,25 +35,17 @@ namespace keyupMusic2
 
             switch (e.key)
             {
+                case Keys.F10:
+                    if (is_ctrl_shift_alt()) break;
+                    quick_max_chrome();
+                    break;
                 case Keys.F11:
-                    //if (is_down(Keys.Delete)) {run_vis(); break; }
-                    if (is_ctrl()) break;
-                    if (!Not_F10_F11_F12_Delete()) break;
-                    if (is_shift())
-                    {
-                        press("500;", 100);
-                        run_vis();
-                    }
-                    //else if (is_douyin())
-                    //{
-                    //    if (Common.FocusProcess(Common.devenv)) break;
-                    //    run_vis();
-                    //}
-                    else if (Common.devenv == module_name)
+                    if (is_ctrl_shift_alt()) break;
+                    if (Common.devenv == module_name)
                     {
                         HideProcess(module_name);
                     }
-                    else if (list_wechat_visualstudio.Contains(module_name) || flag_special || Huan.keyupMusic2_onlisten)
+                    else
                     {
                         if (Common.FocusProcess(Common.devenv)) break;
                         if (e.X == screenWidth1) break;
@@ -61,16 +53,7 @@ namespace keyupMusic2
                     }
                     break;
                 case Keys.F12:
-                    if (is_ctrl()) break;
-                    if (!Not_F10_F11_F12_Delete()) break;
-                    // if (is_douyin())
-                    //{
-                    //    Common.FocusProcess(Common.WeChat);
-                    //    Thread.Sleep(10);
-                    //    if (ProcessName2 == Common.WeChat) break;
-                    //    run_wei();
-                    //}
-                    //else 
+                    if (is_ctrl_shift_alt()) break;
                     if (Common.WeChat == module_name)
                     {
                         CloseProcess(module_name);
@@ -79,7 +62,7 @@ namespace keyupMusic2
                     {
                         Super.hook_KeyDown(Keys.N);
                     }
-                    else if (list_wechat_visualstudio.Contains(module_name) || flag_special || Huan.keyupMusic2_onlisten)
+                    else
                     {
                         Common.FocusProcess(Common.WeChat);
                         Thread.Sleep(10);
@@ -112,12 +95,6 @@ namespace keyupMusic2
                 case Common.msedge:
                     switch (e.key)
                     {
-                        //case Keys.PageDown:
-                        //    if (e.X > screenWidth || is_down(Native.VK_RBUTTON))
-                        //        press(Keys.VolumeDown, 5, 0); break;
-                        //case Keys.PageUp:
-                        //    if (e.X > screenWidth)
-                        //        press(Keys.VolumeUp, 5, 0); break;
                         case Keys.Right:
                             if (ProcessTitle?.IndexOf("起点中文网") >= 0)
                                 press(Keys.PageDown, 0); break;
@@ -206,6 +183,16 @@ namespace keyupMusic2
                             if (is_down(Native.VK_LBUTTON)) break;
                             press("B;1241,692;B;");
                             break;
+                        case Keys.F1:
+                            if (is_ctrl()) break;
+                            if (is_shift()) break;
+                            if (!timer_start)
+                                StartKeyPressLoop();
+                            break;
+                        case Keys.F2:
+                            Sleep(100);
+                            press(Keys.D3);
+                            break;
                         case Keys.F4:
                             CloseProcess(cs2);
                             break;
@@ -220,10 +207,10 @@ namespace keyupMusic2
                 case Common.steam:
                     switch (e.key)
                     {
-                        //case Keys.Space:
                         case Keys.F5:
                         case Keys.MediaNextTrack:
                             press("808,651;");
+                            CloseProcess(steam);
                             break;
                         case Keys.MediaPreviousTrack:
                             press("36,70", 1);
@@ -260,8 +247,30 @@ namespace keyupMusic2
 
         private static void run_vis()
         {
-            press("LWin;VISUAL;100;Apps;100;Enter;", 100, flag_special);
+            press("LWin;VISUAL;en;100;Apps;100;Enter;", 100, flag_special);
             TaskRun(() => { press("Tab;Down;Enter;", 100); }, 1600);
+        }
+        private static System.Timers.Timer timer;
+        static bool timer_start = false;
+        private static void StartKeyPressLoop()
+        {
+            timer_start = true;
+            timer = new System.Timers.Timer(5000); // 每 5 秒触发一次
+            timer.Elapsed += (sender, e) =>
+            {
+                if (ProcessName2 == cs2)
+                {
+                    press(Keys.F1);
+                }
+                else
+                {
+                    timer_start = false;
+                    timer.Stop(); // 停止定时器
+                    timer.Dispose(); // 释放资源
+                }
+            };
+            timer.AutoReset = true; // 自动重置定时器
+            timer.Start(); // 启动定时器
         }
     }
 }

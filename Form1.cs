@@ -19,9 +19,9 @@ namespace keyupMusic2
 
         public Huan()
         {
-            Task.Run(() => { if (!Debugger.IsAttached && IsAdministrator()) copy_secoed_screen("_"); });
             InitializeComponent();
 
+            play_sound_di();
             try_restart_in_admin();
             releas_self_restart_keyup_lost();
             startListen();
@@ -53,7 +53,10 @@ namespace keyupMusic2
                 { string ddfd = "dsad"; }
                 if (mouse_downing) { up_mouse(); mouse_downing = false; }
                 if (!no_sleep) return;
-                Invoke2(() => { label1.Text = label1.Text.Replace(easy_read(e.key), easy_read(e.key).ToLower()); });
+                Invoke2(() => {
+                    label1.Text = label1.Text.Replace(easy_read(e.key), easy_read(e.key).ToLower());
+                    //if (stop_keys.Count == 0) Invoke2(() => { label1.Text = ""; }, 1000);
+                });
                 //log(e.key + "-" + asdsads + "-up" + string.Join(" ", stop_keys));
             }
         }
@@ -62,6 +65,10 @@ namespace keyupMusic2
             if (is_alt() && is_down(Keys.Tab)) return false;
             if (e.key == Keys.F3) return true;
             if (e.key == Keys.F9) return true;
+
+            if (e.key == Keys.F10) return true;
+            if (e.key == Keys.F11) return true;
+            if (e.key == Keys.F12) return true;
 
             if (ProcessName == Common.devenv)
             {
@@ -107,7 +114,8 @@ namespace keyupMusic2
             if (e.Type != KeyboardEventType.KeyDown) return;
             //if (Common.hooked) { e.Handled = true; return; }
             if (e.key == Keys.F3) { e.Handled = true; }
-            if (Common.hooked) { return; }
+            //if (Common.hooked) { return; }
+            if (keyupMusic2_onlisten) { e.Handled = true; }
             //if (is_down(Keys.LWin)) return;
             if (is_alt() && (e.key == Keys.F4 || e.key == Keys.Tab)) { return; }
             if (stop_keys.ContainsKey(e.key)) return;
@@ -252,6 +260,7 @@ namespace keyupMusic2
                 string asd = string.Join(" ", _stop_keys.Select(key => easy_read(key.Key.ToString())));
                 if (label1.Text.ToLower() == asd.ToLower()) asd += " " + DateTimeNow2();
                 //label1.Text = Listen.speak_word + "" + asd;
+                label1.Text = asd;
             }
             );
         }
@@ -472,15 +481,30 @@ namespace keyupMusic2
 
         private void releas_self_restart_keyup_lost()
         {
+            release_all_keydown();
+            //TaskRun(() =>
+            //{
+            //    if (is_down(Keys.RControlKey))
+            //        SSSS.KeyUp(Keys.RControlKey);
+            //    if (is_down(Keys.RShiftKey))
+            //        SSSS.KeyUp(Keys.RShiftKey);
+            //    if (is_down(Keys.F5))
+            //        SSSS.KeyUp(Keys.F5);
+            //}, 1000);
+        }
+        public void release_all_keydown(int tick = 1000)
+        {
             TaskRun(() =>
             {
-                if (is_down(Keys.RControlKey))
-                    SSSS.KeyUp(Keys.RControlKey);
-                if (is_down(Keys.RShiftKey))
-                    SSSS.KeyUp(Keys.RShiftKey);
-                if (is_down(Keys.F5))
-                    SSSS.KeyUp(Keys.F5);
-            }, 1000);
+                var pressedKeys = GetPressedKeys();
+                if (pressedKeys.Any())
+                    Invoke2(() => { label1.Text = "relese: " + string.Join(", ", pressedKeys); });
+                foreach (var key in pressedKeys)
+                {
+                    SSSS.KeyUp(key);
+                }
+                stop_keys = new Dictionary<Keys, string>();
+            }, tick);
         }
 
         private void Form1_Load(object sender, EventArgs e)

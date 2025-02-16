@@ -25,6 +25,7 @@
                 //if (key == Keys.F22) return 1;
                 if (key == (Keys.LButton | Keys.XButton2)) return 1;
                 var args = new KeyboardHookEventArgs(type, key, wParam, lParam);
+                if (args.isVir) return Native.CallNextHookEx(_key_hookId, code, wParam, ref lParam);
                 if (stop_keys.Count == 0 || !stop_keys.ContainsKey(key) || type == KeyboardEventType.KeyUp || key == Keys.VolumeDown || key == Keys.VolumeUp)
                     KeyboardHookEvent(args);
 
@@ -88,6 +89,7 @@
             public bool Handling;
             public int X;
             public int Y;
+            public bool isVir;
 
             public KeyboardHookEventArgs(KeyboardEventType type, Keys key, int wParam, Native.keyboardHookStruct lParam)
             {
@@ -95,6 +97,7 @@
                 this.wParam = wParam;
                 this.lParam = lParam;
                 this.key = key;
+                this.isVir = lParam.dwExtraInfo== Common.isVir;
 
                 this.X = Cursor.Position.X;
                 this.Y = Cursor.Position.Y;
