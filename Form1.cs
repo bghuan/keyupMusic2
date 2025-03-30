@@ -56,6 +56,7 @@ namespace keyupMusic2
                 Invoke2(() => {
                     label1.Text = label1.Text.Replace(easy_read(e.key), easy_read(e.key).ToLower());
                     //if (stop_keys.Count == 0) Invoke2(() => { label1.Text = ""; }, 1000);
+                    keyupMusic2.KeyUp.yo(e);
                 });
                 //log(e.key + "-" + asdsads + "-up" + string.Join(" ", stop_keys));
             }
@@ -69,6 +70,9 @@ namespace keyupMusic2
             if (e.key == Keys.F10) return true;
             if (e.key == Keys.F11) return true;
             if (e.key == Keys.F12) return true;
+
+            if (e.key == Keys.F2 && ProcessName == Common.chrome) 
+                return true;
 
             if (ProcessName == Common.devenv)
             {
@@ -97,6 +101,7 @@ namespace keyupMusic2
                 if (ProcessName == steam) return true;
                 if (ProcessName == cs2) return true;
                 if (ProcessName == Glass2) return true;
+                if (ProcessName == PowerToysCropAndLock) return true;
             }
             if (is_down(Keys.F1))
             {
@@ -142,9 +147,6 @@ namespace keyupMusic2
                 //special_key_quick_yo(e);
             });
             if (e.key == Keys.F3 || e.key == Keys.F9)
-            //|| (e.key == Keys.LControlKey && is_shift())
-            //|| (e.key == Keys.LShiftKey && is_ctrl())
-            //|| (e.key == Keys.Space && is_down(Keys.LWin)))
             {
                 play_sound_di();
                 if (e.key == Keys.F9 && (keyupMusic2_onlisten || !no_sleep))
@@ -197,7 +199,7 @@ namespace keyupMusic2
 
             if (is_ctrl() || GetWindowText() == UnlockingWindow || ProcessName == LockApp || ProcessName == err)
             {
-                paly_sound(Keys.D0);
+                play_sound(Keys.D0);
                 Process.Start("rundll32.exe", "powrprof.dll,SetSuspendState 0,1,1");
                 return;
             }
@@ -206,7 +208,7 @@ namespace keyupMusic2
             TaskRun(() => { Timer_Tick(); }, 70000);
             Task.Run(() =>
             {
-                paly_sound(Keys.D0);
+                play_sound(Keys.D0);
                 Invoke(() => { label1.Text = "系统即将进入睡眠状态"; });
             });
             no_sleep = false;
@@ -228,15 +230,16 @@ namespace keyupMusic2
             if (no_sleep) return;
             no_sleep = true;
             Invoke(() => { SetVisibleCore(false); });
-            Task.Run(
-                () =>
-            press("2200;LWin;1650,1300;1650,1140", tick));
-            for (int i = 0; i < 10; i++)
-            {
-                if (ProcessName2 == StartMenuExperienceHost) { return; }
-                //log_process("F9");
-                play_sound_di(tick);
-            }
+            Process.Start("rundll32.exe", "powrprof.dll,SetSuspendState 0,1,1");
+            ////Task.Run(
+            ////    () =>
+            ////press("500;LWin;1650,1300;1650,1140", tick));
+            ////for (int i = 0; i < 10; i++)
+            ////{
+            ////    if (ProcessName2 == StartMenuExperienceHost) { return; }
+            ////    //log_process("F9");
+            ////    play_sound_di(tick);
+            ////}
         }
         private void handle_special_or_normal_key(KeyboardHookEventArgs e)
         {
@@ -366,6 +369,8 @@ namespace keyupMusic2
                 //_mouseKbdHook.MouseHookEvent += new Douyin_game(this).MouseHookProc;
             }
             _mouseKbdHook.Install();
+
+            new Tick();
         }
         public void stopListen()
         {
@@ -533,6 +538,9 @@ namespace keyupMusic2
             startPoint = new Point(Location.X - 300, Location.Y);
             endPoint = Location;
             SetWindowTitle(Common.devenv, "");
+            SetWindowTitle(Common.chrome, "");
+            SetWindowTitle(Common.PowerToysCropAndLock, "");
+            //SetWindowTitle(Common.msedge, "");
         }
     }
 }

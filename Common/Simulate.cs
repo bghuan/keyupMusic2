@@ -91,8 +91,8 @@ namespace keyupMusic2
             input[0].Type = KeyboardInput.INPUT.INPUTTYPE.Mouse;
 
             input[0].Data.Mouse.mouseData = (uint)delta;
-            input[0].Data.Mouse.Flags = KeyboardInput.MOUSEEVENTF_WHEEL;
-            input[0].Data.Mouse.time = (uint)KeyboardInput.GetTickCount();
+            input[0].Data.Mouse.Flags = Native.MOUSEEVENTF_WHEEL;
+            input[0].Data.Mouse.time = (uint)Native.GetTickCount();
 
             KeyboardInput.SendInput((uint)input.Length, ref input[0], Marshal.SizeOf(input[0]));
 
@@ -161,7 +161,7 @@ namespace keyupMusic2
                         Keyboard = new INPUTUNION.KEYBDINPUT
                         {
                             wVk = virtualKey,
-                            ScanCode = (ushort)(MapVirtualKey(virtualKey, 0) & 0xFFU),
+                            ScanCode = (ushort)(Native.MapVirtualKey(virtualKey, 0) & 0xFFU),
                             Flags = Extend ? KeyboardFlag.KeyDown | KeyboardFlag.ExtendedKey : KeyboardFlag.KeyDown,
                             time = 0,
                             dwExtraInfo = (nint)Common.isVir
@@ -179,7 +179,7 @@ namespace keyupMusic2
                         Keyboard = new INPUTUNION.KEYBDINPUT
                         {
                             wVk = virtualKey,
-                            ScanCode = (ushort)(MapVirtualKey(virtualKey, 0) & 0xFFU),
+                            ScanCode = (ushort)(Native.MapVirtualKey(virtualKey, 0) & 0xFFU),
                             Flags = Extend ? KeyboardFlag.KeyUp | KeyboardFlag.ExtendedKey : KeyboardFlag.KeyUp,
                             time = 0,
                             dwExtraInfo = (nint)Common.isVir
@@ -200,7 +200,7 @@ namespace keyupMusic2
                             ScanCode = virtualKey,
                             Flags = KeyboardFlag.Unicode,
                             time = 0,
-                            dwExtraInfo = IntPtr.Zero
+                            dwExtraInfo = (nint)Common.isVir
                         }
                     }
                 };
@@ -218,7 +218,7 @@ namespace keyupMusic2
                             ScanCode = virtualKey,
                             Flags = KeyboardFlag.Unicode | KeyboardFlag.KeyUp,
                             time = 0,
-                            dwExtraInfo = IntPtr.Zero
+                            dwExtraInfo = (nint)Common.isVir
                         }
                     }
                 };
@@ -240,13 +240,7 @@ namespace keyupMusic2
             }
         }
 
-        [DllImport("Kernel32.dll", EntryPoint = "GetTickCount", CharSet = CharSet.Auto)]
-        internal static extern int GetTickCount();
-        [DllImport("user32.dll")]
-        public static extern uint MapVirtualKey(UInt32 uCode, UInt32 uMapType);
         [DllImport("user32.dll", SetLastError = true)]
         public static extern uint SendInput(uint nInputs, ref INPUT pInputs, int cbSize);
-        public const int MOUSEEVENTF_WHEEL = 0x0800;
-
     }
 }

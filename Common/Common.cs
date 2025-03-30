@@ -53,6 +53,9 @@ namespace keyupMusic2
         public const string cs2 = "cs2";
         public const string PowerToysCropAndLock = "PowerToys.CropAndLock";
         public const string Broforce_beta = "Broforce_beta";
+        public const string oriwotw = "oriwotw";
+        public const string LosslessScaling = "LosslessScaling";
+        public const string wemeetapp = "wemeetapp";
 
         public static SoundPlayer player = new SoundPlayer();
         public static SoundPlayer player2 = new SoundPlayer();
@@ -85,6 +88,7 @@ namespace keyupMusic2
                 return Cursor.Position;
             }
         }
+        public static Point PositionMiddle = new Point(screenWidth2, screenHeight2);
         public static bool is_douyin()
         {
             return ProcessName == douyin || ProcessTitle?.IndexOf("抖音") >= 0 || (ProcessName == msedge && ProcessTitle?.IndexOf("多多自走棋") >= 0);
@@ -248,9 +252,9 @@ namespace keyupMusic2
                 action();
             }
         }
-        public static bool FocusProcess(string procName)
+        public static bool FocusProcess(string procName, bool front = true)
         {
-            IntPtr current_hwnd = Native.GetForegroundWindow(); // 获取当前活动窗口的句柄
+            IntPtr current_hwnd = GetForegroundWindow(); // 获取当前活动窗口的句柄
             Process[] objProcesses = Process.GetProcessesByName(procName);
             if (objProcesses.Length > 0)
             {
@@ -258,12 +262,13 @@ namespace keyupMusic2
                 hWnd = objProcesses[0].MainWindowHandle;
                 if (current_hwnd == hWnd)
                     return true;
-                Native.ShowWindow((hWnd), Native.SW.SW_RESTORE);
+                ShowWindow((hWnd), SW.SW_RESTORE);
                 if (procName != Dragonest && procName != chrome && procName != devenv)
                     ShowWindowAsync(new HandleRef(null, hWnd), SW_RESTORE);
                 //ShowWindow((hWnd), SW.SW_SHOWMAXIMIZED);
                 //ShowWindow((hWnd), SW.SW_SHOW);
                 //ShowWindow((hWnd), SW.SW_SHOWNA);
+                if (!front) return true;
                 SetForegroundWindow(objProcesses[0].MainWindowHandle);
                 Common.ProcessName = objProcesses[0].ProcessName;
                 return true;
@@ -274,7 +279,17 @@ namespace keyupMusic2
         {
             Process[] objProcesses = Process.GetProcessesByName(procName);
             if (objProcesses.Length > 0)
+            {
+                if (objProcesses[0].MainWindowHandle == IntPtr.Zero)
+                {
+                    for (int i = 1; i < objProcesses.Length; i++)
+                    {
+                        if (objProcesses[i].MainWindowHandle != IntPtr.Zero)
+                            return objProcesses[i].MainWindowHandle;
+                    }
+                }
                 return objProcesses[0].MainWindowHandle;
+            }
             return nint.Zero;
         }
         public static bool SetWindowTitle(string window, string title)
@@ -284,7 +299,7 @@ namespace keyupMusic2
             bool result = SetWindowText(hWnd, title);
             return result;
         }
-        public static bool ExsitProcess(string procName, bool front = false)
+        public static bool ExistProcess(string procName, bool front = false)
         {
             Process[] objProcesses = Process.GetProcessesByName(procName);
             if (objProcesses.Length > 0)
@@ -622,7 +637,7 @@ namespace keyupMusic2
         }
 
         public static bool key_sound = true;
-        public static void paly_sound(Keys key)
+        public static void play_sound(Keys key)
         {
             if (is_down(Keys.LWin)) return;
             if (Position.Y == 0) return;
@@ -717,32 +732,274 @@ namespace keyupMusic2
             }
             return result;
         }
-        public static void quick_max_chrome()
+        public static void quick_max_chrome(Point point = new Point())
         {
-            if (Common.ExsitProcess(Common.PowerToysCropAndLock, true))
+            if (ExistProcess(PowerToysCropAndLock, true))
             {
-                if (ProcessName2 == Common.chrome)
+                if (ProcessName2 == chrome)
                 {
-                   press(Keys.F11);
-                    Sleep(20);
+                    press(Keys.F11);
+                    CenterWindowOnScreen(chrome, true);
                     altab();
+                    FocusProcess(PowerToysCropAndLock, false);
+                    if (ExistProcess(cs2)) { mouse_click(); }
                 }
                 else
                 {
-                    FocusProcess(Common.chrome);
-                    Sleep(50);
+                    //放大
+                    HideProcess(PowerToysCropAndLock);
+                    var pp = new Point(point.X - 450, point.Y - 450);
+                    MoveProcessWindow(chrome, pp);
+                    mouse_click2(2);
+                    CenterWindowOnScreen(chrome, true);
                     press(Keys.F11);
-                    Sleep(100);
-                    if (ProcessName2 == Common.chrome && !IsFullScreen())
+                    if (ExistProcess(cs2)) { press_middle_bottom(); }
+
+                    if (ProcessName2 != chrome)
                     {
-                        mouse_click(2559, 722, 0);
-                        if (ProcessName2 == Common.chrome)
-                            press(Keys.F11);
+                        quick_max_chrome(point);
                     }
                 }
                 FreshProcessName();
             }
         }
-        public const uint isVir = 3;
+        public static uint isVir = 3;
+        public const uint isVirConst = 3;
+
+        public static bool is_no_title(string targetWindowTitle)
+        {
+            IntPtr targetWindowHandle = GetProcessID(targetWindowTitle);
+
+            if (targetWindowHandle != IntPtr.Zero)
+            {
+                int currentStyle = GetWindowLong(targetWindowHandle, GWL_STYLE);
+                bool hasCaption = (currentStyle & WS_CAPTION) != 0;
+
+                if (!hasCaption)
+                    return true;
+                return false;
+            }
+            return false;
+        }
+        public static int PowerToysCropAndLock_Height = 0;
+        public static int PowerToysCropAndLock_Wight = 0;
+        public static double PowerToysCropAndLock_delta = 1;
+        public static bool hideProcessTitle(string targetWindowTitle)
+        {
+            IntPtr targetWindowHandle = GetProcessID(targetWindowTitle);
+
+            if (targetWindowHandle != IntPtr.Zero)
+            {
+                // 获取当前窗口样式
+                int currentStyle = GetWindowLong(targetWindowHandle, GWL_STYLE);
+                bool hasCaption = (currentStyle & WS_CAPTION) != 0;
+
+                if (!hasCaption)
+                    return false;
+                // 移除标题栏、边框和调整大小边框的样式
+                int newStyle = currentStyle & ~(WS_CAPTION | WS_BORDER | WS_THICKFRAME);
+
+                // 设置新的窗口样式
+                SetWindowLong(targetWindowHandle, GWL_STYLE, newStyle);
+
+                // 获取当前窗口的位置和大小
+                RECT rect;
+                GetWindowRect(targetWindowHandle, out rect);
+
+                int newWidth = rect.Right - rect.Left - 22;
+                int newHeight = rect.Bottom - rect.Top - 55;
+                PowerToysCropAndLock_Height = newHeight;
+                PowerToysCropAndLock_Wight = newWidth;
+
+
+                // 更新窗口布局，使修改生效，并调整窗口大小
+                SetWindowPos(targetWindowHandle, IntPtr.Zero, rect.Left, rect.Top, newWidth, newHeight, SWP_FRAMECHANGED | SWP_NOMOVE);
+                Console.WriteLine("标题栏和边框已隐藏");
+                return true;
+            }
+            else
+            {
+                Console.WriteLine("未找到目标窗口");
+            }
+            return false;
+        }
+        public static void change_process_size(double delta)
+        {
+            IntPtr targetWindowHandle = GetProcessID(ProcessName);
+            if (targetWindowHandle != IntPtr.Zero)
+            {
+                // 获取当前窗口的矩形
+                RECT rect;
+                Native.GetWindowRect(targetWindowHandle, out rect);
+
+                int width = rect.Right - rect.Left;
+                int height = rect.Bottom - rect.Top;
+                if (PowerToysCropAndLock_Wight != 0)
+                {
+                    width = PowerToysCropAndLock_Wight;
+                    height = PowerToysCropAndLock_Height;
+                }
+                else
+                {
+                    PowerToysCropAndLock_Wight = width;
+                    PowerToysCropAndLock_Height = height;
+                }
+
+                double scaleFactor = 1.1; // 缩放比例，可根据需要调整
+
+                double aspectRatio = (double)width / height; // 计算原始宽高比
+
+                int newWidth, newHeight;
+
+                newWidth = (int)(width / delta);
+                newHeight = (int)(newWidth / delta);
+
+                // 计算新的左上角位置，以左下角为基准
+                int newLeft = rect.Left;
+                int newTop = rect.Bottom - newHeight;
+
+                // 移动窗口并调整大小
+                Native.MoveWindow(targetWindowHandle, newLeft, newTop, newWidth, newHeight, true);
+            }
+        }
+        public static void CenterWindowOnScreen(string targetWindowTitle, bool right = false)
+        {
+            // 查找目标窗口的句柄
+            IntPtr targetWindowHandle = GetProcessID(targetWindowTitle);
+            if (targetWindowHandle == IntPtr.Zero)
+            {
+                Console.WriteLine($"未找到标题为 '{targetWindowTitle}' 的窗口。");
+                return;
+            }
+
+            // 获取目标窗口的矩形信息
+            RECT windowRect;
+            if (!GetWindowRect(targetWindowHandle, out windowRect))
+            {
+                Console.WriteLine("无法获取窗口的矩形信息。");
+                return;
+            }
+
+            // 获取屏幕的矩形信息
+            RECT screenRect;
+            GetWindowRect(Native.GetDesktopWindow(), out screenRect);
+
+            // 计算窗口的宽度和高度
+            int windowWidth = windowRect.Right - windowRect.Left;
+            int windowHeight = windowRect.Bottom - windowRect.Top;
+
+            // 计算窗口在屏幕中间的位置
+            int newX = (screenWidth - windowWidth) + 12;
+            int newY = (screenHeight - windowHeight) / 2;
+            if (right) newX = screenWidth1 - 9;
+
+            if (targetWindowTitle == chrome)
+            {
+                windowWidth = 1300;
+                windowHeight = 860;
+            }
+            if (targetWindowTitle == wemeetapp)
+            {
+                windowWidth = 1927;
+                windowHeight = 1132;
+            }
+            //if (targetWindowTitle == chrome)
+            //{
+            //    windowWidth = 1937;
+            //    windowHeight = 1175;
+            //}
+
+            // 移动窗口到屏幕中间
+            if (!MoveWindow(targetWindowHandle, newX, newY, windowWidth, windowHeight, true))
+            {
+                Console.WriteLine("无法移动窗口到指定位置。");
+            }
+        }
+        public static void CenterWindowOnScreen2(string targetWindowTitle, bool right = false)
+        {
+            // 查找目标窗口的句柄
+            IntPtr targetWindowHandle = GetProcessID(targetWindowTitle);
+            if (targetWindowHandle == IntPtr.Zero)
+            {
+                Console.WriteLine($"未找到标题为 '{targetWindowTitle}' 的窗口。");
+                return;
+            }
+            //// 获取当前窗口样式
+            //int currentStyle = GetWindowLong(targetWindowHandle, GWL_STYLE);
+            //bool hasCaption = (currentStyle & WS_CAPTION) != 0;
+            //if (hasCaption)
+            //{
+            //    int newStyle = currentStyle & ~(WS_CAPTION | WS_BORDER | WS_THICKFRAME);
+            //    SetWindowLong(targetWindowHandle, GWL_STYLE, newStyle);
+            //}
+
+            // 获取目标窗口的矩形信息
+            RECT windowRect;
+            if (!GetWindowRect(targetWindowHandle, out windowRect))
+            {
+                Console.WriteLine("无法获取窗口的矩形信息。");
+                return;
+            }
+
+
+                double windowWidth = 2904;
+                double windowHeight = 1762;
+
+                // 更新窗口布局，使修改生效，并调整窗口大小
+                SetWindowPos(targetWindowHandle, IntPtr.Zero, 0, 0, (int)windowWidth, (int)windowHeight, SWP_FRAMECHANGED | SWP_NOMOVE);
+                //// 移动窗口到屏幕中间
+                //if (!MoveWindow(targetWindowHandle, newX, newY, windowWidth, windowHeight, true))
+                //{
+                //    Console.WriteLine("无法移动窗口到指定位置。");
+                //}
+            }
+            public static void MoveProcessWindow(string targetWindowTitle, Point point)
+            {
+                IntPtr targetWindowHandle = GetProcessID(targetWindowTitle);
+                RECT windowRect;
+                GetWindowRect(targetWindowHandle, out windowRect);
+
+                int windowWidth = windowRect.Right - windowRect.Left;
+                int windowHeight = windowRect.Bottom - windowRect.Top;
+
+                MoveWindow(targetWindowHandle, point.X, point.Y, windowWidth, windowHeight, true);
+            }
+            public static void MoveProcessWindow2(string targetWindowTitle)
+            {
+                IntPtr targetWindowHandle = GetProcessID(targetWindowTitle);
+                RECT windowRect;
+                GetWindowRect(targetWindowHandle, out windowRect);
+
+                int windowWidth = windowRect.Right - windowRect.Left;
+                int windowHeight = windowRect.Bottom - windowRect.Top;
+                int dsad = screenHeight - windowHeight;
+
+                MoveWindow(targetWindowHandle, 0, dsad, windowWidth, windowHeight, true);
+            }
+        // 系统指标常量
+        private const int SM_CYCAPTION = 4;
+        public static bool IsClickOnTitleBar(string ProcessName, Point clickPosition)
+        {
+            // 查找目标窗口的句柄
+            IntPtr windowHandle = GetProcessID(ProcessName);
+            // 获取窗口的矩形信息
+            RECT windowRect;
+            if (!GetWindowRect(windowHandle, out windowRect))
+            {
+                return false;
+            }
+
+            // 获取标题栏的高度
+            int captionHeight = GetSystemMetrics(SM_CYCAPTION);
+
+            // 将鼠标点击的屏幕坐标转换为窗口的客户区坐标
+            Point clientPoint = clickPosition;
+            ScreenToClient(windowHandle, ref clientPoint);
+
+            // 判断点击位置是否在标题栏内
+            return clientPoint.Y >= 0 && clientPoint.Y < captionHeight;
+        }
+
+
     }
 }

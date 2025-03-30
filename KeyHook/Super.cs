@@ -1,5 +1,6 @@
 ﻿using System.Diagnostics;
 using System.Drawing.Imaging;
+using System.Runtime.InteropServices;
 using static keyupMusic2.Common;
 using static keyupMusic2.MouseKeyboardHook;
 
@@ -18,7 +19,6 @@ namespace keyupMusic2
         Keys[] keys = { Keys.D0, Keys.D1, Keys.D2, Keys.D3, Keys.D4, Keys.D5, Keys.D6, Keys.D7, Keys.D8, Keys.D9, Keys.PageUp, Keys.Home, Keys.End };
         public static bool start_record = false;
         string commnd_record = "";
-        private bool ddsadsad;
 
         public static void hook_KeyDown(Keys keys)
         {
@@ -42,19 +42,16 @@ namespace keyupMusic2
                     SSSS.KeyPress(Keys.LWin, "verge", Keys.Enter);
                     break;
                 case Keys.W:
-                    start_listen_to_word();
                     break;
                 case Keys.E:
-                    paly_sound(Keys.D0);
+                    play_sound(Keys.D0);
                     winBinWallpaper.changeImg();
                     break;
                 case Keys.R:
                     sound_setting();
-                    //if (key_sound) player.Stop();
-                    //key_sound = !key_sound;
                     break;
-                //case Keys.T:
-                //    break;
+                case Keys.T:
+                    break;
                 case Keys.Y:
                     Common.cmd($"/c start ms-settings:taskbar");
                     press("200;978,1042;907,1227;2500,32;", 801);
@@ -64,52 +61,38 @@ namespace keyupMusic2
                     press("200;1056,588;2118,530;2031,585;2516,8;", 801);
                     break;
                 case Keys.I:
-                    IsMouseStopClick = !IsMouseStopClick;
+
                     break;
                 case Keys.O:
-                    paly_sound(Keys.D5);
+                    play_sound(Keys.D5);
                     change_file_last(true);
                     break;
                 case Keys.P:
-                    paly_sound(Keys.D3);
+                    play_sound(Keys.D3);
                     change_file_last(false);
                     break;
                 case Keys.A:
                     start_record = !start_record;
                     break;
                 case Keys.S:
-                    Invoke(() =>
-                    {
-                        string ddd = Clipboard.GetText();
-                        string dddd = ddd.Substring(ddd.IndexOf("app/") + 4, 8);
-                        string ddddd = dddd.Substring(0, dddd.IndexOf("/"));
-                        ProcessRun("C:\\Program Files\\other\\Onekey---v1.3.5.exe");
-                        Simm.Wait(2000).KeyPress(ddddd).KeyPress(Keys.Enter);
-                    });
                     break;
                 case Keys.D:
-                    new Other().hook_KeyDown(Keys.F11);
                     break;
                 case Keys.F:
-                    Simm.KeyPress(Keys.F);
-                    Simm.MouseWhell(120);
                     break;
                 case Keys.G:
                     break;
                 case Keys.H:
-                    press(Keys.F11);
                     break;
                 case Keys.J:
-                    run_chrome();
                     break;
                 case Keys.K:
                     huan.release_all_keydown(1000);
                     break;
                 case Keys.L:
-                    quick_dir_file();
                     break;
                 case Keys.Z:
-                    press("100;LWin;KK;Enter;", 110);
+
                     break;
                 case Keys.X:
                     Thread.Sleep(3000);
@@ -126,15 +109,10 @@ namespace keyupMusic2
                     stop_keys = new Dictionary<Keys, string>();
                     break;
                 case Keys.M:
-                    //ddsadsad = !ddsadsad;
-                    //TaskRun(() =>
-                    //{
-                    //    while (ddsadsad)
-                    //    {
-                    //        mouse_click();
-                    //        Sleep(1000);
-                    //    }
-                    //}, 1000);
+                    chrome_m();
+                    break;
+                case Keys.N:
+                    notify();
                     break;
                 case Keys.Space:
                     Invoke(() =>
@@ -147,34 +125,30 @@ namespace keyupMusic2
                             press(ddd);
                     });
                     break;
-                case Keys.N:
-                    notify();
-                    break;
                 case Keys.F1:
                     get_point_color(e);
                     break;
                 case Keys.F2:
-                    huan._mouseKbdHook.ChangeMouseHooks();
-                    break;
-                case Keys.F5:
-                    paly_sound(Keys.D2);
-                    //    if (ProcessName == Common.ACPhoenix) { Common.HideProcess(Common.ACPhoenix); break; }
-                    //    if (Common.FocusProcess(Common.ACPhoenix)) break;
-                    //    dragonest();
-                    ProcessRun("C:\\Program Files (x86)\\Steam\\steam.exe");
+                    var exi = ExistProcess(LosslessScaling);
+                    if (!exi)
+                    {
+                        ProcessRun("C:\\program files (x86)\\steam\\steamapps\\common\\Lossless Scaling\\LosslessScaling.exe");
+                        Sleep(2200);
+                    }
+                    if (!ExistProcess(LosslessScaling)) Sleep(1000);
+                    if (!ExistProcess(LosslessScaling)) Sleep(1000);
+                    if (ProcessName2==(LosslessScaling)) altab();
+                    if (ProcessName2==(Common.keyupMusic2)) altab();
+                    press([Keys.LControlKey, Keys.LShiftKey, Keys.S]);
                     break;
                 case Keys.F4:
                     press(Keys.MediaPlayPause);
                     break;
+                case Keys.F5:
+                    play_sound(Keys.D2);
+                    ProcessRun("C:\\Program Files (x86)\\Steam\\steam.exe");
+                    break;
                 case Keys.F6:
-                    //TaskRun(() =>
-                    //{
-                    //    if (!FocusProcess(Common.chrome)) return;
-                    //    play_sound_di();
-                    //    Simm.KeyPress(Keys.M).Sleep(100);
-                    //    altab();
-                    //}, 100);
-                    press("2411,95;2391,184;2393,35", 200);
                     break;
                 //case Keys.Up:
                 //    Invoke(() => huan.Opacity = huan.Opacity >= 1 ? 1 : huan.Opacity + 0.5);
@@ -183,14 +157,12 @@ namespace keyupMusic2
                 //    Invoke(() => huan.Opacity = huan.Opacity <= 0 ? 0 : huan.Opacity - 0.5);
                 //    break;
                 case Keys.Escape:
-                    if (is_ctrl() && is_shift()) { Process.Start(new ProcessStartInfo("taskmgr.exe")); break; }
-                    press_middle_bottom();
+                    //if (is_ctrl() && is_shift()) { Process.Start(new ProcessStartInfo("taskmgr.exe")); break; }
+                    //press_middle_bottom();
+                    huan._mouseKbdHook.ChangeMouseHooks();
                     break;
                 case Keys.F11:
                 case Keys.F12:
-                    //new Other().hook_KeyDown(e.key);
-                    ////string dfsadd = "taskkill /f /im explorer.exe & start explorer.exe";
-                    ////ProcessRun(dfsadd);
                     press(e.key);
                     break;
 
@@ -215,7 +187,7 @@ namespace keyupMusic2
                     break;
             }
 
-            if (key_sound && keys.Contains(e.key)) { paly_sound(e.key); catched = true; }
+            if (key_sound && keys.Contains(e.key)) { play_sound(e.key); catched = true; }
 
             if (catched)
             {
@@ -224,6 +196,29 @@ namespace keyupMusic2
                 //KeyboardHook.stop_next = true;
             }
             Common.hooked = false;
+        }
+
+        public static void chrome_m()
+        {
+            TaskRun(() =>
+            {
+                if (!FocusProcess(Common.chrome)) return;
+                play_sound_di();
+                Simm.KeyPress(Keys.M).Sleep(100);
+                altab();
+            }, 100);
+        }
+
+        private void quick_onekey()
+        {
+            Invoke(() =>
+            {
+                string ddd = Clipboard.GetText();
+                string dddd = ddd.Substring(ddd.IndexOf("app/") + 4, 8);
+                string ddddd = dddd.Substring(0, dddd.IndexOf("/"));
+                ProcessRun("C:\\Program Files\\other\\Onekey---v1.3.5.exe");
+                Simm.Wait(2000).KeyPress(ddddd).KeyPress(Keys.Enter);
+            });
         }
 
         private static void run_chrome()
@@ -245,7 +240,7 @@ namespace keyupMusic2
                 return;
             }
             Invoke(() => { try { press(Clipboard.GetText()); } catch { } });
-            paly_sound(Keys.D1);
+            play_sound(Keys.D1);
         }
 
         private static void quick_dir_file()
@@ -278,7 +273,7 @@ namespace keyupMusic2
 
         private static void dragonest()
         {
-            if (!Common.ExsitProcess(Common.Dragonest))
+            if (!Common.ExistProcess(Common.Dragonest))
             {
                 dragonest_init();
                 dragonest_max(10000);

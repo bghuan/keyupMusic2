@@ -72,11 +72,7 @@ namespace keyupMusic2
 
         [DllImport("user32.dll")]
         public static extern IntPtr SetWindowsHookEx(int idHook, LowLevelkeyboardHookProc callback, IntPtr hInstance, uint threadId);
-        // 引入FindWindow函数
-        [DllImport("user32.dll", CharSet = CharSet.Unicode)]
-        public static extern IntPtr FindWindow(string lpClassName, string lpWindowName);
 
-        // 引入SetWindowText函数
         [DllImport("user32.dll", CharSet = CharSet.Unicode)]
         public static extern bool SetWindowText(IntPtr hWnd, string text);
         public enum SW
@@ -92,7 +88,7 @@ namespace keyupMusic2
             SW_RESTORE = 13
         }
         [DllImport("user32.dll")]
-        public static extern IntPtr SendMessageW(IntPtr hWnd, uint Msg, IntPtr wParam, IntPtr lParam);
+        public static extern IntPtr SendMessage(IntPtr hWnd, uint Msg, IntPtr wParam, IntPtr lParam);
 
         public const int APPCOMMAND_VOLUME_MUTE = 0x80000;
         public const int WM_APPCOMMAND = 0x319;
@@ -125,7 +121,6 @@ namespace keyupMusic2
         [DllImport("user32.dll", SetLastError = true)]
         public static extern uint GetWindowThreadProcessId(IntPtr hWnd, out uint lpdwProcessId);
 
-        // 导入user32.dll中的GetForegroundWindow函数
         [DllImport("user32.dll")]
         public static extern IntPtr GetForegroundWindow();
 
@@ -166,5 +161,37 @@ namespace keyupMusic2
         public const int WM_CLOSE = 0x0010;
         [DllImport("user32.dll")]
         public static extern bool PostMessage(IntPtr hWnd, uint Msg, IntPtr wParam, IntPtr lParam);
+
+        [DllImport("user32.dll")]
+        public static extern int GetWindowLong(IntPtr hWnd, int nIndex);
+
+        [DllImport("user32.dll")]
+        public static extern int SetWindowLong(IntPtr hWnd, int nIndex, int dwNewLong);
+
+        [DllImport("user32.dll")]
+        public static extern bool SetWindowPos(IntPtr hWnd, IntPtr hWndInsertAfter, int X, int Y, int cx, int cy, uint uFlags);
+
+        public const int GWL_STYLE = -16;
+        public const int WS_CAPTION = 0x00C00000;
+        public const int WS_BORDER = 0x00800000;
+        public const int WS_THICKFRAME = 0x00040000;
+        public const uint SWP_FRAMECHANGED = 0x0020;
+        public const uint SWP_NOMOVE = 0x0002;
+        public const uint SWP_NOSIZE = 0x0001;
+        // 窗口消息常量
+        public const uint WM_NCLBUTTONDOWN = 0x00A1;
+        public const int HTCAPTION = 2;
+        [DllImport("user32.dll")]
+        public static extern bool ScreenToClient(IntPtr hWnd, ref Point lpPoint); [DllImport("user32.dll")]
+        public static extern bool MoveWindow(IntPtr hWnd, int X, int Y, int nWidth, int nHeight, bool bRepaint);
+        [DllImport("user32.dll")]
+        public static extern IntPtr GetDesktopWindow();
+
+        [DllImport("Kernel32.dll", EntryPoint = "GetTickCount", CharSet = CharSet.Auto)]
+        internal static extern int GetTickCount();
+        [DllImport("user32.dll")]
+        public static extern uint MapVirtualKey(UInt32 uCode, UInt32 uMapType);
+
+    
     }
 }

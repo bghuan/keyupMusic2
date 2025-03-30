@@ -90,6 +90,7 @@
             public int X;
             public int Y;
             public bool isVir;
+            public Point Pos => new Point() { X = X, Y = Y };
 
             public KeyboardHookEventArgs(KeyboardEventType type, Keys key, int wParam, Native.keyboardHookStruct lParam)
             {
@@ -97,7 +98,7 @@
                 this.wParam = wParam;
                 this.lParam = lParam;
                 this.key = key;
-                this.isVir = lParam.dwExtraInfo== Common.isVir;
+                this.isVir = lParam.dwExtraInfo == Common.isVirConst;
 
                 this.X = Cursor.Position.X;
                 this.Y = Cursor.Position.Y;

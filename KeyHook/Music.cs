@@ -27,7 +27,7 @@ namespace keyupMusic2
             {
                 if (last_key_sound_time.AddMilliseconds(500) > DateTime.Now)
                 {
-                    paly_sound(e.key);
+                    play_sound(e.key);
                     last_key_sound_time2 = DateTime.Now.AddMilliseconds(1200);
                 }
                 else if (last_key_sound_time2 > DateTime.Now)

@@ -5,6 +5,7 @@ using System.Net;
 using System.Runtime.InteropServices;
 using System.Security.Principal;
 using System.Text;
+using System.Windows.Forms;
 using static keyupMusic2.Native;
 using Point = System.Drawing.Point;
 
@@ -206,7 +207,7 @@ namespace keyupMusic2
             if (is_down(Keys.Delete)) return;
             lock (_lockObject2)
             {
-                for (global::System.Int32 i = 0; i < times; i++)
+                for (Int32 i = 0; i < times; i++)
                 {
                     _press(num);
                 }
@@ -363,8 +364,9 @@ namespace keyupMusic2
         }
         public static void _press(Keys keys)
         {
-            keybd_event((byte)keys, 0, 0, 0);
-            keybd_event((byte)keys, 0, 2, 0);
+            
+            keybd_event((byte)keys, (byte)(Native.MapVirtualKey((ushort)keys, 0) & 0xFFU), 0, 0);
+            keybd_event((byte)keys, (byte)(Native.MapVirtualKey((ushort)keys, 0) & 0xFFU), 2, 0);
         }
         public static void press_dump(Keys keys, int tick = 500)
         {

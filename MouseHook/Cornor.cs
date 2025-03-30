@@ -80,9 +80,9 @@ namespace keyupMusic2
                 }
                 else if (cornor == 4)
                 {
-                    if (Common.ACPhoenix.Equals(Common.ProcessName))
-                        press([Keys.Escape]);
-                    quick_max_chrome();
+                    //if (Common.ACPhoenix.Equals(Common.ProcessName))
+                    //    press([Keys.Escape]);
+                    //quick_max_chrome(e.Pos);
                 }
                 else if (cornor == 5)
                 {

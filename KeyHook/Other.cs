@@ -1,5 +1,6 @@
 ﻿using static keyupMusic2.Common;
 using static keyupMusic2.MouseKeyboardHook;
+using static keyupMusic2.Native;
 
 namespace keyupMusic2
 {
@@ -36,8 +37,11 @@ namespace keyupMusic2
             switch (e.key)
             {
                 case Keys.F10:
+                case Keys.PageDown:
+                    if (e.key == Keys.PageDown && (!is_steam_game() && module_name != chrome)) break;
+                    if (e.key == Keys.PageDown && module_name == QyClient) { press("563, 894", 1); break; }
                     if (is_ctrl_shift_alt()) break;
-                    quick_max_chrome();
+                    quick_max_chrome(e.Pos);
                     break;
                 case Keys.F11:
                     if (is_ctrl_shift_alt()) break;
@@ -73,8 +77,6 @@ namespace keyupMusic2
                 case Keys.MediaPreviousTrack:
                     if (module_name == HuyaClient) { press("587,152", 1); break; }
                     break;
-                case Keys.PageDown:
-                    if (module_name == QyClient) press("563, 894", 1); break;
                 case Keys.F4:
                     if (module_name == vlc) CloseProcess(vlc); break;
             }
@@ -177,17 +179,17 @@ namespace keyupMusic2
                     {
                         case Keys.MediaPreviousTrack:
                             if (is_down(Native.VK_LBUTTON)) break;
-                            press("B;930,962;B;");
+                            press("B;930,962;1483,568;1483,696;1483,828;1483,969;B;D3;");
                             break;
                         case Keys.MediaNextTrack:
                             if (is_down(Native.VK_LBUTTON)) break;
-                            press("B;1241,692;B;");
+                            press("Escape;");
                             break;
+                        //case Keys.MediaNextTrack:
+                        //    if (is_down(Native.VK_LBUTTON)) break;
+                        //    press("B;1241,692;1483,568;1483,696;1483,828;1483,969;B;D3;", 50);
+                        //    break;
                         case Keys.F1:
-                            if (is_ctrl()) break;
-                            if (is_shift()) break;
-                            if (!timer_start)
-                                StartKeyPressLoop();
                             break;
                         case Keys.F2:
                             Sleep(100);
@@ -200,7 +202,20 @@ namespace keyupMusic2
                             press("1301,48;100;1274,178;2260,1374");
                             break;
                         case Keys.F6:
-                            press("Escape;1643,179");
+                            press("Escape;1643,179;100;1466,818;1556,806");
+                            break;
+                        //case Keys.D:
+                        //    press_dump(Keys.A,100);
+                        //    break;
+                        case Keys.W:
+                            KeyUp.w = 1;
+                            break;
+                        case Keys.OemPeriod:
+                            var sfa = Position;
+                            mouse_click();
+                            press("1654, 555;1564, 970;");
+                            mouse_move(sfa);
+                            //if (is_ctrl()) press("170;Escape;");
                             break;
                     }
                     break;
@@ -209,7 +224,7 @@ namespace keyupMusic2
                     {
                         case Keys.F5:
                         case Keys.MediaNextTrack:
-                            press("808,651;");
+                            press("808,651;", 1);
                             CloseProcess(steam);
                             break;
                         case Keys.MediaPreviousTrack:
@@ -229,6 +244,43 @@ namespace keyupMusic2
                             break;
                     }
                     break;
+                case Common.PowerToysCropAndLock:
+                    switch (e.key)
+                    {
+                        case Keys.Space:
+                            hideProcessTitle(PowerToysCropAndLock);
+                            MoveProcessWindow2(PowerToysCropAndLock);
+                            CenterWindowOnScreen(chrome, true);
+                            break;
+                    }
+                    break;
+                case Common.oriwotw:
+                    switch (e.key)
+                    {
+                        case Keys.F1:
+                            press("H;200;955,332;1179,335;1395,336;1613,332;" +
+                                "732,922;902,939;1183,939;1060,780;H;");
+                            break;
+                        case Keys.F2:
+                            press("H;200;955,332;1179,335;1395,336;1613,332;" +
+                                "1378,1102;1519,1113;1685,785;1183,939;H;");
+                            break;
+                    }
+                    break;
+                case Common.wemeetapp:
+                    switch (e.key)
+                    {
+                        case Keys.F1:
+                            CenterWindowOnScreen(wemeetapp);
+                            break;
+                        case Keys.Oem3:
+                            mouse_click();
+                            break;
+                            //case Keys.MediaNextTrack:
+                            //   SS(0).KeyPress(Keys.C);
+                            //    break;
+                    }
+                    break;
             }
 
 
@@ -237,7 +289,7 @@ namespace keyupMusic2
         }
         private static void run_wei()
         {
-            if (!Common.ExsitProcess(Common.WeChat))
+            if (!Common.ExistProcess(Common.WeChat))
             {
                 press("LWin;100;WEI;100;Enter;", 50, flag_special);
                 return;
@@ -249,28 +301,6 @@ namespace keyupMusic2
         {
             press("LWin;VISUAL;en;100;Apps;100;Enter;", 100, flag_special);
             TaskRun(() => { press("Tab;Down;Enter;", 100); }, 1600);
-        }
-        private static System.Timers.Timer timer;
-        static bool timer_start = false;
-        private static void StartKeyPressLoop()
-        {
-            timer_start = true;
-            timer = new System.Timers.Timer(5000); // 每 5 秒触发一次
-            timer.Elapsed += (sender, e) =>
-            {
-                if (ProcessName2 == cs2)
-                {
-                    press(Keys.F1);
-                }
-                else
-                {
-                    timer_start = false;
-                    timer.Stop(); // 停止定时器
-                    timer.Dispose(); // 释放资源
-                }
-            };
-            timer.AutoReset = true; // 自动重置定时器
-            timer.Start(); // 启动定时器
         }
     }
 }

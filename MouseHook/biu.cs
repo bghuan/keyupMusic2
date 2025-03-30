@@ -1,4 +1,5 @@
 ﻿using static keyupMusic2.Common;
+using static keyupMusic2.MouseKeyboardHook;
 using static keyupMusic2.Simulate;
 
 namespace keyupMusic2
@@ -29,7 +30,7 @@ namespace keyupMusic2
         bool r_button_downing = false;
         bool x_button_dowing = false;
 
-        public void MouseHookProc(MouseKeyboardHook.MouseHookEventArgs e)
+        public void MouseHookProc(MouseHookEventArgs e)
         {
             if (hooked_mouse) return;
             if (handing4) return;
@@ -38,11 +39,11 @@ namespace keyupMusic2
             hooked_mouse = true;
             handing = true;
             handing3 = true;
-            //handing4 = true;
             this.e = e;
-            if (e.Msg != MouseMsg.WM_MOUSEMOVE) Task.Run(() => { FreshProcessName(); });
-            //if (Common.ProcessName == err) return;
+            if (e.Msg != MouseMsg.WM_MOUSEMOVE) FreshProcessName();
             if (e.Msg == MouseMsg.WM_LBUTTONDOWN && e.X < screenHeight && e.X > screenHeight - 200 && e.Y < 100) TaskRun(() => { FreshProcessName(); }, 500);
+
+            if (judge_handled(e)) e.Handled = true;
 
             Douyin(e);
             //Task.Run(ACPhoenix);
@@ -58,6 +59,19 @@ namespace keyupMusic2
             handing = false;
             hooked_mouse = false;
 
+        }
+        public bool judge_handled(MouseHookEventArgs e)
+        {
+            if (e.Msg == MouseMsg.WM_MOUSEMOVE) return false;
+            if (ProcessName == Common.chrome)
+            {
+                if (ExistProcess(PowerToysCropAndLock, true))
+                {
+                    if (e.Msg == MouseMsg.WM_RBUTTONDOWN) return true;
+                    if (e.Msg == MouseMsg.WM_RBUTTONUP) return true;
+                }
+            }
+            return false;
         }
         public void Douyin(MouseKeyboardHook.MouseHookEventArgs e)
         {
@@ -111,21 +125,5 @@ namespace keyupMusic2
         }
         int ffff = 0;
 
-
-        public void Other()
-        {
-            //if (e.Msg == MouseMsg.WM_LBUTTONDOWN)
-            //{
-            //    if (ProcessName == keyupMusic2.Common.msedge && (e.Y == (screenHeight - 1)))
-            //        press(Keys.PageDown, 0);
-            //}
-            //else if (e.Msg == MouseMsg.WM_LBUTTONUP)
-            //{
-            //    if (e.X == 6719 || e.Y == 1619)
-            //    {
-            //        HideProcess(keyupMusic2.Common.chrome); return;
-            //    };
-            //}
-        }
     }
 }

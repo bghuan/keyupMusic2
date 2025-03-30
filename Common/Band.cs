@@ -42,10 +42,26 @@ namespace keyupMusic2
                 if (key == Keys.Up)
                     key = Keys.PageUp;
             }
+            else if (ProcessName2 == Common.steam)
+            {
+                if (key == Keys.PageDown)
+                    key = Keys.Down;
+                else if (key == Keys.Right)
+                {
+                    key = Keys.None;
+                    mouse_click();
+                }
+                else if (key == Keys.Left)
+                {
+                    key = Keys.MediaPreviousTrack;
+                }
+            }
 
             if (key == Keys.None) return;
 
-            Simm.KeyPress(key);
+            Common.isVir = 0;
+            press(key);
+            Common.isVir = 3;
             //log(msg + "-" + ProcessName2 + "-" + key);
         }
     }
