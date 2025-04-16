@@ -265,6 +265,7 @@ namespace keyupMusic2
                 {
                     //Thread.Sleep(10);
                     keybd_event((byte)item, 0, 0, 0);
+                    Sleep(10);
                 }
                 Array.Reverse(keys);
                 foreach (var item in keys)

@@ -150,6 +150,9 @@ namespace keyupMusic2
                     break;
                 case Keys.F6:
                     break;
+                case Keys.F10:
+                    Process.Start("rundll32.exe", "powrprof.dll,SetSuspendState 0,1,1");
+                    break;
                 //case Keys.Up:
                 //    Invoke(() => huan.Opacity = huan.Opacity >= 1 ? 1 : huan.Opacity + 0.5);
                 //    break;

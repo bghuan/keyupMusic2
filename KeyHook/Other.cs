@@ -29,22 +29,37 @@ namespace keyupMusic2
         {
             string module_name = ProcessName;
             //flag_special = is_down(Keys.Delete);
-            if (!list.Contains(module_name) || flag_special) return;
+            //if (!list.Contains(module_name) || flag_special) return;
             Common.hooked = true;
             Not_F10_F11_F12_Delete(true, e.key);
             handling_keys = e.key;
 
+            if (is_ctrl_shift_alt()) return;
             switch (e.key)
             {
-                case Keys.F10:
                 case Keys.PageDown:
                     if (e.key == Keys.PageDown && (!is_steam_game() && module_name != chrome)) break;
                     if (e.key == Keys.PageDown && module_name == QyClient) { press("563, 894", 1); break; }
                     if (is_ctrl_shift_alt()) break;
                     quick_max_chrome(e.Pos);
                     break;
+                case Keys.F4:
+                    if (ProcessName == Common.keyupMusic2) break;
+                    CloseProcess();
+                    break;
+                //case Keys.F10:
+                //case Keys.PageDown:
+                //    if (e.key == Keys.PageDown && (!is_steam_game() && module_name != chrome)) break;
+                //    if (e.key == Keys.PageDown && module_name == QyClient) { press("563, 894", 1); break; }
+                //    if (is_ctrl_shift_alt()) break;
+                //    quick_max_chrome(e.Pos);
+                //    break;
+                case Keys.F10:
+                    if (TryFocusProcess(Common.cs2)) break;
+                    if (TryFocusProcess(Common.SplitFiction)) break;
+                    if (TryFocusProcess(Common.steam)) break;
+                    break;
                 case Keys.F11:
-                    if (is_ctrl_shift_alt()) break;
                     if (Common.devenv == module_name)
                     {
                         HideProcess(module_name);
@@ -57,7 +72,6 @@ namespace keyupMusic2
                     }
                     break;
                 case Keys.F12:
-                    if (is_ctrl_shift_alt()) break;
                     if (Common.WeChat == module_name)
                     {
                         CloseProcess(module_name);
@@ -74,11 +88,6 @@ namespace keyupMusic2
                         run_wei();
                     }
                     break;
-                case Keys.MediaPreviousTrack:
-                    if (module_name == HuyaClient) { press("587,152", 1); break; }
-                    break;
-                case Keys.F4:
-                    if (module_name == vlc) CloseProcess(vlc); break;
             }
             switch (module_name)
             {
@@ -179,7 +188,8 @@ namespace keyupMusic2
                     {
                         case Keys.MediaPreviousTrack:
                             if (is_down(Native.VK_LBUTTON)) break;
-                            press("B;930,962;1483,568;1483,696;1483,828;1483,969;B;D3;");
+                            press("B;985,699;1499,429;1483,568;1483,696;1483,828;1483,969;B;D3;");
+                            //("B;930,962;1483,568;1483,696;1483,828;1483,969;B;D3;");
                             break;
                         case Keys.MediaNextTrack:
                             if (is_down(Native.VK_LBUTTON)) break;
@@ -195,9 +205,9 @@ namespace keyupMusic2
                             Sleep(100);
                             press(Keys.D3);
                             break;
-                        case Keys.F4:
-                            CloseProcess(cs2);
-                            break;
+                        //case Keys.F4:
+                        //    CloseProcess(cs2);
+                        //    break;
                         case Keys.F5:
                             press("1301,48;100;1274,178;2260,1374");
                             break;
@@ -300,7 +310,7 @@ namespace keyupMusic2
         private static void run_vis()
         {
             press("LWin;VISUAL;en;100;Apps;100;Enter;", 100, flag_special);
-            TaskRun(() => { press("Tab;Down;Enter;", 100); }, 1600);
+            TaskRun(() => { press("Tab;Down;Enter;", 100); }, 1800);
         }
     }
 }

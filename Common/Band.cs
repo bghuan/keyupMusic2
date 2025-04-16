@@ -62,7 +62,7 @@ namespace keyupMusic2
             Common.isVir = 0;
             press(key);
             Common.isVir = 3;
-            //log(msg + "-" + ProcessName2 + "-" + key);
+            log(msg + "-" + ProcessName2 + "-" + key);
         }
     }
 }

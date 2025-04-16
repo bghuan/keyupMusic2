@@ -56,6 +56,7 @@ namespace keyupMusic2
         public const string oriwotw = "oriwotw";
         public const string LosslessScaling = "LosslessScaling";
         public const string wemeetapp = "wemeetapp";
+        public const string SplitFiction = "SplitFiction";
 
         public static SoundPlayer player = new SoundPlayer();
         public static SoundPlayer player2 = new SoundPlayer();
@@ -274,6 +275,16 @@ namespace keyupMusic2
                 return true;
             }
             return false;
+        }
+        public static bool TryFocusProcess(string process)
+        {
+            var flag = ExistProcess(process);
+            if (flag)
+                if (process == ProcessName)
+                    HideProcess(process);
+                else
+                    FocusProcess(process);
+            return flag;
         }
         public static IntPtr GetProcessID(string procName)
         {
@@ -734,34 +745,33 @@ namespace keyupMusic2
         }
         public static void quick_max_chrome(Point point = new Point())
         {
-            if (ExistProcess(PowerToysCropAndLock, true))
+            if (!ExistProcess(PowerToysCropAndLock, true)) return;
+            if (ProcessName2 == chrome)
             {
-                if (ProcessName2 == chrome)
-                {
-                    press(Keys.F11);
-                    CenterWindowOnScreen(chrome, true);
-                    altab();
-                    FocusProcess(PowerToysCropAndLock, false);
-                    if (ExistProcess(cs2)) { mouse_click(); }
-                }
-                else
-                {
-                    //放大
-                    HideProcess(PowerToysCropAndLock);
-                    var pp = new Point(point.X - 450, point.Y - 450);
-                    MoveProcessWindow(chrome, pp);
-                    mouse_click2(2);
-                    CenterWindowOnScreen(chrome, true);
-                    press(Keys.F11);
-                    if (ExistProcess(cs2)) { press_middle_bottom(); }
-
-                    if (ProcessName2 != chrome)
-                    {
-                        quick_max_chrome(point);
-                    }
-                }
-                FreshProcessName();
+                press(Keys.F11);
+                CenterWindowOnScreen(chrome, true);
+                altab();
+                FocusProcess(PowerToysCropAndLock, false);
+                if (ExistProcess(cs2)) { Sleep(10); mouse_click(); }
             }
+            else
+            {
+                //放大
+                HideProcess(PowerToysCropAndLock);
+                if (ProcessName == cs2) point = PositionMiddle;
+                var pp = new Point(point.X - 450, point.Y - 450);
+                MoveProcessWindow(chrome, pp);
+                mouse_click2(2);
+                CenterWindowOnScreen(chrome, true);
+                press(Keys.F11);
+                if (ExistProcess(cs2)) { press_middle_bottom(); }
+
+                //if (ProcessName2 != chrome)
+                //{
+                //    quick_max_chrome(point);
+                //}
+            }
+            FreshProcessName();
         }
         public static uint isVir = 3;
         public const uint isVirConst = 3;
@@ -942,40 +952,40 @@ namespace keyupMusic2
             }
 
 
-                double windowWidth = 2904;
-                double windowHeight = 1762;
+            double windowWidth = 2904;
+            double windowHeight = 1762;
 
-                // 更新窗口布局，使修改生效，并调整窗口大小
-                SetWindowPos(targetWindowHandle, IntPtr.Zero, 0, 0, (int)windowWidth, (int)windowHeight, SWP_FRAMECHANGED | SWP_NOMOVE);
-                //// 移动窗口到屏幕中间
-                //if (!MoveWindow(targetWindowHandle, newX, newY, windowWidth, windowHeight, true))
-                //{
-                //    Console.WriteLine("无法移动窗口到指定位置。");
-                //}
-            }
-            public static void MoveProcessWindow(string targetWindowTitle, Point point)
-            {
-                IntPtr targetWindowHandle = GetProcessID(targetWindowTitle);
-                RECT windowRect;
-                GetWindowRect(targetWindowHandle, out windowRect);
+            // 更新窗口布局，使修改生效，并调整窗口大小
+            SetWindowPos(targetWindowHandle, IntPtr.Zero, 0, 0, (int)windowWidth, (int)windowHeight, SWP_FRAMECHANGED | SWP_NOMOVE);
+            //// 移动窗口到屏幕中间
+            //if (!MoveWindow(targetWindowHandle, newX, newY, windowWidth, windowHeight, true))
+            //{
+            //    Console.WriteLine("无法移动窗口到指定位置。");
+            //}
+        }
+        public static void MoveProcessWindow(string targetWindowTitle, Point point)
+        {
+            IntPtr targetWindowHandle = GetProcessID(targetWindowTitle);
+            RECT windowRect;
+            GetWindowRect(targetWindowHandle, out windowRect);
 
-                int windowWidth = windowRect.Right - windowRect.Left;
-                int windowHeight = windowRect.Bottom - windowRect.Top;
+            int windowWidth = windowRect.Right - windowRect.Left;
+            int windowHeight = windowRect.Bottom - windowRect.Top;
 
-                MoveWindow(targetWindowHandle, point.X, point.Y, windowWidth, windowHeight, true);
-            }
-            public static void MoveProcessWindow2(string targetWindowTitle)
-            {
-                IntPtr targetWindowHandle = GetProcessID(targetWindowTitle);
-                RECT windowRect;
-                GetWindowRect(targetWindowHandle, out windowRect);
+            MoveWindow(targetWindowHandle, point.X, point.Y, windowWidth, windowHeight, true);
+        }
+        public static void MoveProcessWindow2(string targetWindowTitle)
+        {
+            IntPtr targetWindowHandle = GetProcessID(targetWindowTitle);
+            RECT windowRect;
+            GetWindowRect(targetWindowHandle, out windowRect);
 
-                int windowWidth = windowRect.Right - windowRect.Left;
-                int windowHeight = windowRect.Bottom - windowRect.Top;
-                int dsad = screenHeight - windowHeight;
+            int windowWidth = windowRect.Right - windowRect.Left;
+            int windowHeight = windowRect.Bottom - windowRect.Top;
+            int dsad = screenHeight - windowHeight;
 
-                MoveWindow(targetWindowHandle, 0, dsad, windowWidth, windowHeight, true);
-            }
+            MoveWindow(targetWindowHandle, 0, dsad, windowWidth, windowHeight, true);
+        }
         // 系统指标常量
         private const int SM_CYCAPTION = 4;
         public static bool IsClickOnTitleBar(string ProcessName, Point clickPosition)

@@ -53,13 +53,15 @@ namespace keyupMusic2
                 { string ddfd = "dsad"; }
                 if (mouse_downing) { up_mouse(); mouse_downing = false; }
                 if (!no_sleep) return;
-                Invoke2(() => {
+                Invoke2(() =>
+                {
                     label1.Text = label1.Text.Replace(easy_read(e.key), easy_read(e.key).ToLower());
                     //if (stop_keys.Count == 0) Invoke2(() => { label1.Text = ""; }, 1000);
                     keyupMusic2.KeyUp.yo(e);
                 });
                 //log(e.key + "-" + asdsads + "-up" + string.Join(" ", stop_keys));
             }
+            //if (ProcessName == Common.chrome && e.key == Keys.Z) SS().KeyUp(Keys.X);
         }
         public bool judge_handled(KeyboardHookEventArgs e, string ProcessName)
         {
@@ -71,7 +73,7 @@ namespace keyupMusic2
             if (e.key == Keys.F11) return true;
             if (e.key == Keys.F12) return true;
 
-            if (e.key == Keys.F2 && ProcessName == Common.chrome) 
+            if (e.key == Keys.F2 && ProcessName == Common.chrome)
                 return true;
 
             if (ProcessName == Common.devenv)
@@ -230,16 +232,16 @@ namespace keyupMusic2
             if (no_sleep) return;
             no_sleep = true;
             Invoke(() => { SetVisibleCore(false); });
-            Process.Start("rundll32.exe", "powrprof.dll,SetSuspendState 0,1,1");
-            ////Task.Run(
-            ////    () =>
-            ////press("500;LWin;1650,1300;1650,1140", tick));
-            ////for (int i = 0; i < 10; i++)
-            ////{
-            ////    if (ProcessName2 == StartMenuExperienceHost) { return; }
-            ////    //log_process("F9");
-            ////    play_sound_di(tick);
-            ////}
+            //Process.Start("rundll32.exe", "powrprof.dll,SetSuspendState 0,1,1");
+            Task.Run(
+                () =>
+            press("500;LWin;1650,1300;1650,1140", tick));
+            for (int i = 0; i < 10; i++)
+            {
+                if (ProcessName2 == StartMenuExperienceHost) { return; }
+                //log_process("F9");
+                play_sound_di(tick);
+            }
         }
         private void handle_special_or_normal_key(KeyboardHookEventArgs e)
         {

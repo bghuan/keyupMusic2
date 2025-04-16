@@ -108,7 +108,7 @@ namespace keyupMusic2
                         client.Dispose();
                     }
                 }
-                Thread.Sleep(10);
+                Thread.Sleep(100);
             }
         }
         public static void Invoke(string msg)

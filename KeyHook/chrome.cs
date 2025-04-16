@@ -31,6 +31,9 @@ namespace keyupMusic2
                 case Keys.F2:
                     CenterWindowOnScreen2(chrome, true);
                     break;
+                //case Keys.Z:
+                //    SS().KeyDown(Keys.X);
+                //    break;
                 case Keys.VolumeDown:
                     if (Position.Y == 0 || Position.X == 0 || Position.X == 6719) { press(Keys.Left); deal(); }
                     break;
@@ -40,7 +43,6 @@ namespace keyupMusic2
                 //case Keys.F:
                 //    if (Position.Y == 1619)
                 //        copy_secoed_screen();
-                    break;
             }
             if (catched == false && judge_handled_key.Contains(e.key))
             {

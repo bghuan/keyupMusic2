@@ -10,6 +10,8 @@ namespace keyupMusic2
         static DateTime last_key_sound_time = DateTime.Now.AddDays(-1);
         static DateTime last_key_sound_time2 = DateTime.Now.AddDays(-1);
         static Dictionary<string, Keys[]> expect = new Dictionary<string, Keys[]> {{
+                Common.cs2,
+                    [Keys.D3, Keys.D4]},{
                 Common.msedge,
                     [Keys.Next, Keys.Space, Keys.D0]},{
                 Common.douyin,

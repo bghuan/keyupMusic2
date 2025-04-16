@@ -1,8 +1,4 @@
-﻿using System.Timers;
-using System.Windows.Forms;
-using static keyupMusic2.Common;
-using static keyupMusic2.Native;
-using static System.Windows.Forms.VisualStyles.VisualStyleElement.Window;
+﻿using static keyupMusic2.Common;
 
 namespace keyupMusic2
 {
@@ -76,6 +72,12 @@ namespace keyupMusic2
                         if (e.X == 0) { press(Keys.OemPeriod); break; }
                         quick_max_chrome(e.Pos);
                     }
+                    break;
+                case cs2:
+                    if (e.Msg == MouseMsg.WM_LBUTTONDOWN)
+                        huan.Invoke2(() => { huan.label1.Text = "click_down"; });
+                    else if (e.Msg == MouseMsg.WM_LBUTTONUP)
+                        huan.Invoke2(() => { huan.label1.Text = "click_up"; });
                     break;
             }
         }
