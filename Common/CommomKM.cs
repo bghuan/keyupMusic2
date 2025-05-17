@@ -280,7 +280,19 @@ namespace keyupMusic2
         public static Point lastPosition;
         public static void press_middle_bottom()
         {
-            press("1333.1439", 0);
+            press(middle_bottom, 0);
+        }
+        public static string middle_bottom = "1333.1439";
+        public static string middle_bottom_last_position = "1333.1439";
+        public static void press_middle_bottom2()
+        {
+            if (Position != new Point(1333, 1439))
+            {
+                middle_bottom_last_position = Position.X + "." + Position.Y;
+                press(middle_bottom, 0);
+                return;
+            }
+            press(middle_bottom_last_position, 0);
         }
 
         public static void ctrl_shift_win_search(bool zh = true)
@@ -365,7 +377,7 @@ namespace keyupMusic2
         }
         public static void _press(Keys keys)
         {
-            
+
             keybd_event((byte)keys, (byte)(Native.MapVirtualKey((ushort)keys, 0) & 0xFFU), 0, 0);
             keybd_event((byte)keys, (byte)(Native.MapVirtualKey((ushort)keys, 0) & 0xFFU), 2, 0);
         }

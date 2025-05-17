@@ -34,61 +34,53 @@ namespace keyupMusic2
             Not_F10_F11_F12_Delete(true, e.key);
             handling_keys = e.key;
 
-            if (is_ctrl_shift_alt()) return;
-            switch (e.key)
-            {
-                case Keys.PageDown:
-                    if (e.key == Keys.PageDown && (!is_steam_game() && module_name != chrome)) break;
-                    if (e.key == Keys.PageDown && module_name == QyClient) { press("563, 894", 1); break; }
-                    if (is_ctrl_shift_alt()) break;
-                    quick_max_chrome(e.Pos);
-                    break;
-                case Keys.F4:
-                    if (ProcessName == Common.keyupMusic2) break;
-                    CloseProcess();
-                    break;
-                //case Keys.F10:
-                //case Keys.PageDown:
-                //    if (e.key == Keys.PageDown && (!is_steam_game() && module_name != chrome)) break;
-                //    if (e.key == Keys.PageDown && module_name == QyClient) { press("563, 894", 1); break; }
-                //    if (is_ctrl_shift_alt()) break;
-                //    quick_max_chrome(e.Pos);
-                //    break;
-                case Keys.F10:
-                    if (TryFocusProcess(Common.cs2)) break;
-                    if (TryFocusProcess(Common.SplitFiction)) break;
-                    if (TryFocusProcess(Common.steam)) break;
-                    break;
-                case Keys.F11:
-                    if (Common.devenv == module_name)
-                    {
-                        HideProcess(module_name);
-                    }
-                    else
-                    {
-                        if (Common.FocusProcess(Common.devenv)) break;
-                        if (e.X == screenWidth1) break;
-                        run_vis();
-                    }
-                    break;
-                case Keys.F12:
-                    if (Common.WeChat == module_name)
-                    {
-                        CloseProcess(module_name);
-                    }
-                    else if (GetWindowText() == UnlockingWindow || ProcessName == LockApp || ProcessName == err)
-                    {
-                        Super.hook_KeyDown(Keys.N);
-                    }
-                    else
-                    {
-                        Common.FocusProcess(Common.WeChat);
-                        Thread.Sleep(10);
-                        if (ProcessName2 == Common.WeChat) break;
-                        run_wei();
-                    }
-                    break;
-            }
+            if (!is_down(Keys.Delete))
+                switch (e.key)
+                {
+                    case Keys.PageDown:
+                        if (e.key == Keys.PageDown && (!is_steam_game() && module_name != chrome && module_name != PowerToysCropAndLock)) break;
+                        quick_max_chrome(e.Pos);
+                        break;
+                    case Keys.F4:
+                        if (ProcessName == Common.keyupMusic2) break;
+                        CloseProcess();
+                        break;
+                    case Keys.F10:
+                        if (TryFocusProcess(Common.cs2)) break;
+                        if (TryFocusProcess(Common.SplitFiction)) break;
+                        //if (TryFocusProcess(Common.steam)) break;
+                        quick_max_chrome();
+                        break;
+                    case Keys.F11:
+                        if (Common.devenv == module_name)
+                        {
+                            HideProcess(module_name);
+                        }
+                        else
+                        {
+                            if (Common.FocusProcess(Common.devenv)) break;
+                            if (e.X == screenWidth1) break;
+                            run_vis();
+                        }
+                        break;
+                    case Keys.F12:
+                        if (Common.WeChat == module_name)
+                        {
+                            CloseProcess(module_name);
+                        }
+                        else if (GetWindowText() == UnlockingWindow || ProcessName == LockApp || ProcessName == err)
+                        {
+                            Super.hook_KeyDown(Keys.N);
+                        }
+                        else
+                        {
+                            Common.FocusProcess(Common.WeChat);
+                            Thread.Sleep(10);
+                            if (ProcessName2 == Common.WeChat) break;
+                            run_wei();
+                        }
+                        break;
+                }
             switch (module_name)
             {
                 case QQLive:
@@ -188,7 +180,10 @@ namespace keyupMusic2
                     {
                         case Keys.MediaPreviousTrack:
                             if (is_down(Native.VK_LBUTTON)) break;
-                            press("B;985,699;1499,429;1483,568;1483,696;1483,828;1483,969;B;D3;");
+                            if (is_down(Keys.D1)) press("B;1243,699;1483,429;1483,568;1483,828;1483,696;1483,969;B;D3;");
+                            else if (is_down(Keys.D5)) press("B;985,969;1483,429;1483,568;1483,696;1483,969;B;D3;");
+                            else
+                                press("B;985,699;1483,429;1483,568;1483,828;1483,696;1483,969;B;D3;");
                             //("B;930,962;1483,568;1483,696;1483,828;1483,969;B;D3;");
                             break;
                         case Keys.MediaNextTrack:
@@ -205,9 +200,6 @@ namespace keyupMusic2
                             Sleep(100);
                             press(Keys.D3);
                             break;
-                        //case Keys.F4:
-                        //    CloseProcess(cs2);
-                        //    break;
                         case Keys.F5:
                             press("1301,48;100;1274,178;2260,1374");
                             break;
@@ -289,6 +281,52 @@ namespace keyupMusic2
                             //case Keys.MediaNextTrack:
                             //   SS(0).KeyPress(Keys.C);
                             //    break;
+                    }
+                    break;
+                case Common.vlc:
+                    var tick = 100;
+                    switch (e.key)
+                    {
+                        case Keys.D1:
+                        case Keys.MediaPreviousTrack:
+                        case Keys.PageUp:
+                            var fdsafdas = e.Y;
+                            if (e.key == Keys.MediaPreviousTrack && e.Y == screenHeight1) { press(Keys.Space); break; }
+                            Sleep(tick);
+                            mouse_click_right();
+                            SS(tick)
+                                //.KeyPress(Keys.Apps)
+                                .KeyPress(Keys.P)
+                                .KeyPress(Keys.E)
+                                .KeyPress(Keys.W)
+                                .KeyPress(Keys.Enter)
+                                ;
+                            break;
+                        case Keys.D2:
+                        case Keys.MediaNextTrack:
+                        case Keys.PageDown:
+                            Sleep(tick);
+                            mouse_click_right();
+                            SS(tick)
+                                //.KeyPress(Keys.Apps)
+                                .KeyPress(Keys.P)
+                                .KeyPress(Keys.E)
+                                .KeyPress(Keys.F)
+                                .KeyPress(Keys.Enter)
+                                ;
+                            break;
+                        case Keys.Right:
+                        case Keys.Left:
+                            var keyssss = Keys.V;
+                            if (e.key == Keys.Right) keyssss = Keys.X;
+                            if (!is_ctrl()) break;
+                            Sleep(200);
+                            mouse_click_right();
+                            SS(tick)
+                                .KeyPress(keyssss)
+                                .KeyPress(Keys.Enter)
+                                ;
+                            break;
                     }
                     break;
             }

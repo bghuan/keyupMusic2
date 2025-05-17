@@ -69,9 +69,9 @@ namespace keyupMusic2
             if (e.key == Keys.F3) return true;
             if (e.key == Keys.F9) return true;
 
-            if (e.key == Keys.F10) return true;
-            if (e.key == Keys.F11) return true;
-            if (e.key == Keys.F12) return true;
+            //if (e.key == Keys.F10) return true;
+            //if (e.key == Keys.F11) return true;
+            //if (e.key == Keys.F12) return true;
 
             if (e.key == Keys.F2 && ProcessName == Common.chrome)
                 return true;
@@ -81,13 +81,10 @@ namespace keyupMusic2
                 if (e.key == Keys.F && is_shift() && is_alt())
                     return true;
             }
-            if (e.key == Keys.F11 || e.key == Keys.F12)
+            if (e.key == Keys.F10 || e.key == Keys.F11 || e.key == Keys.F12)
             {
-                if (!is_ctrl())
-                {
-                    var list = new List<string>() { Common.devenv, Common.explorer };
-                    if (list.Contains(ProcessName)) return true;
-                }
+                if (!is_down(Keys.Delete))
+                    return true;
             }
             if (ProcessName == Common.msedge && !is_douyin())
             {
@@ -104,6 +101,12 @@ namespace keyupMusic2
                 if (ProcessName == cs2) return true;
                 if (ProcessName == Glass2) return true;
                 if (ProcessName == PowerToysCropAndLock) return true;
+                if (ProcessName == vlc) return true;
+            }
+            if ((e.key == Keys.Right || e.key == Keys.Left) && is_ctrl())
+            {
+                if (ProcessName == vlc) return true;
+                if (ProcessName == msedge) return true;
             }
             if (is_down(Keys.F1))
             {
@@ -119,11 +122,8 @@ namespace keyupMusic2
         private void hook_KeyDown(KeyboardHookEventArgs e)
         {
             if (e.Type != KeyboardEventType.KeyDown) return;
-            //if (Common.hooked) { e.Handled = true; return; }
             if (e.key == Keys.F3) { e.Handled = true; }
-            //if (Common.hooked) { return; }
             if (keyupMusic2_onlisten) { e.Handled = true; }
-            //if (is_down(Keys.LWin)) return;
             if (is_alt() && (e.key == Keys.F4 || e.key == Keys.Tab)) { return; }
             if (stop_keys.ContainsKey(e.key)) return;
             //if (stop_keys.Count >= 8) { Dispose(); return; }
@@ -164,6 +164,11 @@ namespace keyupMusic2
                     Invoke(() => { SetVisibleCore(aa); });
                     return;
                 }
+                if (is_ctrl())
+                {
+                    LossScale();
+                    return;
+                }
                 form_move();
                 super_listen();
             }
@@ -183,7 +188,7 @@ namespace keyupMusic2
                     Alll.hook_KeyDown_ddzzq(e);
 
                     Music.hook_KeyDown_keyupMusic2(e);
-                    if (!no_sleep && e.key != Keys.VolumeDown && e.key != Keys.VolumeUp && e.key != Keys.MediaStop)
+                    if (!no_sleep && e.key != Keys.VolumeDown && e.key != Keys.VolumeUp && e.key != Keys.MediaStop && e.key != Keys.F22)
                     {
                         player.Stop();
                         Invoke2(() => { label1.Text = "取消睡眠"; });
@@ -198,6 +203,7 @@ namespace keyupMusic2
             temp_visiable = false;
             press(Keys.MediaStop);
             Invoke(() => { SetVisibleCore(true); });
+            KeyTime[system_sleep_string] = DateTime.Now;
 
             if (is_ctrl() || GetWindowText() == UnlockingWindow || ProcessName == LockApp || ProcessName == err)
             {
@@ -258,11 +264,11 @@ namespace keyupMusic2
         }
         private void print_easy_read()
         {
-            var _stop_keys = stop_keys.ToArray();
+            var _stop_keys = stop_keys?.ToArray();
             if (!no_sleep) return;
             Invoke(() =>
             {
-                string asd = string.Join(" ", _stop_keys.Select(key => easy_read(key.Key.ToString())));
+                string asd = string.Join(" ", _stop_keys?.Select(key => easy_read(key.Key.ToString())));
                 if (label1.Text.ToLower() == asd.ToLower()) asd += " " + DateTimeNow2();
                 //label1.Text = Listen.speak_word + "" + asd;
                 label1.Text = asd;
@@ -482,7 +488,7 @@ namespace keyupMusic2
             try { base.Invoke(method); }
             catch (Exception ex)
             {
-                log(ex.Message);
+                log("Invoke err: " + ex.Message);
             }
         }
 

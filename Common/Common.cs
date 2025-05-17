@@ -7,12 +7,14 @@ using System.Runtime.InteropServices;
 using System.Security.Principal;
 using System.Text;
 using static keyupMusic2.Native;
+using static System.Windows.Forms.VisualStyles.VisualStyleElement.Window;
 using Point = System.Drawing.Point;
 
 namespace keyupMusic2
 {
     public partial class Common
     {
+        public static Dictionary<string, DateTime> KeyTime = new Dictionary<string, DateTime>();
         public const string keyupMusic2 = "keyupMusic4";
         public const string ACPhoenix = "ACPhoenix";
         public const string Dragonest = "DragonestGameLauncher";
@@ -55,6 +57,7 @@ namespace keyupMusic2
         public const string Broforce_beta = "Broforce_beta";
         public const string oriwotw = "oriwotw";
         public const string LosslessScaling = "LosslessScaling";
+        public const string LosslessScalingexe = "\"C:\\\\program files (x86)\\\\steam\\\\steamapps\\\\common\\\\Lossless Scaling\\\\LosslessScaling.exe\"";
         public const string wemeetapp = "wemeetapp";
         public const string SplitFiction = "SplitFiction";
 
@@ -70,6 +73,18 @@ namespace keyupMusic2
         public static string ProcessName = "";
         public static string ProcessTitle = "";
         public static string ProcessPath = "";
+        public static string system_sleep_string = "system_sleep";
+        public static int system_sleep_count = 0;
+        public static bool lock_err
+        {
+            get
+            {
+                var aaa =
+                GetWindowText() == UnlockingWindow || ProcessName == LockApp || ProcessName == err;
+                if (aaa) Log.log("GetWindowText():" + GetWindowText() + ",ProcessName:" + ProcessName);
+                return aaa;
+            }
+        }
         public static string ProcessName2
         {
             get
@@ -699,12 +714,13 @@ namespace keyupMusic2
         {
             return new Simulate(tick);
         }
-        public static Dictionary<string, DateTime> KeyTime = new Dictionary<string, DateTime>();
         public static IEnumerable<Keys> GetPressedKeys()
         {
             var keys = new List<Keys>();
             for (int i = 0; i < 256; i++)
             {
+                if (i == (int)Keys.Menu || i == (int)Keys.LMenu)
+                    continue;
                 if (Native.GetAsyncKeyState(i) < 0)
                 {
                     keys.Add((Keys)i);
@@ -746,6 +762,7 @@ namespace keyupMusic2
         public static void quick_max_chrome(Point point = new Point())
         {
             if (!ExistProcess(PowerToysCropAndLock, true)) return;
+            if (point == new Point()) point = Position;
             if (ProcessName2 == chrome)
             {
                 press(Keys.F11);
@@ -900,13 +917,13 @@ namespace keyupMusic2
 
             // 计算窗口在屏幕中间的位置
             int newX = (screenWidth - windowWidth) + 12;
-            int newY = (screenHeight - windowHeight) / 2;
+            int newY = (screenHeight - windowHeight) / 2 + 1;
             if (right) newX = screenWidth1 - 9;
 
             if (targetWindowTitle == chrome)
             {
-                windowWidth = 1300;
-                windowHeight = 860;
+                windowWidth = 1301;
+                windowHeight = 861;
             }
             if (targetWindowTitle == wemeetapp)
             {
@@ -1009,7 +1026,27 @@ namespace keyupMusic2
             // 判断点击位置是否在标题栏内
             return clientPoint.Y >= 0 && clientPoint.Y < captionHeight;
         }
-
+        public static void LossScale()
+        {
+            var exi = ExistProcess(LosslessScaling);
+            if (!exi)
+            {
+                ProcessRun(LosslessScalingexe);
+                for (Int32 i = 0; i < 5; i++)
+                {
+                    play_sound_di();
+                    if (!ExistProcess(LosslessScaling)) Sleep(1000);
+                }
+                Sleep(500);
+            }
+            if (ProcessName2 == (LosslessScaling)) altab();
+            if (ProcessName2 == (Common.keyupMusic2)) altab();
+            Sleep(100);
+            press([Keys.LControlKey, Keys.LShiftKey, Keys.R]);
+            press_middle_bottom();
+            if (ProcessName2 == (Common.chrome))
+                mouse_move(2559, 875);
+        }
 
     }
 }

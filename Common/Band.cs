@@ -41,6 +41,11 @@ namespace keyupMusic2
             {
                 if (key == Keys.Up)
                     key = Keys.PageUp;
+                if (ProcessTitle.Contains("502"))
+                    if (key == Keys.PageDown)
+                        key = Keys.F5;
+                    else if (key == Keys.Up)
+                        key = Keys.F11;
             }
             else if (ProcessName2 == Common.steam)
             {
@@ -56,13 +61,22 @@ namespace keyupMusic2
                     key = Keys.MediaPreviousTrack;
                 }
             }
+            else if (ProcessName2 == Common.vlc)
+            {
+                if (key == Keys.PageDown)
+                    key = Keys.D2;
+                else if (key == Keys.Up)
+                    key = Keys.D1;
+                else if (key == Keys.Left)
+                    key = Keys.Space;
+            }
 
             if (key == Keys.None) return;
 
             Common.isVir = 0;
             press(key);
             Common.isVir = 3;
-            log(msg + "-" + ProcessName2 + "-" + key);
+            //log(msg + "-" + ProcessName2 + "-" + key);
         }
     }
 }

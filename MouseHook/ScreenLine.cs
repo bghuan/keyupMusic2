@@ -43,6 +43,8 @@ namespace keyupMusic2
                 }
                 else if (left_left_click && e.X == 0)
                 {
+                    if (ProcessName.Equals(chrome)) return;
+
                     if (is_douyin()) return;
                     if (ProcessTitle.Contains(bilibili)) return;
                     if (ProcessName.Equals(err)) return;
@@ -56,7 +58,7 @@ namespace keyupMusic2
                 else if ((left_up_click && e.Y == 0 && e.X < screenWidth))
                 {
                     if (ProcessName.Equals(err)) return;
-                    if (ProcessName.Equals(chrome) && e.X < screenWidth / 4 * 3)
+                    if (ProcessName.Equals(chrome) && e.X < screenWidth / 4 * 3 && e.X > 200)
                         SS().KeyPress(Keys.F);
                     left_up_click = false;
                 }
@@ -76,9 +78,9 @@ namespace keyupMusic2
                     if (ProcessName == Common.chrome)
                     {
                         if (e.X > screenWidth2) return;
-                        SS().KeyPress(Keys.F);
-                        //if (!judge_color(1840, 51, Color.FromArgb(162, 37, 45)))
-                        SS().MouseWhell(-120 * 9);
+                        if (!judge_color(1840, 51, Color.FromArgb(162, 37, 45)))
+                            SS().KeyPress(Keys.F);
+                        SS().MouseWhell(-120 * 12);
                         return;
                     }
                     mouse_click2(0);

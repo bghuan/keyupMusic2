@@ -1,6 +1,5 @@
 ﻿using System.Diagnostics;
 using System.Drawing.Imaging;
-using System.Runtime.InteropServices;
 using static keyupMusic2.Common;
 using static keyupMusic2.MouseKeyboardHook;
 
@@ -92,7 +91,8 @@ namespace keyupMusic2
                 case Keys.L:
                     break;
                 case Keys.Z:
-
+                    //var capturer = new WindowCaptureFixed();
+                    //capturer.StartLiveBackgroundRemoval(PowerToysCropAndLock);
                     break;
                 case Keys.X:
                     Thread.Sleep(3000);
@@ -129,17 +129,7 @@ namespace keyupMusic2
                     get_point_color(e);
                     break;
                 case Keys.F2:
-                    var exi = ExistProcess(LosslessScaling);
-                    if (!exi)
-                    {
-                        ProcessRun("C:\\program files (x86)\\steam\\steamapps\\common\\Lossless Scaling\\LosslessScaling.exe");
-                        Sleep(2200);
-                    }
-                    if (!ExistProcess(LosslessScaling)) Sleep(1000);
-                    if (!ExistProcess(LosslessScaling)) Sleep(1000);
-                    if (ProcessName2==(LosslessScaling)) altab();
-                    if (ProcessName2==(Common.keyupMusic2)) altab();
-                    press([Keys.LControlKey, Keys.LShiftKey, Keys.S]);
+                    LossScale();
                     break;
                 case Keys.F4:
                     press(Keys.MediaPlayPause);
@@ -149,9 +139,14 @@ namespace keyupMusic2
                     ProcessRun("C:\\Program Files (x86)\\Steam\\steam.exe");
                     break;
                 case Keys.F6:
+                    play_sound(Keys.D2);
+                    press(Keys.LWin);
+                    Sleep(200);
+                    mouse_click(1062, 899);
                     break;
                 case Keys.F10:
-                    Process.Start("rundll32.exe", "powrprof.dll,SetSuspendState 0,1,1");
+                    //Process.Start("rundll32.exe", "powrprof.dll,SetSuspendState 0,1,1");
+                    LossScale();
                     break;
                 //case Keys.Up:
                 //    Invoke(() => huan.Opacity = huan.Opacity >= 1 ? 1 : huan.Opacity + 0.5);

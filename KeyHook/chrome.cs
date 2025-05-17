@@ -10,7 +10,8 @@ namespace keyupMusic2
         //{
         //    Common.list2.Add(ClassName);
         //}
-        public static Keys[] judge_handled_key = { Keys.VolumeDown, Keys.VolumeUp, Keys.F1, };
+        //public static Keys[] judge_handled_key = { Keys.VolumeDown, Keys.VolumeUp, Keys.F1, };
+        public static Keys[] judge_handled_key = {  Keys.F1, };
         public override bool judge_handled(KeyEvent e)
         {
             if (Common.ProcessName != ClassName) return false;
@@ -30,6 +31,9 @@ namespace keyupMusic2
             {
                 case Keys.F2:
                     CenterWindowOnScreen2(chrome, true);
+                    break;
+                case Keys.PageUp:
+                    LossScale();
                     break;
                 //case Keys.Z:
                 //    SS().KeyDown(Keys.X);

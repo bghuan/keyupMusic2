@@ -92,7 +92,12 @@ namespace keyupMusic2
                     if (right_top) press(Keys.F8); break;
                 case Keys.Delete:
                 case Keys.Escape:
-                    Special_Input = false; DaleyRun_stop = true; special_delete_key_time = DateTime.Now; player.Stop(); break;
+                    Special_Input = false; 
+                    DaleyRun_stop = true; 
+                    special_delete_key_time = DateTime.Now;
+                    KeyTime[system_sleep_string] = DateTime.MinValue;
+                    player.Stop(); 
+                    break;
                 case Keys.LMenu:
                 case Keys.Tab:
                 case Keys.F4:
@@ -105,8 +110,8 @@ namespace keyupMusic2
                 //    play_sound_di(); break;
                 case Keys.Oem2:
                     if (is_down(Keys.RControlKey)) SS().KeyPress(Keys.Apps); break;
-                case Keys.RControlKey:
-                    log(DateTimeOffset.UtcNow.ToUnixTimeMilliseconds().ToString()); break;
+                //case Keys.RControlKey:
+                //    log(DateTimeOffset.UtcNow.ToUnixTimeMilliseconds().ToString()); break;
             }
 
             Common.hooked = false;

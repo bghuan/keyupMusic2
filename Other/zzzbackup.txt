@@ -1,4 +1,122 @@
-﻿using SharpDX.DirectInput;
+﻿using OpenCvSharp;
+using OpenCvSharp.Extensions;
+using System.Diagnostics;
+using static keyupMusic2.Native;
+
+namespace keyupMusic2
+{
+    public class WindowCaptureFixed
+    {
+        // 屏幕区域捕获
+        private Bitmap CaptureScreenRegion(int x, int y, int width, int height)
+        {
+            Bitmap screenShot = new Bitmap(width, height);
+            using (Graphics g = Graphics.FromImage(screenShot))
+            {
+                g.CopyFromScreen(x, y, 0, 0, new System.Drawing.Size(width, height));
+            }
+            return screenShot;
+        }
+        int width; int height;
+        // 主方法：使用屏幕区域捕获并显示
+        public void StartLiveBackgroundRemoval(string processName)
+        {
+            Process[] processes = Process.GetProcessesByName(processName);
+            IntPtr hWnd = processes[0].MainWindowHandle;
+            GetWindowRect(hWnd, out RECT rect);
+            width = rect.Right - rect.Left;
+            height = rect.Bottom - rect.Top;
+            int x = 0;
+            int y = Screen.PrimaryScreen.Bounds.Height - height;
+            //width = 2116- 1653;
+            //height = 1139- 423;
+            //x = 1653;
+            //y = 423;
+
+            // 创建显示窗口
+            //Cv2.NamedWindow("Live Capture", WindowFlags.Normal);
+            //Cv2.ResizeWindow("Live Capture", width, height);
+
+            // 创建背景减除器（优化参数）
+            using var bgSubtractor = BackgroundSubtractorMOG2.Create(
+                history: 5000,          // 历史帧数，越大适应背景变化越慢
+                varThreshold: 16,      // 像素与模型之间的方差阈值，越小越敏感
+                detectShadows: true    // 是否检测阴影
+            );
+
+            // 创建辅助Mat对象
+            var result = new Mat();
+            using var foreground = new Mat();
+            using var blurred = new Mat();
+            using var enhancedMask = new Mat(); 
+            using var morphElement = Cv2.GetStructuringElement(
+                MorphShapes.Ellipse,
+                new OpenCvSharp.Size(5, 5)
+            );
+
+            while (true)
+            {
+                using Bitmap screenBitmap = CaptureScreenRegion(x, y, width, height);
+                if (screenBitmap == null)
+                {
+                    Console.WriteLine("捕获失败，尝试重新连接...");
+                    Cv2.WaitKey(1000);
+                    continue;
+                }
+
+                // 转换为OpenCV的Mat格式
+                using var frame = BitmapConverter.ToMat(screenBitmap);
+
+                // 高斯模糊减少噪点
+                Cv2.GaussianBlur(frame, blurred, new OpenCvSharp.Size(5, 5), 0);
+
+                // 背景减除获取前景掩码
+                using var fgMask = new Mat();
+                bgSubtractor.Apply(blurred, fgMask);
+
+                // 增强前景掩码（多步后处理）
+                // 1. 阈值处理
+                Cv2.Threshold(fgMask, enhancedMask, 127, 255, ThresholdTypes.Binary);
+
+                // 2. 开运算（去除小噪点）
+                Cv2.MorphologyEx(enhancedMask, enhancedMask, MorphTypes.Open, morphElement);
+
+                // 3. 闭运算（填充孔洞）
+                Cv2.MorphologyEx(enhancedMask, enhancedMask, MorphTypes.Close, morphElement);
+
+                // 4. 膨胀操作（扩大前景区域）
+                Cv2.Dilate(enhancedMask, enhancedMask, morphElement, iterations: 2);
+
+                // 应用掩码到原始帧，保留前景
+                frame.CopyTo(foreground, enhancedMask);
+
+                // 创建背景掩码的反值
+                using var inverseMask = new Mat();
+                Cv2.BitwiseNot(enhancedMask, inverseMask);
+
+                // 复制原始帧并清除前景区域
+                result = frame.Clone();
+                result.SetTo(new Scalar(0, 0, 0), inverseMask);
+
+                // 添加前景到结果
+                result.Add(foreground);
+
+                // 显示不同阶段的处理结果
+                Cv2.ImShow("原始画面", frame);
+                Cv2.ImShow("背景掩码", enhancedMask);
+                Cv2.ImShow("去背景结果", result);
+
+                // 按ESC键退出
+                if (Cv2.WaitKey(1) == 27)
+                    break;
+            }
+            // 释放资源
+            Cv2.DestroyAllWindows();
+        }
+    }
+}
+
+using SharpDX.DirectInput;
 using System;
 using System.Runtime.InteropServices;
 using System.Threading;
