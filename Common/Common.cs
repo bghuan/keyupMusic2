@@ -57,9 +57,16 @@ namespace keyupMusic2
         public const string Broforce_beta = "Broforce_beta";
         public const string oriwotw = "oriwotw";
         public const string LosslessScaling = "LosslessScaling";
-        public const string LosslessScalingexe = "\"C:\\\\program files (x86)\\\\steam\\\\steamapps\\\\common\\\\Lossless Scaling\\\\LosslessScaling.exe\"";
+        public const string LosslessScalingexe = "C:\\Program Files (x86)\\Steam\\steamapps\\common\\Lossless Scaling\\LosslessScaling.exe";
         public const string wemeetapp = "wemeetapp";
         public const string SplitFiction = "SplitFiction";
+        public const string gcc = "GCC";
+        public const string gccexe = "C:\\Program Files\\GIGABYTE\\Control Center\\GCC.exe";
+        public const string TwinkleTray = "Twinkle Tray";
+        public const string TwinkleTrayexe = "C:\\Users\\bu\\AppData\\Local\\Programs\\twinkle-tray\\Twinkle Tray.exe";
+        public const string androidstudio = "studio64";
+
+        public static List<string> list_go_back = new List<string> { explorer, VSCode, msedge, chrome, devenv, androidstudio };
 
         public static SoundPlayer player = new SoundPlayer();
         public static SoundPlayer player2 = new SoundPlayer();
@@ -69,6 +76,7 @@ namespace keyupMusic2
         public static bool ACPhoenix_mouse_hook = false;
         public static DateTime special_delete_key_time;
         public static bool handing4 = false;
+        public static bool gcc_restart = false;
 
         public static string ProcessName = "";
         public static string ProcessTitle = "";
@@ -81,7 +89,12 @@ namespace keyupMusic2
             {
                 var aaa =
                 GetWindowText() == UnlockingWindow || ProcessName == LockApp || ProcessName == err;
-                if (aaa) Log.log("GetWindowText():" + GetWindowText() + ",ProcessName:" + ProcessName);
+                if (aaa)
+                {
+                    Log.log("GetWindowText():" + GetWindowText() + ",ProcessName:" + ProcessName);
+                    if (ProcessName == err)
+                        play_sound_di2();
+                }
                 return aaa;
             }
         }
@@ -226,13 +239,13 @@ namespace keyupMusic2
             if (flag && action != null) action();
             return flag;
         }
-        public static bool judge_color(int x, int y, Color color, Action action = null, int similar = 50)
+        public static bool judge_color(int x, int y, Color color, int similar = 50)
         {
             x = deal_size_x_y(x, y, false)[0];
             y = deal_size_x_y(x, y, false)[1];
             var asd = get_mouse_postion_color(new Point(x, y));
             var flag = AreColorsSimilar(asd, color, similar);
-            if (flag && action != null) action();
+            //if (flag && action != null) action();
             return flag;
         }
         public static bool try_press(int x, int y, Color color, Action action = null)
@@ -356,6 +369,18 @@ namespace keyupMusic2
                 PostMessage(hWnd, (uint)WM_CLOSE, IntPtr.Zero, IntPtr.Zero);
             }
         }
+
+        public static void CloseProcessFoce(string procName)
+        {
+            Process[] objProcesses = Process.GetProcessesByName(procName);
+            if (objProcesses.Length > 0)
+            {
+                foreach (Process proc in objProcesses)
+                {
+                    proc.Kill();
+                }
+            }
+        }
         public static void CloseProcess()
         {
             IntPtr hwnd = Native.GetForegroundWindow();
@@ -408,6 +433,10 @@ namespace keyupMusic2
                 gfxScreenshot.CopyFromScreen(new Point(screenWidth, 0), Point.Empty, currentScreen.Bounds.Size);
 
                 return bmpScreenshot.GetPixel(relativeX, relativeY);
+            }
+            if (point.X < 0)
+            {
+                point = new Point((int)(point.X / 1.5), (int)(point.Y / 1.5));
             }
             using (Bitmap bitmap = new Bitmap(1, 1))
             {
@@ -506,7 +535,8 @@ namespace keyupMusic2
         {
             play_sound_di();
             Screen secondaryScreen = Screen.AllScreens.FirstOrDefault(scr => !scr.Primary);
-            int start_x = 2560;
+            //int start_x = 2560;
+            int start_x = -1920;
             if (secondaryScreen == null) { return; }
             Bitmap bmpScreenshot = new Bitmap(1920, 1080, PixelFormat.Format32bppArgb);
             Graphics gfxScreenshot = Graphics.FromImage(bmpScreenshot);
@@ -677,14 +707,20 @@ namespace keyupMusic2
                 player.Play();
             }
         }
+        static string wav = "wav\\d2.wav";
+        static bool is_di = File.Exists(wav);
         public static void play_sound_di(int tick = 0)
         {
-            string wav = "wav\\d2.wav";
-            if (!File.Exists(wav)) return;
+            if (!is_di) return;
 
             player = new SoundPlayer(wav);
             player.Play();
             Sleep(tick);
+        }
+        public static void play_sound_di2(int tick = 0)
+        {
+            play_sound_di();
+            TaskRun(() => play_sound_di(), 80);
         }
         public static void HttpGet(string url)
         {
@@ -1028,6 +1064,12 @@ namespace keyupMusic2
         }
         public static void LossScale()
         {
+            if (!ExistProcess(LosslessScaling))
+                ProcessRun(LosslessScalingexe);
+            press([Keys.LControlKey, Keys.F3]);
+        }
+        public static void LossScale2()
+        {
             var exi = ExistProcess(LosslessScaling);
             if (!exi)
             {
@@ -1040,12 +1082,25 @@ namespace keyupMusic2
                 Sleep(500);
             }
             if (ProcessName2 == (LosslessScaling)) altab();
-            if (ProcessName2 == (Common.keyupMusic2)) altab();
+            else if (ProcessName2 == (Common.keyupMusic2)) altab();
             Sleep(100);
-            press([Keys.LControlKey, Keys.LShiftKey, Keys.R]);
+            press([Keys.LControlKey, Keys.F3]);
             press_middle_bottom();
-            if (ProcessName2 == (Common.chrome))
-                mouse_move(2559, 875);
+            //if (ProcessName2 == (Common.chrome))
+            //    mouse_move(2559, 875);
+        }
+        public static void system_hard_sleep()
+        {
+            Process.Start("rundll32.exe", "powrprof.dll,SetSuspendState 0,1,1");
+            gcc_restart = true;
+            KeyTime[system_sleep_string] = DateTime.Now;
+        }
+        public static void bland_title()
+        {
+            //SetWindowTitle(Common.devenv, "");
+            SetWindowTitle(Common.chrome, "");
+            SetWindowTitle(Common.PowerToysCropAndLock, "");
+            SetWindowTitle(Common.wemeetapp, "");
         }
 
     }

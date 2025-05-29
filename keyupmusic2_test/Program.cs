@@ -1,102 +1,46 @@
-﻿using SharpDX.DirectInput;
-using System;
-using System.Runtime.InteropServices;
-using System.Threading;
-
-class GamepadHandler
+﻿using System;
+using System.Collections.Generic;
+using NAudio.Wave;
+class Program
 {
-    private DirectInput directInput;
-    private Joystick joystick;
-    private bool deviceAcquired = false;
-
-    public GamepadHandler()
+    static void Main()
     {
-        // 初始化 DirectInput 对象
-        directInput = new DirectInput();
+        Console.WriteLine("=== 系统声音输入设备列表 ===");
 
-        // 查找第一个可用的游戏手柄设备
-        foreach (var deviceInstance in directInput.GetDevices(DeviceType.Gamepad, DeviceEnumerationFlags.AttachedOnly))
+        // 使用 NAudio 方法
+        var devices = AudioDeviceLister.GetAudioInputDevices();
+
+        foreach (var device in devices)
         {
-            joystick = new Joystick(directInput, deviceInstance.InstanceGuid);
-            break;
+            Console.WriteLine(device);
         }
 
-        if (joystick == null)
-        {
-            throw new Exception("未找到游戏手柄设备");
-        }
-
-        // 设置数据格式
-        joystick.Properties.BufferSize = 128;
-        joystick.Acquire();
-        deviceAcquired = true;
+        Console.ReadLine();
     }
-
-    public void Poll()
+}
+public class AudioDeviceLister
+{
+    public static List<string> GetAudioInputDevices()
     {
-        if (!deviceAcquired)
-        {
-            try
-            {
-                joystick.Acquire();
-                deviceAcquired = true;
-            }
-            catch (SharpDX.SharpDXException)
-            {
-                // 设备可能暂时不可用，等待一段时间后重试
-                Thread.Sleep(100);
-                return;
-            }
-        }
+        var devices = new List<string>();
 
         try
         {
-            joystick.Poll();
-            var state = joystick.GetCurrentState();
+            // 获取系统中所有音频输入设备的数量
+            int deviceCount = WaveIn.DeviceCount;
 
-            // 处理游戏手柄状态
-            HandleGamepadState(state);
-        }
-        catch (SharpDX.SharpDXException)
-        {
-            // 设备可能丢失，标记为未获得
-            deviceAcquired = false;
-        }
-    }
-
-    private void HandleGamepadState(JoystickState state)
-    {
-        // 处理按钮状态
-        bool[] buttons = state.Buttons;
-        for (int i = 0; i < buttons.Length; i++)
-        {
-            if (buttons[i])
+            for (int i = 0; i < deviceCount; i++)
             {
-                Console.WriteLine($"按钮 {i} 被按下");
+                // 获取每个设备的信息
+                WaveInCapabilities deviceInfo = WaveIn.GetCapabilities(i);
+                devices.Add($"设备 {i}: {deviceInfo.ProductName}");
             }
         }
-
-        // 处理轴状态
-        int xAxis = state.X;
-        int yAxis = state.Y;
-        int zAxis = state.Z;
-        int rzAxis = state.RotationZ;
-
-        Console.WriteLine($"X 轴: {xAxis}, Y 轴: {yAxis}, Z 轴: {zAxis}, RZ 轴: {rzAxis}");
-    }
-}
-
-
-class Program
-{
-    static void Main(string[] args)
-    {
-        GamepadHandler gamepadHandler = new GamepadHandler();
-
-        while (true)
+        catch (Exception ex)
         {
-            gamepadHandler.Poll();
-            Thread.Sleep(10);
+            Console.WriteLine($"获取音频输入设备时出错: {ex.Message}");
         }
+
+        return devices;
     }
 }

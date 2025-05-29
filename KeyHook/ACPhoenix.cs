@@ -33,7 +33,7 @@ namespace keyupMusic2
                     if (try_press(1422, 942, Color.FromArgb(245, 194, 55), () => { })) { break; }//匹配进入游戏
                     if (is_alt() && try_press(2497, 1328, Color.FromArgb(148, 185, 195), () => { })) { break; }//匹配取消
                     if (judge_color(127, 177, Color.FromArgb(255, 227, 132))) { press(Keys.Escape); break; }//关闭图鉴
-                    if (!is_ctrl() && !is_alt() && judge_color(1307, 85, Color.FromArgb(36, 39, 54), null, 10) && judge_color(2450, 80, Color.FromArgb(194, 198, 226))) { press(Keys.Tab); break; }//关闭tab
+                    if (!is_ctrl() && !is_alt() && judge_color(1307, 85, Color.FromArgb(36, 39, 54), 10) && judge_color(2450, 80, Color.FromArgb(194, 198, 226))) { press(Keys.Tab); break; }//关闭tab
                     raw_press();
                     break;
                 case Keys.Tab:
@@ -80,7 +80,7 @@ namespace keyupMusic2
                     break;
                 case Keys.Z:
                     if (is_alt()) break;
-                    if (judge_color(2141, 214, Color.FromArgb(215, 214, 216), null, 10)) { press(Keys.E); break; }
+                    if (judge_color(2141, 214, Color.FromArgb(215, 214, 216),  10)) { press(Keys.E); break; }
                     //bug 滑动
                     //每次重置
                     if (!is_ctrl()) break;
@@ -89,7 +89,7 @@ namespace keyupMusic2
                     //Ssss.MouseWhell(-120 * 10);
                     break;
                 case Keys.X:
-                    if (judge_color(2141, 214, Color.FromArgb(215, 214, 216), null, 10)) { press(Keys.E); break; }
+                    if (judge_color(2141, 214, Color.FromArgb(215, 214, 216), 10)) { press(Keys.E); break; }
                     if (!is_ctrl()) break;
                     press("2325, 53", 101);
                     break;
@@ -109,7 +109,7 @@ namespace keyupMusic2
                     break;
                 case Keys.E:
                     if (Position.Y == 0) { press(Keys.MediaNextTrack); break; }
-                    if ((is_ctrl() || is_alt()) && judge_color(2524, 210, Color.FromArgb(39, 61, 118), null, 10)) { mouse_move(2139, 336); break; }
+                    if ((is_ctrl() || is_alt()) && judge_color(2524, 210, Color.FromArgb(39, 61, 118), 10)) { mouse_move(2139, 336); break; }
                     if (is_ctrl() || is_alt()) { mouse_move(2139, 336); }
                     raw_press();
                     break;

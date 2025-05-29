@@ -1,4 +1,6 @@
-﻿namespace keyupMusic2
+﻿using System.Runtime.InteropServices;
+
+namespace keyupMusic2
 {
     public class MouseKeyboardHook : IDisposable
     {
@@ -34,16 +36,48 @@
 
             return Native.CallNextHookEx(_key_hookId, code, wParam, ref lParam);
         }
+        [StructLayout(LayoutKind.Sequential)]
+        public struct MSLLHOOKSTRUCT
+        {
+            public Point pt;
+            public uint mouseData;  // 高16位包含XButton信息
+            public uint flags;
+            public uint time;
+            public IntPtr dwExtraInfo;
+        }
+
         protected virtual IntPtr MouseHookProc(int nCode, IntPtr wParam, IntPtr lParam)
         {
+
             Point curPos;
             Native.GetCursorPos(out curPos);
             var args = new MouseHookEventArgs((MouseMsg)wParam, curPos.X, curPos.Y, wParam, lParam);
+
+            judge_go(lParam, args);
 
             if (MouseHookEvent != null)
                 MouseHookEvent(args);
 
             return args.Handled ? new IntPtr(-1) : Native.CallNextHookEx(_mouse_hookId, nCode, wParam, lParam);
+        }
+
+        private static void judge_go(nint lParam, MouseHookEventArgs args)
+        {
+            if (args.Msg == MouseMsg.WM_XBUTTONDOWN || args.Msg == MouseMsg.WM_XBUTTONUP)
+            {
+                MSLLHOOKSTRUCT hookStruct = (MSLLHOOKSTRUCT)Marshal.PtrToStructure(lParam, typeof(MSLLHOOKSTRUCT));
+                var ButtonData = (hookStruct.mouseData >> 16) & 0xFFFF;
+                if ((ButtonData & Native.XBUTTON1) != 0)
+                {
+                }
+                else if ((ButtonData & Native.XBUTTON2) != 0)
+                {
+                    if (args.Msg == MouseMsg.WM_XBUTTONDOWN)
+                        args.Msg = MouseMsg.WM_GO_XBUTTONDOWN;
+                    else if (args.Msg == MouseMsg.WM_XBUTTONUP)
+                        args.Msg = MouseMsg.WM_GO_XBUTTONUP;
+                }
+            }
         }
 
         const int WM_HOOK_TIMEOUT = 0x0400 + 1;
@@ -58,7 +92,7 @@
 
         public class MouseHookEventArgs : EventArgs
         {
-            public MouseMsg Msg { get; private set; }
+            public MouseMsg Msg { get; set; }
             public int X { get; private set; }
             public int Y { get; private set; }
 
@@ -173,7 +207,10 @@
         WM_RBUTTONUP = 0x0205,
 
         WM_XBUTTONDOWN = 0x020B,
-        WM_XBUTTONUP = 0x020C
+        WM_XBUTTONUP = 0x020C,
+
+        WM_GO_XBUTTONDOWN = 0x920B,
+        WM_GO_XBUTTONUP = 0x920C
     }
 
     public enum KeyboardEventType

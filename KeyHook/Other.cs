@@ -34,7 +34,7 @@ namespace keyupMusic2
             Not_F10_F11_F12_Delete(true, e.key);
             handling_keys = e.key;
 
-            if (!is_down(Keys.Delete))
+            if (!is_down(Keys.Delete) && !is_ctrl())
                 switch (e.key)
                 {
                     case Keys.PageDown:
@@ -43,6 +43,7 @@ namespace keyupMusic2
                         break;
                     case Keys.F4:
                         if (ProcessName == Common.keyupMusic2) break;
+                        if (lock_err) { system_hard_sleep(); break; }
                         CloseProcess();
                         break;
                     case Keys.F10:
@@ -59,7 +60,6 @@ namespace keyupMusic2
                         else
                         {
                             if (Common.FocusProcess(Common.devenv)) break;
-                            if (e.X == screenWidth1) break;
                             run_vis();
                         }
                         break;
@@ -339,7 +339,7 @@ namespace keyupMusic2
         {
             if (!Common.ExistProcess(Common.WeChat))
             {
-                press("LWin;100;WEI;100;Enter;", 50, flag_special);
+                press("LWin;100;WEI;en;100;Enter;", 50, flag_special);
                 return;
             }
             press([Keys.LControlKey, Keys.LMenu, Keys.W]);

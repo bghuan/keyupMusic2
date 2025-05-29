@@ -38,9 +38,14 @@ namespace keyupMusic2
             {
                 case Keys.Q:
                     //SSSS.KeyPress(Keys.LWin, "openvpn", Keys.Enter);
-                    SSSS.KeyPress(Keys.LWin, "verge", Keys.Enter);
+                    //SSSS.KeyPress(Keys.LWin, "verge", Keys.Enter);
+                    mouse_click_right(2186, 1403);
+                    press("2259,1112;2109,1107", 100);
                     break;
                 case Keys.W:
+                    //2083,1180 2109,1107 2259,1112 2186,1403
+                    mouse_click_right(2186, 1403);
+                    press("2259,1112;2083,1180",100);
                     break;
                 case Keys.E:
                     play_sound(Keys.D0);
@@ -50,10 +55,11 @@ namespace keyupMusic2
                     sound_setting();
                     break;
                 case Keys.T:
+                    gcc_restart = true;
                     break;
                 case Keys.Y:
                     Common.cmd($"/c start ms-settings:taskbar");
-                    press("200;978,1042;907,1227;2500,32;", 801);
+                    press("200;978,1042;10;907,1227;2500,32;", 801);
                     break;
                 case Keys.U:
                     Common.cmd($"/c start ms-settings:personalization");
@@ -117,9 +123,8 @@ namespace keyupMusic2
                 case Keys.Space:
                     Invoke(() =>
                     {
-                        press([Keys.LControlKey, Keys.A]);
-                        press([Keys.LControlKey, Keys.C]);
-                        press([Keys.LShiftKey]);
+                        press([Keys.LControlKey, Keys.A, Keys.C],200);
+                        press([Keys.LShiftKey], 100);
                         string ddd = Clipboard.GetText().ToUpper();
                         if (ddd.Length < 20)
                             press(ddd);
@@ -129,7 +134,7 @@ namespace keyupMusic2
                     get_point_color(e);
                     break;
                 case Keys.F2:
-                    LossScale();
+                    //LossScale();
                     break;
                 case Keys.F4:
                     press(Keys.MediaPlayPause);
@@ -146,7 +151,8 @@ namespace keyupMusic2
                     break;
                 case Keys.F10:
                     //Process.Start("rundll32.exe", "powrprof.dll,SetSuspendState 0,1,1");
-                    LossScale();
+                    Huan.no_sleep = false;
+                    huan.system_sleep();
                     break;
                 //case Keys.Up:
                 //    Invoke(() => huan.Opacity = huan.Opacity >= 1 ? 1 : huan.Opacity + 0.5);
@@ -296,7 +302,7 @@ namespace keyupMusic2
                 huan.Invoke(() => { huan.label1.Text = DateTimeNow2(); });
                 Simm.MouseWhell(-120 * 10);
                 return (judge_color(775, 1265, Color.FromArgb(26, 26, 25)))
-                     && judge_color(2124, 1327, Color.FromArgb(243, 243, 243), null, 2);
+                     && judge_color(2124, 1327, Color.FromArgb(243, 243, 243), 2);
             };
             var run = () => { press("200;2220,1070", 10); };
             var action2 = () =>
@@ -340,6 +346,7 @@ namespace keyupMusic2
                     string asd = $"({mousePosition.X},{mousePosition.Y}, Color.FromArgb({color.R},{color.G},{color.B}))";
                     log(ProcessName + asd);
                     log_process(e?.key.ToString());
+                    asd = $"{mousePosition.X},{mousePosition.Y}";
                     Invoke(() => Clipboard.SetText(asd));
                 }
             }

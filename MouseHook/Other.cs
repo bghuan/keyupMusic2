@@ -72,12 +72,29 @@ namespace keyupMusic2
                         if (e.X == 0) { press(Keys.OemPeriod); break; }
                         quick_max_chrome(e.Pos);
                     }
+                    else if (e.Msg == MouseMsg.WM_XBUTTONUP)
+                    {
+                        if (judge_color(26, 94, Color.FromArgb(120, 123, 117)))
+                        {
+                            press([Keys.LControlKey, Keys.W]);
+                        }
+                    }
                     break;
                 case cs2:
                     if (e.Msg == MouseMsg.WM_LBUTTONDOWN)
                         huan.Invoke2(() => { huan.label1.Text = "click_down"; });
                     else if (e.Msg == MouseMsg.WM_LBUTTONUP)
                         huan.Invoke2(() => { huan.label1.Text = "click_up"; });
+                    break;
+                case msedge:
+                    if (e.Msg == MouseMsg.WM_XBUTTONUP)
+                    {
+                        if (judge_color(33, 80, Color.FromArgb(204, 204, 204), 0))
+                        //if (judge_color(92, 73, Color.FromArgb(0, 0, 0), null, 0))
+                        {
+                            press([Keys.LControlKey, Keys.W]);
+                        }
+                    }
                     break;
             }
         }

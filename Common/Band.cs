@@ -25,6 +25,14 @@ namespace keyupMusic2
                 key = Keys.PageDown;
             else if (msg.Contains("\"msg\":2"))
                 key = Keys.F3;
+            else if (msg.Contains("sleep"))
+            {
+                system_hard_sleep();
+                return;
+            }
+            else {
+                log("band listening msg not right,msg: " + msg);
+            }
 
             if (is_douyin())
             {

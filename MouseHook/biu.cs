@@ -17,12 +17,13 @@ namespace keyupMusic2
         bool handing = false;
         bool handing2 = false;
         bool handing3 = false;
-        bool left_left_click = false;
+        bool left_side_click = false;
         bool left_down_click = false;
         bool left_up_click = false;
         bool right_up_click = false;
         bool right_up_f = false;
         bool right_down_click = false;
+        bool right_side_click = false;
         private static readonly object _lockObject_handing2 = new object();
         MouseKeyboardHook.MouseHookEventArgs e = null;
         private Point start = Point.Empty;
@@ -44,6 +45,7 @@ namespace keyupMusic2
             if (e.Msg == MouseMsg.WM_LBUTTONDOWN && e.X < screenHeight && e.X > screenHeight - 200 && e.Y < 100) TaskRun(() => { FreshProcessName(); }, 500);
 
             if (judge_handled(e)) e.Handled = true;
+            quick_go_back(e);
 
             Douyin(e);
             //Task.Run(ACPhoenix);
@@ -62,7 +64,16 @@ namespace keyupMusic2
         }
         public bool judge_handled(MouseHookEventArgs e)
         {
+            if (e.Msg == MouseMsg.WM_GO_XBUTTONUP || e.Msg == MouseMsg.WM_XBUTTONUP)
+            {
+
+                string dsadasd = "ddddddddd";
+            }
             if (e.Msg == MouseMsg.WM_MOUSEMOVE) return false;
+            if (e.Msg == MouseMsg.WM_XBUTTONDOWN || e.Msg == MouseMsg.WM_GO_XBUTTONDOWN || e.Msg == MouseMsg.WM_XBUTTONUP || e.Msg == MouseMsg.WM_GO_XBUTTONUP)
+            {
+                if (!list_go_back.Contains(ProcessName)) return true;
+            }
             if (ProcessName == Common.chrome)
             {
                 if (ExistProcess(PowerToysCropAndLock, true))
@@ -71,7 +82,28 @@ namespace keyupMusic2
                     if (e.Msg == MouseMsg.WM_RBUTTONUP) return true;
                 }
             }
+            if (is_douyin())
+            {
+                if (e.Msg == MouseMsg.WM_XBUTTONDOWN) return true;
+            }
             return false;
+        }
+
+        private static void quick_go_back(MouseHookEventArgs e)
+        {
+            if (e.Msg == MouseMsg.WM_MOUSEMOVE) return;
+
+            if (e.Msg == MouseMsg.WM_GO_XBUTTONDOWN && ProcessName == msedge)
+                press(Keys.Right);
+            if (e.Msg == MouseMsg.WM_GO_XBUTTONDOWN && ProcessName == chrome)
+                press(Keys.F);
+
+            if (list_go_back.Contains(ProcessName)) return;
+
+            if (e.Msg == MouseMsg.WM_GO_XBUTTONDOWN)
+                press(Keys.MediaNextTrack);
+            else if (e.Msg == MouseMsg.WM_XBUTTONDOWN)
+                press(Keys.MediaPreviousTrack);
         }
         public void Douyin(MouseKeyboardHook.MouseHookEventArgs e)
         {

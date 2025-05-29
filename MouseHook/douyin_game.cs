@@ -153,9 +153,9 @@ namespace keyupMusic2
                 //var a1 = judge_color(673, 787, color) && judge_color(1355, 788, color);
                 //var a2 = judge_color(696, 812, color) && judge_color(1329, 811, color);
                 //var a3 = judge_color(1012, 1036, color) && judge_color(741, 878, color);
-                var a2 = judge_color(890, 1050, color, null, 22);
-                var a3 = judge_color(926, 1047, color, null, 22);
-                var a4 = judge_color(1011, 1035, color, null, 22);
+                var a2 = judge_color(890, 1050, color, 22);
+                var a3 = judge_color(926, 1047, color, 22);
+                var a4 = judge_color(1011, 1035, color, 22);
                 if (a4) R = R4;
                 else if (a3) R = R3;
                 else if (a2) R = R2;
@@ -204,9 +204,9 @@ namespace keyupMusic2
                 //var a1 = judge_color(673, 787, color) && judge_color(1355, 788, color);
                 //var a2 = judge_color(696, 812, color) && judge_color(1329, 811, color);
                 //var a3 = judge_color(1012, 1036, color) && judge_color(741, 878, color);
-                var a2 = judge_color(890, 1050, color, null, 22);
-                var a3 = judge_color(926, 1047, color, null, 22);
-                var a4 = judge_color(1011, 1035, color, null, 22);
+                var a2 = judge_color(890, 1050, color, 22);
+                var a3 = judge_color(926, 1047, color, 22);
+                var a4 = judge_color(1011, 1035, color, 22);
                 if (a4) R = R4;
                 else if (a3) R = R3;
                 else if (a2) R = R2;

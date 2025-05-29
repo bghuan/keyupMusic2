@@ -29,7 +29,7 @@ namespace keyupMusic2
             x = deal_size_x_y(x, y)[0];
             y = deal_size_x_y(x, y)[1];
 
-            if (x < screenWidth)
+            if (x > 0 && x < screenWidth)
                 mouse_event(MOUSEEVENTF_ABSOLUTE | MOUSEEVENTF_MOVE, x * 65536 / screenWidth, y * 65536 / screenHeight, 0, 0);
             else
                 SetCursorPos(x, y);
@@ -53,6 +53,13 @@ namespace keyupMusic2
         public static int screenHeight1 = Screen.PrimaryScreen.Bounds.Height - 1;
         public static int screenWidth2 = Screen.PrimaryScreen.Bounds.Width / 2;
         public static int screenHeight2 = Screen.PrimaryScreen.Bounds.Height / 2;
+
+        public static int screen2Width = -2880;
+        public static int screen2Height = 1619;
+        public static int screen2Width1 = Screen.PrimaryScreen.Bounds.Width - 1;
+        public static int screen2Height1 = Screen.PrimaryScreen.Bounds.Height - 1;
+        public static int screen2Width2 = Screen.PrimaryScreen.Bounds.Width / 2;
+        public static int screen2Height2 = Screen.PrimaryScreen.Bounds.Height / 2;
 
 
         public static void mouse_move(int x, int y, int x2, int y2)
@@ -106,6 +113,11 @@ namespace keyupMusic2
             }
             mouse_event(MOUSEEVENTF_LEFTDOWN | MOUSEEVENTF_LEFTUP, 0, 0, 0, 0);
         }
+        public static void mouse_click_right(int x, int y)
+        {
+            mouse_move(x, y);
+            mouse_click_right();
+        }
         public static void mouse_click_right(int tick = 10)
         {
             if (tick > 0)
@@ -117,6 +129,23 @@ namespace keyupMusic2
                 return;
             }
             mouse_event(MOUSEEVENTF_LEFTDOWN | MOUSEEVENTF_LEFTUP, 0, 0, 0, 0);
+        }
+        // 模拟鼠标前进（点击前进按钮）
+        public static void MouseForward()
+        {
+            // 按下前进按钮
+            mouse_event(MOUSEEVENTF_XDOWN, 0, 0, XBUTTON2, 0);
+            // 释放前进按钮
+            mouse_event(MOUSEEVENTF_XUP, 0, 0, XBUTTON2, 0);
+        }
+
+        // 模拟鼠标后退（点击后退按钮）
+        public static void MouseBack()
+        {
+            // 按下后退按钮
+            mouse_event(MOUSEEVENTF_XDOWN, 0, 0, XBUTTON1, 0);
+            // 释放后退按钮
+            mouse_event(MOUSEEVENTF_XUP, 0, 0, XBUTTON1, 0);
         }
         public static void mouse_click(int x, int y, int tick = 10)
         {
@@ -172,6 +201,10 @@ namespace keyupMusic2
         public static bool is_ctrl()
         {
             return Native.GetAsyncKeyState(Keys.ControlKey) < 0;
+        }
+        public static bool isctrl()
+        {
+            return is_ctrl();
         }
         public static bool is_ctrl_shift_alt()
         {

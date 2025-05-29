@@ -28,6 +28,7 @@ namespace keyupMusic2
 
         private static void NewMethod()
         {
+            //log(ProcessName2+ lock_err+ KeyTime[system_sleep_string]+ KeyTime[system_sleep_string].AddMinutes(5)+ DateTime.Now+ system_sleep_count+ gcc_restart);
             if (ProcessName2 == cs2)
             {
                 if (!is_ctrl() && !is_down(Keys.LWin))
@@ -35,26 +36,45 @@ namespace keyupMusic2
                 if (Position != PositionMiddle)
                     PositionMiddle = Position;
             }
-            else if (lock_err && KeyTime[system_sleep_string].AddMinutes(5) > DateTime.Now)
+            else if (!KeyTime.ContainsKey(system_sleep_string))
             {
-                if (system_sleep_count++ > 3)
+                KeyTime[system_sleep_string] = DateTime.MinValue;
+            }
+            else if (lock_err && KeyTime.ContainsKey(system_sleep_string) && KeyTime[system_sleep_string].AddMinutes(5) > DateTime.Now)
+            {
+                play_sound(Keys.D1);
+                if (system_sleep_count++ > 4)
+                //if (system_sleep_count> 0)
                 {
-                    Process.Start("rundll32.exe", "powrprof.dll,SetSuspendState 0,1,1");
-                    KeyTime[system_sleep_string] = DateTime.Now;
+                    system_hard_sleep();
                 }
+            }
+            else if (gcc_restart)
+            {
+                for (int i = 0; i < 30; i++)
+                {
+                    if (ExistProcess(gcc))
+                    {
+                        CloseProcessFoce(gcc);
+                        Sleep(100);
+                    }
+                }
+                ProcessRun(gccexe);
+                //Sleep(1100);
+                //CloseProcess(gccexe);
+
+                gcc_restart = false;
             }
             else if (ExistProcess(cs2) && Position == PositionMiddle)
             {
                 press_middle_bottom();
             }
-            else
+            else if (system_sleep_count != 0)
             {
                 system_sleep_count = 0;
             }
-            SetWindowTitle(Common.devenv, "");
-            SetWindowTitle(Common.chrome, "");
-            SetWindowTitle(Common.PowerToysCropAndLock, "");
-            SetWindowTitle(Common.wemeetapp, "");
+            bland_title();
         }
+
     }
 }

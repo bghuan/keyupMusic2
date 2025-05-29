@@ -13,7 +13,8 @@ namespace keyupMusic2
         All Alll;
         Super super;
         Chrome chrome;
-        bool not_init_show = (is_ctrl() && !is_shift()) || Position.Y == 0;
+        //bool not_init_show = (is_ctrl() && !is_shift()) || Position.Y == 0;
+        bool not_init_show = !((is_ctrl() && !is_shift()) || Position.Y == 0);
         bool not_mouse_hook = !((is_ctrl() && !is_shift()) || Position.Y == 1439);
         bool not_not_sleep = Position.X == screenWidth1 && Position.Y == screenHeight1;
 
@@ -86,6 +87,11 @@ namespace keyupMusic2
                 if (!is_down(Keys.Delete))
                     return true;
             }
+            if (e.key == Keys.OemPeriod)
+            {
+                if (is_down(Keys.RControlKey))
+                    return true;
+            }
             if (ProcessName == Common.msedge && !is_douyin())
             {
                 if (e.key == Keys.Home) return true;
@@ -102,6 +108,7 @@ namespace keyupMusic2
                 if (ProcessName == Glass2) return true;
                 if (ProcessName == PowerToysCropAndLock) return true;
                 if (ProcessName == vlc) return true;
+                if (list_go_back.Contains(ProcessName)) return true;
             }
             if ((e.key == Keys.Right || e.key == Keys.Left) && is_ctrl())
             {
@@ -164,6 +171,11 @@ namespace keyupMusic2
                     Invoke(() => { SetVisibleCore(aa); });
                     return;
                 }
+                if (e.Y == 0)
+                {
+                    press([Keys.LControlKey, Keys.F1]);
+                    return;
+                }
                 if (is_ctrl())
                 {
                     LossScale();
@@ -198,9 +210,10 @@ namespace keyupMusic2
             }
         }
 
-        private void system_sleep()
+        public void system_sleep()
         {
             temp_visiable = false;
+            system_sleep_count = 1;
             press(Keys.MediaStop);
             Invoke(() => { SetVisibleCore(true); });
             KeyTime[system_sleep_string] = DateTime.Now;
@@ -208,7 +221,7 @@ namespace keyupMusic2
             if (is_ctrl() || GetWindowText() == UnlockingWindow || ProcessName == LockApp || ProcessName == err)
             {
                 play_sound(Keys.D0);
-                Process.Start("rundll32.exe", "powrprof.dll,SetSuspendState 0,1,1");
+                system_hard_sleep();
                 return;
             }
 
@@ -230,8 +243,8 @@ namespace keyupMusic2
             }
         }
 
-        private static bool no_sleep = true;
-        private void Timer_Tick(int tick = 1000)
+        public static bool no_sleep = true;
+        public void Timer_Tick(int tick = 1000)
         {
             // 执行系统睡眠命令
             //Process.Start("rundll32.exe", "powrprof.dll,SetSuspendState 0,1,1");
@@ -533,10 +546,10 @@ namespace keyupMusic2
                 SetVisibleCore(false);
                 TaskRun(() => { Invoke(() => SetVisibleCore(false)); }, 200);
             }
-            if (not_not_sleep)
-            {
-                TaskRun(() => { press(Keys.F9); press(Keys.F9); }, 1000);
-            }
+            //if (not_not_sleep)
+            //{
+            //    TaskRun(() => { press(Keys.F9); press(Keys.F9); }, 1000);
+            //}
             Common.FocusProcess(Common.ACPhoenix);
             Common.FocusProcess(Common.Glass3);
             Common.FocusProcess(Common.Kingdom);
@@ -545,10 +558,8 @@ namespace keyupMusic2
 
             startPoint = new Point(Location.X - 300, Location.Y);
             endPoint = Location;
-            SetWindowTitle(Common.devenv, "");
-            SetWindowTitle(Common.chrome, "");
-            SetWindowTitle(Common.PowerToysCropAndLock, "");
-            //SetWindowTitle(Common.msedge, "");
+            bland_title();
+            if (!ExistProcess(TwinkleTray)) { ProcessRun(TwinkleTrayexe); }
         }
     }
 }

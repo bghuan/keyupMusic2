@@ -139,6 +139,12 @@ namespace keyupMusic2
         // 定义 MOUSEEVENTF_WHEEL 标志  
         public const int MOUSEEVENTF_WHEEL = 0x0800;
         public const int SW_RESTORE = 9;
+        // 鼠标事件标志
+        public const int MOUSEEVENTF_XDOWN = 0x0080;
+        public const int MOUSEEVENTF_XUP = 0x0100;
+        public const int XBUTTON1 = 0x0001; // 鼠标后退按钮
+        public const int XBUTTON2 = 0x0002; // 鼠标前进按钮
+
 
 
         [DllImport("user32.dll", EntryPoint = "keybd_event", SetLastError = true)]
