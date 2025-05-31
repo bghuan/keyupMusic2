@@ -28,8 +28,8 @@ namespace keyupMusic2
             if (!IsMouseStopClick) return;
             //if (isMouseStopped) return;
             if (!lastMoveTime.HasValue) return;
-            if (!long_mouse_down && is_down(Native.VK_LBUTTON)) return;
-            if (is_down(Native.VK_RBUTTON)) return;
+            if (!long_mouse_down && is_down(Keys.LButton)) return;
+            if (is_down(Keys.RButton)) return;
             DateTime currentTime = DateTime.Now;
             TimeSpan elapsedTime = currentTime - lastMoveTime.Value;
             if (!isMouseStopped && elapsedTime.TotalMilliseconds > 100) // 假设超过1秒没移动算停了下来
@@ -90,7 +90,7 @@ namespace keyupMusic2
         }
         void MoveStop()
         {
-            if (e.Msg == MouseMsg.WM_MOUSEMOVE)
+            if (e.Msg == MouseMsg.move)
             {
                 MoveStopClick();
             }
@@ -99,12 +99,12 @@ namespace keyupMusic2
             //    lastMousePosition = e.Pos;
             //    isMouseStopped = true;
             //}
-            else if (e.Msg == MouseMsg.WM_LBUTTONUP)
+            else if (e.Msg == MouseMsg.click_up)
             {
                 lastMousePosition = e.Pos;
                 isMouseStopped = true;
             }
-            else if (e.Msg == MouseMsg.WM_RBUTTONUP)
+            else if (e.Msg == MouseMsg.click_r_up)
             {
                 if (QTCheck(last_right_time, 200))
                 {

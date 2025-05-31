@@ -1,4 +1,13 @@
-﻿using SharpDX.DirectInput;
+﻿
+        private bool is_double_click()
+        {
+            var result = MouseMsgTime != null && MouseMsgTime.ContainsKey(e.Msg) && MouseMsgTime[e.Msg] != DateTime.MinValue && MouseMsgTime[e.Msg].AddMilliseconds(200) > DateTime.Now;
+
+            result = result && !IsClickOnTitleBar(ProcessName, e.Pos);
+            if (MouseMsgTime != null) MouseMsgTime[e.Msg] = DateTime.Now;
+            if (result) MouseMsgTime[e.Msg] = DateTime.MinValue;
+            return result;
+        }using SharpDX.DirectInput;
 using System;
 using System.Runtime.InteropServices;
 using System.Threading;

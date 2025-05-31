@@ -36,15 +36,6 @@ namespace keyupMusic2
 
             return Native.CallNextHookEx(_key_hookId, code, wParam, ref lParam);
         }
-        [StructLayout(LayoutKind.Sequential)]
-        public struct MSLLHOOKSTRUCT
-        {
-            public Point pt;
-            public uint mouseData;  // 高16位包含XButton信息
-            public uint flags;
-            public uint time;
-            public IntPtr dwExtraInfo;
-        }
 
         protected virtual IntPtr MouseHookProc(int nCode, IntPtr wParam, IntPtr lParam)
         {
@@ -53,34 +44,36 @@ namespace keyupMusic2
             Native.GetCursorPos(out curPos);
             var args = new MouseHookEventArgs((MouseMsg)wParam, curPos.X, curPos.Y, wParam, lParam);
 
-            judge_go(lParam, args);
+            Param_Data(lParam, args);
+            if (args.isVir) return Native.CallNextHookEx(_mouse_hookId, nCode, wParam, lParam);
 
             if (MouseHookEvent != null)
                 MouseHookEvent(args);
 
             return args.Handled ? new IntPtr(-1) : Native.CallNextHookEx(_mouse_hookId, nCode, wParam, lParam);
         }
-
-        private static void judge_go(nint lParam, MouseHookEventArgs args)
+        private static void Param_Data(nint lParam, MouseHookEventArgs args)
         {
-            if (args.Msg == MouseMsg.WM_XBUTTONDOWN || args.Msg == MouseMsg.WM_XBUTTONUP)
+            if (args.Msg == MouseMsg.move) return;
+
+            MSLLHOOKSTRUCT hookStruct = (MSLLHOOKSTRUCT)lParam;
+
+            args.dwExtraInfo = (int)hookStruct.dwExtraInfo;
+            args.data = (int)hookStruct.mouseData;
+            short buttonData = (short)((hookStruct.mouseData >> 16 & 0xFFFF));
+
+            if (buttonData == 2 && (args.Msg == MouseMsg.back || args.Msg == MouseMsg.back_up))
             {
-                MSLLHOOKSTRUCT hookStruct = (MSLLHOOKSTRUCT)Marshal.PtrToStructure(lParam, typeof(MSLLHOOKSTRUCT));
-                var ButtonData = (hookStruct.mouseData >> 16) & 0xFFFF;
-                if ((ButtonData & Native.XBUTTON1) != 0)
-                {
-                }
-                else if ((ButtonData & Native.XBUTTON2) != 0)
-                {
-                    if (args.Msg == MouseMsg.WM_XBUTTONDOWN)
-                        args.Msg = MouseMsg.WM_GO_XBUTTONDOWN;
-                    else if (args.Msg == MouseMsg.WM_XBUTTONUP)
-                        args.Msg = MouseMsg.WM_GO_XBUTTONUP;
-                }
+                args.Msg = args.Msg == MouseMsg.back
+                           ? MouseMsg.go
+                           : MouseMsg.go_up;
+            }
+            if (args.Msg == MouseMsg.wheel)
+            {
+                var scrollAmount = buttonData / 120;
+                args.data = scrollAmount;
             }
         }
-
-        const int WM_HOOK_TIMEOUT = 0x0400 + 1;
 
         private IntPtr _key_hookId = IntPtr.Zero;
         public IntPtr _mouse_hookId = IntPtr.Zero;
@@ -95,13 +88,14 @@ namespace keyupMusic2
             public MouseMsg Msg { get; set; }
             public int X { get; private set; }
             public int Y { get; private set; }
-
-            public Point Pos => new Point() { X = X, Y = Y };
+            public bool Handled { get; set; }
 
             public IntPtr wParam;
             public IntPtr lParam;
-
-            public bool Handled { get; set; }
+            public Point Pos => new Point(X, Y);
+            public int data;
+            public int dwExtraInfo;
+            public bool isVir => dwExtraInfo == Common.isVirConst;
 
             public MouseHookEventArgs(MouseMsg msg, int x, int y, IntPtr wParam, IntPtr lParam)
             {
@@ -195,27 +189,42 @@ namespace keyupMusic2
 
     public enum MouseMsg
     {
-        WM_LBUTTONDOWN = 0x0201,
-        WM_LBUTTONUP = 0x0202,
-        WM_MOUSEMOVE = 0x0200,
+        click = 0x0201,
+        click_up = 0x0202,
+        move = 0x0200,
 
-        WM_MOUSEWHEEL = 0x020A,
-        WM_MBUTTONDOWN = 0x0207,
-        WM_MBUTTONUP = 0X0208,
+        wheel = 0x020A,
+        middle = 0x0207,
+        middle_up = 0X0208,
 
-        WM_RBUTTONDOWN = 0x0204,
-        WM_RBUTTONUP = 0x0205,
+        click_r = 0x0204,
+        click_r_up = 0x0205,
 
-        WM_XBUTTONDOWN = 0x020B,
-        WM_XBUTTONUP = 0x020C,
+        back = 0x020B,
+        back_up = 0x020C,
 
-        WM_GO_XBUTTONDOWN = 0x920B,
-        WM_GO_XBUTTONUP = 0x920C
+        go = 0x920B,
+        go_up = 0x920C
     }
 
     public enum KeyboardEventType
     {
         KeyDown, KeyUp
+    }
+
+    [StructLayout(LayoutKind.Sequential)]
+    public struct MSLLHOOKSTRUCT
+    {
+        public Point pt;
+        public uint mouseData;  // 高16位包含XButton信息
+        public uint flags;
+        public uint time;
+        public IntPtr dwExtraInfo;
+
+        public static explicit operator MSLLHOOKSTRUCT(nint v)
+        {
+            return (MSLLHOOKSTRUCT)Marshal.PtrToStructure(v, typeof(MSLLHOOKSTRUCT));
+        }
     }
 
 }

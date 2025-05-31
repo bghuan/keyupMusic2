@@ -1,4 +1,5 @@
 ﻿using System.Diagnostics;
+using System.Drawing;
 using System.Drawing.Imaging;
 using System.Media;
 using System.Net;
@@ -55,11 +56,8 @@ namespace keyupMusic2
         public static int screenHeight2 = Screen.PrimaryScreen.Bounds.Height / 2;
 
         public static int screen2Width = -2880;
-        public static int screen2Height = 1619;
-        public static int screen2Width1 = Screen.PrimaryScreen.Bounds.Width - 1;
-        public static int screen2Height1 = Screen.PrimaryScreen.Bounds.Height - 1;
-        public static int screen2Width2 = Screen.PrimaryScreen.Bounds.Width / 2;
-        public static int screen2Height2 = Screen.PrimaryScreen.Bounds.Height / 2;
+        public static int screen2Height = 1620;
+        public static int screen2Height1 = 1619;
 
 
         public static void mouse_move(int x, int y, int x2, int y2)
@@ -113,6 +111,10 @@ namespace keyupMusic2
             }
             mouse_event(MOUSEEVENTF_LEFTDOWN | MOUSEEVENTF_LEFTUP, 0, 0, 0, 0);
         }
+        public static int mouse_event(int dwFlags, int dx, int dy, int cButtons, int dwExtraInfo)
+        {
+            return Native.mouse_event(dwFlags, dx, dy, cButtons, (int)isVir);
+        }
         public static void mouse_click_right(int x, int y)
         {
             mouse_move(x, y);
@@ -120,15 +122,14 @@ namespace keyupMusic2
         }
         public static void mouse_click_right(int tick = 10)
         {
-            if (tick > 0)
-            {
-                mouse_event(MOUSEEVENTF_RIGHTDOWN, 0, 0, 0, 0);
-                Thread.Sleep(tick);
-                mouse_event(MOUSEEVENTF_RIGHTUP, 0, 0, 0, 0);
-                Thread.Sleep(tick);
-                return;
-            }
-            mouse_event(MOUSEEVENTF_LEFTDOWN | MOUSEEVENTF_LEFTUP, 0, 0, 0, 0);
+            mouse_event(MOUSEEVENTF_RIGHTDOWN, 0, 0, 0, 0);
+            Thread.Sleep(tick);
+            mouse_event(MOUSEEVENTF_RIGHTUP, 0, 0, 0, 0);
+            Thread.Sleep(tick);
+        }
+        public static void mouse_click_right2()
+        {
+            mouse_event(MOUSEEVENTF_RIGHTUP, 0, 0, 0, 0);
         }
         // 模拟鼠标前进（点击前进按钮）
         public static void MouseForward()
@@ -276,6 +277,22 @@ namespace keyupMusic2
         {
             press([Keys.LMenu, Keys.Tab]);
             Thread.Sleep(tick);
+        }
+        public static void press_raw(Keys num, int tick = 0)
+        {
+            isVir = 0;
+            press(num, tick);
+            isVir = isVirConst;
+        }
+        public static void press_raw(Keys[] keys, int tick = 10)
+        {
+            isVir = 0;
+            press(keys, tick);
+            isVir = isVirConst;
+        }
+        public static void press_task(Keys[] keys, int tick = 10)
+        {
+            TaskRun(() => press(keys, 10), tick);
         }
         public static void press(Keys[] keys, int tick = 10)
         {

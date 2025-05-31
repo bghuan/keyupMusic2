@@ -16,13 +16,14 @@ namespace keyupMusic2
         //Point point7 = new Point(0, screenHeight1);
         //Point point8 = new Point(0, screenHeight1);
 
-        Point point5 = new Point(-2880, 0);
+        Point point5 = new Point(screen2Width, 0);
         Point point6 = new Point(-1, 0);
-        Point point7 = new Point(0, screenHeight1);
-        Point point8 = new Point(0, screenHeight1);
+        Point point7 = new Point(-1, screen2Height1);
+        Point point8 = new Point(screen2Width, screen2Height1);
         Point last_point = new Point();
         public void Cornor()
         {
+            if (is_ctrl_shift_alt()){ handing2 = false; return; }
             _Cornor();
             handing2 = false;
         }
@@ -36,7 +37,7 @@ namespace keyupMusic2
                 handing2 = true;
                 if (ffff != 10) ffff++;//change abs
                 if (ffff < 10) return;
-                if (e.Msg != MouseMsg.WM_MOUSEMOVE) return;
+                if (e.Msg != MouseMsg.move) return;
                 cornor = 0;
                 var catched = true;
                 if (point1.Equals(e.Pos)) cornor = 1;
@@ -45,9 +46,11 @@ namespace keyupMusic2
                 else if (point4.Equals(e.Pos)) cornor = 4;
                 else if (point5.Equals(e.Pos)) cornor = 5;
                 else if (point6.Equals(e.Pos)) cornor = 6;
+                else if (point8.Equals(e.Pos)) cornor = 8;
                 else return;
 
                 if (mouse_click_not_repeat_time.AddMilliseconds(600) > DateTime.Now) { handing2 = false; return; }
+                if (is_down(Keys.LButton) || is_down(Keys.RButton)) { handing2 = false; return; }
                 if (cornor == 1)
                 {
                     if (Common.ACPhoenix.Equals(Common.ProcessName))
@@ -104,6 +107,10 @@ namespace keyupMusic2
                         }
                 }
                 else if (cornor == 6)
+                {
+                    press(Keys.F11);
+                }
+                else if (cornor == 8)
                 {
                     press(Keys.F11);
                 }

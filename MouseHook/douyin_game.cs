@@ -52,7 +52,7 @@ namespace keyupMusic2
             int y = -(e.Y - point_start.Y);
             //R = 50;
 
-            if (e.Msg == MouseMsg.WM_MOUSEMOVE)
+            if (e.Msg == MouseMsg.move)
             {
                 var area_start = get_area_number(x, y, true);
                 var sss = huan.label1.Text;
@@ -63,22 +63,22 @@ namespace keyupMusic2
                     huan.label1.Text = area_start;
                 });
             }
-            else if (e.Msg == MouseMsg.WM_LBUTTONDOWN)
+            else if (e.Msg == MouseMsg.click)
             {
                 area_start = get_area_number(x, y);
             }
-            else if (e.Msg == MouseMsg.WM_LBUTTONUP)
+            else if (e.Msg == MouseMsg.click_up)
             {
                 area_end = get_area_number(x, y);
                 string vs = "攻击";
                 set_clip_txt(area_start, vs, area_end);
             }
-            else if (e.Msg == MouseMsg.WM_RBUTTONDOWN)
+            else if (e.Msg == MouseMsg.click_r)
             {
                 if (is_ctrl() || is_alt()) point_start = e.Pos;
                 else area_start = get_area_number(x, y);
             }
-            else if (e.Msg == MouseMsg.WM_RBUTTONUP)
+            else if (e.Msg == MouseMsg.click_r_up)
             {
                 if (is_ctrl()) init_area(e, x, y);
                 else

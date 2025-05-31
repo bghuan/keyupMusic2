@@ -10,7 +10,7 @@ namespace keyupMusic2
             if (ProcessName != keyupMusic2.Common.Kingdom) return;
             //MoveStop();
 
-            if (e.Msg == MouseMsg.WM_RBUTTONUP)
+            if (e.Msg == MouseMsg.click_r_up)
             {
                 //if (is_ctrl())
                 //{

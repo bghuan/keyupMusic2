@@ -13,7 +13,7 @@ namespace keyupMusic2
         int line2 = 1980;
         public void Glass()
         {
-            if (e.Msg == MouseMsg.WM_MOUSEMOVE) return;
+            if (e.Msg == MouseMsg.move) return;
             var asdads = new string[] { Common.Glass, Common.Glass2, Common.Glass3, };
             if (!asdads.Contains(ProcessName)) return;
 
@@ -22,16 +22,15 @@ namespace keyupMusic2
             //var dfsaf = Native.GetAsyncKeyState(VK_XBUTTON1);
             //var dfsaf2 = Native.GetAsyncKeyState(VK_XBUTTON2);
 
-            if (e.Msg == MouseMsg.WM_LBUTTONUP)
+            if (e.Msg == MouseMsg.click_up)
             {
                 if (!(e.X > line && e.X < line2))
                 {
                     last_left = e.Pos;
                 }
             }
-            else if (e.Msg == MouseMsg.WM_RBUTTONUP)
+            else if (e.Msg == MouseMsg.click_r_up)
             {
-                handing4 = true;
                 if (!(e.X > line && e.X < line2))
                 {
                     last_left = e.Pos;
@@ -45,11 +44,9 @@ namespace keyupMusic2
                     mouse_click();
                     mouse_move(point, 10);
                 }
-                handing4 = false;
             }
-            else if (e.Msg == MouseMsg.WM_XBUTTONDOWN)
+            else if (e.Msg == MouseMsg.back)
             {
-                handing4 = true;
                 var dd = 297;
                 if (e.X > screenWidth2) dd = 2245;
                 if (!(e.X > line && e.X < line2))
@@ -67,7 +64,6 @@ namespace keyupMusic2
                     mouse_click();
                     mouse_move(point, 10);
                 }
-                handing4 = false;
             }
         }
     }

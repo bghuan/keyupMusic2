@@ -10,17 +10,17 @@ namespace keyupMusic2
             if (ProcessName != keyupMusic2.Common.ACPhoenix) return;
             MoveStop();
 
-            if (e.Msg == MouseMsg.WM_LBUTTONDOWN)
+            if (e.Msg == MouseMsg.click)
             {
                 listen_move = true;
                 if (e.Y == 0 || e.Y == screenHeight - 1) { press(Keys.Space); }
                 else if (e.X == 0) { press(Keys.Tab); }
             }
-            else if (e.Msg == MouseMsg.WM_LBUTTONUP)
+            else if (e.Msg == MouseMsg.click_up)
             {
                 listen_move = false;
             }
-            else if (e.Msg == MouseMsg.WM_RBUTTONDOWN)
+            else if (e.Msg == MouseMsg.click_r)
             {
                 downing2 = true;
                 if (!(right_top_exit()))
@@ -36,7 +36,7 @@ namespace keyupMusic2
                         }
                     });
             }
-            else if (e.Msg == MouseMsg.WM_RBUTTONUP)
+            else if (e.Msg == MouseMsg.click_r_up)
             {
                 downing2 = false;
                 if ((e.Y < (493 * screenHeight / 1440) && e.Y > (190 * screenHeight / 1440)) && e.X < (2066 * screenWidth / 2560))
@@ -53,7 +53,7 @@ namespace keyupMusic2
             }
             if (!listen_move) { return; }
 
-            if (e.Msg == MouseMsg.WM_MOUSEMOVE)
+            if (e.Msg == MouseMsg.move)
             {
                 //var aaa = 1430 * 2160 / 1440;
                 if (!listen_move || (e.Y < screenHeight - 10) || (e.X > screenWidth)) { return; }

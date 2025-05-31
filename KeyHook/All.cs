@@ -1,4 +1,5 @@
-﻿using static keyupMusic2.Common;
+﻿using System.Drawing;
+using static keyupMusic2.Common;
 using static keyupMusic2.MouseKeyboardHook;
 
 namespace keyupMusic2
@@ -13,7 +14,7 @@ namespace keyupMusic2
             bool right_top = Position.Y == 0 && Position.X == 2559;
             //if (!handling) return;
 
-            //quick_open(e, module_name);
+            quick_open(e, module_name);
             quick_number(e);
 
             switch (e.key)
@@ -26,10 +27,10 @@ namespace keyupMusic2
                     copy_screen(); break;
                 case Keys.End:
                     copy_secoed_screen(); break;
-                case Keys.VolumeDown:
-                    if (right_top) press(Keys.F7); break;
-                case Keys.VolumeUp:
-                    if (right_top) press(Keys.F8); break;
+                //case Keys.VolumeDown:
+                //    if (right_top) press(Keys.F7); break;
+                //case Keys.VolumeUp:
+                //    if (right_top) press(Keys.F8); break;
                 case Keys.Delete:
                 case Keys.Escape:
                     Special_Input = false;
@@ -80,36 +81,14 @@ namespace keyupMusic2
                 switch (e.key)
                 {
                     case Keys.D1:
-                        if (Common.devenv == module_name)
-                        {
-                            HideProcess(module_name);
-                        }
-                        else if (!Common.FocusProcess(Common.devenv))
-                        {
-                            if (Common.FocusProcess(Common.devenv)) break;
-                            press("LWin;VIS;Apps;100;Enter;", 100);
-                            //TaskRun(() => { press("Tab;Down;Enter;", 100); }, 1500);
-                            DaleyRun(() =>
-                            {
-                                var flag = judge_color(519, 717, Color.FromArgb(115, 97, 236), 10)
-                                        && judge_color(571, 460, Color.FromArgb(250, 250, 250));
-                                return flag;
-                            }, 3000, 100);
-                            press("Tab;Down;Enter;", 100);
-                        }
                         break;
                     case Keys.D2:
-                        if (!Common.FocusProcess(Common.douyin))
-                        {
-                            press(Keys.MediaStop);
-                            //ProcessRun(douyinexe);
-                            DaleyRun(() => { return judge_color(2318, 1258, Color.FromArgb(111, 112, 120), 10); }, 3000, 100);
-                            press("311, 1116", 0);
-                            mouse_click(11);
-                            press("2227, 1245", 0);
-                            mouse_click(11);
-                            press("1333.1444", 0);
-                        }
+                        break;
+                    case Keys.Right:
+                    case Keys.Left:
+                        var pp = new Point(100, 100);
+                        if(e.key == Keys.Left) pp = new Point(screen2Width, 100);
+                        MoveProcessWindow(ProcessName, pp);
                         break;
                 }
         }

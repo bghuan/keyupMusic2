@@ -180,11 +180,11 @@ namespace keyupMusic2
 
         public void MouseHookProc(MouseKeyboardHook.MouseHookEventArgs e)
         {
-            if (e.Msg == MouseMsg.WM_LBUTTONUP)
+            if (e.Msg == MouseMsg.click_up)
             {
                 if (ACPhoenix_mouse_down) ACPhoenix_mouse_down = false;
             }
-            else if (e.Msg == MouseMsg.WM_RBUTTONDOWN)
+            else if (e.Msg == MouseMsg.click_r)
             {
                 if (ProcessName2 != Common.ACPhoenix) return;
                 //if (ACPhoenix_mouse_down == false) mouse_down();

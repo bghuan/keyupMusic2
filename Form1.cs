@@ -1,6 +1,7 @@
 using System.Diagnostics;
 using static keyupMusic2.Common;
 using static keyupMusic2.MouseKeyboardHook;
+using static System.Windows.Forms.VisualStyles.VisualStyleElement.TrackBar;
 
 namespace keyupMusic2
 {
@@ -13,17 +14,16 @@ namespace keyupMusic2
         All Alll;
         Super super;
         Chrome chrome;
-        //bool not_init_show = (is_ctrl() && !is_shift()) || Position.Y == 0;
-        bool not_init_show = !((is_ctrl() && !is_shift()) || Position.Y == 0);
-        bool not_mouse_hook = !((is_ctrl() && !is_shift()) || Position.Y == 1439);
-        bool not_not_sleep = Position.X == screenWidth1 && Position.Y == screenHeight1;
+        bool is_init_show = !(Position.Y == 0);
+        bool is_mouse_hook = !(Position.Y == 1439);
 
         public Huan()
         {
+            if (start_check()) return;
             InitializeComponent();
 
             play_sound_di();
-            try_restart_in_admin();
+            if (try_restart_in_admin()) return;
             releas_self_restart_keyup_lost();
             startListen();
 
@@ -74,6 +74,11 @@ namespace keyupMusic2
             //if (e.key == Keys.F11) return true;
             //if (e.key == Keys.F12) return true;
 
+            if (e.key == Keys.F1 && !isctrl())
+            {
+                var list = new List<string> { Common.chrome, msedge, Common.devenv };
+                if (list.Contains(ProcessName)) return true;
+            }
             if (e.key == Keys.F2 && ProcessName == Common.chrome)
                 return true;
 
@@ -103,11 +108,8 @@ namespace keyupMusic2
             }
             if (e.key == Keys.MediaPreviousTrack || e.key == Keys.MediaNextTrack)
             {
-                if (ProcessName == steam) return true;
-                if (ProcessName == cs2) return true;
-                if (ProcessName == Glass2) return true;
-                if (ProcessName == PowerToysCropAndLock) return true;
-                if (ProcessName == vlc) return true;
+                var list = new List<string> { steam, cs2, Glass2, PowerToysCropAndLock, vlc };
+                if (list.Contains(ProcessName)) return true;
                 if (list_go_back.Contains(ProcessName)) return true;
             }
             if ((e.key == Keys.Right || e.key == Keys.Left) && is_ctrl())
@@ -277,7 +279,15 @@ namespace keyupMusic2
         }
         private void print_easy_read()
         {
-            var _stop_keys = stop_keys?.ToArray();
+            Dictionary<Keys, string> _stop_keys = null;
+            try
+            {
+                _stop_keys = stop_keys?.ToList().ToDictionary(kv => kv.Key, kv => kv.Value);
+            }
+            catch (ArgumentException ex)
+            {
+                _stop_keys = new Dictionary<Keys, string>(); // 使用空集合作为默认值
+            }
             if (!no_sleep) return;
             Invoke(() =>
             {
@@ -378,18 +388,23 @@ namespace keyupMusic2
         {
             label1.Text = DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss");
             label2.Text = "";
+
             _mouseKbdHook = new MouseKeyboardHook();
             _mouseKbdHook.KeyboardHookEvent += hook_KeyDown;
             _mouseKbdHook.KeyboardHookEvent += hook_KeyUp;
-            if (not_mouse_hook)
+
+            if (is_mouse_hook)
             {
                 var b = new biu(this);
                 _mouseKbdHook.MouseHookEvent += b.MouseHookProc;
                 //Invoke(() => { b.MoveStopClickListen(); }); 
-                //b.MoveStopClickListen();
                 //_mouseKbdHook.MouseHookEvent += new Douyin_game(this).MouseHookProc;
+                _mouseKbdHook.Install();
             }
-            _mouseKbdHook.Install();
+            else
+            {
+                Text = Text + "no mousehook";
+            }
 
             new Tick();
         }
@@ -478,7 +493,66 @@ namespace keyupMusic2
         {
             Task.Run(() => { Thread.Sleep(tick); this.Invoke(action); });
         }
-        private void try_restart_in_admin()
+
+        public void Invoke(Action method)
+        {
+            try { base.Invoke(method); }
+            catch (Exception ex)
+            {
+                log("Invoke err: " + ex.Message);
+            }
+        }
+
+        private void releas_self_restart_keyup_lost()
+        {
+            release_all_key();
+            //TaskRun(() =>
+            //{
+            //    if (is_down(Keys.RControlKey))
+            //        SSSS.KeyUp(Keys.RControlKey);
+            //    if (is_down(Keys.RShiftKey))
+            //        SSSS.KeyUp(Keys.RShiftKey);
+            //    if (is_down(Keys.F5))
+            //        SSSS.KeyUp(Keys.F5);
+            //}, 1000);
+        }
+        public void release_all_key(int tick = 1000)
+        {
+            TaskRun(() =>
+            {
+                var pressedKeys = release_all_keydown();
+                if (pressedKeys.Any())
+                    Invoke2(() => { label1.Text = string.Join(", ", pressedKeys); });
+                stop_keys = new Dictionary<Keys, string>();
+            }, tick);
+        }
+
+        private bool start_check()
+        {
+            if (IsAdministrator()) return false;
+            int currentProcessId = Process.GetCurrentProcess().Id;
+            Process[] processes = Process.GetProcessesByName(Common.keyupMusic2);
+            foreach (Process process in processes)
+            {
+                if (process.Id != currentProcessId)
+                {
+                    //process.Kill();
+                    //log(process.Id + "--" + currentProcessId+"--"+ Position.Y);
+                    //if (Position.Y == 0)
+                    //    press([Keys.LControlKey, Keys.F1]);
+                    //else
+                    //    LossScale(); 
+                    press_raw([Keys.LControlKey, Keys.F3]);
+                    TaskRun(() =>
+                    {
+                        Application.Exit();
+                    }, 10);
+                    return true;
+                }
+            }
+            return false;
+        }
+        private bool try_restart_in_admin()
         {
             if (!Debugger.IsAttached && !is_down(Keys.LControlKey) && !IsAdministrator())
             {
@@ -494,67 +568,23 @@ namespace keyupMusic2
             {
                 Text = Text + "(非管理员)";
             }
+            return false;
         }
-
-        public void Invoke(Action method)
-        {
-            try { base.Invoke(method); }
-            catch (Exception ex)
-            {
-                log("Invoke err: " + ex.Message);
-            }
-        }
-
-        private void releas_self_restart_keyup_lost()
-        {
-            release_all_keydown();
-            //TaskRun(() =>
-            //{
-            //    if (is_down(Keys.RControlKey))
-            //        SSSS.KeyUp(Keys.RControlKey);
-            //    if (is_down(Keys.RShiftKey))
-            //        SSSS.KeyUp(Keys.RShiftKey);
-            //    if (is_down(Keys.F5))
-            //        SSSS.KeyUp(Keys.F5);
-            //}, 1000);
-        }
-        public void release_all_keydown(int tick = 1000)
-        {
-            TaskRun(() =>
-            {
-                var pressedKeys = GetPressedKeys();
-                if (pressedKeys.Any())
-                    Invoke2(() => { label1.Text = "relese: " + string.Join(", ", pressedKeys); });
-                foreach (var key in pressedKeys)
-                {
-                    SSSS.KeyUp(key);
-                }
-                stop_keys = new Dictionary<Keys, string>();
-            }, tick);
-        }
-
         private void Form1_Load(object sender, EventArgs e)
         {
             int currentProcessId = Process.GetCurrentProcess().Id;
             Process[] processes = Process.GetProcessesByName(Common.keyupMusic2);
             foreach (Process process in processes)
-                if (process.Id != currentProcessId)
+                if (process.Id != currentProcessId && IsAdministrator())
                     process.Kill();
 
-            if (not_init_show)
+            if (is_init_show && !Debugger.IsAttached)
             {
                 SetVisibleCore(false);
                 TaskRun(() => { Invoke(() => SetVisibleCore(false)); }, 200);
             }
-            //if (not_not_sleep)
-            //{
-            //    TaskRun(() => { press(Keys.F9); press(Keys.F9); }, 1000);
-            //}
-            Common.FocusProcess(Common.ACPhoenix);
-            Common.FocusProcess(Common.Glass3);
-            Common.FocusProcess(Common.Kingdom);
-            Common.FocusProcess(Common.Kingdom5);
-            Location = new Point(Screen.PrimaryScreen.Bounds.Width - 310, 100);
+            //Location = new Point(Screen.PrimaryScreen.Bounds.Width - 310, 100);
+            Location = new Point(2255, 37);
 
             startPoint = new Point(Location.X - 300, Location.Y);
             endPoint = Location;

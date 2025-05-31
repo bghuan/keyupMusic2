@@ -17,9 +17,9 @@ namespace keyupMusic2
                     //if (!is_no_title(PowerToysCropAndLock))
                     //    break;
                     if (is_down(Keys.LWin)) break;
-                    if (e.Msg == MouseMsg.WM_LBUTTONDOWN)
+                    if (e.Msg == MouseMsg.click)
                         is_PowerToysCropAndLock_down = true;
-                    else if (e.Msg == MouseMsg.WM_LBUTTONUP)
+                    else if (e.Msg == MouseMsg.click_up)
                     {
                         if (e.X == 0)
                         {
@@ -36,7 +36,7 @@ namespace keyupMusic2
                         //if (is_double_click()) quick_max_chrome(e.Pos);
                         is_PowerToysCropAndLock_down = false;
                     }
-                    else if (e.Msg == MouseMsg.WM_RBUTTONUP)
+                    else if (e.Msg == MouseMsg.click_r_up)
                     {
                         quick_max_chrome(e.Pos);
                         if (e.X == 0)
@@ -45,7 +45,7 @@ namespace keyupMusic2
                             SS().MouseWhell(-120 * 9);
                         }
                     }
-                    else if (e.Msg == MouseMsg.WM_MOUSEMOVE && is_PowerToysCropAndLock_down)
+                    else if (e.Msg == MouseMsg.move && is_PowerToysCropAndLock_down)
                     {
                         IntPtr targetWindowHandle = GetProcessID(ProcessName);
                         var lastCursor = e.Pos;
@@ -53,7 +53,7 @@ namespace keyupMusic2
                         IntPtr lParam = ((lastCursor.Y << 16) | lastCursor.X);
                         Native.SendMessage(targetWindowHandle, Native.WM_NCLBUTTONDOWN, Native.HTCAPTION, lParam);
                     }
-                    else if (e.Msg == MouseMsg.WM_MOUSEWHEEL)
+                    else if (e.Msg == MouseMsg.wheel)
                     {
                         //HandleMouseWheel(e);
                     }
@@ -65,14 +65,14 @@ namespace keyupMusic2
                     //    CenterWindowOnScreen(chrome);
                     //else if (e.Msg == MouseMsg.WM_LBUTTONUP && (e.X == screenWidth1 && e.Y >= screenHeight2))
                     //    CenterWindowOnScreen(chrome, true); 
-                    if (e.Msg == MouseMsg.WM_LBUTTONUP && (e.X == screenWidth1))
+                    if (e.Msg == MouseMsg.click_up && (e.X == screenWidth1))
                         CenterWindowOnScreen(chrome, e.Y >= screenHeight2);
-                    else if (e.Msg == MouseMsg.WM_RBUTTONUP && ExistProcess(PowerToysCropAndLock, true))
+                    else if (e.Msg == MouseMsg.click_r_up && ExistProcess(PowerToysCropAndLock, true))
                     {
                         if (e.X == 0) { press(Keys.OemPeriod); break; }
                         quick_max_chrome(e.Pos);
                     }
-                    else if (e.Msg == MouseMsg.WM_XBUTTONUP)
+                    else if (e.Msg == MouseMsg.back_up)
                     {
                         if (judge_color(26, 94, Color.FromArgb(120, 123, 117)))
                         {
@@ -81,13 +81,48 @@ namespace keyupMusic2
                     }
                     break;
                 case cs2:
-                    if (e.Msg == MouseMsg.WM_LBUTTONDOWN)
+                    if (e.Msg == MouseMsg.click)
                         huan.Invoke2(() => { huan.label1.Text = "click_down"; });
-                    else if (e.Msg == MouseMsg.WM_LBUTTONUP)
+                    else if (e.Msg == MouseMsg.click_up)
                         huan.Invoke2(() => { huan.label1.Text = "click_up"; });
                     break;
-                case msedge:
-                    if (e.Msg == MouseMsg.WM_XBUTTONUP)
+                case Common.devenv:
+                    if (e.Msg == MouseMsg.click_r)
+                    {
+                        if ((e.Y != 0)) break;
+                        if (Deven_runing())
+                            //press_task([Keys.RControlKey, Keys.RShiftKey, Keys.F5], 200);
+                            press("116,69");
+                        //Task.Run(() => Sim.KeyPress([Keys.RControlKey, Keys.RShiftKey, Keys.F5]));
+                        //press("115, 69",101);
+                        else
+                            press("898,71");
+                            //press([Keys.F5]);
+                    }
+                    break;
+                case Common.msedge:
+                    if (is_douyin())
+                    {
+                        if (e.Msg == MouseMsg.back)
+                        {
+                            SS().KeyPress(Keys.X);
+                        }
+                        else if (e.Msg == MouseMsg.go)
+                        {
+                            SS().KeyPress(Keys.H);
+                        }
+                        else if (e.Msg == MouseMsg.click_up)
+                        {
+                            Common.isVir = 0;
+                            if (e.Y == screenHeight1 && e.X < screenWidth2)
+                                SS().KeyPress(Keys.PageUp);
+                            else if (e.Y == screenHeight1 && e.X < screenWidth1)
+                                SS().KeyPress(Keys.PageDown);
+                            Common.isVir = 3;
+                        }
+                        break;
+                    }
+                    if (e.Msg == MouseMsg.back_up)
                     {
                         if (judge_color(33, 80, Color.FromArgb(204, 204, 204), 0))
                         //if (judge_color(92, 73, Color.FromArgb(0, 0, 0), null, 0))
@@ -99,14 +134,5 @@ namespace keyupMusic2
             }
         }
 
-        private bool is_double_click()
-        {
-            var result = MouseMsgTime != null && MouseMsgTime.ContainsKey(e.Msg) && MouseMsgTime[e.Msg] != DateTime.MinValue && MouseMsgTime[e.Msg].AddMilliseconds(200) > DateTime.Now;
-
-            result = result && !IsClickOnTitleBar(ProcessName, e.Pos);
-            if (MouseMsgTime != null) MouseMsgTime[e.Msg] = DateTime.Now;
-            if (result) MouseMsgTime[e.Msg] = DateTime.MinValue;
-            return result;
-        }
     }
 }

@@ -38,12 +38,12 @@ namespace keyupMusic2
                 //case Keys.Z:
                 //    SS().KeyDown(Keys.X);
                 //    break;
-                case Keys.VolumeDown:
-                    if (Position.Y == 0 || Position.X == 0 || Position.X == 6719) { press(Keys.Left); deal(); }
-                    break;
-                case Keys.VolumeUp:
-                    if (Position.Y == 0 || Position.X == 0 || Position.X == 6719) { press(Keys.Right); deal(); }
-                    break;
+                //case Keys.VolumeDown:
+                //    if (Position.Y == 0 || Position.X == 0 || Position.X == 6719) { press(Keys.Left); deal(); }
+                //    break;
+                //case Keys.VolumeUp:
+                //    if (Position.Y == 0 || Position.X == 0 || Position.X == 6719) { press(Keys.Right); deal(); }
+                //    break;
                 //case Keys.F:
                 //    if (Position.Y == 1619)
                 //        copy_secoed_screen();

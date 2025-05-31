@@ -6,6 +6,8 @@ using System.Reflection;
 using System.Runtime.InteropServices;
 using System.Security.Principal;
 using System.Text;
+using System.Windows.Forms;
+using System.Xml.Linq;
 using static keyupMusic2.Native;
 using static System.Windows.Forms.VisualStyles.VisualStyleElement.Window;
 using Point = System.Drawing.Point;
@@ -66,16 +68,14 @@ namespace keyupMusic2
         public const string TwinkleTrayexe = "C:\\Users\\bu\\AppData\\Local\\Programs\\twinkle-tray\\Twinkle Tray.exe";
         public const string androidstudio = "studio64";
 
-        public static List<string> list_go_back = new List<string> { explorer, VSCode, msedge, chrome, devenv, androidstudio };
+        public static List<string> list_go_back = new List<string> { explorer, VSCode, msedge, chrome, devenv, androidstudio, ApplicationFrameHost, cs2 };
 
         public static SoundPlayer player = new SoundPlayer();
         public static SoundPlayer player2 = new SoundPlayer();
         public static bool hooked = false;
-        public static bool hooked_mouse = false;
         public static bool stop_listen = false;
         public static bool ACPhoenix_mouse_hook = false;
         public static DateTime special_delete_key_time;
-        public static bool handing4 = false;
         public static bool gcc_restart = false;
 
         public static string ProcessName = "";
@@ -128,7 +128,7 @@ namespace keyupMusic2
         }
         static IntPtr old_hwnd = 0;
 
-        static Dictionary<IntPtr, string> ProcessMap = new Dictionary<IntPtr, string>();
+        public static Dictionary<IntPtr, string> ProcessMap = new Dictionary<IntPtr, string>();
         public static string FreshProcessName()
         {
             IntPtr hwnd = Native.GetForegroundWindow(); // 获取当前活动窗口的句柄
@@ -187,6 +187,23 @@ namespace keyupMusic2
             //Console.WriteLine("当前活动窗口名称: " + windowTitle);
 
             return windowTitle;
+        }
+        public static string GetPointName(IntPtr hwnd)
+        {
+            IntPtr hWnd = Native.WindowFromPoint(Position);
+            var aaa = GetWindowName(hWnd);
+            return aaa;
+        }
+        public static string GetWindowName(IntPtr hwnd)
+        {
+            uint processId;
+            string Name;
+            Native.GetWindowThreadProcessId(hwnd, out processId);
+            using (Process process = Process.GetProcessById((int)processId))
+            {
+                Name = process.ProcessName;
+            }
+            return Name;
         }
         static string proc_info = "";
         public static string log_process(string key = "")
@@ -616,6 +633,18 @@ namespace keyupMusic2
         {
             Thread.Sleep(tick);
         }
+        public static Point ProcessPosition(string pro)
+        {
+            IntPtr targetWindowHandle = GetProcessID(pro);
+
+            if (targetWindowHandle != IntPtr.Zero)
+            {
+                RECT rect;
+                GetWindowRect(targetWindowHandle, out rect);
+                return new Point(rect.Left, rect.Top);
+            }
+            return new Point(0, 0);
+        }
         public static bool IsFullScreen(IntPtr hWnd = 0)
         {
             if (hWnd == 0)
@@ -636,6 +665,13 @@ namespace keyupMusic2
             int screenWidth = Native.GetSystemMetrics(Native.SM_CXSCREEN);
             int screenHeight = Native.GetSystemMetrics(Native.SM_CYSCREEN);
 
+            if (Position.X < 0 || Position.X > screenWidth)
+            {
+                return windowRect.Left == screen2Width &&
+                   windowRect.Top == 0 &&
+                   windowRect.Right == 0 &&
+                   windowRect.Bottom == screen2Height;
+            }
             //Thread.Sleep(1000); 
             // Check if the window covers the entire screen  
             return windowRect.Left == 0 &&
@@ -707,6 +743,14 @@ namespace keyupMusic2
                 player.Play();
             }
         }
+        public static void play_sound_bongocat(Keys key)
+        {
+            string wav = "wav\\bongocat\\keyboard" + key.ToString().Replace("D", "") + ".wav";
+            if (!File.Exists(wav)) return;
+
+            player = new SoundPlayer(wav);
+            player.Play();
+        }
         static string wav = "wav\\d2.wav";
         static bool is_di = File.Exists(wav);
         public static void play_sound_di(int tick = 0)
@@ -763,6 +807,12 @@ namespace keyupMusic2
                 }
             }
             return keys;
+        }
+        public static IEnumerable<Keys> release_all_keydown()
+        {
+            IEnumerable<Keys> pressedKeys = GetPressedKeys();
+            foreach (var key in pressedKeys) SSSS.KeyUp(key);
+            return pressedKeys;
         }
         public static bool Deven_runing()
         {
@@ -1064,30 +1114,18 @@ namespace keyupMusic2
         }
         public static void LossScale()
         {
+            FreshProcessName();
+            List<string> lines = new List<string>()
+                { devenv , keyupMusic2, explorer };
+            if (lines.Contains(ProcessName))
+            {
+                release_all_keydown();
+                //ProcessRun(Application.ExecutablePath);
+                return;
+            }
             if (!ExistProcess(LosslessScaling))
                 ProcessRun(LosslessScalingexe);
-            press([Keys.LControlKey, Keys.F3]);
-        }
-        public static void LossScale2()
-        {
-            var exi = ExistProcess(LosslessScaling);
-            if (!exi)
-            {
-                ProcessRun(LosslessScalingexe);
-                for (Int32 i = 0; i < 5; i++)
-                {
-                    play_sound_di();
-                    if (!ExistProcess(LosslessScaling)) Sleep(1000);
-                }
-                Sleep(500);
-            }
-            if (ProcessName2 == (LosslessScaling)) altab();
-            else if (ProcessName2 == (Common.keyupMusic2)) altab();
-            Sleep(100);
-            press([Keys.LControlKey, Keys.F3]);
-            press_middle_bottom();
-            //if (ProcessName2 == (Common.chrome))
-            //    mouse_move(2559, 875);
+            press([Keys.LControlKey, Keys.F2]);
         }
         public static void system_hard_sleep()
         {

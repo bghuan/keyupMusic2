@@ -1,6 +1,8 @@
-﻿using static keyupMusic2.Common;
+﻿using System.Windows.Forms;
+using static keyupMusic2.Common;
 using static keyupMusic2.MouseKeyboardHook;
 using static keyupMusic2.Simulate;
+using static System.Windows.Forms.VisualStyles.VisualStyleElement;
 
 namespace keyupMusic2
 {
@@ -30,116 +32,220 @@ namespace keyupMusic2
         private int threshold = 10;
         bool r_button_downing = false;
         bool x_button_dowing = false;
+        Point r_down_x = Point.Empty;
+        bool r_chrome_menu = false;
 
         public void MouseHookProc(MouseHookEventArgs e)
         {
-            if (hooked_mouse) return;
-            if (handing4) return;
             if (handing3) return;
             if (handing) return;
-            hooked_mouse = true;
             handing = true;
             handing3 = true;
             this.e = e;
-            if (e.Msg != MouseMsg.WM_MOUSEMOVE) FreshProcessName();
-            if (e.Msg == MouseMsg.WM_LBUTTONDOWN && e.X < screenHeight && e.X > screenHeight - 200 && e.Y < 100) TaskRun(() => { FreshProcessName(); }, 500);
 
             if (judge_handled(e)) e.Handled = true;
-            quick_go_back(e);
 
-            Douyin(e);
-            //Task.Run(ACPhoenix);
-            Task.Run(Devenv);
-            Task.Run(Cornor);
-            Task.Run(ScreenLine);
-            Task.Run(UnderLine);
-            //Task.Run(QQMusic);
-            Task.Run(Other);
-            Task.Run(Glass);
-            Task.Run(Kingdom);
+            if (e.Msg != MouseMsg.move) FreshProcessName();
+            if (e.Msg == MouseMsg.click && e.X < screenHeight && e.X > screenHeight - 200 && e.Y < 100) TaskRun(() => { FreshProcessName(); }, 500);
+
+            //easy_read();
+
+            Task.Run(() =>
+            {
+                Cornor();
+                ScreenLine();
+                BottomLine();
+                Other();
+
+                Glass();
+                Kingdom();
+
+                GoBack();
+                Gestures();
+                All();
+            });
 
             handing = false;
-            hooked_mouse = false;
-
         }
+
+        private void Gestures()
+        {
+            if (e.Msg == MouseMsg.click_r) r_down_x = e.Pos;
+            if (e.Msg == MouseMsg.click) { r_chrome_menu = false; return; }
+            if (e.Msg == MouseMsg.move) return;
+            if (e.Msg != MouseMsg.click_r_up) return;
+            if (r_down_x == Point.Empty) return;
+            //if (r_chrome_menu && ProcessName == chrome) return;
+
+            //string msg = r_down_x.ToString() + e.Pos;
+            //huan.Invoke2(() =>
+            //{
+            //    huan.label1.Text = msg;
+            //}, 10);
+
+            int arraw = 0;
+            int arraw_long = 110;
+            bool catched = false;
+            //log(e.X + " " + e.Y + " " + r_down_x.X + " " + r_down_x.Y);
+            if (e.Y - r_down_x.Y > arraw_long) arraw = 3;
+            else if (e.Y - r_down_x.Y < -arraw_long) arraw = 4;
+            else if (e.X - r_down_x.X > arraw_long) arraw = 1;
+            else if (e.X - r_down_x.X < -arraw_long) arraw = 2;
+
+            var is_chrome = ProcessName == chrome && !r_chrome_menu;
+
+            switch (arraw)
+            {
+                case 0:
+                    r_chrome_menu = true;
+                    mouse_click_right();
+                    break;
+                // 右
+                case 1:
+                    if (is_chrome)
+                    {
+                        var full = IsFullScreen();
+                        if (full)
+                            SS().KeyPress(Keys.F11);
+                        var pp = new Point(100, 100);
+                        MoveProcessWindow(ProcessName, pp);
+                        if (full)
+                            SS().KeyPress(Keys.F11);
+                    }
+                    break;
+                // 左
+                case 2:
+                    if (is_chrome)
+                    {
+                        var full = IsFullScreen();
+                        if (full)
+                            SS().KeyPress(Keys.F11);
+                        var pp = new Point(screen2Width, 100);
+                        MoveProcessWindow(ProcessName, pp);
+                        if (full)
+                            SS().KeyPress(Keys.F11);
+                    }
+                    break;
+                //  下
+                case 3:
+                    if (is_chrome)
+                        SS().KeyPress(Keys.M);
+                    break;
+                //  上
+                case 4:
+                    if (is_chrome)
+                        SS().KeyPress(Keys.F);
+                    break;
+            }
+            if (catched)
+            {
+                if (is_down(Keys.LButton)) mouse_click();
+                if (is_down(Keys.RButton)) mouse_click_right();
+                r_down_x = Point.Empty;
+                play_sound_di();
+            }
+        }
+        private void All()
+        {
+            if (e.Msg == MouseMsg.move) return;
+
+            if (e.Msg == MouseMsg.middle)
+                press(Keys.MediaPlayPause);
+            if (e.Msg == MouseMsg.wheel && e.Y == 0)
+            {
+                Keys keys = Keys.F7;
+                if (e.data > 0) keys = Keys.F8;
+                press(keys);
+            }
+            if (e.Msg == MouseMsg.wheel && e.X == screenWidth1 && ProcessName == chrome)
+            {
+                Keys keys = Keys.Right;
+                if (e.data > 0) keys = Keys.Left;
+                press(keys);
+            }
+        }
+
+        private void easy_read()
+        {
+            if (e.Msg == MouseMsg.move) return;
+
+            string msg = e.Msg.ToString();
+            huan.Invoke2(() =>
+            {
+                IEnumerable<Keys> pressedKeys = GetPressedKeys();
+                msg = msg + "    " + string.Join(", ", pressedKeys);
+                huan.label1.Text = msg;
+            }, 10);
+        }
+
         public bool judge_handled(MouseHookEventArgs e)
         {
-            if (e.Msg == MouseMsg.WM_GO_XBUTTONUP || e.Msg == MouseMsg.WM_XBUTTONUP)
-            {
+            if (e.Msg == MouseMsg.move) return false;
+            if (e.Msg == MouseMsg.middle) return true;
+            if (e.Msg == MouseMsg.middle_up) return true;
 
-                string dsadasd = "ddddddddd";
-            }
-            if (e.Msg == MouseMsg.WM_MOUSEMOVE) return false;
-            if (e.Msg == MouseMsg.WM_XBUTTONDOWN || e.Msg == MouseMsg.WM_GO_XBUTTONDOWN || e.Msg == MouseMsg.WM_XBUTTONUP || e.Msg == MouseMsg.WM_GO_XBUTTONUP)
+            if (e.Msg == MouseMsg.wheel && e.Y == 0) return true;
+
+            if (e.Msg == MouseMsg.back || e.Msg == MouseMsg.go || e.Msg == MouseMsg.back_up || e.Msg == MouseMsg.go_up)
             {
                 if (!list_go_back.Contains(ProcessName)) return true;
+                if (is_douyin()) return true;
             }
             if (ProcessName == Common.chrome)
             {
                 if (ExistProcess(PowerToysCropAndLock, true))
                 {
-                    if (e.Msg == MouseMsg.WM_RBUTTONDOWN) return true;
-                    if (e.Msg == MouseMsg.WM_RBUTTONUP) return true;
+                    if (e.Msg == MouseMsg.click_r) return true;
+                    if (e.Msg == MouseMsg.click_r_up) return true;
                 }
             }
-            if (is_douyin())
+            if (ProcessName == chrome)
             {
-                if (e.Msg == MouseMsg.WM_XBUTTONDOWN) return true;
+                if (is_down(Keys.RButton)) return false;
+                if (e.Msg == MouseMsg.click_r)
+                    return true;
+                if (e.Msg == MouseMsg.click_r_up)
+                    return true;
+            }
+            if (ProcessName == Common.devenv)
+            {
+                if (is_down(Keys.RButton)) return false;
+                if (e.Y != 0) return false;
+
+                if (e.Msg == MouseMsg.click_r)
+                    return true;
+                if (e.Msg == MouseMsg.click_r_up)
+                    return true;
             }
             return false;
         }
 
-        private static void quick_go_back(MouseHookEventArgs e)
+        private void GoBack()
         {
-            if (e.Msg == MouseMsg.WM_MOUSEMOVE) return;
+            if (e.Msg == MouseMsg.move) return;
 
-            if (e.Msg == MouseMsg.WM_GO_XBUTTONDOWN && ProcessName == msedge)
-                press(Keys.Right);
-            if (e.Msg == MouseMsg.WM_GO_XBUTTONDOWN && ProcessName == chrome)
-                press(Keys.F);
+            if (e.Msg == MouseMsg.go)
+            {
+                if (ProcessName == msedge) press(Keys.Right);
+                if (ProcessName == chrome) press(Keys.F);
+                if (ProcessName == cs2) press_raw(Keys.MediaNextTrack);
+            }
+            if (e.Msg == MouseMsg.back)
+            {
+                if (ProcessName == cs2) press_raw(Keys.MediaPreviousTrack);
+            }
 
             if (list_go_back.Contains(ProcessName)) return;
 
-            if (e.Msg == MouseMsg.WM_GO_XBUTTONDOWN)
+            if (e.Msg == MouseMsg.go)
                 press(Keys.MediaNextTrack);
-            else if (e.Msg == MouseMsg.WM_XBUTTONDOWN)
+            else if (e.Msg == MouseMsg.back)
                 press(Keys.MediaPreviousTrack);
         }
-        public void Douyin(MouseKeyboardHook.MouseHookEventArgs e)
-        {
-            if (!is_douyin()) return;
 
-            if (e.Msg == MouseMsg.WM_XBUTTONDOWN)
-            {
-                SS().KeyPress(Keys.X);
-            }
-            else if (e.Msg == MouseMsg.WM_LBUTTONUP)
-            {
-                if (e.Y == screenHeight1 && e.X < screenWidth2)
-                    SS().KeyPress(Keys.PageUp);
-                else if (e.Y == screenHeight1 && e.X < screenWidth1)
-                    SS().KeyPress(Keys.PageDown);
-            }
-        }
-
-        public void Devenv()
+        public void BottomLine()
         {
-            if (ProcessName != keyupMusic2.Common.devenv) return;
-
-            if (e.Msg == MouseMsg.WM_RBUTTONDOWN)
-            {
-                if ((e.Y != 0)) return;
-                if (Deven_runing())
-                    press([Keys.RControlKey, Keys.RShiftKey, Keys.F5]);
-                //Task.Run(() => Sim.KeyPress([Keys.RControlKey, Keys.RShiftKey, Keys.F5]));
-                //press("115, 69",101);
-                else
-                    press([Keys.F5]);
-            }
-        }
-        public void UnderLine()
-        {
-            if (e.Msg == MouseMsg.WM_RBUTTONUP)
+            if (e.Msg == MouseMsg.click_r_up)
             {
                 if (e.Y == screenHeight1 && !IsFullScreen())
                 {
@@ -147,12 +253,6 @@ namespace keyupMusic2
                     mouse_move_to(0, 1325 - screenHeight);
                     mouse_click();
                 }
-                //if (e.Y > screenHeight - 20 && !IsFullScreen())
-                //{
-                //    Sleep(322);
-                //    mouse_move_to(0, 1325 - screenHeight);
-                //    mouse_click();
-                //}
             }
         }
         int ffff = 0;

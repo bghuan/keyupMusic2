@@ -21,18 +21,19 @@ namespace keyupMusic2
                     if (Deven_runing())
                         press([Keys.RControlKey, Keys.RShiftKey, Keys.F5]);
                     break;
-                //case Keys.F11:
-                //    ProcessStartInfo startInfo = new ProcessStartInfo("taskmgr.exe");
-                //    Process.Start(startInfo);
-                //    break;
 
+                case Keys.F1:
+                    press([Keys.RControlKey, Keys.K, Keys.D]);
+                    break;
+                case Keys.F2:
+                    press("73,242",1);
+                    break;
                 case Keys.F:
                     if (is_alt() && is_shift())
                     {
                         TaskRun(() =>
                         {
-                            press([Keys.RControlKey, Keys.K]);
-                            press([Keys.RControlKey, Keys.D]);
+                            press([Keys.RControlKey, Keys.K, Keys.D]);
                         }, 300);
                     }
                     break;

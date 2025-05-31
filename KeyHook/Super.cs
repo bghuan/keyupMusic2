@@ -1,5 +1,6 @@
 ﻿using System.Diagnostics;
 using System.Drawing.Imaging;
+using System.Windows.Forms;
 using static keyupMusic2.Common;
 using static keyupMusic2.MouseKeyboardHook;
 
@@ -45,7 +46,7 @@ namespace keyupMusic2
                 case Keys.W:
                     //2083,1180 2109,1107 2259,1112 2186,1403
                     mouse_click_right(2186, 1403);
-                    press("2259,1112;2083,1180",100);
+                    press("2259,1112;2083,1180", 100);
                     break;
                 case Keys.E:
                     play_sound(Keys.D0);
@@ -66,7 +67,7 @@ namespace keyupMusic2
                     press("200;1056,588;2118,530;2031,585;2516,8;", 801);
                     break;
                 case Keys.I:
-
+                    SS().KeyPress(Keys.RButton);
                     break;
                 case Keys.O:
                     play_sound(Keys.D5);
@@ -80,8 +81,12 @@ namespace keyupMusic2
                     start_record = !start_record;
                     break;
                 case Keys.S:
+                    IntPtr hWnd = Native.WindowFromPoint(Position);
+                    var aaa = GetWindowName(hWnd);
+                    huan.Invoke2(() => { huan.label1.Text = aaa; });
                     break;
                 case Keys.D:
+                    mouse_click_right2();
                     break;
                 case Keys.F:
                     break;
@@ -92,7 +97,7 @@ namespace keyupMusic2
                 case Keys.J:
                     break;
                 case Keys.K:
-                    huan.release_all_keydown(1000);
+                    huan.release_all_key(1000);
                     break;
                 case Keys.L:
                     break;
@@ -112,6 +117,9 @@ namespace keyupMusic2
                     cmd_v();
                     break;
                 case Keys.B:
+                    var pressedKeys = release_all_keydown();
+                    if (pressedKeys.Any())
+                        huan.Invoke2(() => { huan.label1.Text = "relese: " + string.Join(", ", pressedKeys); });
                     stop_keys = new Dictionary<Keys, string>();
                     break;
                 case Keys.M:
@@ -123,7 +131,7 @@ namespace keyupMusic2
                 case Keys.Space:
                     Invoke(() =>
                     {
-                        press([Keys.LControlKey, Keys.A, Keys.C],200);
+                        press([Keys.LControlKey, Keys.A, Keys.C], 200);
                         press([Keys.LShiftKey], 100);
                         string ddd = Clipboard.GetText().ToUpper();
                         if (ddd.Length < 20)
@@ -164,6 +172,9 @@ namespace keyupMusic2
                     //if (is_ctrl() && is_shift()) { Process.Start(new ProcessStartInfo("taskmgr.exe")); break; }
                     //press_middle_bottom();
                     huan._mouseKbdHook.ChangeMouseHooks();
+                    break;
+                case Keys.Delete:
+                    Application.Exit();
                     break;
                 case Keys.F11:
                 case Keys.F12:

@@ -1,4 +1,5 @@
 ﻿using System.Diagnostics;
+using System.Drawing;
 using System.Runtime.InteropServices;
 using System.Text;
 
@@ -46,11 +47,16 @@ namespace keyupMusic2
         [DllImport("user32.dll", CharSet = CharSet.Auto, SetLastError = true)]
         public static extern IntPtr CallNextHookEx(IntPtr hhk, int nCode,
             IntPtr wParam, IntPtr lParam);
+        [DllImport("user32.dll")]
+        public static extern IntPtr WindowFromPoint(Point Point);
+
 
         [DllImport("user32.dll")]
         public static extern int CallNextHookEx(IntPtr idHook, int nCode, int wParam, ref keyboardHookStruct lParam);
         public static int VK_LBUTTON = 0x01;
         public static int VK_RBUTTON = 0x02;
+        public static int VK_XBUTTON1 = 0x05;
+        public static int VK_XBUTTON2 = 0x06;
 
         [DllImport("user32.dll")]
         public static extern short GetAsyncKeyState(Keys vKey);
@@ -68,7 +74,7 @@ namespace keyupMusic2
             IntPtr hMod,
             uint dwThreadId);
         [DllImport("user32.dll")]
-        public static extern bool GetCursorPos(out System.Drawing.Point lpPoint);
+        public static extern bool GetCursorPos(out System.Drawing.Point lpPoint); 
 
         [DllImport("user32.dll")]
         public static extern IntPtr SetWindowsHookEx(int idHook, LowLevelkeyboardHookProc callback, IntPtr hInstance, uint threadId);
