@@ -3,16 +3,17 @@ using System.Drawing.Imaging;
 using System.Windows.Forms;
 using static keyupMusic2.Common;
 using static keyupMusic2.MouseKeyboardHook;
+using static keyupMusic2.Native;
 
 namespace keyupMusic2
 {
-    public partial class Super
+    public partial class SuperClass
     {
-        public Super(Form parentForm)
+        public SuperClass(Form parentForm)
         {
             huan = (Huan)parentForm;
         }
-        public Super()
+        public SuperClass()
         {
         }
         public static Huan huan;
@@ -23,8 +24,8 @@ namespace keyupMusic2
         public static void hook_KeyDown(Keys keys)
         {
             Huan.keyupMusic2_onlisten = true;
-            var e = new KeyboardHookEventArgs(KeyboardEventType.KeyDown, keys, 0, new Native.keyboardHookStruct());
-            new Super().hook_KeyDown_keyupMusic2(e);
+            var e = new KeyboardHookEventArgs(KeyboardType.KeyDown, keys, 0, new Native.keyboardHookStruct());
+            new SuperClass().hook_KeyDown_keyupMusic2(e);
         }
         public void hook_KeyDown_keyupMusic2(KeyboardHookEventArgs e)
         {
@@ -106,9 +107,6 @@ namespace keyupMusic2
                     //capturer.StartLiveBackgroundRemoval(PowerToysCropAndLock);
                     break;
                 case Keys.X:
-                    Thread.Sleep(3000);
-                    mouse_move(1, 1);
-                    press(Keys.Left);
                     break;
                 case Keys.C:
                     press_middle_bottom();
@@ -120,7 +118,7 @@ namespace keyupMusic2
                     var pressedKeys = release_all_keydown();
                     if (pressedKeys.Any())
                         huan.Invoke2(() => { huan.label1.Text = "relese: " + string.Join(", ", pressedKeys); });
-                    stop_keys = new Dictionary<Keys, string>();
+                    hanling_keys = new Dictionary<Keys, string>();
                     break;
                 case Keys.M:
                     chrome_m();

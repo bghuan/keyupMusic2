@@ -1,6 +1,7 @@
 ﻿using System.Windows.Forms;
 using static keyupMusic2.Common;
 using static keyupMusic2.MouseKeyboardHook;
+using static keyupMusic2.Native;
 using static keyupMusic2.Simulate;
 using static System.Windows.Forms.VisualStyles.VisualStyleElement;
 
@@ -35,9 +36,42 @@ namespace keyupMusic2
         Point r_down_x = Point.Empty;
         bool r_chrome_menu = false;
 
+        public bool judge_handled(MouseHookEventArgs e)
+        {
+            if (e.Msg == MouseMsg.move) return false;
+            if (e.Msg == MouseMsg.middle) return true;
+            if (e.Msg == MouseMsg.middle_up) return true;
+            if (e.Msg == MouseMsg.wheel && e.Y == 0) return true;
+
+            if (e.Msg == MouseMsg.back || e.Msg == MouseMsg.go || e.Msg == MouseMsg.back_up || e.Msg == MouseMsg.go_up)
+            {
+                if (!list_go_back.Contains(ProcessName)) return true;
+                if (is_douyin()) return true;
+            }
+            if (ProcessName == Common.chrome)
+            {
+                if (is_down(Keys.RButton)) return false;
+                if (e.Msg == MouseMsg.click_r)
+                    return true;
+                if (e.Msg == MouseMsg.click_r_up)
+                    return true;
+            }
+            if (ProcessName == Common.devenv)
+            {
+                //if (e.Y != 0) return false;
+
+                if (is_down(Keys.RButton)) return false;
+                if (e.Msg == MouseMsg.click_r)
+                    return true;
+                if (e.Msg == MouseMsg.click_r_up)
+                    return true;
+            }
+            return false;
+        }
+
         public void MouseHookProc(MouseHookEventArgs e)
         {
-            if (handing3) return;
+            //if (handing3) return;
             if (handing) return;
             handing = true;
             handing3 = true;
@@ -46,9 +80,8 @@ namespace keyupMusic2
             if (judge_handled(e)) e.Handled = true;
 
             if (e.Msg != MouseMsg.move) FreshProcessName();
-            if (e.Msg == MouseMsg.click && e.X < screenHeight && e.X > screenHeight - 200 && e.Y < 100) TaskRun(() => { FreshProcessName(); }, 500);
 
-            //easy_read();
+            easy_read();
 
             Task.Run(() =>
             {
@@ -75,13 +108,6 @@ namespace keyupMusic2
             if (e.Msg == MouseMsg.move) return;
             if (e.Msg != MouseMsg.click_r_up) return;
             if (r_down_x == Point.Empty) return;
-            //if (r_chrome_menu && ProcessName == chrome) return;
-
-            //string msg = r_down_x.ToString() + e.Pos;
-            //huan.Invoke2(() =>
-            //{
-            //    huan.label1.Text = msg;
-            //}, 10);
 
             int arraw = 0;
             int arraw_long = 110;
@@ -97,45 +123,21 @@ namespace keyupMusic2
             switch (arraw)
             {
                 case 0:
-                    r_chrome_menu = true;
-                    mouse_click_right();
+                    if (ProcessName == chrome)
+                    {
+                        r_chrome_menu = true;
+                        mouse_click_right();
+                    }
                     break;
-                // 右
+                
                 case 1:
-                    if (is_chrome)
-                    {
-                        var full = IsFullScreen();
-                        if (full)
-                            SS().KeyPress(Keys.F11);
-                        var pp = new Point(100, 100);
-                        MoveProcessWindow(ProcessName, pp);
-                        if (full)
-                            SS().KeyPress(Keys.F11);
-                    }
-                    break;
-                // 左
+                    if (is_chrome) quick_left_right(arraw); break;// 右
                 case 2:
-                    if (is_chrome)
-                    {
-                        var full = IsFullScreen();
-                        if (full)
-                            SS().KeyPress(Keys.F11);
-                        var pp = new Point(screen2Width, 100);
-                        MoveProcessWindow(ProcessName, pp);
-                        if (full)
-                            SS().KeyPress(Keys.F11);
-                    }
-                    break;
-                //  下
+                    if (is_chrome) quick_left_right(arraw); break;// 左
                 case 3:
-                    if (is_chrome)
-                        SS().KeyPress(Keys.M);
-                    break;
-                //  上
+                    if (is_chrome) SS().KeyPress(Keys.M); break;//  下
                 case 4:
-                    if (is_chrome)
-                        SS().KeyPress(Keys.F);
-                    break;
+                    if (is_chrome) SS().KeyPress(Keys.F); break;//  上
             }
             if (catched)
             {
@@ -145,6 +147,7 @@ namespace keyupMusic2
                 play_sound_di();
             }
         }
+
         private void All()
         {
             if (e.Msg == MouseMsg.move) return;
@@ -177,49 +180,6 @@ namespace keyupMusic2
                 huan.label1.Text = msg;
             }, 10);
         }
-
-        public bool judge_handled(MouseHookEventArgs e)
-        {
-            if (e.Msg == MouseMsg.move) return false;
-            if (e.Msg == MouseMsg.middle) return true;
-            if (e.Msg == MouseMsg.middle_up) return true;
-
-            if (e.Msg == MouseMsg.wheel && e.Y == 0) return true;
-
-            if (e.Msg == MouseMsg.back || e.Msg == MouseMsg.go || e.Msg == MouseMsg.back_up || e.Msg == MouseMsg.go_up)
-            {
-                if (!list_go_back.Contains(ProcessName)) return true;
-                if (is_douyin()) return true;
-            }
-            if (ProcessName == Common.chrome)
-            {
-                if (ExistProcess(PowerToysCropAndLock, true))
-                {
-                    if (e.Msg == MouseMsg.click_r) return true;
-                    if (e.Msg == MouseMsg.click_r_up) return true;
-                }
-            }
-            if (ProcessName == chrome)
-            {
-                if (is_down(Keys.RButton)) return false;
-                if (e.Msg == MouseMsg.click_r)
-                    return true;
-                if (e.Msg == MouseMsg.click_r_up)
-                    return true;
-            }
-            if (ProcessName == Common.devenv)
-            {
-                if (is_down(Keys.RButton)) return false;
-                if (e.Y != 0) return false;
-
-                if (e.Msg == MouseMsg.click_r)
-                    return true;
-                if (e.Msg == MouseMsg.click_r_up)
-                    return true;
-            }
-            return false;
-        }
-
         private void GoBack()
         {
             if (e.Msg == MouseMsg.move) return;

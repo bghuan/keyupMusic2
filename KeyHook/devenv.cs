@@ -3,12 +3,12 @@ using static keyupMusic2.MouseKeyboardHook;
 
 namespace keyupMusic2
 {
-    public class devenv : Default
+    public class DevenvClass : Default
     {
         static int is_oem = 0;
         public void hook_KeyDown_ddzzq(KeyboardHookEventArgs e)
         {
-            if (ProcessName != ClassName()) return;
+            if (ProcessName != devenv) return;
             Common.hooked = true;
 
             switch (e.key)
@@ -26,7 +26,7 @@ namespace keyupMusic2
                     press([Keys.RControlKey, Keys.K, Keys.D]);
                     break;
                 case Keys.F2:
-                    press("73,242",1);
+                    press("73,242", 1);
                     break;
                 case Keys.F:
                     if (is_alt() && is_shift())

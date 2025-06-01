@@ -18,6 +18,8 @@ namespace keyupMusic2
     {
         public static Dictionary<string, DateTime> KeyTime = new Dictionary<string, DateTime>();
         public const string keyupMusic2 = "keyupMusic4";
+        public const string ElecHead = "ElecHead";
+        public const string Windblown = "Windblown";
         public const string ACPhoenix = "ACPhoenix";
         public const string Dragonest = "DragonestGameLauncher";
         public const string devenv = "devenv";
@@ -91,6 +93,13 @@ namespace keyupMusic2
                 GetWindowText() == UnlockingWindow || ProcessName == LockApp || ProcessName == err;
                 if (aaa)
                 {
+                    string _ProcessName = ProcessName;
+                    if (_ProcessName == "err")
+                    {
+                        uint processId = 0;
+                        Native.GetWindowThreadProcessId(Native.GetForegroundWindow(), out processId);
+                        _ProcessName = "err,processId:" + processId;
+                    }
                     Log.log("GetWindowText():" + GetWindowText() + ",ProcessName:" + ProcessName);
                     if (ProcessName == err)
                         play_sound_di2();
@@ -128,55 +137,108 @@ namespace keyupMusic2
         }
         static IntPtr old_hwnd = 0;
 
-        public static Dictionary<IntPtr, string> ProcessMap = new Dictionary<IntPtr, string>();
+        //public static Dictionary<IntPtr, string> ProcessMap = new Dictionary<IntPtr, string>();
+        //public static string FreshProcessName()
+        //{
+        //    IntPtr hwnd = Native.GetForegroundWindow(); // 获取当前活动窗口的句柄
+        //    if (ProcessMap.ContainsKey(hwnd))
+        //    {
+        //        Common.ProcessName = ProcessMap[hwnd].Split(";;;;")[0];
+        //        ProcessTitle = ProcessMap[hwnd].Split(";;;;")[1];
+        //        ProcessPath = ProcessMap[hwnd].Split(";;;;")[2];
+        //        if (Common.ProcessName == msedge)
+        //            ProcessTitle = GetWindowText(hwnd); ;
+        //        return Common.ProcessName;
+        //    }
+        //    //if (hwnd == old_hwnd) return Common.ProcessName;
+        //    old_hwnd = hwnd;
+
+        //    string windowTitle = GetWindowText(hwnd);
+        //    ProcessTitle = string.IsNullOrEmpty(windowTitle) ? "" : windowTitle;
+        //    //Console.WriteLine("当前活动窗口名称: " + windowTitle);
+
+        //    var filePath = "a.txt";
+        //    var fildsadsePath = "err";
+        //    var module_name = "err";
+        //    var ProcessName = "err";
+
+        //    try
+        //    {
+        //        uint processId;
+        //        Native.GetWindowThreadProcessId(hwnd, out processId);
+        //        using (Process process = Process.GetProcessById((int)processId))
+        //        {
+        //            fildsadsePath = process.MainModule.FileName;
+        //            ProcessPath = fildsadsePath;
+        //            module_name = process.MainModule.ModuleName;
+        //            ProcessName = process.ProcessName;
+        //        }
+        //    }
+        //    catch (System.Exception ex)
+        //    {
+        //        fildsadsePath = ex.Message;
+        //    }
+
+        //    //log(DateTime.Now.ToString("") + " " + windowTitle + " " + fildsadsePath + module_nasme + "\n");
+        //    Common.ProcessName = ProcessName;
+        //    lock (ProcessMap)
+        //    {
+        //        if (!ProcessMap.ContainsKey(hwnd))
+        //            ProcessMap.Add(hwnd, ProcessName + ";;;;" + ProcessTitle + ";;;;" + ProcessPath);
+        //    }
+        //    return ProcessName;
+        //}
+
+
+
+        public static Dictionary<IntPtr, ProcessWrapper> ProcessMap2 = new Dictionary<IntPtr, ProcessWrapper>();
+        public class ProcessWrapper
+        {
+            public string name { get; set; }
+            public string title { get; set; }
+            public string path { get; set; }
+
+            public ProcessWrapper(string name, string title, string path)
+            {
+                this.name = name;
+                this.title = title;
+                this.path = path;
+            }
+        }
         public static string FreshProcessName()
         {
             IntPtr hwnd = Native.GetForegroundWindow(); // 获取当前活动窗口的句柄
-            if (ProcessMap.ContainsKey(hwnd))
+            if (ProcessMap2.ContainsKey(hwnd) && ProcessMap2[hwnd].title != null)
             {
-                Common.ProcessName = ProcessMap[hwnd].Split(";;;;")[0];
-                ProcessTitle = ProcessMap[hwnd].Split(";;;;")[1];
-                ProcessPath = ProcessMap[hwnd].Split(";;;;")[2];
+                Common.ProcessName = ProcessMap2[hwnd].name;
+                ProcessTitle = ProcessMap2[hwnd].title;
+                ProcessPath = ProcessMap2[hwnd].path;
                 if (Common.ProcessName == msedge)
                     ProcessTitle = GetWindowText(hwnd); ;
                 return Common.ProcessName;
             }
-            //if (hwnd == old_hwnd) return Common.ProcessName;
-            old_hwnd = hwnd;
-
-            string windowTitle = GetWindowText(hwnd);
-            ProcessTitle = string.IsNullOrEmpty(windowTitle) ? "" : windowTitle;
-            //Console.WriteLine("当前活动窗口名称: " + windowTitle);
-
-            var filePath = "a.txt";
-            var fildsadsePath = "err";
-            var module_name = "err";
-            var ProcessName = "err";
-
-            try
+            lock (ProcessMap2)
             {
-                uint processId;
-                Native.GetWindowThreadProcessId(hwnd, out processId);
-                using (Process process = Process.GetProcessById((int)processId))
+                string windowTitle = GetWindowText(hwnd);
+                ProcessTitle = string.IsNullOrEmpty(windowTitle) ? "" : windowTitle;
+                var ProcessName = "none";
+
+                try
                 {
-                    fildsadsePath = process.MainModule.FileName;
-                    ProcessPath = fildsadsePath;
-                    module_name = process.MainModule.ModuleName;
-                    ProcessName = process.ProcessName;
+                    uint processId;
+                    Native.GetWindowThreadProcessId(hwnd, out processId);
+                    using (Process process = Process.GetProcessById((int)processId))
+                    {
+                        Common.ProcessName = process.ProcessName;
+
+                        ProcessMap2.Add(hwnd, new ProcessWrapper(process.ProcessName, ProcessTitle, process.MainModule.FileName));
+                    }
+                }
+                catch (System.Exception ex)
+                {
                 }
             }
-            catch (System.Exception ex)
-            {
-                fildsadsePath = ex.Message;
-            }
 
-            //log(DateTime.Now.ToString("") + " " + windowTitle + " " + fildsadsePath + module_nasme + "\n");
-            Common.ProcessName = ProcessName;
-            lock (ProcessMap)
-            {
-                if (!ProcessMap.ContainsKey(hwnd))
-                    ProcessMap.Add(hwnd, ProcessName + ";;;;" + ProcessTitle + ";;;;" + ProcessPath);
-            }
             return ProcessName;
         }
         public static string GetWindowText()
@@ -218,9 +280,9 @@ namespace keyupMusic2
             var module_name = "err";
             var Name = "err";
 
+            uint processId = 0;
             try
             {
-                uint processId;
                 Native.GetWindowThreadProcessId(hwnd, out processId);
                 using (Process process = Process.GetProcessById((int)processId))
                 {
@@ -234,6 +296,7 @@ namespace keyupMusic2
                 Path = ex.Message;
             }
 
+            if (Name == "err") Name = "err,processId:" + processId;
             string txt = key;
             var curr_proc_info = new { key, Name, Title, Path, IsFull }.ToString();
             if (proc_info != curr_proc_info) txt = curr_proc_info;
@@ -1126,6 +1189,8 @@ namespace keyupMusic2
             if (!ExistProcess(LosslessScaling))
                 ProcessRun(LosslessScalingexe);
             press([Keys.LControlKey, Keys.F2]);
+
+            if (Position.X > 0) press_middle_bottom();
         }
         public static void system_hard_sleep()
         {
@@ -1139,6 +1204,40 @@ namespace keyupMusic2
             SetWindowTitle(Common.chrome, "");
             SetWindowTitle(Common.PowerToysCropAndLock, "");
             SetWindowTitle(Common.wemeetapp, "");
+        }
+
+        public static void quick_left_right(int arraw)
+        {
+            IntPtr hwnd = GetForegroundWindow();
+            var full = IsFullScreen(hwnd);
+            if (full)
+            {
+                SS().KeyPress(Keys.F11);
+                Sleep(500);
+            }
+
+            ShowWindow((hwnd), SW.SW_SHOWNORMAL);
+            Sleep(500);
+
+            var pp = new Point(100, 100);
+            if (arraw == 2) pp = new Point(screen2Width + 100, 100);
+            MoveProcessWindow(ProcessName, pp);
+            Sleep(500);
+
+            RECT windowRect;
+            GetWindowRect(hwnd, out windowRect);
+            int windowWidth = windowRect.Right - windowRect.Left;
+            if (windowWidth > 3000 || windowWidth < 1000)
+            {
+                SetWindowPos(hwnd, IntPtr.Zero, pp.X, pp.Y, 1800, 920, SWP_FRAMECHANGED | SWP_NOMOVE);
+                Sleep(500);
+            }
+
+            ShowWindow((hwnd), SW.SW_SHOWMAXIMIZED);
+            Sleep(500);
+
+            if (full)
+                SS().KeyPress(Keys.F11);
         }
 
     }

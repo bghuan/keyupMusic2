@@ -3509,7 +3509,135 @@ namespace keyupMusic2
         }
 
         public static int screenWidth = Screen.PrimaryScreen.Bounds.Width;
-        public static int screenHeight = Screen.PrimaryScreen.Bounds.Height;
+        public static int screenHeusing OpenCvSharp;
+using OpenCvSharp.Extensions;
+using System.Diagnostics;
+using System.Drawing.Imaging;
+using static keyupMusic2.Native;
+
+namespace keyupMusic2
+{
+    public class WindowCaptureFixed
+    {
+        // 屏幕区域捕获
+        private Bitmap CaptureScreenRegion(int x, int y, int width, int height)
+        {
+            Bitmap screenShot = new Bitmap(width, height);
+            using (Graphics g = Graphics.FromImage(screenShot))
+            {
+                g.CopyFromScreen(x, y, 0, 0, new System.Drawing.Size(width, height));
+            }
+            return screenShot;
+        }
+        public byte[] BitmapToByteArray(Bitmap bitmap, ImageFormat format = null)
+        {
+            format ??= ImageFormat.Jpeg; // 默认使用 JPEG 格式
+
+            using var ms = new MemoryStream();
+            bitmap.Save(ms, format);
+            return ms.ToArray();
+        }
+        int width; int height;
+        // 主方法：使用屏幕区域捕获并显示
+        public void StartLiveBackgroundRemoval(string processName)
+        {
+            var server = new ScreenVideoSharingServer();
+            Process[] processes = Process.GetProcessesByName(processName);
+            IntPtr hWnd = processes[0].MainWindowHandle;
+            GetWindowRect(hWnd, out RECT rect);
+            width = rect.Right - rect.Left;
+            height = rect.Bottom - rect.Top;
+            int x = 0;
+            int y = Screen.PrimaryScreen.Bounds.Height - height;
+            //width = 2116- 1653;
+            //height = 1139- 423;
+            //x = 1653;
+            //y = 423;
+
+            // 创建显示窗口
+            Cv2.NamedWindow("Live Capture", WindowFlags.Normal);
+            Cv2.ResizeWindow("Live Capture", width, height);
+
+            // 创建背景减除器
+            using var bgSubtractor = BackgroundSubtractorMOG2.Create();
+            using var result = new Mat();
+
+            var screenBitmap22 = CaptureScreenRegion(x, y, width, height);
+            server.socket_write(BitmapToByteArray(screenBitmap22));
+            // 循环捕获和处理
+            while (true)
+            {
+                using Bitmap screenBitmap = CaptureScreenRegion(x, y, width, height);
+                server.socket_write(BitmapToByteArray(screenBitmap));
+                server.socket_write("a.png");
+                using var frame = BitmapConverter.ToMat(screenBitmap);
+                Cv2.ImShow("Live Capture", frame);
+
+                if (Cv2.WaitKey(1) == 27)
+                    break;
+            }
+            // 释放资源
+            Cv2.DestroyAllWindows();
+        }
+    }
+}namespace keyupMusic2
+{
+    public partial class Form1 : Form
+    {
+        public const string PowerToysCropAndLock = "PowerToys.CropAndLock";
+        public Form1()
+        {
+            InitializeComponent();
+            //server.socket_write(PowerToysCropAndLock);
+            new WindowCaptureFixed().StartLiveBackgroundRemoval(PowerToysCropAndLock);
+        }
+    }
+}
+
+
+using System.Net;
+using System.Net.Sockets;
+using System.Net.WebSockets;
+using System.Text;
+
+public class ScreenVideoSharingServer
+{
+    public static TcpListener listener;
+    public static TcpClient client2;
+    public static NetworkStream stream;
+    private const string Hostname = "127.0.0.1";
+    private const int pport = 13000;
+    private const string WebSocketUrl = "wss://bghuan.cn/ws";
+    private ClientWebSocket client;
+
+    public ScreenVideoSharingServer()
+    {
+        client = new ClientWebSocket();
+        client.ConnectAsync(new Uri(WebSocketUrl), CancellationToken.None).Wait();
+
+        socket_write("open yo");
+    }
+    public void socket_write(string msg)
+    {
+        byte[] buffer = Encoding.UTF8.GetBytes(msg);
+        client.SendAsync(
+            new ArraySegment<byte>(buffer),
+            WebSocketMessageType.Text,
+            true,
+            CancellationToken.None
+        ).Wait();
+    }
+    public void socket_write(byte[] data)
+    {
+        client.SendAsync(
+            new ArraySegment<byte>(data),
+            WebSocketMessageType.Binary,
+            true,
+            CancellationToken.None
+        ).Wait();
+    }
+}
+ight = Screen.PrimaryScreen.Bounds.Height;
         public static int screenWidth1 = Screen.PrimaryScreen.Bounds.Width - 1;
         public static int screenHeight1 = Screen.PrimaryScreen.Bounds.Height - 1;
         public static int screenWidth2 = Screen.PrimaryScreen.Bounds.Width / 2;

@@ -3,7 +3,7 @@ using static keyupMusic2.MouseKeyboardHook;
 
 namespace keyupMusic2
 {
-    public partial class Super
+    public partial class SuperClass
     {
         public static bool judge_handled(KeyboardHookEventArgs e)
         {

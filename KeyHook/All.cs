@@ -4,7 +4,7 @@ using static keyupMusic2.MouseKeyboardHook;
 
 namespace keyupMusic2
 {
-    public class All : Default
+    public class AllClass : Default
     {
         public void hook_KeyDown_ddzzq(KeyboardHookEventArgs e)
         {
@@ -19,43 +19,105 @@ namespace keyupMusic2
 
             switch (e.key)
             {
-                //case Keys.MediaNextTrack:
-                //case Keys.MediaPreviousTrack:
-                //    quick_go_back(e);
-                //    break;
+                case Keys.F4:
+                    quick_close(); fresh_name(); break;
+                case Keys.F10:
+                    quick_what();break;
+                case Keys.F11:
+                    quick_visiualstudio(module_name);break;
+                case Keys.F12:
+                    quick_wechat_or_notify(module_name);break;
+
                 case Keys.Home:
                     copy_screen(); break;
                 case Keys.End:
                     copy_secoed_screen(); break;
-                //case Keys.VolumeDown:
-                //    if (right_top) press(Keys.F7); break;
-                //case Keys.VolumeUp:
-                //    if (right_top) press(Keys.F8); break;
+                case Keys.PageDown:
+                    quick_gamg_alttab(e, module_name); break;
+
                 case Keys.Delete:
                 case Keys.Escape:
-                    Special_Input = false;
-                    DaleyRun_stop = true;
-                    special_delete_key_time = DateTime.Now;
-                    KeyTime[system_sleep_string] = DateTime.MinValue;
-                    player.Stop();
-                    break;
+                    esc(); break;
+
                 case Keys.LMenu:
                 case Keys.Tab:
-                case Keys.F4:
-                    Sleep(100); FreshProcessName(); break;
-                //case Keys.LWin:
-                //case Keys.M:
-                //case Keys.B:
-                //case Keys.Oem1:
-                //case Keys.D9:
-                //    play_sound_di(); break;
+                    fresh_name(); break;
+
                 case Keys.OemPeriod:
                     if (is_down(Keys.RControlKey)) SS().KeyPress(Keys.Apps); break;
-                    //case Keys.RControlKey:
-                    //    log(DateTimeOffset.UtcNow.ToUnixTimeMilliseconds().ToString()); break;
             }
 
             Common.hooked = false;
+        }
+
+        private static void quick_what()
+        {
+            //if (TryFocusProcess(Common.cs2)) return;
+            //if (TryFocusProcess(Common.SplitFiction)) return;
+            ////if (TryFocusProcess(Common.steam)) break;
+            //quick_max_chrome();
+        }
+
+        private static void quick_gamg_alttab(KeyboardHookEventArgs e, string module_name)
+        {
+            if (e.key == Keys.PageDown && (!is_steam_game() && module_name != chrome && module_name != PowerToysCropAndLock)) return;
+            quick_max_chrome(e.Pos);
+        }
+
+        private static void quick_close()
+        {
+            if (ProcessName == Common.keyupMusic2) return;
+            if (lock_err) { system_hard_sleep(); return; }
+            CloseProcess();
+        }
+
+        private static void fresh_name()
+        {
+            Sleep(100);
+            FreshProcessName();
+        }
+
+        private static void quick_wechat_or_notify(string module_name)
+        {
+            if (is_down(Keys.Delete) || is_ctrl())return;
+            if (Common.WeChat == module_name)
+            {
+                CloseProcess(module_name);
+            }
+            else if (GetWindowText() == UnlockingWindow || ProcessName == LockApp || ProcessName == err)
+            {
+                SuperClass.hook_KeyDown(Keys.N);
+            }
+            else
+            {
+                Common.FocusProcess(Common.WeChat);
+                Thread.Sleep(10);
+                if (ProcessName2 == Common.WeChat) return;
+                run_wei();
+            }
+        }
+
+        private static void quick_visiualstudio(string module_name)
+        {
+            if (is_down(Keys.Delete) || is_ctrl()) return;
+            if (Common.devenv == module_name)
+            {
+                HideProcess(module_name);
+            }
+            else
+            {
+                if (Common.FocusProcess(Common.devenv)) return;
+                run_vis();
+            }
+        }
+
+        private static void esc()
+        {
+            Special_Input = false;
+            DaleyRun_stop = true;
+            special_delete_key_time = DateTime.Now;
+            KeyTime[system_sleep_string] = DateTime.MinValue;
+            player.Stop();
         }
 
         private static void quick_go_back(KeyboardHookEventArgs e)
@@ -86,9 +148,8 @@ namespace keyupMusic2
                         break;
                     case Keys.Right:
                     case Keys.Left:
-                        var pp = new Point(100, 100);
-                        if(e.key == Keys.Left) pp = new Point(screen2Width, 100);
-                        MoveProcessWindow(ProcessName, pp);
+                        int arraw = e.key == Keys.Left ? 2 : 1;
+                        quick_left_right(arraw);
                         break;
                 }
         }
@@ -119,6 +180,21 @@ namespace keyupMusic2
                     case Keys.Space:
                         press(Keys.D0); break;
                 }
+        }
+        private static void run_wei()
+        {
+            if (!Common.ExistProcess(Common.WeChat))
+            {
+                press("LWin;100;WEI;en;100;Enter;", 50);
+                return;
+            }
+            press([Keys.LControlKey, Keys.LMenu, Keys.W]);
+        }
+
+        private static void run_vis()
+        {
+            press("LWin;VISUAL;en;100;Apps;100;Enter;", 100);
+            TaskRun(() => { press("Tab;Down;Enter;", 100); }, 1800);
         }
     }
 }

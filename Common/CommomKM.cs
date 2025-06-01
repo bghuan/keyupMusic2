@@ -1,4 +1,5 @@
-﻿using System.Diagnostics;
+﻿using System;
+using System.Diagnostics;
 using System.Drawing;
 using System.Drawing.Imaging;
 using System.Media;
@@ -59,29 +60,6 @@ namespace keyupMusic2
         public static int screen2Height = 1620;
         public static int screen2Height1 = 1619;
 
-
-        public static void mouse_move(int x, int y, int x2, int y2)
-        {
-            mouse_move(x, y);
-            down_mouse();
-
-            int times = 20;
-            int all_times = 20;
-            for (int i = 1; i < times + 1; i++)
-            {
-                int xx = 1;
-                int yy = 1;
-                if (x == x2) xx = 0;
-                else xx = (x2 - x) / times * i;
-                if (y == y2) yy = 0;
-                else yy = (y2 - y) / times * i;
-
-                mouse_move(x + xx, y + yy, all_times / times);
-            }
-
-            mouse_move(x2, y2);
-            up_mouse();
-        }
         public static void mouse_move_center(int tick = 0)
         {
             int x = screenWidth / 2;
@@ -437,6 +415,10 @@ namespace keyupMusic2
             Thread.Sleep(tick);
             keybd_event((byte)keys, 0, 2, 0);
         }
+        public static void press_dump_task(Keys keys, int tick = 100, int tick2 = 0)
+        {
+            TaskRun(() => press_dump(keys, tick), tick2);
+        }
         public static void down_press(Keys keys)
         {
             keybd_event((byte)keys, 0, 0, 0);
@@ -445,9 +427,14 @@ namespace keyupMusic2
         {
             keybd_event((byte)keys, 0, 2, 0);
         }
+        static Dictionary<byte, byte> MapVirtualKey = new Dictionary<byte, byte>();
         private static void keybd_event(byte bVk, byte bScan, uint dwFlags, uint dwExtraInfo)
         {
-            Native.keybd_event(bVk, bScan, dwFlags, isVir);
+            if (!MapVirtualKey.ContainsKey(bVk)) 
+            { 
+                MapVirtualKey.Add(bVk, (byte)(Native.MapVirtualKey(bVk, 0) & 0xFFU));
+            }
+            Native.keybd_event(bVk, MapVirtualKey[bVk], dwFlags, isVir);
         }
     }
 }

@@ -4,42 +4,21 @@ namespace keyupMusic2
 {
     public class MouseKeyboardHook : IDisposable
     {
-        public static Dictionary<Keys, string> stop_keys = new Dictionary<Keys, string>();
-        public static bool mouse_downing = false;
+        public static Dictionary<Keys, string> hanling_keys = new Dictionary<Keys, string>();
         public static bool handling = false;
         protected virtual int KeyboardHookProc(int code, int wParam, ref Native.keyboardHookStruct lParam)
         {
-            var key = (Keys)lParam.vkCode;
-            {
-                KeyboardEventType type;
-
-                if ((wParam == 0x0100 || wParam == 0x0104))
-                {
-                    type = KeyboardEventType.KeyDown;
-                }
-                else if ((wParam == 0x0101 || wParam == 0x0105))
-                {
-                    type = KeyboardEventType.KeyUp;
-                }
-                else
-                    return Native.CallNextHookEx(_key_hookId, code, wParam, ref lParam);
-
-                //if (key == Keys.F22) return 1;
-                if (key == (Keys.LButton | Keys.XButton2)) return 1;
-                var args = new KeyboardHookEventArgs(type, key, wParam, lParam);
-                if (args.isVir) return Native.CallNextHookEx(_key_hookId, code, wParam, ref lParam);
-                if (stop_keys.Count == 0 || !stop_keys.ContainsKey(key) || type == KeyboardEventType.KeyUp || key == Keys.VolumeDown || key == Keys.VolumeUp)
-                    KeyboardHookEvent(args);
-
-                if (args.Handled) return 1;
-            }
+            var args = new KeyboardHookEventArgs(0, (Keys)lParam.vkCode, wParam, lParam);
+            if (!args.isVir)
+                KeyboardHookEvent(args);
+            if (args.Handled) 
+                return 1;
 
             return Native.CallNextHookEx(_key_hookId, code, wParam, ref lParam);
         }
 
         protected virtual IntPtr MouseHookProc(int nCode, IntPtr wParam, IntPtr lParam)
         {
-
             Point curPos;
             Native.GetCursorPos(out curPos);
             var args = new MouseHookEventArgs((MouseMsg)wParam, curPos.X, curPos.Y, wParam, lParam);
@@ -109,7 +88,7 @@ namespace keyupMusic2
         }
         public class KeyboardHookEventArgs : EventArgs
         {
-            public KeyboardEventType Type;
+            public KeyboardType Type;
             public int wParam;
             public Native.keyboardHookStruct lParam;
             public Keys key;
@@ -120,9 +99,9 @@ namespace keyupMusic2
             public bool isVir;
             public Point Pos => new Point() { X = X, Y = Y };
 
-            public KeyboardHookEventArgs(KeyboardEventType type, Keys key, int wParam, Native.keyboardHookStruct lParam)
+            public KeyboardHookEventArgs(KeyboardType type, Keys key, int wParam, Native.keyboardHookStruct lParam)
             {
-                Type = type;
+                Type = (wParam == 0x0101 || wParam == 0x0105) ? KeyboardType.KeyUp : KeyboardType.KeyDown;
                 this.wParam = wParam;
                 this.lParam = lParam;
                 this.key = key;
@@ -207,7 +186,7 @@ namespace keyupMusic2
         go_up = 0x920C
     }
 
-    public enum KeyboardEventType
+    public enum KeyboardType
     {
         KeyDown, KeyUp
     }

@@ -3,24 +3,18 @@ using KeyEvent = keyupMusic2.MouseKeyboardHook.KeyboardHookEventArgs;
 
 namespace keyupMusic2
 {
-    public class Chrome : Default
+    public class ChromeClass : Default
     {
-        public static string ClassName = "chrome";
-        //public chrome()
-        //{
-        //    Common.list2.Add(ClassName);
-        //}
-        //public static Keys[] judge_handled_key = { Keys.VolumeDown, Keys.VolumeUp, Keys.F1, };
         public static Keys[] judge_handled_key = {  Keys.F1, };
         public override bool judge_handled(KeyEvent e)
         {
-            if (Common.ProcessName != ClassName) return false;
+            if (Common.ProcessName != chrome) return false;
             if (judge_handled_key.Contains(e.key)) return true;
             return false;
         }
         public void handlehandle(KeyEvent e)
         {
-            if (Common.ProcessName != ClassName) return;
+            if (Common.ProcessName != chrome) return;
             pre_handling(e);
             do_handling(e);
             fin_handling(e);

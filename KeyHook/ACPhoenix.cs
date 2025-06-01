@@ -3,14 +3,14 @@ using static keyupMusic2.MouseKeyboardHook;
 
 namespace keyupMusic2
 {
-    public class ACPhoenix : Default
+    public class ACPhoenixClass : Default
     {
         public bool ACPhoenix_mouse_down = false;
 
         public void hook_KeyDown_ddzzq(KeyboardHookEventArgs e)
         {
             if (is_alt() && is_down(Keys.Tab)) return;
-            if (ProcessName != ClassName()) return;
+            if (ProcessName != ACPhoenix) return;
             Common.hooked = true;
             string nothing = "1834.1103";
             string nothing2 = screenWidth2 + "." + screenHeight2;
@@ -67,7 +67,6 @@ namespace keyupMusic2
                     break;
                 case Keys.Oem3:
                     if (is_ctrl() || is_alt()) { mouse_click(); mouse_click(); break; }
-                    mouse_downing = true;
                     down_mouse();
                     break;
                 case Keys.Enter:

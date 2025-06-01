@@ -4,9 +4,9 @@ using static keyupMusic2.Native;
 
 namespace keyupMusic2
 {
-    public class Other : Default
+    public class OtherClass : Default
     {
-        public Other()
+        public OtherClass()
         {
             var constants = GetPublicConstStrings(typeof(Common));
             var list = new List<string>();
@@ -19,68 +19,18 @@ namespace keyupMusic2
         string[] list = new string[200];
         string[] list_wechat_visualstudio = { Common.WeChat, Common.ACPhoenix, explorer, Common.keyupMusic2, Common.douyin, Common.devenv, Common.QQMusic, Common.SearchHost, Common.ApplicationFrameHost, Common.vlc, Common.v2rayN, Common.cs2 };
         string[] list_volume = { Common.douyin, Common.msedge };
-        static bool flag_special = false;
 
         public void hook_KeyDown(Keys keys)
         {
-            new Other().hook_KeyDown(new KeyboardHookEventArgs(KeyboardEventType.KeyDown, keys, 0, new Native.keyboardHookStruct()));
+            new OtherClass().hook_KeyDown(new KeyboardHookEventArgs(KeyboardType.KeyDown, keys, 0, new Native.keyboardHookStruct()));
         }
         public void hook_KeyDown(KeyboardHookEventArgs e)
         {
             string module_name = ProcessName;
-            //flag_special = is_down(Keys.Delete);
-            //if (!list.Contains(module_name) || flag_special) return;
             Common.hooked = true;
-            Not_F10_F11_F12_Delete(true, e.key);
+            //Not_F10_F11_F12_Delete(true, e.key);
             handling_keys = e.key;
 
-            if (!is_down(Keys.Delete) && !is_ctrl())
-                switch (e.key)
-                {
-                    case Keys.PageDown:
-                        if (e.key == Keys.PageDown && (!is_steam_game() && module_name != chrome && module_name != PowerToysCropAndLock)) break;
-                        quick_max_chrome(e.Pos);
-                        break;
-                    case Keys.F4:
-                        if (ProcessName == Common.keyupMusic2) break;
-                        if (lock_err) { system_hard_sleep(); break; }
-                        CloseProcess();
-                        break;
-                    case Keys.F10:
-                        if (TryFocusProcess(Common.cs2)) break;
-                        if (TryFocusProcess(Common.SplitFiction)) break;
-                        //if (TryFocusProcess(Common.steam)) break;
-                        quick_max_chrome();
-                        break;
-                    case Keys.F11:
-                        if (Common.devenv == module_name)
-                        {
-                            HideProcess(module_name);
-                        }
-                        else
-                        {
-                            if (Common.FocusProcess(Common.devenv)) break;
-                            run_vis();
-                        }
-                        break;
-                    case Keys.F12:
-                        if (Common.WeChat == module_name)
-                        {
-                            CloseProcess(module_name);
-                        }
-                        else if (GetWindowText() == UnlockingWindow || ProcessName == LockApp || ProcessName == err)
-                        {
-                            Super.hook_KeyDown(Keys.N);
-                        }
-                        else
-                        {
-                            Common.FocusProcess(Common.WeChat);
-                            Thread.Sleep(10);
-                            if (ProcessName2 == Common.WeChat) break;
-                            run_wei();
-                        }
-                        break;
-                }
             switch (module_name)
             {
                 case QQLive:
@@ -206,12 +156,6 @@ namespace keyupMusic2
                         case Keys.F6:
                             press("Escape;1643,179;100;1466,818;1556,806");
                             break;
-                        //case Keys.D:
-                        //    press_dump(Keys.A,100);
-                        //    break;
-                        case Keys.W:
-                            KeyUp.w = 1;
-                            break;
                         case Keys.OemPeriod:
                             var sfa = Position;
                             mouse_click();
@@ -252,7 +196,7 @@ namespace keyupMusic2
                         case Keys.Space:
                             hideProcessTitle(PowerToysCropAndLock);
                             MoveProcessWindow2(PowerToysCropAndLock);
-                            CenterWindowOnScreen(chrome, true);
+                            //CenterWindowOnScreen(chrome, true);
                             break;
                     }
                     break;
@@ -334,21 +278,6 @@ namespace keyupMusic2
 
 
             Common.hooked = false;
-        }
-        private static void run_wei()
-        {
-            if (!Common.ExistProcess(Common.WeChat))
-            {
-                press("LWin;100;WEI;en;100;Enter;", 50, flag_special);
-                return;
-            }
-            press([Keys.LControlKey, Keys.LMenu, Keys.W]);
-        }
-
-        private static void run_vis()
-        {
-            press("LWin;VISUAL;en;100;Apps;100;Enter;", 100, flag_special);
-            TaskRun(() => { press("Tab;Down;Enter;", 100); }, 1800);
         }
     }
 }

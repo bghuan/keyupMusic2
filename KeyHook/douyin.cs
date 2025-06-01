@@ -3,13 +3,13 @@ using static keyupMusic2.MouseKeyboardHook;
 
 namespace keyupMusic2
 {
-    public class douyin : Default
+    public class DouyinClass : Default
     {
-        public douyin(Form parentForm)
+        public DouyinClass(Form parentForm)
         {
             huan = (Huan)parentForm;
         }
-        public douyin()
+        public DouyinClass()
         {
         }
         public static Huan huan;
@@ -20,7 +20,7 @@ namespace keyupMusic2
         bool not_in_class = false;
         public override bool judge_handled(KeyboardHookEventArgs e)
         {
-            not_in_class = ProcessName != ClassName()
+            not_in_class = ProcessName != douyin
                 && (ProcessName != ApplicationFrameHost || ProcessTitle?.IndexOf("照片") < 0)
                 && ProcessTitle?.IndexOf("抖音") < 0
                 //&& (ProcessName == msedge && ProcessTitle?.IndexOf("多多自走棋") < 0)
@@ -75,16 +75,6 @@ namespace keyupMusic2
                     }
                     break;
             }
-            //douyin_game_key(e, is_string_cmd);
-            //if (e.key == Keys.Right)
-            //{
-            //    if (e.X < 800)
-            //    {
-            //        press(Keys.X);
-            //    }
-            //    if (e.X < 1600) { }
-            //    if (e.X < 2600) { }
-            //}
 
             Common.hooked = false;
             if (!handling) handling = true;
@@ -111,120 +101,5 @@ namespace keyupMusic2
             //    || judge_color(1996, 1400, Color.FromArgb(117, 46, 66)))
             press("2345,1409;2345," + (1030 + (num * 50)), 101);
         }
-        //private void douyin_game_key(KeyboardHookEventArgs e, bool is_string_cmd)
-        //{
-        //    switch (e.key)
-        //    {
-        //        case Keys.F1:
-        //            press(Keys.Enter);
-        //            break;
-        //        case Keys.F2:
-        //            Special_Input2 = !Special_Input2;
-        //            Special_Input_tiem = DateTime.Now;
-        //            play_sound_di();
-        //            break;
-
-        //        case Keys.F4:
-        //            send_input("揭竿而起");
-        //            break;
-        //        case Keys.F5:
-        //            send_input("全军出击");
-        //            break;
-        //        case Keys.F6:
-        //            send_input("休养生息");
-        //            break;
-
-        //        case Keys.Oem3:
-        //            if (is_string_cmd) { raw_press(); break; }
-        //            else if (!is_shift()) send_input("x", false); break;
-
-        //        case Keys.D1:
-        //            if (is_string_cmd) send_input("隔山打牛"); break;//远
-        //        case Keys.Q:
-        //            if (is_string_cmd) send_input("雷霆万钧"); break;//         2
-
-        //        case Keys.D2:
-        //            if (is_string_cmd) send_input("兵不厌诈"); break;//+2       pick
-        //        case Keys.W:
-        //            if (is_string_cmd) send_input("无中生有"); break;//         1
-
-        //        case Keys.D3:
-        //            if (is_string_cmd) send_input("勇冠三军"); break;//+2
-        //        case Keys.E:
-        //            if (is_string_cmd) send_input("如影随形"); break;//         3
-
-        //        case Keys.D4:
-        //            if (is_string_cmd) send_input("固若金汤"); break;//+3
-        //        case Keys.R:
-        //            if (is_string_cmd) send_input("溃不成军"); break;//no
-
-        //        case Keys.D5:
-        //            if (is_string_cmd) send_input("救死扶伤"); break;//铁
-        //        case Keys.T:
-        //            if (is_string_cmd) send_input("殃及池鱼"); break;//         01
-
-        //        case Keys.D6:
-        //            if (is_string_cmd) send_input("急速冷却"); break;//辅
-        //        case Keys.Y:
-        //            if (is_string_cmd) send_input("调兵遣将"); break;//no
-
-        //        case Keys.D7:
-        //            if (is_string_cmd) send_input("指鹿为马"); break;//+3       pick
-        //        case Keys.U:
-        //            if (is_string_cmd) send_input("偷梁换柱"); break;//no
-
-        //        case Keys.D8:
-        //            if (is_string_cmd) send_input("破釜沉舟"); break;//逆风
-
-        //        case Keys.D9:
-        //            if (is_string_cmd) send_input("割地称臣"); break;//逆风
-
-
-        //        case Keys.D0:
-        //            if (is_string_cmd) send_input("招贤纳士"); break;//
-
-        //        case Keys.C:
-        //            if (is_string_cmd) send_input("水淹七军"); break;//
-        //        case Keys.Z:
-        //            if (is_string_cmd) send_input("战无不胜"); break;//
-        //        case Keys.X:
-        //            if (is_string_cmd) send_input("殃及池鱼"); break;//
-        //        case Keys.V:
-        //            if (is_string_cmd) send_input("神之守护"); break;//
-        //    }
-        //}
-
-
-
-        //static string last_clip = "";
-        //private void send_input(string txt, bool click_input = true)
-        //{
-        //    Special_Input_tiem = init_time;
-        //    play_sound_di();
-        //    if (last_clip != txt)
-        //        Invoke(() => Clipboard.SetText(txt));
-        //    last_clip = txt;
-
-        //    if (is_ctrl())
-        //    {
-        //        string url = "https://bghuan.cn/api/save.php/?namespace=douyin_game&format=string&str=" + txt;
-        //        HttpGet(url);
-        //        return;
-        //    }
-
-        //    var old_pos = Position;
-        //    if (click_input)
-        //    {
-        //        press("2220,1385", 10);
-        //        press([Keys.LControlKey, Keys.A]);
-        //        press([Keys.Back]);
-        //    }
-        //    press([Keys.LControlKey, Keys.V]);
-        //    press(old_pos.X + "." + old_pos.Y, 0);
-        //}
-        //public void Invoke(Action action)
-        //{
-        //    huan.Invoke(action);
-        //}
     }
 }

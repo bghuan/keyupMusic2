@@ -84,14 +84,17 @@ namespace keyupMusic2
         public enum SW
         {
             SW_HIDE = 0,
-            SW_SHOWNORMAL = 1,
+            SW_SHOWNORMAL = 1,     // 等价于 SW_NORMAL (已弃用)
+            SW_SHOWMINIMIZED = 2,  // 显示并最小化
+            SW_SHOWMAXIMIZED = 3,  // 显示并最大化
             SW_SHOWNOACTIVATE = 4,
             SW_SHOW = 5,
             SW_MINIMIZE = 6,
+            SW_SHOWMINNOACTIVE = 7,// 最小化但不激活
             SW_SHOWNA = 8,
-            SW_SHOWMAXIMIZED = 11,
-            SW_MAXIMIZE = 12,
-            SW_RESTORE = 13
+            SW_RESTORE = 9,        // 等价于 SW_SHOWNORMAL
+            SW_SHOWDEFAULT = 10,   // 根据启动参数显示窗口
+            SW_FORCEMINIMIZE = 11  // 强制最小化（不激活）
         }
         [DllImport("user32.dll")]
         public static extern IntPtr SendMessage(IntPtr hWnd, uint Msg, IntPtr wParam, IntPtr lParam);
