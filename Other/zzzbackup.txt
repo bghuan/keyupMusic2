@@ -1,4 +1,507 @@
-﻿
+﻿using System.Runtime.InteropServices;
+using static keyupMusic2.Common;
+
+namespace keyupMusic2
+{
+    partial class biu
+    {
+
+        int expect_cornor_edge = 150;
+        public void ScreenLine()
+        {
+            if (is_ctrl_shift_alt()) { handing3 = false; return; }
+            _ScreenLine();
+            handing3 = false;
+        }
+
+        static int f150 = 150;
+        static int f_150 = screenWidth - f150;
+        static int gao = screenHeight1;
+        static int chang = screenWidth1;
+        static int gao2 = screen2Height1;
+        static int chang2 = screen2Width;
+
+        RECTT line1 = new RECTT(new RECT(f150, 0, f_150, 0), new RECT(0, 0, f_150, f150));
+        RECTT line2 = new RECTT(new RECT(f150, gao, f_150, gao), new RECT(f150, gao - f150, f_150, gao));
+        RECTT line3 = new RECTT(new RECT(chang, f150, chang, gao - f150), new RECT(chang - f150, 0, chang, gao));
+        RECTT line5 = new RECTT(new RECT(chang2 + f150, 0, -f150, 0), new RECT(chang2, 0, 0, f150));
+        RECTT line6 = new RECTT(new RECT(chang2 + f150, gao2, -f150, gao2), new RECT(chang2, gao2 - f150, 0, gao2));
+        RECTT line7 = new RECTT(new RECT(chang2, f150, chang2, gao2 - f150), new RECT(chang2, 0, chang2 + f150, gao));
+
+        int chrome_x_min = -50;
+        public void aaaa()
+        {
+            if (e.Msg == MouseMsg.move)
+            {
+                int line = 0;
+                if (line1.target(e.Pos)) { play_sound_di(); line = 1; }
+                else if (line2.target(e.Pos)) { play_sound_di(); line = 2; }
+                else if (line3.target(e.Pos)) { play_sound_di(); line = 3; }
+                else if (line5.target(e.Pos)) { play_sound_di(); line = 5; }
+                else if (line6.target(e.Pos)) { play_sound_di(); line = 6; }
+                else if (line7.target(e.Pos)) { play_sound_di(); line = 7; }
+
+                if (line == 1)
+                {
+                    if (ProcessName.Equals(err)) return;
+                    if (ProcessName.Equals(chrome))
+                        if (ProcessPosition(chrome).X >= chrome_x_min)
+                            SS().KeyPress(Keys.F);
+                }
+                else if (line == 2)
+                {
+                    var chrome_red = (judge_color(-1783, 51, Color.FromArgb(162, 37, 45))
+                                   && judge_color(-645, 45, Color.FromArgb(162, 37, 45)));
+                    var right_up_f = ProcessName == Common.chrome && chrome_red;
+                    left_down_click = false;
+                    if (ProcessName.Equals(err)) return;
+                    if (is_douyin() && IsFullScreen()) return;
+                    if (judge_color(Color.FromArgb(210, 27, 70))) { return; }
+                    if (right_up_f && ProcessName == Common.chrome) SS().KeyPress(Keys.F);
+                    mouse_click2(0);
+                    if (ProcessName2 == Common.chrome && ProcessPosition(chrome).X >= chrome_x_min)
+                    {
+                        if (!judge_color(1840, 51, Color.FromArgb(162, 37, 45)))
+                            SS().KeyPress(Keys.F);
+                        SS().MouseWhell(-120 * 12);
+                        return;
+                    }
+                }
+                else if (line == 3)
+                {
+                    var aaa = ProcessName == Common.chrome && !(!judge_color(-1783, 51, Color.FromArgb(162, 37, 45)) || !judge_color(-645, 45, Color.FromArgb(162, 37, 45)));
+                    if (is_douyin()) return;
+                    if (ProcessTitle.Contains(bilibili)) return;
+                    if (ProcessName.Equals(err)) return;
+                    if (ProcessTitle.Contains(Ghostrunner2)) return;
+                    if (ProcessTitle.Contains(ItTakesTwo)) return;
+                    if (aaa && ProcessName == Common.chrome) SS().KeyPress(Keys.F);
+                    left_side_click = false;
+                    mouse_click2(0);
+                    //if (ProcessName2 == msedge && is_douyin()) mouse_click2(0);
+                }
+                else if (line == 5)
+                {
+                    right_up_click = false;
+                    mouse_click2(0);
+                    SS().KeyPress(Keys.F)
+                        .MouseWhell(120 * 12);
+                }
+                else if (line == 6)
+                {
+                    right_down_click = false;
+                    if (ProcessName2 != Common.chrome)
+                    {
+                        mouse_click2(10);
+                    }
+                    //mouse_click2(0);
+                    var aaa = ProcessName == Common.chrome && !(judge_color(-1783, 51, Color.FromArgb(162, 37, 45)) && judge_color(-645, 45, Color.FromArgb(162, 37, 45)));
+                    if (aaa)
+                        SS().KeyPress(Keys.F);
+                    SS().MouseWhell(-120 * 12);
+                }
+                else if (line == 7)
+                {
+                    right_side_click = false;
+                    mouse_click2(0);
+                }
+
+                line1.ignore(e.Pos);
+                line2.ignore(e.Pos);
+                line3.ignore(e.Pos);
+                line5.ignore(e.Pos);
+                line6.ignore(e.Pos);
+                line7.ignore(e.Pos);
+            }
+        }
+
+        // Structure to hold window rectangle  
+        [StructLayout(LayoutKind.Sequential)]
+        public struct RECT
+        {
+            public int Left;
+            public int Top;
+            public int Right;
+            public int Bottom;
+            public RECT(int Left, int Top, int Right, int Bottom)
+            {
+                this.Left = Left;
+                this.Top = Top;
+                this.Right = Right;
+                this.Bottom = Bottom;
+            }
+        }
+        public class RECTT
+        {
+            bool can = true;
+            RECT a;
+            RECT b;
+            public RECTT(RECT a, RECT b)
+            {
+                this.a = a;
+                this.b = b;
+            }
+            public bool target(Point testPoint)
+            {
+                if (can == false) return false;
+                RECT a = this.a;
+
+                var aaa = (testPoint.X >= a.Left && testPoint.X <= a.Right &&
+                       testPoint.Y >= a.Top && testPoint.Y <= a.Bottom);
+
+                if (aaa) can = false;
+                return aaa;
+            }
+            public bool ignore(Point testPoint)
+            {
+                if (can == true) return true;
+                RECT a = this.b;
+
+                var aaa = !(testPoint.X >= a.Left && testPoint.X <= a.Right &&
+                       testPoint.Y >= a.Top && testPoint.Y <= a.Bottom);
+
+                if (aaa) can = true;
+                return aaa;
+            }
+        }
+
+        public void _ScreenLine()
+        {
+            aaaa(); return;
+            if (is_ctrl()) return;
+            if (e.Msg == MouseMsg.click || cornor != 0)
+            {
+                left_side_click = false;
+                left_down_click = false;
+                left_up_click = false;
+
+                right_up_click = false;
+                right_down_click = false;
+                right_side_click = false;
+            }
+            else if (e.Msg == MouseMsg.move)
+            {
+                //if (e.X > (screenWidth) / 4 && left_side_click == false)
+                if (e.X < 0 && left_side_click == false)
+                    left_side_click = true;
+                else if (e.Y < (screenHeight) / 4 * 3 && left_down_click == false)
+                    left_down_click = true;
+                else if (e.Y > (screenHeight) / 4 && left_up_click == false)
+                    left_up_click = true;
+
+                else if (e.Y > (screen2Height1) / 4 && e.Y < (screenHeight) / 4 * 3 && right_up_click == false)
+                    right_up_click = true;
+                else if (e.Y < (screen2Height1) / 4 * 3 && right_down_click == false)
+                    right_down_click = true;
+                else if (e.X > 0 && right_side_click == false)
+                    right_side_click = true;
+
+                if (Math.Abs(e.X - (1333 * screenWidth / 2560)) < 2 && e.Y == screenWidth1)
+                    left_down_click = false;
+
+                var not_allow = (ProcessName != keyupMusic2.Common.ACPhoenix) && (ProcessName != msedge);
+                var catched = true;
+
+                //if (left_side_click && e.X == 0 && (e.Y < expect_cornor_edge || e.Y > screenHeight - expect_cornor_edge))
+                if (left_side_click && e.X == screenWidth1 && e.Y > expect_cornor_edge && e.Y < screen2Height1 - expect_cornor_edge)
+                {
+                    //if (ProcessName.Equals(chrome)) return;
+
+                    var aaa = ProcessName == Common.chrome && !(!judge_color(-1783, 51, Color.FromArgb(162, 37, 45)) || !judge_color(-645, 45, Color.FromArgb(162, 37, 45)));
+                    if (is_douyin()) return;
+                    if (ProcessTitle.Contains(bilibili)) return;
+                    if (ProcessName.Equals(err)) return;
+                    if (ProcessTitle.Contains(Ghostrunner2)) return;
+                    if (ProcessTitle.Contains(ItTakesTwo)) return;
+                    if (aaa && ProcessName == Common.chrome) SS().KeyPress(Keys.F);
+                    left_side_click = false;
+                    mouse_click2(0);
+                    //if (ProcessName2 == msedge && is_douyin()) mouse_click2(0);
+                }
+                else if (right_up_click && e.Y == 0 && e.X < 0 && e.X > screen2Width + expect_cornor_edge)
+                {
+                    play_sound_di();
+                    catched = false;
+                    right_up_click = false;
+                    mouse_click2(0);
+                    SS().KeyPress(Keys.F)
+                        .MouseWhell(120 * 12);
+                }
+                else if (right_down_click && e.Y == screen2Height1 && e.X < 0 && e.X > screen2Width + expect_cornor_edge)
+                {
+                    play_sound_di();
+                    catched = false;
+                    right_down_click = false;
+                    if (ProcessName2 != Common.chrome)
+                    {
+                        mouse_click2(10);
+                    }
+                    //mouse_click2(0);
+                    var aaa = ProcessName == Common.chrome && !(judge_color(-1783, 51, Color.FromArgb(162, 37, 45)) && judge_color(-645, 45, Color.FromArgb(162, 37, 45)));
+                    if (aaa)
+                        SS().KeyPress(Keys.F);
+                    SS().MouseWhell(-120 * 12);
+                }
+                else if (right_side_click && e.X == screen2Width && e.Y > expect_cornor_edge)
+                {
+                    right_side_click = false;
+                    mouse_click2(0);
+                }
+                else
+                {
+                    catched = false;
+                }
+
+                if (catched) { play_sound_di(); }
+            }
+        }
+    }
+}
+using static keyupMusic2.Common;
+
+namespace keyupMusic2
+{
+    partial class biu
+    {
+
+        int expect_cornor_edge = 150;
+        public void ScreenLine()
+        {
+            if (is_ctrl_shift_alt()) { handing3 = false; return; }
+            _ScreenLine();
+            handing3 = false;
+        }
+
+        static int f150 = 150;
+        static int f_150 = screenWidth - f150;
+        static int gao = screenHeight1;
+        static int W = screenWidth1;
+
+        chang line1 = new chang(
+            new Point(f150, 0), new Point(f_150, 0),
+            new Point(0, 0), new Point(screenWidth, f150));
+        chang line2 = new chang(
+            new Point(f150, gao), new Point(W - f150, gao),
+            new Point(0, gao - f150), new Point(W, gao));
+        chang line3 = new chang(
+            new Point(W, f150), new Point(screenWidth1 - f150, screenHeight1),
+            new Point(0, screenHeight1 - f150), new Point(screenWidth1, screenHeight1));
+        chang line5 = new chang(
+            new Point(f150, screenHeight1), new Point(screenWidth1 - f150, screenHeight1),
+            new Point(0, screenHeight1 - f150), new Point(screenWidth1, screenHeight1));
+        chang line6 = new chang(
+            new Point(f150, screenHeight1), new Point(screenWidth1 - f150, screenHeight1),
+            new Point(0, screenHeight1 - f150), new Point(screenWidth1, screenHeight1));
+        chang line7 = new chang(
+            new Point(f150, screenHeight1), new Point(screenWidth1 - f150, screenHeight1),
+            new Point(0, screenHeight1 - f150), new Point(screenWidth1, screenHeight1));
+
+        int chrome_x_min = -50;
+        public void aaaa()
+        {
+            if (e.Msg == MouseMsg.move)
+            {
+                int line = 0;
+                if (line1.target(e.Pos)) { play_sound_di(); line = 1; }
+                else if (line2.target(e.Pos)) { play_sound_di(); line = 2; }
+
+                if (line == 1)
+                {
+                    if (ProcessName.Equals(err)) return;
+                    if (ProcessName.Equals(chrome))
+                        if (ProcessPosition(chrome).X >= chrome_x_min)
+                            SS().KeyPress(Keys.F);
+                }
+                else if (line == 2)
+                {
+                    var chrome_red = (judge_color(-1783, 51, Color.FromArgb(162, 37, 45)) 
+                                   && judge_color(-645, 45, Color.FromArgb(162, 37, 45)));
+                    var right_up_f = ProcessName == Common.chrome && chrome_red;
+                    left_down_click = false;
+                    if (ProcessName.Equals(err)) return;
+                    if (is_douyin() && IsFullScreen()) return;
+                    if (judge_color(Color.FromArgb(210, 27, 70))) { return; }
+                    if (right_up_f && ProcessName == Common.chrome) SS().KeyPress(Keys.F);
+                    mouse_click2(0);
+                    if (ProcessName2 == Common.chrome && ProcessPosition(chrome).X >= chrome_x_min)
+                    {
+                        if (!judge_color(1840, 51, Color.FromArgb(162, 37, 45)))
+                            SS().KeyPress(Keys.F);
+                        SS().MouseWhell(-120 * 12);
+                        return;
+                    }
+                }
+                else if (line == 3)
+                {
+                    var aaa = ProcessName == Common.chrome && !(!judge_color(-1783, 51, Color.FromArgb(162, 37, 45)) || !judge_color(-645, 45, Color.FromArgb(162, 37, 45)));
+                    if (is_douyin()) return;
+                    if (ProcessTitle.Contains(bilibili)) return;
+                    if (ProcessName.Equals(err)) return;
+                    if (ProcessTitle.Contains(Ghostrunner2)) return;
+                    if (ProcessTitle.Contains(ItTakesTwo)) return;
+                    if (aaa && ProcessName == Common.chrome) SS().KeyPress(Keys.F);
+                    left_side_click = false;
+                    mouse_click2(0);
+                    //if (ProcessName2 == msedge && is_douyin()) mouse_click2(0);
+                }
+                else if (line == 5)
+                {
+                    right_up_click = false;
+                    mouse_click2(0);
+                    SS().KeyPress(Keys.F)
+                        .MouseWhell(120 * 12);
+                }
+                else if (line == 6)
+                {
+                    right_down_click = false;
+                    if (ProcessName2 != Common.chrome)
+                    {
+                        mouse_click2(10);
+                    }
+                    //mouse_click2(0);
+                    var aaa = ProcessName == Common.chrome && !(judge_color(-1783, 51, Color.FromArgb(162, 37, 45)) && judge_color(-645, 45, Color.FromArgb(162, 37, 45)));
+                    if (aaa)
+                        SS().KeyPress(Keys.F);
+                    SS().MouseWhell(-120 * 12);
+                }
+                else if (line == 7)
+                {
+                    right_side_click = false;
+                    mouse_click2(0);
+                }
+
+                line1.ignore(e.Pos);
+                line2.ignore(e.Pos);
+            }
+        }
+
+        public class chang
+        {
+            bool can = true;
+            Point a1; Point a2;
+            Point a11; Point a12;
+            public chang(Point point1, Point point2, Point point11, Point point12)
+            {
+                this.a1 = point1;
+                this.a2 = point2;
+                this.a11 = point11;
+                this.a12 = point12;
+            }
+            public bool target(Point testPoint)
+            {
+                if (can == false) return false;
+
+                var aaa = (testPoint.X >= a1.X && testPoint.X <= a2.X &&
+                       testPoint.Y >= a1.Y && testPoint.Y <= a2.Y);
+
+                if (aaa) can = false;
+                return aaa;
+            }
+            public bool ignore(Point testPoint)
+            {
+                if (can == true) return true;
+
+                var aaa = !(testPoint.X >= a11.X && testPoint.X <= a12.X &&
+                       testPoint.Y >= a11.Y && testPoint.Y <= a12.Y);
+
+                if (aaa) can = true;
+                return aaa;
+            }
+        }
+
+        public void _ScreenLine()
+        {
+            aaaa(); return;
+            if (is_ctrl()) return;
+            if (e.Msg == MouseMsg.click || cornor != 0)
+            {
+                left_side_click = false;
+                left_down_click = false;
+                left_up_click = false;
+
+                right_up_click = false;
+                right_down_click = false;
+                right_side_click = false;
+            }
+            else if (e.Msg == MouseMsg.move)
+            {
+                //if (e.X > (screenWidth) / 4 && left_side_click == false)
+                if (e.X < 0 && left_side_click == false)
+                    left_side_click = true;
+                else if (e.Y < (screenHeight) / 4 * 3 && left_down_click == false)
+                    left_down_click = true;
+                else if (e.Y > (screenHeight) / 4 && left_up_click == false)
+                    left_up_click = true;
+
+                else if (e.Y > (screen2Height1) / 4 && e.Y < (screenHeight) / 4 * 3 && right_up_click == false)
+                    right_up_click = true;
+                else if (e.Y < (screen2Height1) / 4 * 3 && right_down_click == false)
+                    right_down_click = true;
+                else if (e.X > 0 && right_side_click == false)
+                    right_side_click = true;
+
+                if (Math.Abs(e.X - (1333 * screenWidth / 2560)) < 2 && e.Y == screenWidth1)
+                    left_down_click = false;
+
+                var not_allow = (ProcessName != keyupMusic2.Common.ACPhoenix) && (ProcessName != msedge);
+                var catched = true;
+
+                //if (left_side_click && e.X == 0 && (e.Y < expect_cornor_edge || e.Y > screenHeight - expect_cornor_edge))
+                if (left_side_click && e.X == screenWidth1 && e.Y > expect_cornor_edge && e.Y < screen2Height1 - expect_cornor_edge)
+                {
+                    //if (ProcessName.Equals(chrome)) return;
+
+                    var aaa = ProcessName == Common.chrome && !(!judge_color(-1783, 51, Color.FromArgb(162, 37, 45)) || !judge_color(-645, 45, Color.FromArgb(162, 37, 45)));
+                    if (is_douyin()) return;
+                    if (ProcessTitle.Contains(bilibili)) return;
+                    if (ProcessName.Equals(err)) return;
+                    if (ProcessTitle.Contains(Ghostrunner2)) return;
+                    if (ProcessTitle.Contains(ItTakesTwo)) return;
+                    if (aaa && ProcessName == Common.chrome) SS().KeyPress(Keys.F);
+                    left_side_click = false;
+                    mouse_click2(0);
+                    //if (ProcessName2 == msedge && is_douyin()) mouse_click2(0);
+                }
+                else if (right_up_click && e.Y == 0 && e.X < 0 && e.X > screen2Width + expect_cornor_edge)
+                {
+                    play_sound_di();
+                    catched = false;
+                    right_up_click = false;
+                    mouse_click2(0);
+                    SS().KeyPress(Keys.F)
+                        .MouseWhell(120 * 12);
+                }
+                else if (right_down_click && e.Y == screen2Height1 && e.X < 0 && e.X > screen2Width + expect_cornor_edge)
+                {
+                    play_sound_di();
+                    catched = false;
+                    right_down_click = false;
+                    if (ProcessName2 != Common.chrome)
+                    {
+                        mouse_click2(10);
+                    }
+                    //mouse_click2(0);
+                    var aaa = ProcessName == Common.chrome && !(judge_color(-1783, 51, Color.FromArgb(162, 37, 45)) && judge_color(-645, 45, Color.FromArgb(162, 37, 45)));
+                    if (aaa)
+                        SS().KeyPress(Keys.F);
+                    SS().MouseWhell(-120 * 12);
+                }
+                else if (right_side_click && e.X == screen2Width && e.Y > expect_cornor_edge)
+                {
+                    right_side_click = false;
+                    mouse_click2(0);
+                }
+                else
+                {
+                    catched = false;
+                }
+
+                if (catched) { play_sound_di(); }
+            }
+        }
+    }
+}
+
         private bool is_double_click()
         {
             var result = MouseMsgTime != null && MouseMsgTime.ContainsKey(e.Msg) && MouseMsgTime[e.Msg] != DateTime.MinValue && MouseMsgTime[e.Msg].AddMilliseconds(200) > DateTime.Now;

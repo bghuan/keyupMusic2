@@ -1,4 +1,5 @@
 using System.Diagnostics;
+using System.Runtime.InteropServices;
 using static keyupMusic2.Common;
 using static keyupMusic2.MouseKeyboardHook;
 
@@ -130,6 +131,28 @@ namespace keyupMusic2
         }
         private void label1_Click(object sender, EventArgs e)
         {
+        }
+        protected override void WndProc(ref Message m)
+        {
+            if (m.Msg == CUSTOM_MESSAGE)
+            {
+                // 提取消息内容
+                string message = Marshal.PtrToStringUni(m.LParam);
+                Console.WriteLine($"收到消息: {message}");
+
+                // 可以在这里处理接收到的消息
+                ProcessMessage(message);
+
+                return; // 消息已处理，不需要进一步处理
+            }
+
+            base.WndProc(ref m);
+        }
+
+        private void ProcessMessage(string message)
+        {
+            // 处理接收到的消息
+            MessageBox.Show($"收到外部消息: {message}");
         }
     }
 }

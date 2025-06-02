@@ -203,15 +203,17 @@ namespace keyupMusic2
             return Native.GetAsyncKeyState(Keys.ShiftKey) < 0;
         }
         public static readonly object _lockObject2 = new object();
+
+        public static void press_rate(Keys num, int tick = 0)
+        {
+            RateLimiter.Execute(press, num, 0);
+        }
         public static void press(Keys num, int tick = 0)
         {
             if (is_down(Keys.Delete)) return;
             lock (_lockObject2)
             {
-                //bool flag = tick > 0 && tick % 10 == 2;
-                //if (flag) MouseKeyboardHook.handling = true;
                 press([num], tick);
-                //if (flag) MouseKeyboardHook.handling = false;
             }
         }
         public static void press(Keys num, int times, int tick = 0)
@@ -430,8 +432,8 @@ namespace keyupMusic2
         static Dictionary<byte, byte> MapVirtualKey = new Dictionary<byte, byte>();
         private static void keybd_event(byte bVk, byte bScan, uint dwFlags, uint dwExtraInfo)
         {
-            if (!MapVirtualKey.ContainsKey(bVk)) 
-            { 
+            if (!MapVirtualKey.ContainsKey(bVk))
+            {
                 MapVirtualKey.Add(bVk, (byte)(Native.MapVirtualKey(bVk, 0) & 0xFFU));
             }
             Native.keybd_event(bVk, MapVirtualKey[bVk], dwFlags, isVir);

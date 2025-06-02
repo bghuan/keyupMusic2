@@ -227,6 +227,7 @@ namespace keyupMusic2
             {
                 if (process.Id != currentProcessId)
                 {
+                    //SendMessageToWindow(Common.keyupMusic2,"3214421432");
                     press_raw([Keys.LControlKey, Keys.F3]);
                     TaskRun(() => { Application.Exit(); }, 10);
                     return true;

@@ -9,8 +9,8 @@ namespace keyupMusic2
     partial class biu
     {
         static Point last_left = new Point(297, 680);
-        int line = 580;
-        int line2 = 1980;
+        int lineeeeeeeeee = 580;
+        int line222222222222 = 1980;
         public void Glass()
         {
             if (e.Msg == MouseMsg.move) return;
@@ -24,14 +24,14 @@ namespace keyupMusic2
 
             if (e.Msg == MouseMsg.click_up)
             {
-                if (!(e.X > line && e.X < line2))
+                if (!(e.X > lineeeeeeeeee && e.X < line222222222222))
                 {
                     last_left = e.Pos;
                 }
             }
             else if (e.Msg == MouseMsg.click_r_up)
             {
-                if (!(e.X > line && e.X < line2))
+                if (!(e.X > lineeeeeeeeee && e.X < line222222222222))
                 {
                     last_left = e.Pos;
                     Thread.Sleep(100);
@@ -49,7 +49,7 @@ namespace keyupMusic2
             {
                 var dd = 297;
                 if (e.X > screenWidth2) dd = 2245;
-                if (!(e.X > line && e.X < line2))
+                if (!(e.X > lineeeeeeeeee && e.X < line222222222222))
                 {
                     mouse_click();
                     mouse_click(dd, 680);

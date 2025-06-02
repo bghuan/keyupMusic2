@@ -1,156 +1,174 @@
-﻿using static keyupMusic2.Common;
+﻿using System.Runtime.InteropServices;
+using static keyupMusic2.Common;
 
 namespace keyupMusic2
 {
     partial class biu
     {
 
-        int expect_cornor_edge = 150;
+        static int f150 = 400;
+        static int f_150 = screenWidth - f150;
+        static int gao = screenHeight1;
+        static int chang = screenWidth1;
+        static int gao2 = screen2Height1;
+        static int chang2 = screen2Width;
+        int chrome_x_min = -50;
+
+        RECTT line1 = new RECTT(new RECT(f150, 0, f_150, 0),
+                                new RECT(0, 0, chang, f150));
+        RECTT line2 = new RECTT(new RECT(f150, gao, f_150 - 200, gao),
+                                new RECT(0, gao - f150, chang, gao));
+        RECTT line3 = new RECTT(new RECT(chang, f150, chang, gao - f150),
+                                new RECT(chang - f150, 0, chang, gao));
+        RECTT line5 = new RECTT(new RECT(chang2 + f150, 0, -f150, 0),
+                                new RECT(chang2, 0, 0, f150));
+        RECTT line6 = new RECTT(new RECT(chang2 + f150, gao2, -f150, gao2),
+                                new RECT(chang2, gao2 - f150, 0, gao2));
+        RECTT line7 = new RECTT(new RECT(chang2, f150, chang2, gao2 - f150),
+                                new RECT(chang2, 0, chang2 + f150, gao2));
+
         public void ScreenLine()
         {
-            if (is_ctrl_shift_alt()){ handing3 = false; return; }
-            _ScreenLine();
-            handing3 = false;
-        }
+            if (e.Msg != MouseMsg.move) return;
+            int line = 0;
+            if (line1.target(e.Pos)) { play_sound_di(); line = 1; }
+            else if (line2.target(e.Pos)) { play_sound_di(); line = 2; }
+            else if (line3.target(e.Pos)) { play_sound_di(); line = 3; }
+            else if (line5.target(e.Pos)) { play_sound_di(); line = 5; }
+            else if (line6.target(e.Pos)) { play_sound_di(); line = 6; }
+            else if (line7.target(e.Pos)) { play_sound_di(); line = 7; }
 
-        int[] special = new int[] {
-                0,
-                screenWidth,
-                screenHeight,
-                screenWidth1,
-                screenHeight1,
-                screenWidth2,
-                screenHeight2,
-                screen2Width,
-                screen2Height1,
-            };
-        public void _ScreenLine()
-        {
-            //if (e.Msg == MouseMsg.WM_MOUSEMOVE && left_side_click && left_down_click && left_up_click && right_up_click && right_down_click && right_side_click && (!special.Contains(e.X)&& special.Contains(e.Y)))
-            //{
-            //    return;
-            //}
-            if (is_ctrl()) return;
-            if (e.Msg == MouseMsg.click || cornor != 0)
+            if (line == 1)
             {
-                left_side_click = false;
-                left_down_click = false;
-                left_up_click = false;
-
-                right_up_click = false;
-                right_down_click = false;
-                right_side_click = false;
+                if (ProcessName.Equals(err)) return;
+                if (ProcessName.Equals(chrome))
+                    if (ProcessPosition(chrome).X >= chrome_x_min)
+                        SS().KeyPress(Keys.F);
             }
-            else if (e.Msg == MouseMsg.move)
+            else if (line == 2)
             {
-                //if (e.X > (screenWidth) / 4 && left_side_click == false)
-                if (e.X < 0 && left_side_click == false)
-                    left_side_click = true;
-                else if (e.Y < (screenHeight) / 4 * 3 && left_down_click == false)
-                    left_down_click = true;
-                else if (e.Y > (screenHeight) / 4 && left_up_click == false)
-                    left_up_click = true;
-
-                else if (e.Y > (screen2Height1) / 4 && e.Y < (screenHeight) / 4 * 3 && right_up_click == false)
-                    right_up_click = true;
-                else if (e.Y < (screen2Height1) / 4 * 3 && right_down_click == false)
-                    right_down_click = true;
-                else if (e.X > 0 && right_side_click == false)
-                    right_side_click = true;
-
-                if (Math.Abs(e.X - (1333 * screenWidth / 2560)) < 2 && e.Y == screenWidth1)
-                    left_down_click = false;
-
-                var not_allow = (ProcessName != keyupMusic2.Common.ACPhoenix) && (ProcessName != msedge);
-                var catched = true;
-
-                //if (left_side_click && e.X == 0 && (e.Y < expect_cornor_edge || e.Y > screenHeight - expect_cornor_edge))
-                if (left_side_click && e.X == screenWidth1 && e.Y > expect_cornor_edge && e.Y < screen2Height1 - expect_cornor_edge)
+                var chrome_red = (judge_color(-1783, 51, Color.FromArgb(162, 37, 45))
+                               && judge_color(-645, 45, Color.FromArgb(162, 37, 45)));
+                var right_up_f = ProcessName == Common.chrome && chrome_red;
+                left_down_click = false;
+                if (ProcessName.Equals(err)) return;
+                if (is_douyin() && IsFullScreen()) return;
+                if (judge_color(Color.FromArgb(210, 27, 70))) { return; }
+                if (right_up_f && ProcessName == Common.chrome) SS().KeyPress(Keys.F);
+                mouse_click2(0);
+                if (ProcessName2 == Common.chrome && ProcessPosition(chrome).X >= chrome_x_min)
                 {
-                    //if (ProcessName.Equals(chrome)) return;
-
-                    var aaa = ProcessName == Common.chrome && !(!judge_color(-1783, 51, Color.FromArgb(162, 37, 45)) || !judge_color(-645, 45, Color.FromArgb(162, 37, 45)));
-                    if (is_douyin()) return;
-                    if (ProcessTitle.Contains(bilibili)) return;
-                    if (ProcessName.Equals(err)) return;
-                    if (ProcessTitle.Contains(Ghostrunner2)) return;
-                    if (ProcessTitle.Contains(ItTakesTwo)) return;
-                    if (aaa && ProcessName == Common.chrome) SS().KeyPress(Keys.F);
-                    right_up_f = false;
-                    left_side_click = false;
-                    mouse_click2(0);
-                    //if (ProcessName2 == msedge && is_douyin()) mouse_click2(0);
-                }
-                else if ((left_up_click && e.Y == 0 && e.X < screenWidth) && e.X > 0)
-                {
-                    catched = false;
-                    if (ProcessName.Equals(err)) return;
-                    if (ProcessName.Equals(chrome) && e.X < screenWidth - expect_cornor_edge && e.X > expect_cornor_edge)
-                        if (ProcessPosition(chrome).X >= 0)
-                            SS().KeyPress(Keys.F);
-                    left_up_click = false;
-                }
-                else if ((left_down_click && e.Y + 1 == screenHeight && e.X > 0 && e.X < screenWidth) && (e.X < expect_cornor_edge || (e.X > screenWidth - 500)))
-                {
-                    left_down_click = false;
-                }
-                else if (left_down_click && e.Y + 1 == screenHeight && e.X > 0 && e.X < screenWidth)
-                {
-                    var aaa = ProcessName == Common.chrome && !(!judge_color(-1783, 51, Color.FromArgb(162, 37, 45)) || !judge_color(-645, 45, Color.FromArgb(162, 37, 45)));
-                    right_up_f = aaa;
-                    left_down_click = false;
-                    if (ProcessName.Equals(err)) return;
-                    if (!not_allow && IsFullScreen()) return;
-                    if (is_douyin() && IsFullScreen()) return;
-                    if (judge_color(Color.FromArgb(210, 27, 70))) { return; }
-                    if (right_up_f && ProcessName == Common.chrome) SS().KeyPress(Keys.F);
-                    mouse_click2(0);
-                    if (ProcessName2 == Common.chrome && ProcessPosition(chrome).X >= 0)
-                    {
-                        //if (e.X > screenWidth2) return;
-                        if (!judge_color(1840, 51, Color.FromArgb(162, 37, 45)))
-                            SS().KeyPress(Keys.F);
-                        SS().MouseWhell(-120 * 12);
-                        return;
-                    }
-                }
-                else if (right_up_click && e.Y == 0 && e.X < 0 && e.X > screen2Width + expect_cornor_edge)
-                {
-                    play_sound_di();
-                    catched = false;
-                    right_up_click = false;
-                    right_up_f = true;
-                    mouse_click2(0);
-                    SS().KeyPress(Keys.F)
-                        .MouseWhell(120 * 12);
-                }
-                else if (right_down_click && e.Y == screen2Height1 && e.X < 0 && e.X > screen2Width + expect_cornor_edge)
-                {
-                    play_sound_di();
-                    catched = false;
-                    right_down_click = false;
-                    if (ProcessName != Common.chrome)
-                    {
-                        mouse_click2(0);
-                    }
-                    //mouse_click2(0);
-                    var aaa = ProcessName == Common.chrome && !(judge_color(-1783, 51, Color.FromArgb(162, 37, 45)) && judge_color(-645, 45, Color.FromArgb(162, 37, 45)));
-                    if (aaa)
+                    if (!judge_color(1840, 51, Color.FromArgb(162, 37, 45)))
                         SS().KeyPress(Keys.F);
                     SS().MouseWhell(-120 * 12);
+                    return;
                 }
-                else if (right_side_click && e.X == screen2Width && e.Y > expect_cornor_edge)
+            }
+            else if (line == 3)
+            {
+                var aaa = ProcessName == Common.chrome && !(!judge_color(-1783, 51, Color.FromArgb(162, 37, 45)) || !judge_color(-645, 45, Color.FromArgb(162, 37, 45)));
+                if (is_douyin()) return;
+                if (ProcessTitle.Contains(bilibili)) return;
+                if (ProcessName.Equals(err)) return;
+                if (ProcessTitle.Contains(Ghostrunner2)) return;
+                if (ProcessTitle.Contains(ItTakesTwo)) return;
+                if (aaa && ProcessName == Common.chrome) SS().KeyPress(Keys.F);
+                left_side_click = false;
+                mouse_click2(0);
+                //if (ProcessName2 == msedge && is_douyin()) mouse_click2(0);
+            }
+            else if (line == 5)
+            {
+                right_up_click = false;
+                mouse_click2(0);
+                SS().KeyPress(Keys.F)
+                    .MouseWhell(120 * 12);
+            }
+            else if (line == 6)
+            {
+                right_down_click = false;
+                if (ProcessName2 != Common.chrome)
                 {
-                    right_side_click = false;
-                    mouse_click2(0);
+                    mouse_click2(10);
                 }
-                else
-                {
-                    catched = false;
-                }
+                //mouse_click2(0);
+                var aaa = ProcessName == Common.chrome && !(judge_color(-1783, 51, Color.FromArgb(162, 37, 45)) && judge_color(-645, 45, Color.FromArgb(162, 37, 45)));
+                if (aaa)
+                    SS().KeyPress(Keys.F);
+                SS().MouseWhell(-120 * 12);
+            }
+            else if (line == 7)
+            {
+                right_side_click = false;
+                mouse_click2(0);
+            }
 
-                if (catched) { play_sound_di(); }
+            line1.ignore(e.Pos);
+            line2.ignore(e.Pos);
+            line3.ignore(e.Pos);
+            line5.ignore(e.Pos);
+            line6.ignore(e.Pos);
+            line7.ignore(e.Pos);
+            if (line != 0)
+            {
+                corner1.can = false;
+                corner2.can = false;
+                corner3.can = false;
+                corner4.can = false;
+                corner5.can = false;
+                corner6.can = false;
+                corner7.can = false;
+                corner8.can = false;
             }
         }
+
+        public struct RECT
+        {
+            public int Left;
+            public int Top;
+            public int Right;
+            public int Bottom;
+            public RECT(int Left, int Top, int Right, int Bottom)
+            {
+                this.Left = Left;
+                this.Top = Top;
+                this.Right = Right;
+                this.Bottom = Bottom;
+            }
+        }
+        public class RECTT
+        {
+            public bool can = true;
+            public RECT a;
+            public RECT b;
+            public RECTT(RECT a, RECT b)
+            {
+                this.a = a;
+                this.b = b;
+            }
+            public bool target(Point testPoint)
+            {
+                if (can == false) return false;
+                RECT a = this.a;
+
+                var aaa = (testPoint.X >= a.Left && testPoint.X <= a.Right &&
+                       testPoint.Y >= a.Top && testPoint.Y <= a.Bottom);
+
+                if (aaa) can = false;
+                return aaa;
+            }
+            public bool ignore(Point testPoint)
+            {
+                if (can == true) return true;
+                RECT a = this.b;
+
+                var aaa = !(testPoint.X >= a.Left && testPoint.X <= a.Right &&
+                       testPoint.Y >= a.Top && testPoint.Y <= a.Bottom);
+
+                if (aaa) can = true;
+                return aaa;
+            }
+        }
+
     }
 }

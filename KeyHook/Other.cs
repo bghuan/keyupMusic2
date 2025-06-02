@@ -18,7 +18,7 @@ namespace keyupMusic2
         }
         string[] list = new string[200];
         string[] list_wechat_visualstudio = { Common.WeChat, Common.ACPhoenix, explorer, Common.keyupMusic2, Common.douyin, Common.devenv, Common.QQMusic, Common.SearchHost, Common.ApplicationFrameHost, Common.vlc, Common.v2rayN, Common.cs2 };
-        string[] list_volume = { Common.douyin, Common.msedge };
+        string[] list_volume = { Common.douyin, Common.msedge }; 
 
         public void hook_KeyDown(Keys keys)
         {
@@ -56,10 +56,10 @@ namespace keyupMusic2
                                 press(Keys.PageUp, 0); break;
                         case Keys.VolumeDown:
                             if (e.X == screenWidth1 || e.Y == screenHeight1)
-                                press(Keys.PageDown, 0); break;
+                                press_rate(Keys.PageDown, 0); break;
                         case Keys.VolumeUp:
                             if (e.X == screenWidth1 || e.Y == screenHeight1)
-                                press(Keys.PageUp, 0); break;
+                                press_rate(Keys.PageUp, 0); break;
                     }
                     break;
                 case Common.Glass:

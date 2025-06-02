@@ -22,11 +22,11 @@ namespace keyupMusic2
                 case Keys.F4:
                     quick_close(); fresh_name(); break;
                 case Keys.F10:
-                    quick_what();break;
+                    quick_what(); break;
                 case Keys.F11:
-                    quick_visiualstudio(module_name);break;
+                    quick_visiualstudio(module_name); break;
                 case Keys.F12:
-                    quick_wechat_or_notify(module_name);break;
+                    quick_wechat_or_notify(module_name); break;
 
                 case Keys.Home:
                     copy_screen(); break;
@@ -60,7 +60,8 @@ namespace keyupMusic2
 
         private static void quick_gamg_alttab(KeyboardHookEventArgs e, string module_name)
         {
-            if (e.key == Keys.PageDown && (!is_steam_game() && module_name != chrome && module_name != PowerToysCropAndLock)) return;
+            var allow = is_steam_game() || module_name == chrome || module_name == PowerToysCropAndLock;
+            if (!allow) return;
             quick_max_chrome(e.Pos);
         }
 
@@ -79,7 +80,7 @@ namespace keyupMusic2
 
         private static void quick_wechat_or_notify(string module_name)
         {
-            if (is_down(Keys.Delete) || is_ctrl())return;
+            if (is_down(Keys.Delete) || is_ctrl()) return;
             if (Common.WeChat == module_name)
             {
                 CloseProcess(module_name);

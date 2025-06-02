@@ -70,7 +70,7 @@ namespace keyupMusic2
         public const string TwinkleTrayexe = "C:\\Users\\bu\\AppData\\Local\\Programs\\twinkle-tray\\Twinkle Tray.exe";
         public const string androidstudio = "studio64";
 
-        public static List<string> list_go_back = new List<string> { explorer, VSCode, msedge, chrome, devenv, androidstudio, ApplicationFrameHost, cs2 };
+        public static List<string> list_go_back = new List<string> { explorer, VSCode, msedge, chrome, devenv, androidstudio, ApplicationFrameHost, cs2, steam };
 
         public static SoundPlayer player = new SoundPlayer();
         public static SoundPlayer player2 = new SoundPlayer();
@@ -136,59 +136,6 @@ namespace keyupMusic2
             return ProcessPath != null && ProcessPath.Contains("steam");
         }
         static IntPtr old_hwnd = 0;
-
-        //public static Dictionary<IntPtr, string> ProcessMap = new Dictionary<IntPtr, string>();
-        //public static string FreshProcessName()
-        //{
-        //    IntPtr hwnd = Native.GetForegroundWindow(); // 获取当前活动窗口的句柄
-        //    if (ProcessMap.ContainsKey(hwnd))
-        //    {
-        //        Common.ProcessName = ProcessMap[hwnd].Split(";;;;")[0];
-        //        ProcessTitle = ProcessMap[hwnd].Split(";;;;")[1];
-        //        ProcessPath = ProcessMap[hwnd].Split(";;;;")[2];
-        //        if (Common.ProcessName == msedge)
-        //            ProcessTitle = GetWindowText(hwnd); ;
-        //        return Common.ProcessName;
-        //    }
-        //    //if (hwnd == old_hwnd) return Common.ProcessName;
-        //    old_hwnd = hwnd;
-
-        //    string windowTitle = GetWindowText(hwnd);
-        //    ProcessTitle = string.IsNullOrEmpty(windowTitle) ? "" : windowTitle;
-        //    //Console.WriteLine("当前活动窗口名称: " + windowTitle);
-
-        //    var filePath = "a.txt";
-        //    var fildsadsePath = "err";
-        //    var module_name = "err";
-        //    var ProcessName = "err";
-
-        //    try
-        //    {
-        //        uint processId;
-        //        Native.GetWindowThreadProcessId(hwnd, out processId);
-        //        using (Process process = Process.GetProcessById((int)processId))
-        //        {
-        //            fildsadsePath = process.MainModule.FileName;
-        //            ProcessPath = fildsadsePath;
-        //            module_name = process.MainModule.ModuleName;
-        //            ProcessName = process.ProcessName;
-        //        }
-        //    }
-        //    catch (System.Exception ex)
-        //    {
-        //        fildsadsePath = ex.Message;
-        //    }
-
-        //    //log(DateTime.Now.ToString("") + " " + windowTitle + " " + fildsadsePath + module_nasme + "\n");
-        //    Common.ProcessName = ProcessName;
-        //    lock (ProcessMap)
-        //    {
-        //        if (!ProcessMap.ContainsKey(hwnd))
-        //            ProcessMap.Add(hwnd, ProcessName + ";;;;" + ProcessTitle + ";;;;" + ProcessPath);
-        //    }
-        //    return ProcessName;
-        //}
-
 
 
         public static Dictionary<IntPtr, ProcessWrapper> ProcessMap2 = new Dictionary<IntPtr, ProcessWrapper>();
@@ -1238,6 +1185,85 @@ namespace keyupMusic2
 
             if (full)
                 SS().KeyPress(Keys.F11);
+        }
+        public static class RateLimiter
+        {
+            // 基础策略：记录上次执行时间
+            private static DateTime lastExecuteTime = DateTime.MinValue;
+            private static readonly TimeSpan ExecutionInterval = TimeSpan.FromMilliseconds(400);
+
+            // 过载策略：记录1秒内的调用次数
+            private static int callCount = 0;
+            private static DateTime windowStart = DateTime.MinValue;
+            private const int OverloadThreshold = 5;
+
+            // 线程安全锁
+            private static readonly object _lock = new object();
+
+            public static void Execute<T1, T2>(Action<T1, T2> action, T1 arg1, T2 arg2)
+            {
+                lock (_lock)
+                {
+                    var now = DateTime.Now;
+
+                    // 重置窗口计数器（如果窗口已过期）
+                    if (now - windowStart > ExecutionInterval)
+                    {
+                        windowStart = now;
+                        callCount = 0;
+                    }
+
+                    callCount++;
+
+                    // 策略1：基础频率限制（每秒最多1次）
+                    bool canExecuteBase = now - lastExecuteTime >= ExecutionInterval;
+
+                    // 策略2：过载放行（1秒内调用超过5次时，放行第6次）
+                    bool canExecuteOverload = callCount % OverloadThreshold == 0;
+
+                    if (callCount >= 1.4 * OverloadThreshold)
+                    {
+                        lastExecuteTime = now;
+                        callCount = 0; // 执行后重置计数器
+                        action(arg1, arg2); // 执行带参数的方法
+                    }
+                    else if (callCount >= 2 * OverloadThreshold)
+                    {
+                        lastExecuteTime = now;
+                        callCount = 0; // 执行后重置计数器
+                        action(arg1, arg2); // 执行带参数的方法
+                        action(arg1, arg2); // 执行带参数的方法
+                    }
+                    else if (canExecuteBase || canExecuteOverload)
+                    {
+                        lastExecuteTime = now;
+                        callCount = 0; // 执行后重置计数器
+                        action(arg1, arg2); // 执行带参数的方法
+                    }
+                }
+            }
+        }
+        public const uint WM_USER = 0x0400;
+        public const uint CUSTOM_MESSAGE = WM_USER + 100;
+
+        // 向指定窗口发送消息
+        public static void SendMessageToWindow(string procName, string message)
+        {
+            int currentProcessId = Process.GetCurrentProcess().Id;
+            Process[] processes = Process.GetProcessesByName(procName);
+            foreach (Process process in processes)
+            {
+                if (process.Id != currentProcessId && !process.MainWindowHandle.Equals(IntPtr.Zero))
+                {
+                    // 获取主窗口句柄
+                    IntPtr hWnd = process.MainWindowHandle;
+
+                    // 发送消息
+                    IntPtr lParam = Marshal.StringToHGlobalUni(message);
+                    PostMessage(hWnd, CUSTOM_MESSAGE, IntPtr.Zero, lParam);
+                    Marshal.FreeHGlobal(lParam);
+                }
+            }
         }
 
     }

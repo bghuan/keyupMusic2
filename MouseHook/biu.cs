@@ -24,7 +24,6 @@ namespace keyupMusic2
         bool left_down_click = false;
         bool left_up_click = false;
         bool right_up_click = false;
-        bool right_up_f = false;
         bool right_down_click = false;
         bool right_side_click = false;
         private static readonly object _lockObject_handing2 = new object();
@@ -129,7 +128,7 @@ namespace keyupMusic2
                         mouse_click_right();
                     }
                     break;
-                
+
                 case 1:
                     if (is_chrome) quick_left_right(arraw); break;// 右
                 case 2:
@@ -183,23 +182,30 @@ namespace keyupMusic2
         private void GoBack()
         {
             if (e.Msg == MouseMsg.move) return;
+            var go = e.Msg == MouseMsg.go;
+            var back = e.Msg == MouseMsg.go;
+            if (!(go || back)) return;
 
-            if (e.Msg == MouseMsg.go)
+            if (ProcessName == msedge)
+                if (go) press(Keys.Right);
+            if (ProcessName == chrome)
+                if (go) press(Keys.F);
+            if (ProcessName == cs2)
             {
-                if (ProcessName == msedge) press(Keys.Right);
-                if (ProcessName == chrome) press(Keys.F);
-                if (ProcessName == cs2) press_raw(Keys.MediaNextTrack);
+                if (back) press_raw(Keys.MediaPreviousTrack);
+                if (go) press_raw(Keys.MediaNextTrack);
             }
-            if (e.Msg == MouseMsg.back)
+            if (ProcessName == steam)
             {
-                if (ProcessName == cs2) press_raw(Keys.MediaPreviousTrack);
+                if (go) press("808,651;", 1); CloseProcess(steam);
+                if (back) press("36,70", 1);
             }
 
             if (list_go_back.Contains(ProcessName)) return;
 
-            if (e.Msg == MouseMsg.go)
+            if (go)
                 press(Keys.MediaNextTrack);
-            else if (e.Msg == MouseMsg.back)
+            else if (back)
                 press(Keys.MediaPreviousTrack);
         }
 

@@ -93,6 +93,7 @@ namespace keyupMusic2
             input[0].Data.Mouse.mouseData = (uint)delta;
             input[0].Data.Mouse.Flags = Native.MOUSEEVENTF_WHEEL;
             input[0].Data.Mouse.time = (uint)Native.GetTickCount();
+            input[0].Data.Mouse.dwExtraInfo = (nint)Common.isVir;
 
             KeyboardInput.SendInput((uint)input.Length, ref input[0], Marshal.SizeOf(input[0]));
 
@@ -142,14 +143,6 @@ namespace keyupMusic2
                     public uint time;
                     public IntPtr dwExtraInfo;
                 }
-                //public struct KEYBDINPUT
-                //{
-                //    public int wVk;
-                //    public int ScanCode;
-                //    public KeyboardFlag Flags;
-                //    public int time;
-                //    public int dwExtraInfo;
-                //}
             }
             public static INPUT CreateKeyDown(ushort virtualKey, bool Extend = false)
             {

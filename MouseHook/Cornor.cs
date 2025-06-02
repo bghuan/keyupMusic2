@@ -4,132 +4,99 @@ namespace keyupMusic2
 {
     partial class biu
     {
-        int cornor = 0;
+        RECTT corner1 = new RECTT(new RECT(0, 0, 0, 0), new RECT(0, 0, f150, f150));//
+        RECTT corner2 = new RECTT(new RECT(chang, 0, chang, 0), new RECT(chang - f150, 0, chang , f150));//
+        RECTT corner3 = new RECTT(new RECT(chang, gao, chang, gao), new RECT(chang - f150, gao - f150, chang, gao));
+        RECTT corner4 = new RECTT(new RECT(0, gao, 0, gao), new RECT(0, gao - f150, f150, gao));
 
-        Point point1 = new Point(0, screenHeight1);
-        Point point2 = new Point(0, 0);
-        Point point3 = new Point(screenWidth1, 0);
-        Point point4 = new Point(screenWidth1, screenHeight1);
+        RECTT corner5 = new RECTT(new RECT(chang2, 0, chang2, 0), new RECT(chang2, 0, chang2 + f150, f150));//
+        RECTT corner6 = new RECTT(new RECT(-1, 0, -1, 0), new RECT(-1 - f150, 0, -1, f150));
+        RECTT corner7 = new RECTT(new RECT(-1, gao2, -1, gao2), new RECT(-1 - f150, gao2 - f150, -1, gao2));
+        RECTT corner8 = new RECTT(new RECT(chang2, gao2, chang2, gao2), new RECT(chang2, gao2 - f150, chang2 + f150, gao2));//
 
-        //Point point5 = new Point(3840, 0);
-        //Point point6 = new Point(0, screenHeight1);
-        //Point point7 = new Point(0, screenHeight1);
-        //Point point8 = new Point(0, screenHeight1);
 
-        Point point5 = new Point(screen2Width, 0);
-        Point point6 = new Point(-1, 0);
-        Point point7 = new Point(-1, screen2Height1);
-        Point point8 = new Point(screen2Width, screen2Height1);
-        Point last_point = new Point();
         public void Cornor()
         {
-            if (is_ctrl_shift_alt()){ handing2 = false; return; }
-            _Cornor();
-            handing2 = false;
-        }
-        public void _Cornor()
-        {
-            lock (_lockObject_handing2)
+            if (e.Msg != MouseMsg.move) return;
+            int line = 0;
+            if (corner1.target(e.Pos)) { play_sound_di(); line = 1; }
+            else if (corner2.target(e.Pos)) { play_sound_di(); line = 2; }
+            else if (corner3.target(e.Pos)) { play_sound_di(); line = 3; }
+            else if (corner4.target(e.Pos)) { play_sound_di(); line = 4; }
+            else if (corner5.target(e.Pos)) { play_sound_di(); line = 5; }
+            else if (corner6.target(e.Pos)) { play_sound_di(); line = 6; }
+            else if (corner7.target(e.Pos)) { play_sound_di(); line = 7; }
+            else if (corner8.target(e.Pos)) { play_sound_di(); line = 8; }
+
+            if (line == 1)
             {
-                FreshProcessName();
-                if (handing2) return;
-                if (is_ctrl()) return;
-                handing2 = true;
-                if (ffff != 10) ffff++;//change abs
-                if (ffff < 10) return;
-                if (e.Msg != MouseMsg.move) return;
-                cornor = 0;
-                var catched = true;
-                if (point1.Equals(e.Pos)) cornor = 1;
-                else if (point2.Equals(e.Pos)) cornor = 2;
-                else if (point3.Equals(e.Pos)) cornor = 3;
-                else if (point4.Equals(e.Pos)) cornor = 4;
-                else if (point5.Equals(e.Pos)) cornor = 5;
-                else if (point6.Equals(e.Pos)) cornor = 6;
-                else if (point8.Equals(e.Pos)) cornor = 8;
-                else return;
+                var list = new[] { msedge, Common.chrome };
+                //var list = new[] { msedge };
 
-                if (mouse_click_not_repeat_time.AddMilliseconds(600) > DateTime.Now) { handing2 = false; return; }
-                if (is_down(Keys.LButton) || is_down(Keys.RButton)) { handing2 = false; return; }
-                if (cornor == 1)
+                if (is_douyin())
+                    SS().KeyPress(Keys.H);
+                else if (list.Contains(Common.ProcessName))
+                    press([Keys.F11]);
+                else if (Common.ACPhoenix.Equals(Common.ProcessName))
+                    press([Keys.Tab]);
+            }
+            else if (line == 2)
+            {
+                var list = new[] { ApplicationFrameHost, explorer, vlc, v2rayN, Common.QQMusic, VSCode, AIoT, RadeonSoftware, steam, WeChatAppEx };
+
+                var list2 = new[] { Thunder };
+
+                if (is_douyin())
+                    mouse_click_not_repeat();
+                else if (list.Contains(Common.ProcessName))
+                    mouse_click_not_repeat();
+                else if (list2.Contains(Common.ProcessName))
+                    press_close();
+                else if (ProcessName == Common.devenv && Deven_runing())
                 {
-                    if (Common.ACPhoenix.Equals(Common.ProcessName))
-                        press([Keys.E]);
+                    mouse_click();
+                    press(Keys.Enter);
                 }
-                else if (cornor == 2)
-                {
-                    //var list = new[] { msedge, Common.chrome };
-                    var list = new[] { msedge };
-
-                    if (is_douyin())
-                        SS().KeyPress(Keys.H);
-                    else if (list.Contains(Common.ProcessName))
-                        press([Keys.F11]);
-                    else if (Common.ACPhoenix.Equals(Common.ProcessName))
-                        press([Keys.Tab]);
-                }
-                else if (cornor == 3)
-                {
-                    var list = new[] { ApplicationFrameHost, explorer, vlc, v2rayN, Common.QQMusic, VSCode, AIoT, RadeonSoftware, steam, WeChatAppEx };
-
-                    var list2 = new[] { Thunder };
-
-                    if (is_douyin())
-                        mouse_click_not_repeat();
-                    else if (list.Contains(Common.ProcessName))
-                        mouse_click_not_repeat();
-                    else if (list2.Contains(Common.ProcessName))
-                        press_close();
-                    else if (ProcessName == Common.devenv && Deven_runing())
+                else if (ProcessName == Common.devenv)
+                    HideProcess(Common.devenv);
+                else if (Common.ACPhoenix.Equals(Common.ProcessName))
+                    press([Keys.Space]);
+            }
+            else if (line == 5)
+            {
+                if (ProcessName == Common.chrome)
+                    if (judge_color(-1783, 51, Color.FromArgb(162, 37, 45)))
                     {
-                        mouse_click();
-                        press(Keys.Enter);
+                        press("20;-2625.38;-2625,39");
                     }
-                    else if (ProcessName == Common.devenv)
-                        HideProcess(Common.devenv);
-                    else if (Common.ACPhoenix.Equals(Common.ProcessName))
-                        press([Keys.Space]);
-                }
-                //else if (cornor == 4)
-                //{
-                //    //if (Common.ACPhoenix.Equals(Common.ProcessName))
-                //    //    press([Keys.Escape]);
-                //    //quick_max_chrome(e.Pos);
-                //}
-                else if (cornor == 5)
-                {
-                    if (ProcessName == Common.chrome)
-                        if (judge_color(-1783, 51, Color.FromArgb(162, 37, 45)))
-                        {
-                            play_sound_di();
-                            catched = false;
-                            press("20;-2625.38;-2625,39");
-                        }
-                }
-                else if (cornor == 6)
-                {
-                    press(Keys.F11);
-                }
-                else if (cornor == 8)
-                {
-                    press(Keys.F11);
-                }
-                else
-                {
-                    catched = false;
-                }
+            }
+            else if (line == 6)
+            {
+                press(Keys.F11);
+            }
+            else if (line == 8)
+            {
+                press(Keys.F11);
+            }
 
-                if (catched)
-                {
-                    play_sound_di();
-                }
-                else
-                    return;
-                mouse_click_not_repeat_time = DateTime.Now;
-                ffff = 0;
-                last_point = e.Pos;
-                Common.ProcessName = "";
+            corner1.ignore(e.Pos);
+            corner2.ignore(e.Pos);
+            corner3.ignore(e.Pos);
+            corner4.ignore(e.Pos);
+            corner5.ignore(e.Pos);
+            corner6.ignore(e.Pos);
+            corner7.ignore(e.Pos);
+            corner8.ignore(e.Pos);
+            if (line != 0)
+            {
+                line1.can = false;
+                line2.can = false;
+                line3.can = false;
+                line5.can = false;
+                line6.can = false;
+                line7.can = false;
             }
         }
+
     }
 }
