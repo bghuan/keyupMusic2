@@ -69,6 +69,7 @@ namespace keyupMusic2
         public const string TwinkleTray = "Twinkle Tray";
         public const string TwinkleTrayexe = "C:\\Users\\bu\\AppData\\Local\\Programs\\twinkle-tray\\Twinkle Tray.exe";
         public const string androidstudio = "studio64";
+        public const string cloudmusic = "cloudmusic";
 
         public static List<string> list_go_back = new List<string> { explorer, VSCode, msedge, chrome, devenv, androidstudio, ApplicationFrameHost, cs2, steam };
 
@@ -90,7 +91,7 @@ namespace keyupMusic2
             get
             {
                 var aaa =
-                GetWindowText() == UnlockingWindow || ProcessName == LockApp || ProcessName == err;
+                 ProcessName == err || ProcessName == LockApp || GetWindowText() == UnlockingWindow;
                 if (aaa)
                 {
                     string _ProcessName = ProcessName;
@@ -151,6 +152,10 @@ namespace keyupMusic2
                 this.title = title;
                 this.path = path;
             }
+            public string ToString()
+            {
+                return this.name+" " + this.title + " " + this.path;
+            }
         }
         public static string FreshProcessName()
         {
@@ -197,7 +202,14 @@ namespace keyupMusic2
 
             return windowTitle;
         }
-        public static string GetPointName(IntPtr hwnd)
+        public static bool IsDiffProcess()
+        {
+            IntPtr hWnd = Native.WindowFromPoint(Position);
+            IntPtr hwnd2 = Native.GetForegroundWindow();
+            if (hwnd2 != hWnd) return true;
+            return false;
+        }
+        public static string GetPointName()
         {
             IntPtr hWnd = Native.WindowFromPoint(Position);
             var aaa = GetWindowName(hWnd);
@@ -1124,13 +1136,12 @@ namespace keyupMusic2
         }
         public static void LossScale()
         {
-            FreshProcessName();
+            //press([Keys.LControlKey, Keys.F2]);return;
             List<string> lines = new List<string>()
                 { devenv , keyupMusic2, explorer };
-            if (lines.Contains(ProcessName))
+            if (lines.Contains(ProcessName2))
             {
-                release_all_keydown();
-                //ProcessRun(Application.ExecutablePath);
+                //release_all_keydown();
                 return;
             }
             if (!ExistProcess(LosslessScaling))

@@ -13,7 +13,28 @@ namespace keyupMusic2
         public static void Button1(string msg)
         {
             Keys key = Keys.None;
-            if (msg.Contains("up"))
+            if (msg.Contains("starting"))
+            {
+                if (Position.Y == 0)
+                {
+                    press([Keys.LControlKey, Keys.F1]);
+                }
+                //else if (Position.Y == screenHeight1 && Position.X == screenWidth1)
+                //{
+                //    system_hard_sleep();
+                //}
+                else
+                {
+                    LossScale();
+                }
+                return;
+            }
+            else if (msg.Contains("sleep"))
+            {
+                system_hard_sleep();
+                return;
+            }
+            else if (msg.Contains("up"))
                 key = Keys.Up;
             else if (msg.Contains("down"))
                 key = Keys.Down;
@@ -25,12 +46,8 @@ namespace keyupMusic2
                 key = Keys.PageDown;
             else if (msg.Contains("\"msg\":2"))
                 key = Keys.F3;
-            else if (msg.Contains("sleep"))
+            else
             {
-                system_hard_sleep();
-                return;
-            }
-            else {
                 log("band listening msg not right,msg: " + msg);
             }
 
@@ -81,9 +98,7 @@ namespace keyupMusic2
 
             if (key == Keys.None) return;
 
-            Common.isVir = 0;
-            press(key);
-            Common.isVir = 3;
+            press_raw(key);
             //log(msg + "-" + ProcessName2 + "-" + key);
         }
     }

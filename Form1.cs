@@ -29,7 +29,7 @@ namespace keyupMusic2
         public static bool no_sleep = true;
         public Huan()
         {
-            if (start_check()) return;
+            //if (start_check()) return;
             InitializeComponent();
 
             try_restart_in_admin();

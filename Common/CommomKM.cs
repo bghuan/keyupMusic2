@@ -109,21 +109,15 @@ namespace keyupMusic2
         {
             mouse_event(MOUSEEVENTF_RIGHTUP, 0, 0, 0, 0);
         }
-        // 模拟鼠标前进（点击前进按钮）
         public static void MouseForward()
         {
-            // 按下前进按钮
             mouse_event(MOUSEEVENTF_XDOWN, 0, 0, XBUTTON2, 0);
-            // 释放前进按钮
             mouse_event(MOUSEEVENTF_XUP, 0, 0, XBUTTON2, 0);
         }
 
-        // 模拟鼠标后退（点击后退按钮）
         public static void MouseBack()
         {
-            // 按下后退按钮
             mouse_event(MOUSEEVENTF_XDOWN, 0, 0, XBUTTON1, 0);
-            // 释放后退按钮
             mouse_event(MOUSEEVENTF_XUP, 0, 0, XBUTTON1, 0);
         }
         public static void mouse_click(int x, int y, int tick = 10)
@@ -142,22 +136,6 @@ namespace keyupMusic2
             mouse_event(MOUSEEVENTF_LEFTDOWN | MOUSEEVENTF_LEFTUP, 0, 0, 0, 0);
             Thread.Sleep(tick);
         }
-        public static void mouse_click3()
-        {
-            mouse_event(MOUSEEVENTF_LEFTDOWN | MOUSEEVENTF_LEFTUP, 0, 0, 0, 0);
-        }
-        public static DateTime mouse_click_not_repeat_time = DateTime.Now;
-        public static void mouse_click_not_repeat()
-        {
-            mouse_event(MOUSEEVENTF_LEFTDOWN | MOUSEEVENTF_LEFTUP, 0, 0, 0, 0);
-            mouse_click_not_repeat_time = DateTime.Now;
-        }
-        public static bool not_repeat()
-        {
-            if (mouse_click_not_repeat_time.AddSeconds(1) > DateTime.Now) return false;
-            mouse_click_not_repeat_time = DateTime.Now;
-            return true;
-        }
         public static void down_mouse(int tick = 0)
         {
             mouse_event(MOUSEEVENTF_LEFTDOWN, 0, 0, 0, 0);
@@ -170,16 +148,16 @@ namespace keyupMusic2
         }
         public static bool is_down(Keys key)
         {
-            return Native.GetAsyncKeyState(key) < 0;
+            return GetAsyncKeyState(key) < 0;
         }
         public static bool is_down(int key)
         {
-            return Native.GetAsyncKeyState(key) < 0;
+            return GetAsyncKeyState(key) < 0;
         }
 
         public static bool is_ctrl()
         {
-            return Native.GetAsyncKeyState(Keys.ControlKey) < 0;
+            return GetAsyncKeyState(Keys.ControlKey) < 0;
         }
         public static bool isctrl()
         {
@@ -191,16 +169,16 @@ namespace keyupMusic2
         }
         public static bool is_esc()
         {
-            return Native.GetAsyncKeyState(Keys.Escape) < 0;
+            return GetAsyncKeyState(Keys.Escape) < 0;
         }
         public static bool is_alt()
         {
-            return Native.GetAsyncKeyState(Keys.LMenu) < 0 || Native.GetAsyncKeyState(Keys.RMenu) < 0;
+            return GetAsyncKeyState(Keys.LMenu) < 0 || GetAsyncKeyState(Keys.RMenu) < 0;
         }
 
         public static bool is_shift()
         {
-            return Native.GetAsyncKeyState(Keys.ShiftKey) < 0;
+            return GetAsyncKeyState(Keys.ShiftKey) < 0;
         }
         public static readonly object _lockObject2 = new object();
 
@@ -250,7 +228,6 @@ namespace keyupMusic2
         }
         public static void press_close()
         {
-            if (!not_repeat()) return;
             press([Keys.LMenu, Keys.F4]);
         }
         public static void altab(int tick = 0)
@@ -311,6 +288,7 @@ namespace keyupMusic2
         public static void press_middle_bottom()
         {
             press(middle_bottom, 0);
+            biu.RECTT.release();
         }
         public static string middle_bottom = "1333.1439";
         public static string middle_bottom_last_position = "1333.1439";
@@ -408,8 +386,8 @@ namespace keyupMusic2
         public static void _press(Keys keys)
         {
 
-            keybd_event((byte)keys, (byte)(Native.MapVirtualKey((ushort)keys, 0) & 0xFFU), 0, 0);
-            keybd_event((byte)keys, (byte)(Native.MapVirtualKey((ushort)keys, 0) & 0xFFU), 2, 0);
+            keybd_event((byte)keys, (byte)(MapVirtualKey((ushort)keys, 0) & 0xFFU), 0, 0);
+            keybd_event((byte)keys, (byte)(MapVirtualKey((ushort)keys, 0) & 0xFFU), 2, 0);
         }
         public static void press_dump(Keys keys, int tick = 500)
         {
@@ -434,7 +412,7 @@ namespace keyupMusic2
         {
             if (!MapVirtualKey.ContainsKey(bVk))
             {
-                MapVirtualKey.Add(bVk, (byte)(Native.MapVirtualKey(bVk, 0) & 0xFFU));
+                MapVirtualKey.Add(bVk, (byte)(MapVirtualKey(bVk, 0) & 0xFFU));
             }
             Native.keybd_event(bVk, MapVirtualKey[bVk], dwFlags, isVir);
         }

@@ -22,7 +22,6 @@ namespace keyupMusic2
                         press([Keys.RControlKey, Keys.RShiftKey, Keys.F5]);
                     break;
 
-                case Keys.F1:
                 case Keys.Escape:
                     Sleep(100);
                     press([Keys.RControlKey, Keys.K, Keys.D]);

@@ -10,6 +10,7 @@ namespace keyupMusic2
         {
             // To customize application configuration such as set high DPI settings or default font,
             // see https://aka.ms/applicationconfiguration.
+            if (Huan.start_check()) return;
             ApplicationConfiguration.Initialize();
             Application.Run(new Huan());
         }

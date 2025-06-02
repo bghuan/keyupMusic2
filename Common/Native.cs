@@ -206,7 +206,8 @@ namespace keyupMusic2
         internal static extern int GetTickCount();
         [DllImport("user32.dll")]
         public static extern uint MapVirtualKey(UInt32 uCode, UInt32 uMapType);
+        [DllImport("user32.dll", CharSet = CharSet.Auto)]
+        public static extern IntPtr FindWindow(string lpClassName, string lpWindowName);
 
-    
     }
 }

@@ -87,7 +87,8 @@ namespace keyupMusic2
                     huan.Invoke2(() => { huan.label1.Text = aaa; });
                     break;
                 case Keys.D:
-                    mouse_click_right2();
+                    IntPtr hWnd2 = FindWindow(null, "微信");
+                    FocusProcess(Common.WeChat);
                     break;
                 case Keys.F:
                     break;

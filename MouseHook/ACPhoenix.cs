@@ -5,6 +5,7 @@ namespace keyupMusic2
 {
     partial class biu
     {
+        bool listen_move = false;
         public void ACPhoenix()
         {
             if (ProcessName != keyupMusic2.Common.ACPhoenix) return;
@@ -22,7 +23,7 @@ namespace keyupMusic2
             }
             else if (e.Msg == MouseMsg.click_r)
             {
-                downing2 = true;
+                //downing2 = true;
                 if (!(right_top_exit()))
                     Task.Run(() =>
                     {
@@ -31,14 +32,14 @@ namespace keyupMusic2
                         Thread.Sleep(50);
                         for (var i = 0; i < 50; i++)
                         {
-                            if (!downing2) break;
+                            //if (!downing2) break;
                             mouse_click2(50);
                         }
                     });
             }
             else if (e.Msg == MouseMsg.click_r_up)
             {
-                downing2 = false;
+                //downing2 = false;
                 if ((e.Y < (493 * screenHeight / 1440) && e.Y > (190 * screenHeight / 1440)) && e.X < (2066 * screenWidth / 2560))
                     press(Keys.Space);
                 if (try_press(1433, 1072, Color.FromArgb(245, 194, 55), () => { }))

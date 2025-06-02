@@ -13,11 +13,11 @@ namespace keyupMusic2
             if (e.key == Keys.F3) return true;
             if (e.key == Keys.F9) return true;
 
-            if (e.key == Keys.F1 && !isctrl())
-            {
-                var list = new List<string> { Common.chrome, msedge, Common.devenv };
-                if (list.Contains(ProcessName)) return true;
-            }
+            //if (e.key == Keys.F1 && !isctrl())
+            //{
+            //    var list = new List<string> { Common.chrome, msedge, Common.devenv };
+            //    if (list.Contains(ProcessName)) return true;
+            //}
             if (e.key == Keys.F2 && ProcessName == Common.chrome)
                 return true;
             if (e.key == Keys.F10 || e.key == Keys.F11 || e.key == Keys.F12)
@@ -166,28 +166,19 @@ namespace keyupMusic2
             if (e.key == Keys.F9 && (keyupMusic2_onlisten || !no_sleep))
             {
                 system_sleep();
-                return;
             }
-            if (keyupMusic2_onlisten)
+            else if (keyupMusic2_onlisten)
             {
                 var aa = temp_visiable;
                 temp_visiable = false;
                 keyupMusic2_onlisten = false;
                 Invoke(() => { SetVisibleCore(aa); });
-                return;
             }
-            if (e.Y == 0)
+            else
             {
-                press([Keys.LControlKey, Keys.F1]);
-                return;
+                form_move();
+                super_listen();
             }
-            if (is_ctrl())
-            {
-                LossScale();
-                return;
-            }
-            form_move();
-            super_listen();
         }
 
         private void form_move()
@@ -218,7 +209,7 @@ namespace keyupMusic2
                 }, super_listen_tick);
             });
         }
-        public bool start_check()
+        public static bool start_check()
         {
             if (IsAdministrator()) return false;
             int currentProcessId = Process.GetCurrentProcess().Id;
@@ -227,9 +218,13 @@ namespace keyupMusic2
             {
                 if (process.Id != currentProcessId)
                 {
+                    TcpServer.socket_run = false;
+                    TcpServer.socket_write("starting");
+                    TcpServer.close();
                     //SendMessageToWindow(Common.keyupMusic2,"3214421432");
-                    press_raw([Keys.LControlKey, Keys.F3]);
-                    TaskRun(() => { Application.Exit(); }, 10);
+                    //press_raw([Keys.LControlKey, Keys.F3]);
+                    //TaskRun(() => { Application.Exit(); }, 5550);
+                    //MessageBox.Show("ddd"); 
                     return true;
                 }
             }

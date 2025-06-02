@@ -14,9 +14,10 @@ namespace keyupMusic2
         public static TcpListener listener;
         public static TcpClient client;
         public static NetworkStream stream;
-        static int restart_times = 0;
+        public static bool socket_run = true;
         public TcpServer(Form parentForm)
         {
+            if (!socket_run) return;
             huan = (Huan)parentForm;
             StartServer();
         }
@@ -78,13 +79,14 @@ namespace keyupMusic2
                     while ((i = stream.Read(bytes, 0, bytes.Length)) > 0)
                     {
                         string dataReceived = Encoding.UTF8.GetString(bytes, 0, i);
+                        //Log.log(dataReceived);
                         Invoke(dataReceived);
                     }
                 }
                 catch (Exception ex)
                 {
-                    huan.Invoke(() => { huan.label1.Text = "读取数据时发生错误：" + ex.Message; });
-                    Console.WriteLine("读取数据时发生错误：" + ex.Message);
+                    huan.Invoke(() => { huan.label1.Text = "读错：" + ex.Message; });
+                    Console.WriteLine("读错：" + ex.Message);
                     if (ex.Message.Contains("远程主机强迫关闭了一个现有的连接。"))
                     {
                         // 尝试重新建立连接
@@ -119,75 +121,27 @@ namespace keyupMusic2
                 huan.Invoke(() => { huan.label1.Text = msg; });
             }
         }
-        private static DateTime lastSendTime = DateTime.MinValue;
-        public static string lastMessageToSend;
         public static void socket_write(string msg)
         {
-            Task.Run(() =>
+            if (client == null || stream == null || client.Connected == false)
             {
-                if (restart_times > 10)
-                    return;
-                //if (string.IsNullOrEmpty(msg))
-                //    return;
-                try
-                {
-                    if (client == null || stream == null || client.Connected == false)
-                    {
-                        restart_times++;
-                        client = new TcpClient(Hostname, pport);
-                        stream = client.GetStream();
-                        Thread.Sleep(1000);
-                    }
-                    lastMessageToSend = msg;
-
-                    var now = DateTime.Now;
-                    if (now.Subtract(lastSendTime).TotalMilliseconds < 100)
-                        return;
-
-                    byte[] data = Encoding.UTF8.GetBytes(msg);
-                    stream.Write(data, 0, data.Length);
-                    lastSendTime = now;
-                }
-                catch (Exception ex)
-                {
-                    Console.WriteLine("发送数据时发生错误：" + ex.Message);
-                }
-            });
-        }
-        public static void CheckAndSendPendingMessage(string txt)
-        {
-            var now = DateTime.Now;
-            if ((now.Subtract(lastSendTime).TotalMilliseconds > 100 || lastSendTime == DateTime.MinValue) && txt != lastMessageToSend)
-            {
-                try
-                {
-                    byte[] data = Encoding.UTF8.GetBytes(lastMessageToSend);
-                    stream.Write(data, 0, data.Length);
-                    lastSendTime = now;
-                }
-                catch (Exception ex)
-                {
-                    Console.WriteLine("发送数据时发生错误：" + ex.Message);
-                }
+                client = new TcpClient(Hostname, pport);
+                stream = client.GetStream();
             }
-            //else if (stream != null)
-            //{
-            //    try
-            //    {
-            //        string asd = "+";
-            //        if (last_) asd = "_";
-            //        last_ = !last_;
-            //        byte[] data = Encoding.UTF8.GetBytes(asd);
-            //        stream.Write(data, 0, data.Length);
-            //        lastSendTime = now;
-            //    }
-            //    catch (Exception ex)
-            //    {
-            //        Console.WriteLine("发送数据时发生错误：" + ex.Message);
-            //    }
 
-            //}
+            byte[] data = Encoding.UTF8.GetBytes(msg);
+            stream.Write(data, 0, data.Length);
         }
-        static bool last_ = false;
+        public static void close()
+        {
+            if (stream != null)
+            {
+                stream.Dispose();
+            }
+            if (client != null)
+            {
+                client.Dispose();
+            }
+        }
     }
 }

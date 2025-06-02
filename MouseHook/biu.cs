@@ -14,24 +14,7 @@ namespace keyupMusic2
             huan = (Huan)parentForm;
         }
         public Huan huan;
-        bool listen_move = false;
-        bool downing = false;
-        bool downing2 = false;
-        bool handing = false;
-        bool handing2 = false;
-        bool handing3 = false;
-        bool left_side_click = false;
-        bool left_down_click = false;
-        bool left_up_click = false;
-        bool right_up_click = false;
-        bool right_down_click = false;
-        bool right_side_click = false;
-        private static readonly object _lockObject_handing2 = new object();
-        MouseKeyboardHook.MouseHookEventArgs e = null;
-        private Point start = Point.Empty;
-        private int threshold = 10;
-        bool r_button_downing = false;
-        bool x_button_dowing = false;
+        MouseHookEventArgs e = null;
         Point r_down_x = Point.Empty;
         bool r_chrome_menu = false;
 
@@ -57,8 +40,6 @@ namespace keyupMusic2
             }
             if (ProcessName == Common.devenv)
             {
-                //if (e.Y != 0) return false;
-
                 if (is_down(Keys.RButton)) return false;
                 if (e.Msg == MouseMsg.click_r)
                     return true;
@@ -70,10 +51,6 @@ namespace keyupMusic2
 
         public void MouseHookProc(MouseHookEventArgs e)
         {
-            //if (handing3) return;
-            if (handing) return;
-            handing = true;
-            handing3 = true;
             this.e = e;
 
             if (judge_handled(e)) e.Handled = true;
@@ -96,8 +73,6 @@ namespace keyupMusic2
                 Gestures();
                 All();
             });
-
-            handing = false;
         }
 
         private void Gestures()
@@ -128,7 +103,6 @@ namespace keyupMusic2
                         mouse_click_right();
                     }
                     break;
-
                 case 1:
                     if (is_chrome) quick_left_right(arraw); break;// 右
                 case 2:
@@ -221,7 +195,6 @@ namespace keyupMusic2
                 }
             }
         }
-        int ffff = 0;
 
     }
 }

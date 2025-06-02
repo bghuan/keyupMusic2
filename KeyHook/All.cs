@@ -67,8 +67,8 @@ namespace keyupMusic2
 
         private static void quick_close()
         {
-            if (ProcessName == Common.keyupMusic2) return;
-            if (lock_err) { system_hard_sleep(); return; }
+            //if (ProcessName == Common.keyupMusic2) return;
+            //if (lock_err) { system_hard_sleep(); return; }
             CloseProcess();
         }
 
