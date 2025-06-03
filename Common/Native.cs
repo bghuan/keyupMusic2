@@ -74,7 +74,7 @@ namespace keyupMusic2
             IntPtr hMod,
             uint dwThreadId);
         [DllImport("user32.dll")]
-        public static extern bool GetCursorPos(out System.Drawing.Point lpPoint); 
+        public static extern bool GetCursorPos(out System.Drawing.Point lpPoint);
 
         [DllImport("user32.dll")]
         public static extern IntPtr SetWindowsHookEx(int idHook, LowLevelkeyboardHookProc callback, IntPtr hInstance, uint threadId);
@@ -137,17 +137,16 @@ namespace keyupMusic2
         [DllImport("user32.dll", SetLastError = true, CharSet = CharSet.Auto)]
         public static extern int GetWindowText(IntPtr hWnd, StringBuilder lpString, int nMaxCount);
 
-      public static int MOUSEEVENTF_MOVE = 0x0001;
-      public static int MOUSEEVENTF_LEFTDOWN = 0x0002;
-      public static int MOUSEEVENTF_LEFTUP = 0x0004;
-      public static int MOUSEEVENTF_RIGHTDOWN = 0x0008;
-      public static int MOUSEEVENTF_RIGHTUP = 0x0010;
-      public static int MOUSEEVENTF_MIDDLEDOWN = 0x0020;
-      public static int MOUSEEVENTF_MIDDLEUP = 0x0040;
+        public static int MOUSEEVENTF_MOVE = 0x0001;
+        public static int MOUSEEVENTF_LEFTDOWN = 0x0002;
+        public static int MOUSEEVENTF_LEFTUP = 0x0004;
+        public static int MOUSEEVENTF_RIGHTDOWN = 0x0008;
+        public static int MOUSEEVENTF_RIGHTUP = 0x0010;
+        public static int MOUSEEVENTF_MIDDLEDOWN = 0x0020;
+        public static int MOUSEEVENTF_MIDDLEUP = 0x0040;
         public static int MOUSEEVENTF_ABSOLUTE = 0x8000;
         // 定义 MOUSEEVENTF_WHEEL 标志  
         public const int MOUSEEVENTF_WHEEL = 0x0800;
-        public const int SW_RESTORE = 9;
         // 鼠标事件标志
         public const int MOUSEEVENTF_XDOWN = 0x0080;
         public const int MOUSEEVENTF_XUP = 0x0100;

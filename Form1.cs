@@ -14,6 +14,8 @@ namespace keyupMusic2
         AllClass All;
         SuperClass Super;
         ChromeClass Chrome;
+        WinClass Win;
+        public LongPressClass LongPress;
         bool is_init_show = !(Position.Y == 0);
         bool is_mouse_hook = !(Position.Y == 1439);
         public static bool keyupMusic2_onlisten = false;
@@ -26,7 +28,6 @@ namespace keyupMusic2
         private Point endPoint = new Point(2250, 100);
         private DateTime startTime;
 
-        public static bool no_sleep = true;
         public Huan()
         {
             if (start_check()) return;
@@ -43,9 +44,11 @@ namespace keyupMusic2
             All = new AllClass();
             Super = new SuperClass(this);
             Chrome = new ChromeClass();
+            LongPress = new LongPressClass(this);
+            Win = new WinClass(this);
 
             new TcpServer(this);
-            new Tick();
+            new Tick(this);
         }
         protected override void Dispose(bool disposing)
         {
@@ -104,7 +107,6 @@ namespace keyupMusic2
         {
             base.SetVisibleCore(value);
             key_sound = value;
-            if (temp_visiable) key_sound = false;
             if (!value)
                 Task.Run(() => { Sleep(200); player.Stop(); });
         }
@@ -130,9 +132,9 @@ namespace keyupMusic2
                 TaskRun(() => { Invoke(() => SetVisibleCore(false)); }, 100);
             }
             //Location = new Point(Screen.PrimaryScreen.Bounds.Width - 310, 100);
-            Location = new Point(2255, 37);
+            Location = new Point(2255, 37); 
 
-            startPoint = new Point(Location.X - 300, Location.Y);
+            startPoint = new Point(Location.X - 252, Location.Y);
             endPoint = Location;
             after_load();
         }

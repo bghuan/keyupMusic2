@@ -10,15 +10,16 @@ namespace keyupMusic2
         }
         public int tick = 0;
 
-        public Simulate KeyPress(params object[] inputs)
-            => inputs.Aggregate(this, (sim, input)
-            => input is Keys key ? sim.KeyPress(key) :
-               input is Keys[] keys ? sim.KeyPress(keys) :
-               input is string str ? sim.KeyPress(str) :
-               sim);
+        //public Simulate KeyPress(params object[] inputs)
+        //    => inputs.Aggregate(this, (sim, input)
+        //    => input is Keys key ? sim.KeyPress(key) :
+        //       input is Keys[] keys ? sim.KeyPress(keys) :
+        //       input is string str ? sim.KeyPress(str) :
+        //       sim);
 
         public Simulate KeyPress(string text)
         {
+            if (text == null || text.Length == 0) return this;
             var inputs = new KeyboardInput.INPUT[text.Length * 2];
 
             for (int i = 0; i < text.Length; i++)

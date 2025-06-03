@@ -4,7 +4,7 @@ using static keyupMusic2.MouseKeyboardHook;
 
 namespace keyupMusic2
 {
-    partial class biuSC
+    partial class biuCL
     {
 
         static int far = 400;
@@ -18,7 +18,7 @@ namespace keyupMusic2
         public static RECTT line1 = new RECTT(new RECT(far, 0, _fa, 0),
                                 new RECT(0, 0, cha, far));
         public static RECTT line2 = new RECTT(new RECT(far, gao, _fa - 200, gao),
-                                new RECT(0, gao - far, cha, gao));
+                                new RECT(0, gao - far + 200, cha, gao));
         public static RECTT line3 = new RECTT(new RECT(cha, far, cha, gao - far),
                                 new RECT(cha - far, 0, cha, gao));
         public static RECTT line5 = new RECTT(new RECT(ch2 + far, 0, -far, 0),
@@ -50,7 +50,7 @@ namespace keyupMusic2
             else if (line == 2)
             {
                 if (is_douyin() && IsFullScreen()) return;
-                if (ProcessName == Common.chrome)
+                if (ProcessName == Common.chrome && IsFullScreen())
                 {
                     if (chrome_red()) press(Keys.F);
                     if (ProcessPosition(chrome).X >= chrome_x_min)
@@ -71,36 +71,26 @@ namespace keyupMusic2
                 if (ProcessTitle.Contains(Ghostrunner2)) return;
                 if (ProcessTitle.Contains(ItTakesTwo)) return;
                 if (ProcessName == Common.chrome)
-                {
                     if (chrome_red()) press(Keys.F);
-                }
                 if (IsDiffProcess())
-                {
                     if (GetPointName() == msedge)
-                    {
-                        dii();
                         FocusPointProcess();
-                    }
                     else
                         mouse_click2(0);
-                }
             }
             else if (line == 5)
             {
-                //if (IsDiffProcess())
-                //    mouse_click2(0);
+                if (IsDiffProcess())
+                    mouse_click2(0);
                 press(Keys.F);
                 SS().MouseWhell(120 * 12);
             }
             else if (line == 6)
             {
-                if (ProcessName2 != Common.chrome)
-                {
-                    mouse_click2(10);
-                }
-                var aaa = !(judge_color(-1783, 51, Color.FromArgb(162, 37, 45)) && judge_color(-645, 45, Color.FromArgb(162, 37, 45)));
-                if (aaa)
-                    press(Keys.F, 120);
+                if (IsDiffProcess())
+                    mouse_click2(0);
+                if (!chrome_red())
+                    press(Keys.F, 20);
                 SS().MouseWhell(-120 * 12);
             }
             else if (line == 7)

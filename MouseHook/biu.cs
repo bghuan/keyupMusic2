@@ -12,12 +12,12 @@ namespace keyupMusic2
         public biu(Form parentForm)
         {
             huan = (Huan)parentForm;
-            biusc = new biuSC();
+            biusc = new biuCL();
         }
         public Huan huan;
-        biuSC biusc;
+        biuCL biusc;
         MouseHookEventArgs e = null;
-        Point r_down_x = Point.Empty;
+        public static Point r_down_x = Point.Empty;
         bool r_chrome_menu = false;
 
         public bool judge_handled(MouseHookEventArgs e)
@@ -32,6 +32,7 @@ namespace keyupMusic2
             {
                 if (is_down(Keys.XButton1) || is_down(Keys.XButton2)) { return false; }
                 if (!list_go_back.Contains(ProcessName)) return true;
+                if (Common.cs2.Equals(ProcessName)) return true;
                 if (is_douyin()) return true;
             }
             if (e.Msg == MouseMsg.click_r || e.Msg == MouseMsg.click_r_up)
@@ -50,7 +51,7 @@ namespace keyupMusic2
         {
             this.e = e;
 
-            if (judge_handled(e)) e.Handled = true;
+            if (judge_handled(e)){ e.Handled = true; VirKeyState(e.Msg); }
 
             if (e.Msg != MouseMsg.move) FreshProcessName();
 

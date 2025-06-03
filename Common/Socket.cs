@@ -19,48 +19,48 @@ namespace keyupMusic2
         {
             if (!socket_run) return;
             huan = (Huan)parentForm;
-            StartServer();
+            StartServer().ConfigureAwait(false);
         }
         private static int retryCount = 0;
         private const int maxRetries = 5; // 最大重试次数
 
-        public static void StartServer(int port = pport)
+        public static async Task StartServer(int port = pport)
         {
-            Task.Run(() =>
-            {
-                try
-                {
-                    using (listener = new TcpListener(IPAddress.Any, port))
-                    {
-                        listener.Start();
-                        retryCount = 0; // 重置重试次数
+            await Task.Run(() =>
+             {
+                 try
+                 {
+                     using (listener = new TcpListener(IPAddress.Any, port))
+                     {
+                         listener.Start();
+                         retryCount = 0; // 重置重试次数
 
-                        while (true)
-                        {
-                            client = listener.AcceptTcpClient();
-                            stream = client.GetStream();
-                            _StartServer(port);
-                        }
-                    }
-                }
-                catch (Exception ex)
-                {
-                    retryCount++;
-                    if (retryCount <= maxRetries)
-                    {
-                        //huan.Invoke(() => { huan.label1.Text = $"服务器启动错误：{ex.Message}，重试中 ({retryCount}/{maxRetries})"; });
-                        Console.WriteLine($"服务器启动错误：{ex.Message}，重试中 ({retryCount}/{maxRetries})");
+                         while (true)
+                         {
+                             client = listener.AcceptTcpClient();
+                             stream = client.GetStream();
+                             _StartServer(port);
+                         }
+                     }
+                 }
+                 catch (Exception ex)
+                 {
+                     retryCount++;
+                     if (retryCount <= maxRetries)
+                     {
+                         //huan.Invoke(() => { huan.label1.Text = $"服务器启动错误：{ex.Message}，重试中 ({retryCount}/{maxRetries})"; });
+                         Console.WriteLine($"服务器启动错误：{ex.Message}，重试中 ({retryCount}/{maxRetries})");
 
-                        Thread.Sleep(1000);
-                        StartServer(port); // 递归调用以重试
-                    }
-                    else
-                    {
-                        huan.Invoke(() => { huan.label1.Text = "服务器启动失败，已达到最大重试次数。"; });
-                        Console.WriteLine("服务器启动失败，已达到最大重试次数。");
-                    }
-                }
-            });
+                         Thread.Sleep(1000);
+                         StartServer(port); // 递归调用以重试
+                     }
+                     else
+                     {
+                         huan.Invoke(() => { huan.label1.Text = "服务器启动失败，已达到最大重试次数。"; });
+                         Console.WriteLine("服务器启动失败，已达到最大重试次数。");
+                     }
+                 }
+             });
         }
 
         public static void _StartServer(int port)
@@ -117,8 +117,10 @@ namespace keyupMusic2
         {
             if (!string.IsNullOrEmpty(msg))
             {
-                if (msg == Huan.start_check_str || msg == Huan.start_check_str2) huan.start_catch(msg);
-                else if (Band.band_handle(msg)) { Band.Button1(msg); }
+                if (msg.Contains(Huan.start_check_str) || msg.Contains(Huan.start_check_str2))
+                    huan.start_catch(msg);
+                else if (Band.band_handle(msg))
+                    Band.Button1(msg);
                 //huan.Invoke(() => { huan.label1.Text = msg; });
             }
         }

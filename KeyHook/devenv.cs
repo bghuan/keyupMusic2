@@ -27,17 +27,26 @@ namespace keyupMusic2
                     press([Keys.RControlKey, Keys.K, Keys.D]);
                     break;
                 case Keys.F2:
-                    //press("73,242", 1);
+                    S100.KeyPress([Keys.RControlKey, Keys.OemPeriod])
+                        .KeyPress(Keys.Enter);
+                    //var aaa = (GetPointTitle() == "");
+                    //if (aaa)
+                    //    mouse_move(Position.X + 500, Position.Y);
+                    //SS(1000).KeyPress(Keys.Down)
+                    //    .KeyPress(Keys.Enter)
+                    //    .KeyPress(Keys.Enter);
+                    //if (aaa)
+                    //    mouse_move(Position.X - 500, Position.Y);
                     break;
-                case Keys.F:
-                    if (is_alt() && is_shift())
-                    {
-                        TaskRun(() =>
-                        {
-                            press([Keys.RControlKey, Keys.K, Keys.D]);
-                        }, 300);
-                    }
-                    break;
+                //case Keys.F:
+                //    if (is_alt() && is_shift())
+                //    {
+                //        TaskRun(() =>
+                //        {
+                //            press([Keys.RControlKey, Keys.K, Keys.D]);
+                //        }, 300);
+                //    }
+                //    break;
             }
             Common.hooked = false;
         }

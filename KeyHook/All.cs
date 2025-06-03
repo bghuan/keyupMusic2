@@ -15,13 +15,14 @@ namespace keyupMusic2
             bool right_top = Position.Y == 0 && Position.X == 2559;
             //if (!handling) return;
 
-            quick_open(e, module_name);
             quick_number(e);
 
             switch (e.key)
             {
                 case Keys.F4:
                     quick_close(); fresh_name(); break;
+                case Keys.F9:
+                    quick_sleep(); break;
                 case Keys.F10:
                     quick_what(); break;
                 case Keys.F11:
@@ -38,7 +39,7 @@ namespace keyupMusic2
 
                 case Keys.Delete:
                 case Keys.Escape:
-                    esc(); break;
+                    clean(); break;
 
                 case Keys.LMenu:
                 case Keys.Tab:
@@ -66,11 +67,19 @@ namespace keyupMusic2
             quick_max_chrome(e.Pos);
         }
 
+        private static void quick_sleep()
+        {
+            if (lock_err)
+                system_hard_sleep();
+        }
+
         private static void quick_close()
         {
             //if (ProcessName == Common.keyupMusic2) return;
             //if (lock_err) { system_hard_sleep(); return; }
             CloseProcess();
+            fresh_name();
+            clean();
         }
 
         private static void fresh_name()
@@ -113,13 +122,15 @@ namespace keyupMusic2
             }
         }
 
-        private static void esc()
+        private static void clean()
         {
             Special_Input = false;
             DaleyRun_stop = true;
             special_delete_key_time = DateTime.Now;
             KeyTime[system_sleep_string] = DateTime.MinValue;
             player.Stop();
+            CleanState();
+            ready_to_sleep = false;
         }
 
         private static void quick_go_back(KeyboardHookEventArgs e)
@@ -133,27 +144,10 @@ namespace keyupMusic2
                     press(Keys.F);
 
                 if (e.key == Keys.MediaNextTrack)
-                    MouseForward();
+                    mousego();
                 else
-                    MouseBack();
+                    mouseback();
             }
-        }
-
-        private static void quick_open(KeyboardHookEventArgs e, string module_name)
-        {
-            if (is_down(Keys.LWin))
-                switch (e.key)
-                {
-                    case Keys.D1:
-                        break;
-                    case Keys.D2:
-                        break;
-                    case Keys.Right:
-                    case Keys.Left:
-                        int arraw = e.key == Keys.Left ? 2 : 1;
-                        quick_left_right(arraw);
-                        break;
-                }
         }
 
         private static void quick_number(KeyboardHookEventArgs e)
@@ -197,7 +191,7 @@ namespace keyupMusic2
         {
             press("LWin;VISUAL;en;100;Apps;100;Enter;1000;1271.654;", 100);
             DaleyRun(
-                () => GetPointText() == "Microsoft Visual Studio(管理员)",
+                () => GetPointTitle() == "Microsoft Visual Studio(管理员)",
                 () => press("100;Tab;Down;Enter;", 100),
                 3000, 200);
             //TaskRun(() => { press("Tab;Down;Enter;", 100); }, 1800);

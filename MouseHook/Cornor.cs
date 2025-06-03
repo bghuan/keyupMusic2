@@ -1,10 +1,11 @@
 ﻿using System.Diagnostics;
 using static keyupMusic2.Common;
 using static keyupMusic2.MouseKeyboardHook;
+using static System.Windows.Forms.VisualStyles.VisualStyleElement.TrackBar;
 
 namespace keyupMusic2
 {
-    partial class biuSC
+    partial class biuCL
     {
         RECTT corner1 = new RECTT(new RECT(0, 0, 0, 0), new RECT(0, 0, far, far));//
         RECTT corner2 = new RECTT(new RECT(cha, 0, cha, 0), new RECT(cha - far, 0, cha, far));//
@@ -17,6 +18,7 @@ namespace keyupMusic2
         RECTT corner8 = new RECTT(new RECT(ch2, ga2, ch2, ga2), new RECT(ch2, ga2 - far, ch2 + far, ga2));//
 
         bool di = false;
+        DateTime di_time = DateTime.MinValue;
 
         public void Cornor(MouseHookEventArgs e)
         {
@@ -59,11 +61,12 @@ namespace keyupMusic2
                     press_close();
                 else if (ProcessName == Common.devenv && Deven_runing())
                 {
-                    mouse_click();
-                    press(Keys.Enter);
+                    Sleep(200);
+                    mouse_click(80, 70);
+                    mouse_move(PositionMiddle);
                 }
                 else if (ProcessName == Common.devenv)
-                    HideProcess(Common.devenv);
+                    HideProcess();
                 else if (Common.ACPhoenix.Equals(Common.ProcessName))
                     press([Keys.Space]);
             }
@@ -72,7 +75,7 @@ namespace keyupMusic2
                 if (ProcessName == Common.chrome)
                     if (judge_color(-1783, 51, Color.FromArgb(162, 37, 45)))
                         press("20;-2625.38;-2625,39");
-                    else 
+                    else
                         press([Keys.F11]);
             }
             else if (line == 6)
@@ -100,48 +103,40 @@ namespace keyupMusic2
         }
         public void press(string str, int tick = 100, bool force = false)
         {
-            if (!di) play_sound_di();
+            dii();
             Common.press(str, tick, force);
-            di = true;
         }
 
         public void press(Keys keys, int tick = 0)
         {
-            if (!di)
-                play_sound_di();
+            dii();
             Common.press(keys, tick);
-            di = true;
         }
 
         public void press_close()
         {
-            if (!di) play_sound_di();
+            dii();
             Common.press_close();
-            di = true;
         }
         public void mouse_click(int tick = 10)
         {
-            if (!di) play_sound_di();
+            dii();
             Common.mouse_click(tick);
-            di = true;
         }
         public void press(Keys[] keys, int tick = 10)
         {
-            if (!di) play_sound_di();
+            dii();
             Common.press(keys, tick);
-            di = true;
         }
-        public void HideProcess(string procName)
+        public void HideProcess()
         {
-            if (!di) play_sound_di();
-            Common.hideProcessTitle(procName);
-            di = true;
+            dii();
+            Common.HideProcess();
         }
         public void mouse_click(int x, int y)
         {
-            if (!di) play_sound_di();
+            dii();
             Common.mouse_click(x, y);
-            di = true;
         }
         public void mouse_click2(int tick = 0)
         {
@@ -152,6 +147,13 @@ namespace keyupMusic2
         {
             if (!di) play_sound_di();
             di = true;
+            //if (di_time.AddMilliseconds(100) > DateTime.Now) play_sound_di();
+            //di_time = DateTime.Now;
+        }
+        public void FocusPointProcess()
+        {
+            dii();
+            Common.FocusPointProcess();
         }
     }
 }

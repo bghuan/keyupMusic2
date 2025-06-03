@@ -29,22 +29,24 @@ namespace keyupMusic2
         }
         public void hook_KeyDown_keyupMusic2(KeyboardHookEventArgs e)
         {
-            hook(e);
-            //if (ProcessName != Common.keyupMusic2) return;
             if (!Huan.keyupMusic2_onlisten) return;
-            //if (is_ctrl() && is_shift()) return;
             Common.hooked = true;
-            //string label_backup = huan.label1.Text;
             bool catched = true;
             switch (e.key)
             {
                 case Keys.Q:
+                case Keys.W:
                     //SSSS.KeyPress(Keys.LWin, "openvpn", Keys.Enter);
                     //SSSS.KeyPress(Keys.LWin, "verge", Keys.Enter);
-                    mouse_click_right(2186, 1403);
-                    press("2259,1112;2109,1107", 100);
+                    mouse_move(2186, 1403,100);
+                    var need_win = GetPointName() != explorer;
+                    if (need_win) press(LWin,100);
+                    mouse_click_right();
+                    if (e.key == Q)
+                        press("2259,1112;2109,1107", 100);
+                    else
+                        press("2259,1112;2109,1180", 100);
                     break;
-                case Keys.W:
                     //2083,1180 2109,1107 2259,1112 2186,1403
                     mouse_click_right(2186, 1403);
                     press("2259,1112;2083,1180", 100);
@@ -94,8 +96,21 @@ namespace keyupMusic2
                     Environment.Exit(0);
                     break;
                 case Keys.G:
+                    var keys = new List<Keys>();
+                    for (int i = 0; i < 256; i++)
+                        keys.Add((Keys)i);
+                    huan.Invoke(() => { huan.label1.Text = "all key up " + keys.Count + keys.ToString(); });
+                    Sleep(200);
+                    foreach (var key in keys)
+                    {
+                        if (key == Keys.Apps) continue;
+                        if (is_down(Keys.CapsLock)) return;
+                        huan.Invoke(() => { huan.label1.Text = ProcessName + " " + key.ToString(); });
+                        SS(10).KeyUp(key);
+                    }
                     break;
                 case Keys.H:
+                    up_press(Keys.Apps);
                     break;
                 case Keys.J:
                     break;
@@ -120,7 +135,7 @@ namespace keyupMusic2
                     var pressedKeys = release_all_keydown();
                     if (pressedKeys.Any())
                         huan.Invoke2(() => { huan.label1.Text = "relese: " + string.Join(", ", pressedKeys); });
-                    hanling_keys = new Dictionary<Keys, string>();
+                    handling_keys = new Dictionary<Keys, string>();
                     break;
                 case Keys.M:
                     chrome_m();
@@ -154,12 +169,11 @@ namespace keyupMusic2
                 case Keys.F6:
                     play_sound(Keys.D2);
                     press(Keys.LWin);
-                    Sleep(200);
+                    Sleep(150);
                     mouse_click(1062, 899);
                     break;
                 case Keys.F10:
                     //Process.Start("rundll32.exe", "powrprof.dll,SetSuspendState 0,1,1");
-                    Huan.no_sleep = false;
                     huan.system_sleep();
                     break;
                 //case Keys.Up:
@@ -217,10 +231,11 @@ namespace keyupMusic2
         {
             TaskRun(() =>
             {
-                if (!FocusProcess(Common.chrome)) return;
+                string name = ProcessName;
+                if (!FocusProcessSimple(Common.chrome)) return;
                 play_sound_di();
                 Simm.KeyPress(Keys.M).Sleep(100);
-                altab();
+                FocusProcessSimple(name);
             }, 100);
         }
 
@@ -234,15 +249,6 @@ namespace keyupMusic2
                 ProcessRun("C:\\Program Files\\other\\Onekey---v1.3.5.exe");
                 Simm.Wait(2000).KeyPress(ddddd).KeyPress(Keys.Enter);
             });
-        }
-
-        private static void run_chrome()
-        {
-            if (!is_ctrl()) if (Common.FocusProcess(Common.chrome)) return;
-            //press("LWin;CHR;Enter;", 100);
-            SS().KeyPress(Keys.LWin)
-                .KeyPress("chrome")
-                .KeyPress(Keys.Enter);
         }
 
         private void cmd_v()
@@ -343,8 +349,8 @@ namespace keyupMusic2
 
                 var color = bmpScreenshot.GetPixel(relativeX, relativeY);
                 string asd = $"({mousePosition.X},{mousePosition.Y}, Color.FromArgb({color.R},{color.G},{color.B}))";
-                log(ProcessName + asd);
-                process_and_log(e?.key.ToString());
+                log(ProcessName + " " + GetPointName() + " " + GetPointTitle() + " " + asd);
+                //process_and_log(e?.key.ToString());
                 Invoke(() => Clipboard.SetText(asd));
                 return;
             }
@@ -355,8 +361,8 @@ namespace keyupMusic2
                     g.CopyFromScreen(last_x, last_y, 0, 0, new System.Drawing.Size(1, 1));
                     var color = bitmap.GetPixel(0, 0);
                     string asd = $"({mousePosition.X},{mousePosition.Y}, Color.FromArgb({color.R},{color.G},{color.B}))";
-                    log(ProcessName + asd);
-                    process_and_log(e?.key.ToString());
+                    log(ProcessName + " " + GetPointName() + " " + GetPointTitle() + " " + asd);
+                    //process_and_log(e?.key.ToString());
                     asd = $"{mousePosition.X},{mousePosition.Y}";
                     Invoke(() => Clipboard.SetText(asd));
                 }

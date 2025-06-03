@@ -1,23 +1,98 @@
-﻿using System.Diagnostics;
-using System.Timers;
-using System.Windows.Forms;
+﻿using System.Windows.Forms;
 using static keyupMusic2.Common;
-using static keyupMusic2.Native;
-using static System.Windows.Forms.VisualStyles.VisualStyleElement.Window;
 
 namespace keyupMusic2
 {
     public class Tick
     {
-        public Tick()
+        public Tick(Form parentForm)
         {
+            huan = (Huan)parentForm;
             StartKeyPressLoop();
+            EveryMinite();
+            Every100ms();
+            Every1000ms();
+        }
+        public static Huan huan;
+
+        // 存储按键及其首次按下时间
+        private static Dictionary<Keys, DateTime> _keyPressTimes = new Dictionary<Keys, DateTime>();
+        // 记录已触发长按的按键，避免重复触发
+        private static HashSet<Keys> _longPressedKeys = new HashSet<Keys>();
+        public static void Every100ms()
+        {
+            System.Timers.Timer timer = new(100);
+            timer.Elapsed += (sender, e) =>
+            {
+                var currentKeys = GetVirPressedKeys();
+
+                // 处理新按下的按键
+                foreach (var key in currentKeys)
+                {
+                    if (!_keyPressTimes.ContainsKey(key.Key))
+                    {
+                        _keyPressTimes[key.Key] = DateTime.Now;
+                        _longPressedKeys.Remove(key.Key); // 重置长按状态
+                    }
+
+                    //if ((DateTime.Now - _keyPressTimes[key.Key]).TotalSeconds >= 1 &&
+                    //    !_longPressedKeys.Contains(key.Key))
+                    //{
+                    //    log(key.ToString()+ ProcessName);
+                    //}
+                    // 检查是否长按（超过1秒）
+                    if ((DateTime.Now - _keyPressTimes[key.Key]).TotalSeconds >= 1 &&
+                        !_longPressedKeys.Contains(key.Key)
+                        && (key.Value == null || key.Value == ProcessName))
+                    {
+                        huan.LongPress.asd(key.Key); // 执行长按方法
+                        _longPressedKeys.Add(key.Key); // 标记为已触发
+                    }
+                }
+
+                // 移除已释放的按键
+                var keysToRemove = _keyPressTimes.Keys
+                    .Where(k => !currentKeys.ContainsKey(k))
+                    .ToList();
+
+                foreach (var key in keysToRemove)
+                {
+                    _keyPressTimes.Remove(key);
+                    _longPressedKeys.Remove(key);
+                }
+            };
+            timer.AutoReset = true;
+            timer.Start();
         }
 
-        public static System.Timers.Timer timer;
+        public static void Every1000ms()
+        {
+            System.Timers.Timer timer = new(1000);
+            timer.Elapsed += (sender, e) =>
+            {
+                //var currentKeys = GetVirPressedKeys();
+                //log(string.Join(", ", currentKeys) + ProcessName);
+            };
+            timer.AutoReset = true;
+            timer.Start();
+        }
+        public static void EveryMinite()
+        {
+            System.Timers.Timer timer = new(1000 * 60);
+            timer.Elapsed += (sender, e) =>
+            {
+                if (DateTime.Now.Minute == 0)
+                {
+                    press(Keys.MediaStop);
+                    play_sound(DateTime.Now.Hour % 10);
+                }
+            };
+            timer.AutoReset = true;
+            timer.Start();
+        }
         public static void StartKeyPressLoop()
         {
-            timer = new System.Timers.Timer(8000);
+            System.Timers.Timer timer = new System.Timers.Timer(8000);
             timer.Elapsed += (sender, e) =>
             {
                 NewMethod();
@@ -60,6 +135,8 @@ namespace keyupMusic2
                     }
                 }
                 ProcessRun(gccexe);
+                Sleep(5000);
+                HideProcess(gccexe);
                 //Sleep(1100);
                 //CloseProcess(gccexe);
 

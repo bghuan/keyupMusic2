@@ -14,12 +14,16 @@ namespace keyupMusic2
             if (e.Msg == MouseMsg.move)
             {
                 IntPtr hwnd = Native.WindowFromPoint(Position);
-                string asd = GetWindowName(hwnd) + " " + GetWindowText(hwnd);
-                if (huan.label1.Text != asd)
+                string name = GetWindowName(hwnd);
+                string title = GetWindowTitle(hwnd);
+                string message = name + " " + title;
+                if (huan.label1.Text != message)
                 {
+                    if (name != ProcessName && name != explorer)
+                        CleanState();
                     huan.Invoke2(() =>
                     {
-                        huan.label1.Text = asd;
+                        huan.label1.Text = message;
                     }, 10);
                 }
                 return;
@@ -39,9 +43,12 @@ namespace keyupMusic2
             {
                 if (e.Y == screenHeight1 && !IsFullScreen())
                 {
-                    Sleep(222);
+                    Sleep(100);
                     mouse_move_to(12, 1308 - screenHeight);
-                    mouse_click();
+                    DaleyRun(
+                        () => GetPointName() == ShellExperienceHost,
+                        () => mouse_click(),
+                        400, 50);
                 }
             }
         }

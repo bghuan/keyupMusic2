@@ -43,9 +43,9 @@ namespace keyupMusic2
                 case 2:
                     if (is_chrome) quick_left_right(arraw); break;// 左
                 case 3:
-                    if (is_chrome) SS().KeyPress(Keys.M); break;//  下
+                    if (is_chrome) press([Keys.LControlKey, Keys.W]); break;//  下
                 case 4:
-                    if (is_chrome) SS().KeyPress(Keys.F); break;//  上
+                    if (is_chrome) SS().KeyPress(Keys.M); break;//  上
                 default:
                     catched = false; break;
             }

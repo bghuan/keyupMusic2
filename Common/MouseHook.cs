@@ -4,7 +4,7 @@ namespace keyupMusic2
 {
     public class MouseKeyboardHook : IDisposable
     {
-        public static Dictionary<Keys, string> hanling_keys = new Dictionary<Keys, string>();
+        public static Dictionary<Keys, string> handling_keys = new Dictionary<Keys, string>();
         public static bool handling = false;
         protected virtual int KeyboardHookProc(int code, int wParam, ref Native.keyboardHookStruct lParam)
         {

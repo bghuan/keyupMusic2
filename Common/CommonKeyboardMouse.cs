@@ -60,6 +60,10 @@ namespace keyupMusic2
         public static int screen2Height = 1620;
         public static int screen2Height1 = 1619;
 
+        public static int screen3Width = -1920;
+        public static int screen3Height = 1080;
+        public static int screen3Height1 = 1079;
+
         public static void mouse_move_center(int tick = 0)
         {
             int x = screenWidth / 2;
@@ -109,13 +113,13 @@ namespace keyupMusic2
         {
             mouse_event(MOUSEEVENTF_RIGHTUP, 0, 0, 0, 0);
         }
-        public static void MouseForward()
+        public static void mousego()
         {
             mouse_event(MOUSEEVENTF_XDOWN, 0, 0, XBUTTON2, 0);
             mouse_event(MOUSEEVENTF_XUP, 0, 0, XBUTTON2, 0);
         }
 
-        public static void MouseBack()
+        public static void mouseback()
         {
             mouse_event(MOUSEEVENTF_XDOWN, 0, 0, XBUTTON1, 0);
             mouse_event(MOUSEEVENTF_XUP, 0, 0, XBUTTON1, 0);
@@ -152,18 +156,45 @@ namespace keyupMusic2
         }
         public static bool is_down_vir(Keys key)
         {
-            return GetAsyncKeyState(key) < 0 || VirMouseStateKey.Contains(key);
+            return GetAsyncKeyState(key) < 0
+                || (VirMouseStateKey.ContainsKey(key) && VirMouseStateKey[key] == ProcessName);
         }
-        public static List<Keys> VirMouseStateKey = new List<Keys>();
-        public static void VirMouseState(MouseMsg msg)
+        public static Dictionary<Keys, string> VirMouseStateKey = new Dictionary<Keys, string>();
+        public static void VirKeyState(Keys key, bool up = false)
         {
+            if (up && VirMouseStateKey.ContainsKey(key) && VirMouseStateKey[key] == ProcessName)
+                VirMouseStateKey.Remove(key);
+            else
+                VirMouseStateKey[key] = ProcessName;
+        }
+        public static void VirKeyState(MouseMsg msg)
+        {
+            if (!mousekeymap.ContainsKey(msg)) return;
+            bool up = msg.ToString().Contains("up");
+            Keys key = mousekeymap[msg];
+            if (up && VirMouseStateKey.ContainsKey(key) && VirMouseStateKey[key] == ProcessName)
+                VirMouseStateKey.Remove(key);
+            else
+                VirMouseStateKey[key] = ProcessName;
+        }
+        public static Dictionary<MouseMsg, Keys> mousekeymap = new Dictionary<MouseMsg, Keys>() {
+           { MouseMsg.click,Keys.LButton},
+           { MouseMsg.click_up,Keys.LButton},
+           { MouseMsg.click_r,Keys.RButton},
+           { MouseMsg.click_r_up,Keys.RButton},
+           { MouseMsg.go,Keys.XButton2},
+           { MouseMsg.go_up,Keys.XButton2},
+           { MouseMsg.back,Keys.XButton1},
+           { MouseMsg.back_up,Keys.XButton1},
+           { MouseMsg.middle,Keys.MButton},
+           { MouseMsg.middle_up,Keys.MButton},
+        };
+        public static void CleanVirMouseState()
+        {
+            if (VirMouseStateKey == null || VirMouseStateKey.Count == 0) return;
             lock (VirMouseStateKey)
             {
-                if (msg == MouseMsg.click) VirMouseStateKey.Add(Keys.LButton);
-                else if (msg == MouseMsg.click_r) VirMouseStateKey.Add(Keys.RButton);
-
-                else if (msg == MouseMsg.click_up) VirMouseStateKey.Remove(Keys.LButton);
-                else if (msg == MouseMsg.click_r_up) VirMouseStateKey.Remove(Keys.RButton);
+                VirMouseStateKey = new Dictionary<Keys, string>();
             }
         }
         public static bool is_down(int key)
@@ -222,26 +253,6 @@ namespace keyupMusic2
             }
             Thread.Sleep(tick);
         }
-        public static bool _Not_F10_F11_F12_Delete = true;
-        public static bool Not_F10_F11_F12_Delete(bool refresh = false, Keys current_key = new Keys())
-        {
-            if (refresh)
-            {
-                var keys = new[] { Keys.F10, Keys.F11, Keys.F12, Keys.Delete, Keys.LControlKey, Keys.RControlKey };
-                var sss = false;
-                var filteredKeys = keys.Where(key => key != current_key).ToArray();
-                foreach (Keys key in filteredKeys)
-                {
-                    if (is_down(key))
-                    {
-                        sss = true;
-                    }
-                }
-                _Not_F10_F11_F12_Delete = !sss;
-                //_Not_F10_F11_F12_Delete = !is_down(Keys.F10) && !is_down(Keys.F11) && !is_down(Keys.Delete);
-            }
-            return _Not_F10_F11_F12_Delete;
-        }
         public static void press_close()
         {
             press([Keys.LMenu, Keys.F4]);
@@ -273,7 +284,7 @@ namespace keyupMusic2
                 return;
             if (keys.Length == 1)
             {
-                _press(keys[0]);
+                press_dump(keys[0], tick);
             }
             else if (keys.Length > 1 && keys[0] == keys[1])
             {
@@ -304,7 +315,7 @@ namespace keyupMusic2
         public static void press_middle_bottom()
         {
             press(middle_bottom, 0);
-            biuSC.RECTT.release();
+            biuCL.RECTT.release();
         }
         public static string middle_bottom = "1333.1439";
         public static string middle_bottom_last_position = "1333.1439";
@@ -331,6 +342,26 @@ namespace keyupMusic2
                 press(Keys.LShiftKey, 10);
             return;
         }
+
+        public static void press(int tick, params object[] inputs)
+        {
+            foreach (var item in inputs)
+            {
+                if ("en" == item)
+                    ctrl_shift_win_search(false);
+                else if (item is Keys keys)
+                    press(keys, tick);
+                else if (item is string str)
+                    press_str(str, tick);
+                else if (item is Keys[] ks)
+                    press(ks, tick);
+            }
+        }
+        public static void press_str(string str, int tick = 100)
+        {
+            press(str.ToUpper(), tick);
+        }
+
         //1 返回原来鼠标位置
         //2
         //3 跳过delete return
@@ -351,34 +382,22 @@ namespace keyupMusic2
                 if (item == "LWin")
                 {
                     if (ProcessName == "SearchHost")
-                    {
-                        press([Keys.LControlKey, Keys.A]);
-                        press([Keys.Back]);
-                    }
+                        press([Keys.LControlKey, Keys.A, Keys.Back]);
                     else
                         press(Keys.LWin);
                     Thread.Sleep(100);
                     //ctrl_shift(false);
                 }
                 else if (item == "close")
-                {
                     CloseProcess();
-                }
                 else if (item == "zh")
-                {
                     ctrl_shift_win_search(true);
-                }
                 else if (item == "en")
-                {
                     ctrl_shift_win_search(false);
-                }
                 else if (item == "_") down_mouse();
                 else if (item == "-") up_mouse();
-                //else if (click > 0 && item.Substring(0, click + 1).IndexOf(",") > 0)
-                //{ }
                 else if (click > 0 || move > 0)
                 {
-
                     var x = int.Parse(item.Substring(0, click + move + 1));
                     var y = int.Parse(item.Substring(click + move + 1 + 1));
                     mouse_move(x, y, 10);
@@ -390,7 +409,7 @@ namespace keyupMusic2
                 }
                 else if (Enum.TryParse(typeof(Keys), item, out object asd))
                 {
-                    press((Keys)asd);
+                    press((Keys)asd, tick);
                 }
                 else if (item.Length > 1)
                 {
@@ -405,11 +424,10 @@ namespace keyupMusic2
         }
         public static void _press(Keys keys)
         {
-
             keybd_event((byte)keys, (byte)(MapVirtualKey((ushort)keys, 0) & 0xFFU), 0, 0);
             keybd_event((byte)keys, (byte)(MapVirtualKey((ushort)keys, 0) & 0xFFU), 2, 0);
         }
-        public static void press_dump(Keys keys, int tick = 500)
+        public static void press_dump(Keys keys, int tick = 10)
         {
             keybd_event((byte)keys, 0, 0, 0);
             Thread.Sleep(tick);

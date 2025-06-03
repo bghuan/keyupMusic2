@@ -27,8 +27,6 @@ namespace keyupMusic2
         public void hook_KeyDown(KeyboardHookEventArgs e)
         {
             string module_name = ProcessName;
-            Common.hooked = true;
-            //Not_F10_F11_F12_Delete(true, e.key);
             handling_keys = e.key;
 
             switch (module_name)
@@ -222,9 +220,14 @@ namespace keyupMusic2
                         case Keys.Oem3:
                             mouse_click();
                             break;
-                            //case Keys.MediaNextTrack:
-                            //   SS(0).KeyPress(Keys.C);
-                            //    break;
+                    }
+                    break;
+                case Common.Taskmgr:
+                    switch (e.key)
+                    {
+                        case Keys.F5:
+                            Simm.KeyPress(Common.keyupMusic2);
+                            break;
                     }
                     break;
                 case Common.vlc:

@@ -13,7 +13,8 @@ namespace keyupMusic2
 
         public void Invoke(Action method)
         {
-            try { base.Invoke(method); }
+            if (IsDisposed)return;
+                try { base.Invoke(method); }
             catch (Exception ex)
             {
                 string methodName = "未知方法";
@@ -49,46 +50,33 @@ namespace keyupMusic2
         }
         public void release_all_key(int tick = 1000)
         {
-            TaskRun(() =>
-            {
-                var pressedKeys = release_all_keydown();
-                if (pressedKeys.Any())
-                    Invoke2(() => { label1.Text = string.Join(", ", pressedKeys); });
-            }, tick);
+            var pressedKeys = release_all_keydown();
+            if (pressedKeys.Any())
+                Invoke2(() => { label1.Text = string.Join(", ", pressedKeys); });
         }
-        private void cancel_sleep(KeyboardHookEventArgs e)
+        public void system_sleep(bool force = false)
         {
-            if (!no_sleep && e.key != Keys.VolumeDown && e.key != Keys.VolumeUp && e.key != Keys.MediaStop && e.key != Keys.F22)
-            {
-                player.Stop();
-                Invoke2(() => { label1.Text = "取消睡眠"; });
-                no_sleep = true;
-            }
-        }
-        public void system_sleep()
-        {
-            temp_visiable = false;
-            system_sleep_count = 1;
             press(Keys.MediaStop);
             CloseProcess(chrome);
-            Invoke(() => { SetVisibleCore(true); });
-            KeyTime[system_sleep_string] = DateTime.Now;
 
-            if (GetWindowText() == UnlockingWindow || ProcessName == LockApp || ProcessName == err)
+            ready_to_sleep = true;
+            system_sleep_count = 1;
+            KeyTime[system_sleep_string] = DateTime.Now;
+            Invoke(() => { SetVisibleCore(true); });
+            int sleep = 0;
+
+            if (!force)
             {
                 play_sound(Keys.D0);
-                system_hard_sleep();
-                return;
+                sleep = 70000;
             }
-
-            if (!no_sleep) { Task.Run(() => Timer_Tick(200)); return; }
-            TaskRun(() => { Timer_Tick(); }, 70000);
             Task.Run(() =>
             {
                 play_sound(Keys.D0);
                 Invoke(() => { label1.Text = "系统即将进入睡眠状态"; });
+                Sleep(sleep);
+                Timer_Tick();
             });
-            no_sleep = false;
         }
 
         private void start_record(KeyboardHookEventArgs e)
@@ -99,36 +87,30 @@ namespace keyupMusic2
             }
         }
 
-        public void Timer_Tick(int tick = 1000)
+        public void Timer_Tick(int tick = 200)
         {
-            if (no_sleep) return;
-            no_sleep = true;
+            if (!ready_to_sleep) return;
+            ready_to_sleep = false;
             Invoke(() => { SetVisibleCore(false); });
-            Task.Run(() => press("500;LWin;1650,1300;1650,1140", tick));
-            for (int i = 0; i < 10; i++)
-            {
-                if (ProcessName2 == StartMenuExperienceHost) { return; }
-                play_sound_di(tick);
-            }
+            press("500;LWin;1650,1300;1650,1140", tick);
+            //press("500;LWin;1650,1300;", tick);
         }
         private void handle_special_or_normal_key(KeyboardHookEventArgs e)
         {
-            lock (hanling_keys)
-                if (!hanling_keys.ContainsKey(e.key))
+            lock (handling_keys)
+                if (!handling_keys.ContainsKey(e.key))
                 {
-                    if (e.key == Keys.F9) { return; }
                     string _ProcessName = "";
                     if (special_key.Contains(e.key)) _ProcessName = process_and_log(e.key.ToString());
                     if (e.key == Keys.F22 && (_ProcessName == "WeChatAppEx" || _ProcessName == "WeChat")) { return; }
-                    hanling_keys.Add(e.key, ProcessName);
+                    handling_keys.Add(e.key, ProcessName);
                 }
         }
         private void print_easy_read()
         {
             Dictionary<Keys, string> _stop_keys = new Dictionary<Keys, string>();
-            try { _stop_keys = hanling_keys?.ToList().ToDictionary(kv => kv.Key, kv => kv.Value); }
+            try { _stop_keys = handling_keys?.ToList().ToDictionary(kv => kv.Key, kv => kv.Value); }
             catch (ArgumentException ex) { }
-            if (!no_sleep) return;
             Invoke(() =>
             {
                 string asd = string.Join(" ", _stop_keys?.Select(key => easy_read(key.Key.ToString())));
@@ -147,36 +129,17 @@ namespace keyupMusic2
 
             return asd;
         }
-        private static string easy_read(Keys asd)
+        private static string easy_read2(Keys asd)
         {
             return easy_read(asd.ToString());
         }
 
-        public bool temp_visiable = false;
         private void super_listen_clear(Color color)
         {
             keyupMusic2_onlisten = false;
             BackColor = color;
         }
 
-        private void timerMove_Tick(object sender, EventArgs e)
-        {
-            TimeSpan elapsed = DateTime.Now - startTime;
-
-            if (elapsed.TotalMilliseconds <= timerMove_Tick_tick)
-            {
-                int currentX = (int)(startPoint.X + (endPoint.X - startPoint.X) * (elapsed.TotalMilliseconds / timerMove_Tick_tick));
-                int currentY = startPoint.Y;
-                Location = new Point(currentX, currentY);
-            }
-            else
-            {
-                Location = endPoint;
-                timerMove.Stop();
-                if (temp_visiable) { temp_visiable = false; SetVisibleCore(false); }
-                temp_visiable = false;
-            }
-        }
         public void startListen()
         {
             label1.Text = DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss");
