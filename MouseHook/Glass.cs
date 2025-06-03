@@ -9,62 +9,42 @@ namespace keyupMusic2
     partial class biu
     {
         static Point last_left = new Point(297, 680);
-        int lineeeeeeeeee = 580;
-        int line222222222222 = 1980;
+        static Point aaa = new Point(1277, 743);
         public void Glass()
         {
             if (e.Msg == MouseMsg.move) return;
-            var asdads = new string[] { Common.Glass, Common.Glass2, Common.Glass3, };
-            if (!asdads.Contains(ProcessName)) return;
+            var list = new string[] { Common.Glass, Common.Glass2, Common.Glass3, };
+            if (!list.Contains(ProcessName)) return;
 
-            //const int VK_XBUTTON1 = 0x05; // 鼠标侧键前进键的虚拟键码
-            //const int VK_XBUTTON2 = 0x06; // 鼠标侧键后退键的虚拟键码
-            //var dfsaf = Native.GetAsyncKeyState(VK_XBUTTON1);
-            //var dfsaf2 = Native.GetAsyncKeyState(VK_XBUTTON2);
-
-            if (e.Msg == MouseMsg.click_up)
+            if (e.Msg == MouseMsg.click)
             {
-                if (!(e.X > lineeeeeeeeee && e.X < line222222222222))
-                {
-                    last_left = e.Pos;
-                }
+                if (IsMouseInCircle()) return;
+                last_left = Position;
             }
             else if (e.Msg == MouseMsg.click_r_up)
             {
-                if (!(e.X > lineeeeeeeeee && e.X < line222222222222))
-                {
-                    last_left = e.Pos;
-                    Thread.Sleep(100);
-                    mouse_click2();
-                }
-                else
-                {
-                    var point = Position;
-                    mouse_move(last_left);
-                    mouse_click();
-                    mouse_move(point, 10);
-                }
+                if (!IsMouseInCircle()) return;
+                mouse_click();
+                mouse_move(last_left);
+                mouse_click();
+                mouse_move(aaa);
             }
-            else if (e.Msg == MouseMsg.back)
+            if (e.Msg == MouseMsg.back || e.Msg == MouseMsg.go)
             {
-                var dd = 297;
-                if (e.X > screenWidth2) dd = 2245;
-                if (!(e.X > lineeeeeeeeee && e.X < line222222222222))
-                {
-                    mouse_click();
-                    mouse_click(dd, 680);
-                    mouse_click();
-                    mouse_move(screenWidth2, screenHeight2);
-                }
-                else
-                {
-                    var point = Position;
-                    mouse_click();
-                    mouse_click(dd, 680);
-                    mouse_click();
-                    mouse_move(point, 10);
-                }
+                int x = 2245;
+                if (e.Msg == MouseMsg.go) x = 297;
+                var point = Position;
+                mouse_click();
+                mouse_click(x, 680);
+                last_left = Position;
+                mouse_move(aaa);
             }
+        }
+        public bool IsMouseInCircle(int centerX = 1285, int centerY = 695, int radius = 700)
+        {
+            int dx = e.X - centerX;
+            int dy = e.Y - centerY;
+            return dx * dx + dy * dy <= radius * radius;
         }
     }
 }

@@ -150,6 +150,22 @@ namespace keyupMusic2
         {
             return GetAsyncKeyState(key) < 0;
         }
+        public static bool is_down_vir(Keys key)
+        {
+            return GetAsyncKeyState(key) < 0 || VirMouseStateKey.Contains(key);
+        }
+        public static List<Keys> VirMouseStateKey = new List<Keys>();
+        public static void VirMouseState(MouseMsg msg)
+        {
+            lock (VirMouseStateKey)
+            {
+                if (msg == MouseMsg.click) VirMouseStateKey.Add(Keys.LButton);
+                else if (msg == MouseMsg.click_r) VirMouseStateKey.Add(Keys.RButton);
+
+                else if (msg == MouseMsg.click_up) VirMouseStateKey.Remove(Keys.LButton);
+                else if (msg == MouseMsg.click_r_up) VirMouseStateKey.Remove(Keys.RButton);
+            }
+        }
         public static bool is_down(int key)
         {
             return GetAsyncKeyState(key) < 0;
@@ -288,7 +304,7 @@ namespace keyupMusic2
         public static void press_middle_bottom()
         {
             press(middle_bottom, 0);
-            biu.RECTT.release();
+            biuSC.RECTT.release();
         }
         public static string middle_bottom = "1333.1439";
         public static string middle_bottom_last_position = "1333.1439";
@@ -343,6 +359,10 @@ namespace keyupMusic2
                         press(Keys.LWin);
                     Thread.Sleep(100);
                     //ctrl_shift(false);
+                }
+                else if (item == "close")
+                {
+                    CloseProcess();
                 }
                 else if (item == "zh")
                 {

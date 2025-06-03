@@ -29,11 +29,11 @@ namespace keyupMusic2
         public static bool no_sleep = true;
         public Huan()
         {
-            //if (start_check()) return;
+            if (start_check()) return;
             InitializeComponent();
 
             try_restart_in_admin();
-            release_all_key();
+            //release_all_key();
             startListen();
 
             ACPhoenix = new ACPhoenixClass();
@@ -46,28 +46,6 @@ namespace keyupMusic2
 
             new TcpServer(this);
             new Tick();
-        }
-
-        private void Form1_Load(object sender, EventArgs e)
-        {
-            int currentProcessId = Process.GetCurrentProcess().Id;
-            Process[] processes = Process.GetProcessesByName(Common.keyupMusic2);
-            foreach (Process process in processes)
-                if (process.Id != currentProcessId && IsAdministrator())
-                    process.Kill();
-
-            if (is_init_show && !Debugger.IsAttached)
-            {
-                SetVisibleCore(false);
-                TaskRun(() => { Invoke(() => SetVisibleCore(false)); }, 200);
-            }
-            //Location = new Point(Screen.PrimaryScreen.Bounds.Width - 310, 100);
-            Location = new Point(2255, 37);
-
-            startPoint = new Point(Location.X - 300, Location.Y);
-            endPoint = Location;
-            bland_title();
-            if (!ExistProcess(TwinkleTray)) { ProcessRun(TwinkleTrayexe); }
         }
         protected override void Dispose(bool disposing)
         {
@@ -127,32 +105,45 @@ namespace keyupMusic2
             base.SetVisibleCore(value);
             key_sound = value;
             if (temp_visiable) key_sound = false;
-            if (!value) player.Stop();
+            if (!value)
+                Task.Run(() => { Sleep(200); player.Stop(); });
         }
         private void label1_Click(object sender, EventArgs e)
         {
         }
-        protected override void WndProc(ref Message m)
+
+        private void Form1_Load(object sender, EventArgs e)
         {
-            if (m.Msg == CUSTOM_MESSAGE)
+            if (Debugger.IsAttached)
             {
-                // 提取消息内容
-                string message = Marshal.PtrToStringUni(m.LParam);
-                Console.WriteLine($"收到消息: {message}");
-
-                // 可以在这里处理接收到的消息
-                ProcessMessage(message);
-
-                return; // 消息已处理，不需要进一步处理
+                int currentProcessId = Process.GetCurrentProcess().Id;
+                Process[] processes = Process.GetProcessesByName(Common.keyupMusic2);
+                foreach (Process process in processes)
+                    if (process.Id != currentProcessId && IsAdministrator())
+                        process.Kill();
+                //mouse_move(screenWidth2,screenHeight2);
             }
+            is_init_show = Debugger.IsAttached ? !is_init_show : is_init_show;
+            if (is_init_show)
+            {
+                //SetVisibleCore(false);
+                TaskRun(() => { Invoke(() => SetVisibleCore(false)); }, 100);
+            }
+            //Location = new Point(Screen.PrimaryScreen.Bounds.Width - 310, 100);
+            Location = new Point(2255, 37);
 
-            base.WndProc(ref m);
+            startPoint = new Point(Location.X - 300, Location.Y);
+            endPoint = Location;
+            after_load();
         }
-
-        private void ProcessMessage(string message)
+        void after_load()
         {
-            // 处理接收到的消息
-            MessageBox.Show($"收到外部消息: {message}");
+            bland_title();
+            if (!ExistProcess(TwinkleTray)) { ProcessRun(TwinkleTrayexe); }
+
+            Common.FocusProcess(Common.Glass2);
+            Common.FocusProcess(Common.Glass3);
+
         }
     }
 }

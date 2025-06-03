@@ -11,7 +11,7 @@ namespace keyupMusic2
             var args = new KeyboardHookEventArgs(0, (Keys)lParam.vkCode, wParam, lParam);
             if (!args.isVir)
                 KeyboardHookEvent(args);
-            if (args.Handled) 
+            if (args.Handled)
                 return 1;
 
             return Native.CallNextHookEx(_key_hookId, code, wParam, ref lParam);
@@ -183,7 +183,9 @@ namespace keyupMusic2
         back_up = 0x020C,
 
         go = 0x920B,
-        go_up = 0x920C
+        go_up = 0x920C,
+
+        none = 0x920D,
     }
 
     public enum KeyboardType

@@ -27,7 +27,7 @@ namespace keyupMusic2
                     press([Keys.RControlKey, Keys.K, Keys.D]);
                     break;
                 case Keys.F2:
-                    press("73,242", 1);
+                    //press("73,242", 1);
                     break;
                 case Keys.F:
                     if (is_alt() && is_shift())

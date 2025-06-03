@@ -1,4 +1,7 @@
-﻿using static keyupMusic2.Common;
+﻿using System.Diagnostics;
+using System.Security.Policy;
+using System.Windows.Forms;
+using static keyupMusic2.Common;
 
 namespace keyupMusic2
 {
@@ -64,46 +67,43 @@ namespace keyupMusic2
 
         private void Cs2()
         {
-            if (e.Msg == MouseMsg.click)
-                huan.Invoke2(() => { huan.label1.Text = "click_down"; });
-            else if (e.Msg == MouseMsg.click_up)
-                huan.Invoke2(() => { huan.label1.Text = "click_up"; });
+            //if (e.Msg == MouseMsg.back)
+            //{
+            //    if (is_down(Keys.LButton)) return;
+            //    if (is_down(Keys.D1)) press("B;1243,699;1483,429;1483,568;1483,828;1483,696;1483,969;B;D3;");
+            //    else if (is_down(Keys.D5)) press("B;985,969;1483,429;1483,568;1483,696;1483,969;B;D3;");
+            //    else press("B;985,699;1483,429;1483,568;1483,828;1483,696;1483,969;B;D3;");
+            //    //("B;930,962;1483,568;1483,696;1483,828;1483,969;B;D3;");
+            //}
+            //else if (e.Msg == MouseMsg.go)
+            //{
+            //    if (is_down(Keys.LButton)) return;
+            //    press("Escape;");
+            //}
         }
-        bool devenv_right = false;
-        bool devenv_left = false;
         private void Devenv()
         {
-            if (e.Msg == MouseMsg.click_up)
-            {
-                //if (is_down(Keys.RButton))
-                if (devenv_right)
-                {
+            if (e.Msg == MouseMsg.click)
+                if (is_down_vir(Keys.RButton))
                     press(Keys.F12);
-                    devenv_left= true;
-                }
-            }
             if (e.Msg == MouseMsg.click_r)
             {
-                devenv_right = true;
-                devenv_left = false;
+                VirMouseState(e.Msg);
+                catch_on(MouseMsg.click);
             }
             if (e.Msg == MouseMsg.click_r_up)
             {
                 if (e.Y == 0)
                 {
-                    if (Deven_runing())
-                        press("116,69");
-                    else
-                        press("898,71");
+                    if (Deven_runing()) press("116,69");
+                    else press("898,71");
                 }
-                else if(!devenv_left)
-                {
+                else if (!catch_ed)
                     mouse_click_right();
-                }
-                devenv_right = false;
+                VirMouseState(e.Msg);
+                catch_off();
             }
         }
-
         private void PowerToysCropAndLock()
         {
             //if (!is_no_title(PowerToysCropAndLock))
@@ -171,6 +171,12 @@ namespace keyupMusic2
                 {
                     press([Keys.LControlKey, Keys.W]);
                 }
+            }
+            else if (e.Msg == MouseMsg.wheel && e.X == screenWidth1)
+            {
+                Keys keys = Keys.Right;
+                if (e.data > 0) keys = Keys.Left;
+                press(keys);
             }
         }
     }

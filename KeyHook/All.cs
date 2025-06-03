@@ -1,6 +1,7 @@
 ﻿using System.Drawing;
 using static keyupMusic2.Common;
 using static keyupMusic2.MouseKeyboardHook;
+using static System.Windows.Forms.VisualStyles.VisualStyleElement.TrackBar;
 
 namespace keyupMusic2
 {
@@ -194,8 +195,12 @@ namespace keyupMusic2
 
         private static void run_vis()
         {
-            press("LWin;VISUAL;en;100;Apps;100;Enter;", 100);
-            TaskRun(() => { press("Tab;Down;Enter;", 100); }, 1800);
+            press("LWin;VISUAL;en;100;Apps;100;Enter;1000;1271.654;", 100);
+            DaleyRun(
+                () => GetPointText() == "Microsoft Visual Studio(管理员)",
+                () => press("100;Tab;Down;Enter;", 100),
+                3000, 200);
+            //TaskRun(() => { press("Tab;Down;Enter;", 100); }, 1800);
         }
     }
 }

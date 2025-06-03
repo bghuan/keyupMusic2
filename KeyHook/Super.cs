@@ -91,6 +91,7 @@ namespace keyupMusic2
                     FocusProcess(Common.WeChat);
                     break;
                 case Keys.F:
+                    Environment.Exit(0);
                     break;
                 case Keys.G:
                     break;
@@ -343,7 +344,7 @@ namespace keyupMusic2
                 var color = bmpScreenshot.GetPixel(relativeX, relativeY);
                 string asd = $"({mousePosition.X},{mousePosition.Y}, Color.FromArgb({color.R},{color.G},{color.B}))";
                 log(ProcessName + asd);
-                log_process(e?.key.ToString());
+                process_and_log(e?.key.ToString());
                 Invoke(() => Clipboard.SetText(asd));
                 return;
             }
@@ -355,7 +356,7 @@ namespace keyupMusic2
                     var color = bitmap.GetPixel(0, 0);
                     string asd = $"({mousePosition.X},{mousePosition.Y}, Color.FromArgb({color.R},{color.G},{color.B}))";
                     log(ProcessName + asd);
-                    log_process(e?.key.ToString());
+                    process_and_log(e?.key.ToString());
                     asd = $"{mousePosition.X},{mousePosition.Y}";
                     Invoke(() => Clipboard.SetText(asd));
                 }

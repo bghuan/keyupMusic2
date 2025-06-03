@@ -1,9 +1,10 @@
 ﻿using System.Diagnostics;
 using static keyupMusic2.Common;
+using static keyupMusic2.MouseKeyboardHook;
 
 namespace keyupMusic2
 {
-    partial class biu
+    partial class biuSC
     {
         RECTT corner1 = new RECTT(new RECT(0, 0, 0, 0), new RECT(0, 0, far, far));//
         RECTT corner2 = new RECTT(new RECT(cha, 0, cha, 0), new RECT(cha - far, 0, cha, far));//
@@ -17,7 +18,7 @@ namespace keyupMusic2
 
         bool di = false;
 
-        public void Cornor()
+        public void Cornor(MouseHookEventArgs e)
         {
             if (e.Msg != MouseMsg.move) return;
             if (ProcessName.Equals(err)) return;
@@ -70,9 +71,9 @@ namespace keyupMusic2
             {
                 if (ProcessName == Common.chrome)
                     if (judge_color(-1783, 51, Color.FromArgb(162, 37, 45)))
-                    {
                         press("20;-2625.38;-2625,39");
-                    }
+                    else 
+                        press([Keys.F11]);
             }
             else if (line == 6)
             {
@@ -95,66 +96,62 @@ namespace keyupMusic2
             corner6.ignore(e.Pos);
             corner7.ignore(e.Pos);
             corner8.ignore(e.Pos);
-            if (line != 0)
-            {
-                line1.can = false;
-                line2.can = false;
-                line3.can = false;
-                line5.can = false;
-                line6.can = false;
-                line7.can = false;
-            }
+            if (line != 0) RECTT.release();
         }
-        //public void press(string str, int tick = 100, bool force = false)
-        //{
-        //    if (!di) play_sound_di();
-        //    Common.press(str, tick, force);
-        //    di = true;
-        //}
+        public void press(string str, int tick = 100, bool force = false)
+        {
+            if (!di) play_sound_di();
+            Common.press(str, tick, force);
+            di = true;
+        }
 
-        //public void press(Keys keys, int tick = 0)
-        //{
-        //    if (!di) 
-        //        play_sound_di();
-        //    Common.press(keys, tick);
-        //    di = true;
-        //}
+        public void press(Keys keys, int tick = 0)
+        {
+            if (!di)
+                play_sound_di();
+            Common.press(keys, tick);
+            di = true;
+        }
 
-        //public void press_close()
-        //{
-        //    if (!di) play_sound_di();
-        //    Common.press_close();
-        //    di = true;
-        //}
-        //public void mouse_click(int tick = 10)
-        //{
-        //    if (!di) play_sound_di();
-        //    Common.mouse_click(tick);
-        //    di = true;
-        //}
-        //public void press(Keys[] keys, int tick = 10)
-        //{
-        //    if (!di) play_sound_di();
-        //    Common.press(keys, tick);
-        //    di = true;
-        //}
-        //public void HideProcess(string procName)
-        //{
-        //    if (!di) play_sound_di();
-        //    Common.hideProcessTitle(procName);
-        //    di = true;
-        //}
-        //public void mouse_click(int x, int y)
-        //{
-        //    if (!di) play_sound_di();
-        //    Common.mouse_click(x, y);
-        //    di = true;
-        //}
-        //public  void mouse_click2(int tick = 0)
-        //{
-        //    if (!di) play_sound_di();
-        //    Common.mouse_click2(tick);
-        //    di = true;
-        //}
+        public void press_close()
+        {
+            if (!di) play_sound_di();
+            Common.press_close();
+            di = true;
+        }
+        public void mouse_click(int tick = 10)
+        {
+            if (!di) play_sound_di();
+            Common.mouse_click(tick);
+            di = true;
+        }
+        public void press(Keys[] keys, int tick = 10)
+        {
+            if (!di) play_sound_di();
+            Common.press(keys, tick);
+            di = true;
+        }
+        public void HideProcess(string procName)
+        {
+            if (!di) play_sound_di();
+            Common.hideProcessTitle(procName);
+            di = true;
+        }
+        public void mouse_click(int x, int y)
+        {
+            if (!di) play_sound_di();
+            Common.mouse_click(x, y);
+            di = true;
+        }
+        public void mouse_click2(int tick = 0)
+        {
+            dii();
+            Common.mouse_click2(tick);
+        }
+        public void dii()
+        {
+            if (!di) play_sound_di();
+            di = true;
+        }
     }
 }

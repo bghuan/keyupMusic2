@@ -1,9 +1,10 @@
 ﻿using System.Runtime.InteropServices;
 using static keyupMusic2.Common;
+using static keyupMusic2.MouseKeyboardHook;
 
 namespace keyupMusic2
 {
-    partial class biu
+    partial class biuSC
     {
 
         static int far = 400;
@@ -27,7 +28,7 @@ namespace keyupMusic2
         public static RECTT line7 = new RECTT(new RECT(ch2, far, ch2, ga2 - far),
                                 new RECT(ch2, 0, ch2 + far, ga2));
 
-        public void ScreenLine()
+        public void ScreenLine(MouseHookEventArgs e)
         {
             if (e.Msg != MouseMsg.move) return;
             if (ProcessName.Equals(err)) return;
@@ -48,11 +49,10 @@ namespace keyupMusic2
             }
             else if (line == 2)
             {
-
                 if (is_douyin() && IsFullScreen()) return;
                 if (ProcessName == Common.chrome)
                 {
-                    if (biu.chrome_red()) press(Keys.F);
+                    if (chrome_red()) press(Keys.F);
                     if (ProcessPosition(chrome).X >= chrome_x_min)
                     {
                         if (!judge_color(1840, 51, Color.FromArgb(162, 37, 45)))
@@ -61,6 +61,7 @@ namespace keyupMusic2
                         return;
                     }
                 }
+                if (IsFullScreen()) return;
                 mouse_click2(0);
             }
             else if (line == 3)
@@ -71,14 +72,23 @@ namespace keyupMusic2
                 if (ProcessTitle.Contains(ItTakesTwo)) return;
                 if (ProcessName == Common.chrome)
                 {
-                    if (biu.chrome_red()) press(Keys.F);
+                    if (chrome_red()) press(Keys.F);
                 }
                 if (IsDiffProcess())
-                    mouse_click2(0);
+                {
+                    if (GetPointName() == msedge)
+                    {
+                        dii();
+                        FocusPointProcess();
+                    }
+                    else
+                        mouse_click2(0);
+                }
             }
             else if (line == 5)
             {
-                mouse_click2(0);
+                //if (IsDiffProcess())
+                //    mouse_click2(0);
                 press(Keys.F);
                 SS().MouseWhell(120 * 12);
             }
@@ -104,7 +114,7 @@ namespace keyupMusic2
             line5.ignore(e.Pos);
             line6.ignore(e.Pos);
             line7.ignore(e.Pos);
-            if (line != 0) biu.RECTT.release();
+            if (line != 0) RECTT.release();
         }
 
         private static bool chrome_red()

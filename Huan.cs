@@ -13,6 +13,11 @@ namespace keyupMusic2
             if (e.key == Keys.F3) return true;
             if (e.key == Keys.F9) return true;
 
+            for (int i = 0; i < replace.Count; i++)
+            {
+                if (ProcessName == replace[i].process && e.key == replace[i].defore)
+                    return true;
+            }
             //if (e.key == Keys.F1 && !isctrl())
             //{
             //    var list = new List<string> { Common.chrome, msedge, Common.devenv };
@@ -52,13 +57,6 @@ namespace keyupMusic2
                 if (e.key == Keys.F && is_shift() && is_alt())
                     return true;
             }
-
-            for (int i = 0; i < replace.Count; i++)
-            {
-                if (ProcessName == replace[i].process && e.key == replace[i].defore)
-                    return true;
-            }
-
             if (ProcessName == Common.msedge && !is_douyin())
             {
                 if (e.key == Keys.Home) return true;
@@ -75,19 +73,6 @@ namespace keyupMusic2
             var flag = Chrome.judge_handled(e) || Douyin.judge_handled(e) || SuperClass.judge_handled(e);
             return flag;
         }
-        public class ReplaceKey
-        {
-            public ReplaceKey(string key, Keys defore, Keys after) { this.process = key; this.defore = defore; this.after = after; }
-            public string process;
-            public Keys defore;
-            public Keys after;
-        }
-        public static List<ReplaceKey> replace = new List<ReplaceKey> {
-           //new ReplaceKey( msedge,Keys.A,Keys.D),
-           //new ReplaceKey( msedge,Keys.D,Keys.A),
-           new ReplaceKey( Windblown,Keys.W,Keys.S),
-           new ReplaceKey( Windblown,Keys.S,Keys.W),
-        };
         private void hook_KeyDown(KeyboardHookEventArgs e)
         {
             if (e.Type != KeyboardType.KeyDown) return;
@@ -96,15 +81,7 @@ namespace keyupMusic2
 
             //print_easy_read();
             if (judge_handled(e)) { e.Handled = true; }
-            for (int i = 0; i < replace.Count; i++)
-            {
-                if (ProcessName == replace[i].process && e.key == replace[i].defore)
-                {
-                    down_press(replace[i].after);
-                    return;
-                }
-            }
-
+            if (quick_replace_key(e)) return;
             if (hanling_keys.ContainsKey(e.key)) return;
 
             FreshProcessName();
@@ -139,6 +116,8 @@ namespace keyupMusic2
                 });
             }
         }
+
+
         public void hook_KeyUp(KeyboardHookEventArgs e)
         {
             if (e.Type == KeyboardType.KeyDown) return;
@@ -154,11 +133,7 @@ namespace keyupMusic2
                 });
             }
 
-            for (int i = 0; i < replace.Count; i++)
-            {
-                if (ProcessName == replace[i].process && e.key == replace[i].defore)
-                    up_press(replace[i].after);
-            }
+            quick_replace_key(e, true);
         }
         private void F39(KeyboardHookEventArgs e)
         {
@@ -186,7 +161,9 @@ namespace keyupMusic2
             Invoke2(() =>
             {
                 if (Opacity == 0) { return; }
+                var current_hwnd = ProcessName;
                 if (!Visible) { temp_visiable = true; SetVisibleCore(true); }
+                if (Focused) { FocusProcessSimple(current_hwnd); }
                 timerMove.Interval = 1;
                 timerMove.Tick += timerMove_Tick;
                 timerMove.Start();
@@ -211,7 +188,7 @@ namespace keyupMusic2
         }
         public static bool start_check()
         {
-            if (IsAdministrator()) return false;
+            if (Debugger.IsAttached) return false;
             int currentProcessId = Process.GetCurrentProcess().Id;
             Process[] processes = Process.GetProcessesByName(Common.keyupMusic2);
             foreach (Process process in processes)
@@ -219,30 +196,56 @@ namespace keyupMusic2
                 if (process.Id != currentProcessId)
                 {
                     TcpServer.socket_run = false;
-                    TcpServer.socket_write("starting");
+                    TcpServer.socket_write(start_check_str);
                     TcpServer.close();
-                    //SendMessageToWindow(Common.keyupMusic2,"3214421432");
-                    //press_raw([Keys.LControlKey, Keys.F3]);
-                    //TaskRun(() => { Application.Exit(); }, 5550);
-                    //MessageBox.Show("ddd"); 
+                    Environment.Exit(0);
                     return true;
                 }
             }
             return false;
         }
-        private void try_restart_in_admin()
+        public static string start_check_str = "starting";
+        public static string start_check_str2 = "sleep";
+
+        public void start_catch(string msg)
         {
-            if (!Debugger.IsAttached && !is_down(Keys.LControlKey) && !IsAdministrator())
+            if (msg.Contains("starting"))
             {
-                ProcessStartInfo startInfo = new ProcessStartInfo(Application.ExecutablePath);
-                startInfo.UseShellExecute = true;
-                startInfo.Verb = "runas";
-                TaskRun(() => { if (ProcessName2 == Common.keyupMusic2) press(Keys.Enter, 1000); }, 1000);
-                Process.Start(startInfo);
-                Application.Exit();
-                MessageBox.Show("正在获取管理员权限");
+                play_sound_di2();
+                if (Position.Y == 0)
+                {
+                    Invoke(() => { temp_visiable = !Visible; SetVisibleCore(temp_visiable); });
+                    //press([Keys.LControlKey, Keys.F1]);
+                }
+                else if (Position.X == screenWidth1 && Position.Y == screenHeight1)
+                {
+                    //system_hard_sleep();
+                }
+                else if (Position.X == screenWidth1)
+                {
+                    string executablePath = Process.GetCurrentProcess().MainModule.FileName;
+                    Process.Start(executablePath);
+                    Environment.Exit(0);
+                }
+                else
+                {
+                    List<string> lines = new List<string>()
+                        { devenv , Common.keyupMusic2, explorer, cs2 };
+                    if (SearchHost.Contains(ProcessName2))
+                    {
+                        press([Keys.LControlKey, Keys.F1]);
+                        press(Keys.LWin);
+                    }
+                    else if (lines.Contains(ProcessName2))
+                        return;
+                    else
+                        LossScale();
+                }
             }
-            if (!IsAdministrator()) Text = Text + "(非管理员)";
+            else if (msg.Contains("sleep"))
+            {
+                system_hard_sleep();
+            }
         }
 
     }

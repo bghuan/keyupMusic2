@@ -117,8 +117,9 @@ namespace keyupMusic2
         {
             if (!string.IsNullOrEmpty(msg))
             {
-                if (Band.band_handle(msg)) { Band.Button1(msg); return; }
-                huan.Invoke(() => { huan.label1.Text = msg; });
+                if (msg == Huan.start_check_str || msg == Huan.start_check_str2) huan.start_catch(msg);
+                else if (Band.band_handle(msg)) { Band.Button1(msg); }
+                //huan.Invoke(() => { huan.label1.Text = msg; });
             }
         }
         public static void socket_write(string msg)

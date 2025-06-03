@@ -13,28 +13,7 @@ namespace keyupMusic2
         public static void Button1(string msg)
         {
             Keys key = Keys.None;
-            if (msg.Contains("starting"))
-            {
-                if (Position.Y == 0)
-                {
-                    press([Keys.LControlKey, Keys.F1]);
-                }
-                //else if (Position.Y == screenHeight1 && Position.X == screenWidth1)
-                //{
-                //    system_hard_sleep();
-                //}
-                else
-                {
-                    LossScale();
-                }
-                return;
-            }
-            else if (msg.Contains("sleep"))
-            {
-                system_hard_sleep();
-                return;
-            }
-            else if (msg.Contains("up"))
+            if (msg.Contains("up"))
                 key = Keys.Up;
             else if (msg.Contains("down"))
                 key = Keys.Down;

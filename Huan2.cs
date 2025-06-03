@@ -16,10 +16,37 @@ namespace keyupMusic2
             try { base.Invoke(method); }
             catch (Exception ex)
             {
-                log("Invoke err: " + ex.Message);
+                string methodName = "未知方法";
+
+                // 尝试从 Action 参数获取方法名
+                if (method != null && !method.Method.Name.Contains("DisplayClass"))
+                {
+                    methodName = method.Method.Name;
+                }
+                else
+                {
+                    // 从调用栈获取
+                    try
+                    {
+                        var stackTrace = new System.Diagnostics.StackTrace(ex, true);
+                        for (int i = 0; i < stackTrace.FrameCount; i++)
+                        {
+                            var frame = stackTrace.GetFrame(i);
+                            var methodInfo = frame.GetMethod();
+                            if (methodInfo.DeclaringType != null &&
+                                !methodInfo.DeclaringType.FullName.StartsWith("System."))
+                            {
+                                methodName = methodInfo.Name;
+                                break;
+                            }
+                        }
+                    }
+                    catch { /* 忽略反射异常 */ }
+                }
+
+                log($"Invoke err in {methodName}: {ex.Message}");
             }
         }
-
         public void release_all_key(int tick = 1000)
         {
             TaskRun(() =>
@@ -43,10 +70,11 @@ namespace keyupMusic2
             temp_visiable = false;
             system_sleep_count = 1;
             press(Keys.MediaStop);
+            CloseProcess(chrome);
             Invoke(() => { SetVisibleCore(true); });
             KeyTime[system_sleep_string] = DateTime.Now;
 
-            if (is_ctrl() || GetWindowText() == UnlockingWindow || ProcessName == LockApp || ProcessName == err)
+            if (GetWindowText() == UnlockingWindow || ProcessName == LockApp || ProcessName == err)
             {
                 play_sound(Keys.D0);
                 system_hard_sleep();
@@ -67,7 +95,7 @@ namespace keyupMusic2
         {
             if (SuperClass.start_record)
             {
-                log_process(e.key.ToString());
+                process_and_log(e.key.ToString());
             }
         }
 
@@ -90,7 +118,7 @@ namespace keyupMusic2
                 {
                     if (e.key == Keys.F9) { return; }
                     string _ProcessName = "";
-                    if (special_key.Contains(e.key)) _ProcessName = log_process(e.key.ToString());
+                    if (special_key.Contains(e.key)) _ProcessName = process_and_log(e.key.ToString());
                     if (e.key == Keys.F22 && (_ProcessName == "WeChatAppEx" || _ProcessName == "WeChat")) { return; }
                     hanling_keys.Add(e.key, ProcessName);
                 }
@@ -178,6 +206,17 @@ namespace keyupMusic2
             {
                 _mouseKbdHook.Uninstall();
                 _mouseKbdHook.Dispose();
+            }
+        }
+        private void try_restart_in_admin()
+        {
+            if (!Debugger.IsAttached && !IsAdministrator())
+            {
+                ProcessStartInfo startInfo = new ProcessStartInfo(Application.ExecutablePath);
+                startInfo.UseShellExecute = true;
+                startInfo.Verb = "runas";
+                Process.Start(startInfo);
+                Environment.Exit(0);
             }
         }
 

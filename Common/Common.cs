@@ -71,7 +71,7 @@ namespace keyupMusic2
         public const string androidstudio = "studio64";
         public const string cloudmusic = "cloudmusic";
 
-        public static List<string> list_go_back = new List<string> { explorer, VSCode, msedge, chrome, devenv, androidstudio, ApplicationFrameHost, cs2, steam };
+        public static List<string> list_go_back = new List<string> { explorer, VSCode, msedge, chrome, devenv, androidstudio, ApplicationFrameHost, cs2, steam, Glass, Glass2, Glass3 };
 
         public static SoundPlayer player = new SoundPlayer();
         public static SoundPlayer player2 = new SoundPlayer();
@@ -108,25 +108,8 @@ namespace keyupMusic2
                 return aaa;
             }
         }
-        public static string ProcessName2
-        {
-            get
-            {
-                FreshProcessName();
-                return ProcessName;
-            }
-            set
-            {
-                ProcessName = "";
-            }
-        }
-        public static Point Position
-        {
-            get
-            {
-                return Cursor.Position;
-            }
-        }
+        public static string ProcessName2 { get { FreshProcessName(); return ProcessName; } }
+        public static Point Position { get { return Cursor.Position; } }
         public static Point PositionMiddle = new Point(screenWidth2, screenHeight2);
         public static bool is_douyin()
         {
@@ -154,7 +137,7 @@ namespace keyupMusic2
             }
             public string ToString()
             {
-                return this.name+" " + this.title + " " + this.path;
+                return this.name + " " + this.title + " " + this.path;
             }
         }
         public static string FreshProcessName()
@@ -204,16 +187,39 @@ namespace keyupMusic2
         }
         public static bool IsDiffProcess()
         {
-            IntPtr hWnd = Native.WindowFromPoint(Position);
+            IntPtr hwnd = Native.WindowFromPoint(Position);
             IntPtr hwnd2 = Native.GetForegroundWindow();
-            if (hwnd2 != hWnd) return true;
-            return false;
+            if (hwnd2 == hwnd) return false;
+            //var s = GetWindowName(hwnd);
+            //var s2 = GetWindowName(hwnd2);
+            //if (s == s2) return false;
+            IntPtr point_hwnd = GetPointHwnd();
+            if (hwnd2 == point_hwnd) return false;
+            return true;
         }
         public static string GetPointName()
         {
             IntPtr hWnd = Native.WindowFromPoint(Position);
             var aaa = GetWindowName(hWnd);
             return aaa;
+        }
+        public static string GetPointText()
+        {
+            IntPtr hWnd = Native.WindowFromPoint(Position);
+            var aaa = GetWindowText(hWnd);
+            return aaa;
+        }
+        public static IntPtr GetPointHwnd()
+        {
+            IntPtr point_hwnd = Native.WindowFromPoint(Position);
+            IntPtr hwnd = IntPtr.Zero;
+            uint processId;
+            Native.GetWindowThreadProcessId(point_hwnd, out processId);
+            using (Process process = Process.GetProcessById((int)processId))
+            {
+                hwnd = process.MainWindowHandle;
+            }
+            return hwnd;
         }
         public static string GetWindowName(IntPtr hwnd)
         {
@@ -227,7 +233,7 @@ namespace keyupMusic2
             return Name;
         }
         static string proc_info = "";
-        public static string log_process(string key = "")
+        public static string process_and_log(string key = "")
         {
             IntPtr hwnd = Native.GetForegroundWindow();
             string Title = GetWindowText(hwnd);
@@ -319,6 +325,28 @@ namespace keyupMusic2
                 Sleep(tick);
                 action();
             }
+        }
+        public static void FocusPointProcess()
+        {
+            IntPtr point_hwnd = Native.WindowFromPoint(Position);
+            IntPtr hwnd = GetPointHwnd();
+            SetForegroundWindow(hwnd);
+        }
+        public static bool FocusProcessSimple(string procName)
+        {
+            IntPtr current_hwnd = GetForegroundWindow();
+            Process[] objProcesses = Process.GetProcessesByName(procName);
+            if (objProcesses.Length > 0)
+            {
+                IntPtr hWnd = IntPtr.Zero;
+                hWnd = objProcesses[0].MainWindowHandle;
+                if (current_hwnd == hWnd)
+                    return true;
+                SetForegroundWindow(objProcesses[0].MainWindowHandle);
+                Common.ProcessName = objProcesses[0].ProcessName;
+                return true;
+            }
+            return false;
         }
         public static bool FocusProcess(string procName, bool front = true)
         {
@@ -438,8 +466,6 @@ namespace keyupMusic2
             int y = int.Parse(point.Split(',')[1]);
             //points[0] = new Point(x, y);
         }
-
-
         public static string GetWindowText(IntPtr hWnd)
         {
             const int nChars = 256;
@@ -629,7 +655,7 @@ namespace keyupMusic2
             int i = 0;
             while (alltime >= 0)
             {
-                if (i > 6000) break;
+                if (i++ > 1000) break;
                 if (DaleyRun_stop) break;
                 Thread.Sleep(tick);
                 alltime -= tick;
@@ -671,16 +697,9 @@ namespace keyupMusic2
         {
             if (hWnd == 0)
                 hWnd = Native.GetForegroundWindow();
-            if (hWnd == IntPtr.Zero)
-            {
-                // No foreground window found  
-                return false;
-            }
-
             Native.RECT windowRect;
             if (!Native.GetWindowRect(hWnd, out windowRect))
             {
-                // Failed to get window rectangle  
                 return false;
             }
 
@@ -1137,13 +1156,6 @@ namespace keyupMusic2
         public static void LossScale()
         {
             //press([Keys.LControlKey, Keys.F2]);return;
-            List<string> lines = new List<string>()
-                { devenv , keyupMusic2, explorer };
-            if (lines.Contains(ProcessName2))
-            {
-                //release_all_keydown();
-                return;
-            }
             if (!ExistProcess(LosslessScaling))
                 ProcessRun(LosslessScalingexe);
             press([Keys.LControlKey, Keys.F2]);
@@ -1276,6 +1288,6 @@ namespace keyupMusic2
                 }
             }
         }
-
+        //public static List<ReplaceKey> replace = ReplaceKey.replace;
     }
 }
