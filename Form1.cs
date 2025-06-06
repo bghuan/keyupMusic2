@@ -15,6 +15,7 @@ namespace keyupMusic2
         SuperClass Super;
         ChromeClass Chrome;
         WinClass Win;
+        public OpencvReceive Opencv;
         public LongPressClass LongPress;
         bool is_init_show = !(Position.Y == 0);
         bool is_mouse_hook = !(Position.Y == 1439);
@@ -48,7 +49,8 @@ namespace keyupMusic2
             Win = new WinClass(this);
 
             new TcpServer(this);
-            new Tick(this);
+            new Tick(this); ;
+            Opencv = new OpencvReceive(this);
         }
         protected override void Dispose(bool disposing)
         {
@@ -107,11 +109,14 @@ namespace keyupMusic2
         {
             base.SetVisibleCore(value);
             key_sound = value;
-            if (!value)
-                Task.Run(() => { Sleep(200); player.Stop(); });
+            //if (!value)
+            //    Task.Run(() => { Sleep(200); player.Stop(); });
         }
         private void label1_Click(object sender, EventArgs e)
         {
+            // 创建并显示WebView2窗口
+            WebViewForm webViewWindow = new WebViewForm();
+            webViewWindow.Show();
         }
 
         private void Form1_Load(object sender, EventArgs e)
@@ -132,7 +137,7 @@ namespace keyupMusic2
                 TaskRun(() => { Invoke(() => SetVisibleCore(false)); }, 100);
             }
             //Location = new Point(Screen.PrimaryScreen.Bounds.Width - 310, 100);
-            Location = new Point(2255, 37); 
+            Location = new Point(2255, 37);
 
             startPoint = new Point(Location.X - 252, Location.Y);
             endPoint = Location;
@@ -146,6 +151,10 @@ namespace keyupMusic2
             Common.FocusProcess(Common.Glass2);
             Common.FocusProcess(Common.Glass3);
 
+            if (!Debugger.IsAttached) return;
+            // 创建并显示WebView2窗口
+            WebViewForm webViewWindow = new WebViewForm();
+            webViewWindow.Show();
         }
     }
 }

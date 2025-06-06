@@ -9,24 +9,25 @@ namespace keyupMusic2
 {
     public partial class biu
     {
-        private void Gestures()
+        List<string> list = new() { chrome };
+        private void Gestures(MouseHookEventArgs e)
         {
-            if (e.Msg == MouseMsg.click_r) r_down_x = e.Pos;
-            if (e.Msg == MouseMsg.click) { r_chrome_menu = false; return; }
             if (e.Msg == MouseMsg.move) return;
+            if (e.Msg == MouseMsg.click) { menu_opened = false; return; }
+            if (e.Msg == MouseMsg.click_r) r_down_x = e.Pos;
             if (e.Msg != MouseMsg.click_r_up) return;
             if (r_down_x == Point.Empty) return;
+            if (!list.Contains(ProcessName)) return;
 
             int arraw = 0;
             int arraw_long = 110;
             bool catched = true;
-            //log(e.X + " " + e.Y + " " + r_down_x.X + " " + r_down_x.Y);
             if (e.Y - r_down_x.Y > arraw_long) arraw = 3;
             else if (e.Y - r_down_x.Y < -arraw_long) arraw = 4;
             else if (e.X - r_down_x.X > arraw_long) arraw = 1;
             else if (e.X - r_down_x.X < -arraw_long) arraw = 2;
 
-            var is_chrome = ProcessName == chrome && !r_chrome_menu;
+            var is_chrome = ProcessName == chrome && !menu_opened;
 
             switch (arraw)
             {
@@ -34,7 +35,7 @@ namespace keyupMusic2
                     catched = false;
                     if (ProcessName == chrome)
                     {
-                        r_chrome_menu = true;
+                        menu_opened = true;
                         mouse_click_right();
                     }
                     break;
@@ -42,6 +43,10 @@ namespace keyupMusic2
                     if (is_chrome) quick_left_right(arraw); break;// 右
                 case 2:
                     if (is_chrome) quick_left_right(arraw); break;// 左
+                //case 1:
+                //    if (is_chrome) press_raw([LWin, Right]); break;// 右
+                //case 2:
+                //    if (is_chrome) press_raw([LWin, Left]); break;// 左
                 case 3:
                     if (is_chrome) press([Keys.LControlKey, Keys.W]); break;//  下
                 case 4:
@@ -51,8 +56,7 @@ namespace keyupMusic2
             }
             if (catched)
             {
-                if (is_down(Keys.LButton)) mouse_click();
-                if (is_down(Keys.RButton)) mouse_click_right();
+                // log(e.X + " " + e.Y + " " + r_down_x.X + " " + r_down_x.Y + " " + arraw);
                 r_down_x = Point.Empty;
                 play_sound_di();
             }

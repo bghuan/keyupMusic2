@@ -67,7 +67,7 @@ namespace keyupMusic2
             quick_max_chrome(e.Pos);
         }
 
-        private static void quick_sleep()
+        public static void quick_sleep()
         {
             if (lock_err)
                 system_hard_sleep();
@@ -117,7 +117,7 @@ namespace keyupMusic2
             }
             else
             {
-                if (Common.FocusProcess(Common.devenv)) return;
+                if (Common.FocusProcessSimple(Common.devenv)) return;
                 run_vis();
             }
         }
@@ -129,7 +129,7 @@ namespace keyupMusic2
             special_delete_key_time = DateTime.Now;
             KeyTime[system_sleep_string] = DateTime.MinValue;
             player.Stop();
-            CleanState();
+            CleanMouseState();
             ready_to_sleep = false;
         }
 
@@ -187,7 +187,7 @@ namespace keyupMusic2
             press([Keys.LControlKey, Keys.LMenu, Keys.W]);
         }
 
-        private static void run_vis()
+        public static void run_vis()
         {
             press("LWin;VISUAL;en;100;Apps;100;Enter;1000;1271.654;", 100);
             DaleyRun(

@@ -147,6 +147,7 @@ namespace keyupMusic2
         public static int MOUSEEVENTF_ABSOLUTE = 0x8000;
         // 定义 MOUSEEVENTF_WHEEL 标志  
         public const int MOUSEEVENTF_WHEEL = 0x0800;
+        public const int WHEEL_DELTA = 120;
         // 鼠标事件标志
         public const int MOUSEEVENTF_XDOWN = 0x0080;
         public const int MOUSEEVENTF_XUP = 0x0100;

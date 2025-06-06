@@ -16,9 +16,8 @@ namespace keyupMusic2
         }
         public Huan huan;
         biuCL biusc;
-        MouseHookEventArgs e = null;
         public static Point r_down_x = Point.Empty;
-        bool r_chrome_menu = false;
+        bool menu_opened = false;
 
         public bool judge_handled(MouseHookEventArgs e)
         {
@@ -41,40 +40,53 @@ namespace keyupMusic2
                 if (list.Contains(Common.ProcessName))
                 {
                     if (is_down(Keys.RButton)) return false;
+                    if (GetPointName() == explorer) return false;
                     return true;
                 }
+            }
+            if (e.Msg == MouseMsg.wheel && e.X == screenWidth1)
+            {
+                var list = new[] { chrome };
+                if (list.Contains(Common.ProcessName))
+                    return true;
+            }
+            if (e.Msg == MouseMsg.wheel)
+            {
+                var list = new[] { Glass2 };
+                if (list.Contains(Common.ProcessName))
+                    return true;
             }
             return false;
         }
 
         public void MouseHookProc(MouseHookEventArgs e)
         {
-            this.e = e;
-
-            if (judge_handled(e)){ e.Handled = true; VirKeyState(e.Msg); }
-
             if (e.Msg != MouseMsg.move) FreshProcessName();
-
+            if (judge_handled(e))
+            {
+                e.Handled = true;
+                VirKeyState(e.Msg);
+                if (IsDiffProcess()) FocusPointProcess();
+            }
 
             Task.Run(() =>
             {
-                easy_read();
+                easy_read(e);
 
                 biusc.Cornor(e);
                 biusc.ScreenLine(e);
-                BottomLine();
-                Other();
+                BottomLine(e);
+                Other(e);
 
-                Glass();
-                Kingdom();
+                Glass(e);
 
-                GoBack();
-                Gestures();
-                All();
+                GoBack(e);
+                Gestures(e);
+                All(e);
             });
         }
 
-        private void All()
+        private void All(MouseHookEventArgs e)
         {
             if (e.Msg == MouseMsg.move) return;
 

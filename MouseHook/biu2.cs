@@ -9,7 +9,7 @@ namespace keyupMusic2
 {
     public partial class biu
     {
-        private void easy_read()
+        private void easy_read(MouseHookEventArgs e)
         {
             if (e.Msg == MouseMsg.move)
             {
@@ -20,7 +20,7 @@ namespace keyupMusic2
                 if (huan.label1.Text != message)
                 {
                     if (name != ProcessName && name != explorer)
-                        CleanState();
+                        CleanMouseState();
                     huan.Invoke2(() =>
                     {
                         huan.label1.Text = message;
@@ -28,7 +28,9 @@ namespace keyupMusic2
                 }
                 return;
             }
+            if (ProcessName==VSCode) return;
 
+            //process_and_log(e.Msg.ToString());
             string msg = e.Msg.ToString();
             huan.Invoke2(() =>
             {
@@ -37,18 +39,21 @@ namespace keyupMusic2
                 huan.label1.Text = msg;
             }, 10);
         }
-        public void BottomLine()
+        public void BottomLine(MouseHookEventArgs e)
         {
             if (e.Msg == MouseMsg.click_r_up)
             {
                 if (e.Y == screenHeight1 && !IsFullScreen())
                 {
-                    Sleep(100);
-                    mouse_move_to(12, 1308 - screenHeight);
-                    DaleyRun(
-                        () => GetPointName() == ShellExperienceHost,
-                        () => mouse_click(),
-                        400, 50);
+                    Task.Run(() =>
+                    {
+                        Sleep(150);
+                        mouse_move_to(12, 1308 - screenHeight);
+                        DaleyRun(
+                            () => GetPointName() == ShellExperienceHost,
+                            () => mouse_click(),
+                            400, 10);
+                    });
                 }
             }
         }

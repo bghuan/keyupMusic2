@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Concurrent;
 using System.Diagnostics;
 using System.Drawing;
 using System.Drawing.Imaging;
@@ -93,8 +94,37 @@ namespace keyupMusic2
             }
             mouse_event(MOUSEEVENTF_LEFTDOWN | MOUSEEVENTF_LEFTUP, 0, 0, 0, 0);
         }
+        public static void mousewhell(int x, int y, int num)
+        {
+            var p = Position;
+            mouse_event(MOUSEEVENTF_ABSOLUTE | MOUSEEVENTF_MOVE | MOUSEEVENTF_WHEEL, x * 65536 / screenWidth, y * 65536 / screenHeight, WHEEL_DELTA * num, 0);
+            Sleep(100);
+            mouse_move(p);
+        }
+        public static void mousewhell(int x, int y, int x2, int y2, int num)
+        {
+            var p = Position;
+            mouse_event(MOUSEEVENTF_ABSOLUTE | MOUSEEVENTF_MOVE | MOUSEEVENTF_WHEEL, x * 65536 / screenWidth, y * 65536 / screenHeight, WHEEL_DELTA * num, 0);
+            Sleep(1);
+            mouse_event(MOUSEEVENTF_ABSOLUTE | MOUSEEVENTF_MOVE | MOUSEEVENTF_WHEEL, x2 * 65536 / screenWidth, y2 * 65536 / screenHeight, WHEEL_DELTA * num, 0);
+            Sleep(1);
+            mouse_move(p);
+        }
+        public static void mousewhell(int num)
+        {
+            mouse_event2(MOUSEEVENTF_WHEEL, 0, 0, WHEEL_DELTA * num, 0);
+        }
         public static int mouse_event(int dwFlags, int dx, int dy, int cButtons, int dwExtraInfo)
         {
+            return Native.mouse_event(dwFlags, dx, dy, cButtons, (int)isVir);
+        }
+        public static int mouse_event2(int dwFlags, int dx, int dy, int cButtons, int dwExtraInfo)
+        {
+            if (dx != 0 || dy != 0)
+            {
+                dx = dx * 65536 / screenWidth;
+                dx = dx * 65536 / screenHeight;
+            }
             return Native.mouse_event(dwFlags, dx, dy, cButtons, (int)isVir);
         }
         public static void mouse_click_right(int x, int y)
@@ -162,7 +192,7 @@ namespace keyupMusic2
         public static Dictionary<Keys, string> VirMouseStateKey = new Dictionary<Keys, string>();
         public static void VirKeyState(Keys key, bool up = false)
         {
-            if (up && VirMouseStateKey.ContainsKey(key) && VirMouseStateKey[key] == ProcessName)
+            if (up)
                 VirMouseStateKey.Remove(key);
             else
                 VirMouseStateKey[key] = ProcessName;
@@ -172,7 +202,7 @@ namespace keyupMusic2
             if (!mousekeymap.ContainsKey(msg)) return;
             bool up = msg.ToString().Contains("up");
             Keys key = mousekeymap[msg];
-            if (up && VirMouseStateKey.ContainsKey(key) && VirMouseStateKey[key] == ProcessName)
+            if (up)
                 VirMouseStateKey.Remove(key);
             else
                 VirMouseStateKey[key] = ProcessName;
@@ -280,33 +310,17 @@ namespace keyupMusic2
         }
         public static void press(Keys[] keys, int tick = 10)
         {
-            if (keys == null || keys.Length == 0 || keys.Length > 100)
+            if (keys.Length is 0 or > 100)
                 return;
-            if (keys.Length == 1)
+            foreach (var item in keys)
             {
-                press_dump(keys[0], tick);
+                keybd_event((byte)item, 0, 0, 0);
+                Sleep(tick);
             }
-            else if (keys.Length > 1 && keys[0] == keys[1])
+            Array.Reverse(keys);
+            foreach (var item in keys)
             {
-                foreach (var key in keys)
-                {
-                    _press(key);
-                };
-            }
-            else
-            {
-                foreach (var item in keys)
-                {
-                    //Thread.Sleep(10);
-                    keybd_event((byte)item, 0, 0, 0);
-                    Sleep(10);
-                }
-                Array.Reverse(keys);
-                foreach (var item in keys)
-                {
-                    //Thread.Sleep(10);
-                    keybd_event((byte)item, 0, 2, 0);
-                }
+                keybd_event((byte)item, 0, 2, 0);
             }
             Thread.Sleep(tick);
         }
@@ -445,13 +459,11 @@ namespace keyupMusic2
         {
             keybd_event((byte)keys, 0, 2, 0);
         }
-        static Dictionary<byte, byte> MapVirtualKey = new Dictionary<byte, byte>();
+        static ConcurrentDictionary<byte, byte> MapVirtualKey = new ConcurrentDictionary<byte, byte>();
         private static void keybd_event(byte bVk, byte bScan, uint dwFlags, uint dwExtraInfo)
         {
             if (!MapVirtualKey.ContainsKey(bVk))
-            {
-                MapVirtualKey.Add(bVk, (byte)(MapVirtualKey(bVk, 0) & 0xFFU));
-            }
+                MapVirtualKey[bVk] = (byte)(MapVirtualKey(bVk, 0) & 0xFFU);
             Native.keybd_event(bVk, MapVirtualKey[bVk], dwFlags, isVir);
         }
     }

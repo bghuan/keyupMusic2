@@ -38,14 +38,14 @@ namespace keyupMusic2
                 case Keys.W:
                     //SSSS.KeyPress(Keys.LWin, "openvpn", Keys.Enter);
                     //SSSS.KeyPress(Keys.LWin, "verge", Keys.Enter);
-                    mouse_move(2186, 1403,100);
+                    mouse_move(2186, 1403, 100);
                     var need_win = GetPointName() != explorer;
-                    if (need_win) press(LWin,100);
+                    if (need_win) press(LWin, 100);
                     mouse_click_right();
                     if (e.key == Q)
-                        press("2259,1112;2109,1107", 100);
+                        press("2259,1112;300;2109,1107", 100);
                     else
-                        press("2259,1112;2109,1180", 100);
+                        press("2259,1112;300;2109,1180", 100);
                     break;
                     //2083,1180 2109,1107 2259,1112 2186,1403
                     mouse_click_right(2186, 1403);
@@ -110,9 +110,10 @@ namespace keyupMusic2
                     }
                     break;
                 case Keys.H:
-                    up_press(Keys.Apps);
+                    press(Keys.BrowserHome);
                     break;
                 case Keys.J:
+                    mousewhell(245, 717,524, 735 ,- 2);
                     break;
                 case Keys.K:
                     huan.release_all_key(1000);
@@ -124,6 +125,7 @@ namespace keyupMusic2
                     //capturer.StartLiveBackgroundRemoval(PowerToysCropAndLock);
                     break;
                 case Keys.X:
+                    AllClass.run_vis();
                     break;
                 case Keys.C:
                     press_middle_bottom();
@@ -135,7 +137,7 @@ namespace keyupMusic2
                     var pressedKeys = release_all_keydown();
                     if (pressedKeys.Any())
                         huan.Invoke2(() => { huan.label1.Text = "relese: " + string.Join(", ", pressedKeys); });
-                    handling_keys = new Dictionary<Keys, string>();
+                    Huan.handling_keys = new Dictionary<Keys, string>();
                     break;
                 case Keys.M:
                     chrome_m();
@@ -155,6 +157,8 @@ namespace keyupMusic2
                     break;
                 case Keys.F1:
                     get_point_color(e);
+                    if (VirMouseStateKey.Count > 0)
+                        log("VirMouseStateKey: " + string.Join(", ", VirMouseStateKey));
                     break;
                 case Keys.F2:
                     //LossScale();
@@ -174,7 +178,7 @@ namespace keyupMusic2
                     break;
                 case Keys.F10:
                     //Process.Start("rundll32.exe", "powrprof.dll,SetSuspendState 0,1,1");
-                    huan.system_sleep();
+                    //huan.system_sleep();
                     break;
                 //case Keys.Up:
                 //    Invoke(() => huan.Opacity = huan.Opacity >= 1 ? 1 : huan.Opacity + 0.5);
@@ -374,7 +378,7 @@ namespace keyupMusic2
             //Listen.is_listen = !Listen.is_listen;
             //Invoke(() => huan.SetVisibleCore2(Listen.is_listen));
             ////Listen.aaaEvent += huan.handle_word;
-            //if (Listen.is_listen) Task.Run(() => Listen.listen_word(new string[] { }, (string asd, int a) => { }));
+            //if (Listen.is_listen) Task.Run(() => Listen.listen_word(new string[] { }, (string deal, int a) => { }));
             //Listen.speak_word = "";
         }
 

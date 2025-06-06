@@ -18,8 +18,10 @@ namespace keyupMusic2
                 //        press([Keys.RShiftKey, Keys.F5]);
                 //    break;
                 case Keys.F5:
-                    if (Deven_runing())
-                        press([Keys.RControlKey, Keys.RShiftKey, Keys.F5]);
+                    //if (Deven_runing())
+                    //    press([Keys.RControlKey, Keys.RShiftKey, Keys.F5]);
+                    if (Deven_runing()) press("116,69");
+                    //else press("898,71");
                     break;
 
                 case Keys.Escape:
@@ -38,15 +40,6 @@ namespace keyupMusic2
                     //if (aaa)
                     //    mouse_move(Position.X - 500, Position.Y);
                     break;
-                //case Keys.F:
-                //    if (is_alt() && is_shift())
-                //    {
-                //        TaskRun(() =>
-                //        {
-                //            press([Keys.RControlKey, Keys.K, Keys.D]);
-                //        }, 300);
-                //    }
-                //    break;
             }
             Common.hooked = false;
         }

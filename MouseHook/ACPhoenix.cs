@@ -6,10 +6,10 @@ namespace keyupMusic2
     partial class biu
     {
         bool listen_move = false;
-        public void ACPhoenix()
+        public void ACPhoenix(MouseKeyboardHook.MouseHookEventArgs e)
         {
             if (ProcessName != keyupMusic2.Common.ACPhoenix) return;
-            MoveStop();
+            MoveStop(e);
 
             if (e.Msg == MouseMsg.click)
             {
@@ -24,7 +24,7 @@ namespace keyupMusic2
             else if (e.Msg == MouseMsg.click_r)
             {
                 //downing2 = true;
-                if (!(right_top_exit()))
+                if (!(right_top_exit(e)))
                     Task.Run(() =>
                     {
                         mouse_click2(50);
@@ -45,7 +45,7 @@ namespace keyupMusic2
                 if (try_press(1433, 1072, Color.FromArgb(245, 194, 55), () => { }))
                 { }
                 //退出观战
-                if ((right_top_exit()))
+                if ((right_top_exit(e)))
                 {
                     //press("111"); press(Keys.F4); press("1625.1078");
                     if (is_alt()) return;
@@ -63,7 +63,7 @@ namespace keyupMusic2
             }
         }
 
-        private bool right_top_exit()
+        private bool right_top_exit(MouseKeyboardHook.MouseHookEventArgs e)
         {
             return e.Y == 0 && (e.X <= screenWidth - 1 && e.X > screenWidth - 120);
         }

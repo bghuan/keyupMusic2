@@ -6,47 +6,21 @@ namespace keyupMusic2
 {
     public partial class Huan
     {
+        public static Dictionary<Keys, string> handling_keys = new Dictionary<Keys, string>();
         public void Invoke2(Action action, int tick = 0)
         {
-            Task.Run(() => { Thread.Sleep(tick); this.Invoke(action); });
+            Task.Run(() =>
+            {
+                Thread.Sleep(tick); 
+                this.Invoke(action);
+            });
         }
 
         public void Invoke(Action method)
         {
-            if (IsDisposed)return;
-                try { base.Invoke(method); }
-            catch (Exception ex)
-            {
-                string methodName = "未知方法";
-
-                // 尝试从 Action 参数获取方法名
-                if (method != null && !method.Method.Name.Contains("DisplayClass"))
-                {
-                    methodName = method.Method.Name;
-                }
-                else
-                {
-                    // 从调用栈获取
-                    try
-                    {
-                        var stackTrace = new System.Diagnostics.StackTrace(ex, true);
-                        for (int i = 0; i < stackTrace.FrameCount; i++)
-                        {
-                            var frame = stackTrace.GetFrame(i);
-                            var methodInfo = frame.GetMethod();
-                            if (methodInfo.DeclaringType != null &&
-                                !methodInfo.DeclaringType.FullName.StartsWith("System."))
-                            {
-                                methodName = methodInfo.Name;
-                                break;
-                            }
-                        }
-                    }
-                    catch { /* 忽略反射异常 */ }
-                }
-
-                log($"Invoke err in {methodName}: {ex.Message}");
-            }
+            if (IsDisposed) return;
+            try { base.Invoke(method); }
+            catch (Exception ex){}
         }
         public void release_all_key(int tick = 1000)
         {
@@ -57,7 +31,7 @@ namespace keyupMusic2
         public void system_sleep(bool force = false)
         {
             press(Keys.MediaStop);
-            CloseProcess(chrome);
+            //HomeProcess(chrome);
 
             ready_to_sleep = true;
             system_sleep_count = 1;
@@ -72,7 +46,6 @@ namespace keyupMusic2
             }
             Task.Run(() =>
             {
-                play_sound(Keys.D0);
                 Invoke(() => { label1.Text = "系统即将进入睡眠状态"; });
                 Sleep(sleep);
                 Timer_Tick();
@@ -81,43 +54,33 @@ namespace keyupMusic2
 
         private void start_record(KeyboardHookEventArgs e)
         {
-            if (SuperClass.start_record)
+            //if (SuperClass.start_record)
             {
-                process_and_log(e.key.ToString());
+                log(e.key.ToString());
             }
-        }
-
-        public void Timer_Tick(int tick = 200)
-        {
-            if (!ready_to_sleep) return;
-            ready_to_sleep = false;
-            Invoke(() => { SetVisibleCore(false); });
-            press("500;LWin;1650,1300;1650,1140", tick);
-            //press("500;LWin;1650,1300;", tick);
         }
         private void handle_special_or_normal_key(KeyboardHookEventArgs e)
         {
-            lock (handling_keys)
-                if (!handling_keys.ContainsKey(e.key))
-                {
-                    string _ProcessName = "";
-                    if (special_key.Contains(e.key)) _ProcessName = process_and_log(e.key.ToString());
-                    if (e.key == Keys.F22 && (_ProcessName == "WeChatAppEx" || _ProcessName == "WeChat")) { return; }
-                    handling_keys.Add(e.key, ProcessName);
-                }
+            string _ProcessName = "";
+            if (special_key.Contains(e.key)) _ProcessName = process_and_log(e.key.ToString());
+            if (e.key == Keys.F22 && (_ProcessName == "WeChatAppEx" || _ProcessName == "WeChat")) { return; }
+            handling_keys[e.key] = ProcessName;
         }
         private void print_easy_read()
         {
             Dictionary<Keys, string> _stop_keys = new Dictionary<Keys, string>();
-            try { _stop_keys = handling_keys?.ToList().ToDictionary(kv => kv.Key, kv => kv.Value); }
-            catch (ArgumentException ex) { }
-            Invoke(() =>
+            try
             {
-                string asd = string.Join(" ", _stop_keys?.Select(key => easy_read(key.Key.ToString())));
-                if (label1.Text.ToLower() == asd.ToLower()) asd += " " + DateTimeNow2();
-                label1.Text = asd;
+                _stop_keys = handling_keys?.ToList().ToDictionary(kv => kv.Key, kv => kv.Value);
+                Invoke(() =>
+                    {
+                        string asd = string.Join(" ", _stop_keys?.Select(key => easy_read(key.Key.ToString())));
+                        if (label1.Text.ToLower() == asd.ToLower()) asd += " " + DateTimeNow2();
+                        label1.Text = asd;
+                    }
+                );
             }
-            );
+            catch (ArgumentException ex) { }
         }
         private static string easy_read(string asd)
         {
@@ -181,6 +144,15 @@ namespace keyupMusic2
                 Process.Start(startInfo);
                 Environment.Exit(0);
             }
+        }
+
+        public void Timer_Tick(int tick = 200)
+        {
+            if (!ready_to_sleep) return;
+            ready_to_sleep = false;
+            Invoke(() => { SetVisibleCore(false); });
+            press("500;LWin;1650,1300;1650,1140", tick);
+            //press("500;LWin;1650,1300;", tick);
         }
 
     }

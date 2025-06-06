@@ -1,4 +1,5 @@
-﻿using System.Diagnostics;
+﻿using System.Collections.Concurrent;
+using System.Diagnostics;
 using System.Drawing.Imaging;
 using System.Media;
 using System.Net;
@@ -16,7 +17,7 @@ namespace keyupMusic2
 {
     public partial class Common
     {
-        public static Dictionary<string, DateTime> KeyTime = new Dictionary<string, DateTime>();
+        public static ConcurrentDictionary<string, DateTime> KeyTime = new ConcurrentDictionary<string, DateTime>();
         public const string keyupMusic2 = "keyupMusic4";
         public const string ShellExperienceHost = "ShellExperienceHost";
         public const string ElecHead = "ElecHead";
@@ -88,100 +89,43 @@ namespace keyupMusic2
         public static string system_sleep_string = "system_sleep";
         public static int system_sleep_count = 0;
         public static bool ready_to_sleep = false;
-        public static bool lock_err
-        {
-            get
-            {
-                var aaa =
-                 ProcessName == err || ProcessName == LockApp || GetWindowText() == UnlockingWindow;
-                if (aaa)
-                {
-                    string _ProcessName = ProcessName;
-                    if (_ProcessName == "err")
-                    {
-                        uint processId = 0;
-                        Native.GetWindowThreadProcessId(Native.GetForegroundWindow(), out processId);
-                        _ProcessName = "err,processId:" + processId;
-                    }
-                    Log.log("GetWindowText():" + GetWindowText() + ",ProcessName:" + ProcessName);
-                    if (ProcessName == err)
-                        play_sound_di2();
-                }
-                return aaa;
-            }
-        }
         public static string ProcessName2 { get { FreshProcessName(); return ProcessName; } }
         public static Point Position { get { return Cursor.Position; } }
         public static Point PositionMiddle = new Point(screenWidth2, screenHeight2);
-        public static bool is_douyin()
-        {
-            return ProcessName == douyin || ProcessTitle?.IndexOf("抖音") >= 0 || (ProcessName == msedge && ProcessTitle?.IndexOf("多多自走棋") >= 0);
-        }
-        public static bool is_steam_game()
-        {
-            return ProcessPath != null && ProcessPath.Contains("steam");
-        }
-        static IntPtr old_hwnd = 0;
-
-
-        public static Dictionary<IntPtr, ProcessWrapper> ProcessMap2 = new Dictionary<IntPtr, ProcessWrapper>();
-        public class ProcessWrapper
-        {
-            public string name { get; set; }
-            public string title { get; set; }
-            public string path { get; set; }
-
-            public ProcessWrapper(string name, string title, string path)
-            {
-                this.name = name;
-                this.title = title;
-                this.path = path;
-            }
-            public string ToString()
-            {
-                return this.name + " " + this.title + " " + this.path;
-            }
-        }
         public static string FreshProcessName()
         {
             IntPtr hwnd = Native.GetForegroundWindow(); // 获取当前活动窗口的句柄
             if (hwnd == IntPtr.Zero) return "";
-            if (ProcessMap2.ContainsKey(hwnd) && ProcessMap2[hwnd].name == Common.ProcessName)
+            if (ProcessMap.ContainsKey(hwnd) && ProcessMap[hwnd].name == Common.ProcessName)
                 return Common.ProcessName;
-            if (!ProcessMap2.ContainsKey(hwnd))
+            if (!ProcessMap.ContainsKey(hwnd))
             {
-                string windowTitle = GetWindowTitle(hwnd);
-                ProcessTitle = string.IsNullOrEmpty(windowTitle) ? "" : windowTitle;
-                //try
-                //{
                 uint processId;
                 Native.GetWindowThreadProcessId(hwnd, out processId);
                 using (Process process = Process.GetProcessById((int)processId))
                 {
-                    //Common.ProcessName = process.ProcessName;
-                    ProcessMap2[hwnd] = new ProcessWrapper(process.ProcessName, ProcessTitle, process.MainModule.FileName);
-                    //ProcessMap2.Add(hwnd, new ProcessWrapper(process.ProcessName, ProcessTitle, process.MainModule.FileName));
+                    ProcessMap[hwnd] = new ProcessWrapper(process.ProcessName, GetWindowTitle(hwnd), process.MainModule.FileName);
                 }
-                //}
-                //catch (System.Exception ex)
-                //{
-                //}
             }
-            if (ProcessMap2.ContainsKey(hwnd))
-            {
-                Common.ProcessName = ProcessMap2[hwnd].name;
-                ProcessTitle = ProcessMap2[hwnd].title;
-                ProcessPath = ProcessMap2[hwnd].path;
-                if (Common.ProcessName == msedge)
-                    ProcessTitle = GetWindowTitle(hwnd); ;
-                //return Common.ProcessName;
-            }
+            FreshProcessNameByMap(hwnd);
 
-            CleanState();
+            CleanMouseState();
 
             return ProcessName;
         }
-        public static void CleanState()
+        public static void FreshProcessNameByMap(IntPtr hwnd)
+        {
+            if (ProcessMap.ContainsKey(hwnd))
+            {
+                Common.ProcessName = ProcessMap[hwnd].name;
+                ProcessTitle = ProcessMap[hwnd].title;
+                ProcessPath = ProcessMap[hwnd].path;
+                if (Common.ProcessName == msedge)
+                    ProcessTitle = GetWindowTitle(hwnd); ;
+            }
+
+        }
+        public static void CleanMouseState()
         {
             biu.catch_off();
             //biuCL.RECTT.release();
@@ -202,11 +146,16 @@ namespace keyupMusic2
             IntPtr hwnd = Native.GetForegroundWindow();
             IntPtr point_hwnd = Native.WindowFromPoint(Position);
             if (hwnd == point_hwnd) return false;
-            //var s = GetWindowName(hwnd);
-            //var s2 = GetWindowName(hwnd2);
-            //if (s == s2) return false;
+            if (ProcessMap.ContainsKey(hwnd) && ProcessMap.ContainsKey(point_hwnd))
+                if (ProcessMap[hwnd].name == ProcessMap[point_hwnd].name)
+                    return false;
             IntPtr point_process_hwnd = GetPointProcessHwnd();
             if (hwnd == point_process_hwnd) return false;
+            //if (ProcessMap.ContainsKey(hwnd) && ProcessMap[hwnd].name == LosslessScaling)
+            //    return false;
+            //if (ProcessMap.ContainsKey(hwnd) && ProcessMap.ContainsKey(point_process_hwnd))
+            //    if (ProcessMap[hwnd].name == ProcessMap[point_process_hwnd].name)
+            //        return false;
             return true;
         }
         public static string GetPointName()
@@ -230,7 +179,9 @@ namespace keyupMusic2
             using (Process process = Process.GetProcessById((int)processId))
             {
                 hwnd = process.MainWindowHandle;
+                ProcessMap[point_hwnd] = ProcessMap[hwnd] = new ProcessWrapper(process.ProcessName, GetWindowTitle(hwnd), process.MainModule.FileName);
             }
+            //FreshProcessNameByMap(hwnd);
             return hwnd;
         }
         public static string GetWindowName(IntPtr hwnd)
@@ -243,6 +194,33 @@ namespace keyupMusic2
                 Name = process.ProcessName;
             }
             return Name;
+        }
+        public static bool is_douyin()
+        {
+            return ProcessName == douyin || ProcessTitle?.IndexOf("抖音") >= 0;
+        }
+        public static bool is_steam_game()
+        {
+            return ProcessPath != null && ProcessPath.Contains("steam");
+        }
+
+        public static Dictionary<IntPtr, ProcessWrapper> ProcessMap = new Dictionary<IntPtr, ProcessWrapper>();
+        public class ProcessWrapper
+        {
+            public string name { get; set; }
+            public string title { get; set; }
+            public string path { get; set; }
+
+            public ProcessWrapper(string name, string title, string path)
+            {
+                this.name = name;
+                this.title = title;
+                this.path = path;
+            }
+            public string ToString()
+            {
+                return this.name + " " + this.title + " " + this.path;
+            }
         }
         static string proc_info = "";
         public static string process_and_log(string key = "")
@@ -342,6 +320,8 @@ namespace keyupMusic2
         {
             IntPtr hwnd = GetPointProcessHwnd();
             SetForegroundWindow(hwnd);
+            FreshProcessNameByMap(hwnd);
+            CleanMouseState();
         }
         public static bool FocusProcessSimple(string procName)
         {
@@ -357,6 +337,13 @@ namespace keyupMusic2
                 Common.ProcessName = objProcesses[0].ProcessName;
                 return true;
             }
+            return false;
+        }
+        public static bool FocusProcessSimple(IntPtr hwnd)
+        {
+            if (hwnd == IntPtr.Zero) return false;
+            SetForegroundWindow(hwnd);
+            FreshProcessNameByMap(hwnd);
             return false;
         }
         public static bool FocusProcess(string procName, bool front = true)
@@ -444,6 +431,13 @@ namespace keyupMusic2
             }
         }
 
+        public static void HomeProcess(string procName)
+        {
+            IntPtr hwnd = GetForegroundWindow();
+            FocusProcessSimple(procName);
+            press(Keys.BrowserHome, 100);
+            FocusProcessSimple(hwnd);
+        }
         public static void CloseProcess(string procName)
         {
             Process[] objProcesses = Process.GetProcessesByName(procName);
@@ -595,24 +589,23 @@ namespace keyupMusic2
                 dragonest_notity_click(true);
             }
         }
-        public static Bitmap bmpScreenshot;
-        public static string path;
         public static void copy_screen()
         {
             play_sound_di();
             Screen secondaryScreen = Screen.PrimaryScreen;
-            bmpScreenshot = new Bitmap(secondaryScreen.Bounds.Width, secondaryScreen.Bounds.Height, PixelFormat.Format32bppArgb);
+            var bmpScreenshot = new Bitmap(secondaryScreen.Bounds.Width, secondaryScreen.Bounds.Height, PixelFormat.Format32bppArgb);
             Graphics gfxScreenshot = Graphics.FromImage(bmpScreenshot);
             gfxScreenshot.CopyFromScreen(new Point(0, 0), Point.Empty, secondaryScreen.Bounds.Size);
             string user_path = "C:\\Users\\bu\\Pictures\\Screenshots\\";
             string file_date_name = DateTime.Now.ToString("yyyyMMddHHmmss") + ".png";
-            path = "";
+            var path = "";
             if (ProcessName == Common.ACPhoenix) path = user_path + "dd\\" + file_date_name;
             else if (ProcessName == Common.chrome) path = "image\\encode\\" + file_date_name + "g";
-            else path = user_path + file_date_name; ;
-            //bmpScreenshot.Save(path, ImageFormat.Png);
-            //bmpScreenshot.Dispose();
+            else path = user_path + file_date_name;
+            bmpScreenshot.Save(path, ImageFormat.Png);
+            TaskRun(() => play_sound_di(), 80);
             gfxScreenshot.Dispose();
+            bmpScreenshot.Dispose();
         }
         public static void copy_secoed_screen(string path = "")
         {
@@ -621,13 +614,14 @@ namespace keyupMusic2
             //int start_x = 2560;
             int start_x = -1920;
             if (secondaryScreen == null) { return; }
-            bmpScreenshot = new Bitmap(1920, 1080, PixelFormat.Format32bppArgb);
+            var bmpScreenshot = new Bitmap(1920, 1080, PixelFormat.Format32bppArgb);
             Graphics gfxScreenshot = Graphics.FromImage(bmpScreenshot);
             gfxScreenshot.CopyFromScreen(new Point(start_x, 0), Point.Empty, secondaryScreen.Bounds.Size);
-            Common.path = "image\\encode\\" + path + DateTime.Now.ToString("yyyyMMddHHmmss") + ".png" + "g";
-            //bmpScreenshot.Save(Common.path, ImageFormat.Png);
-            //bmpScreenshot.Dispose();
+            path = "image\\encode\\" + path + DateTime.Now.ToString("yyyyMMddHHmmss") + ".png" + "g";
+            bmpScreenshot.Save(path, ImageFormat.Png);
+            TaskRun(() => play_sound_di(), 80);
             gfxScreenshot.Dispose();
+            bmpScreenshot.Dispose();
         }
         public static void copy_ddzzq_screen()
         {
@@ -788,12 +782,12 @@ namespace keyupMusic2
         }
 
         public static bool key_sound = true;
-        public static void play_sound(Keys key)
+        public static void play_sound(Keys key, bool force = false)
         {
             if (is_down(Keys.LWin)) return;
             if (Position.Y == 0) return;
             //if (key_sound && keys.Contains(e.key))
-            if (key_sound)
+            if (key_sound || force)
             {
                 string wav = "wav\\" + key.ToString().Replace("D", "").Replace("F", "") + ".wav";
                 if (!File.Exists(wav)) return;
@@ -1143,6 +1137,16 @@ namespace keyupMusic2
             //    Console.WriteLine("无法移动窗口到指定位置。");
             //}
         }
+        public static void MoveProcessWindow(IntPtr targetWindowHandle, Point point)
+        {
+            RECT windowRect;
+            GetWindowRect(targetWindowHandle, out windowRect);
+
+            int windowWidth = windowRect.Right - windowRect.Left;
+            int windowHeight = windowRect.Bottom - windowRect.Top;
+
+            MoveWindow(targetWindowHandle, point.X, point.Y, windowWidth, windowHeight, true);
+        }
         public static void MoveProcessWindow(string targetWindowTitle, Point point)
         {
             IntPtr targetWindowHandle = GetProcessID(targetWindowTitle);
@@ -1200,9 +1204,10 @@ namespace keyupMusic2
         }
         public static void system_hard_sleep()
         {
-            Process.Start("rundll32.exe", "powrprof.dll,SetSuspendState 0,1,0");
             gcc_restart = true;
             KeyTime[system_sleep_string] = DateTime.Now;
+            system_sleep_count = 0;
+            Process.Start("rundll32.exe", "powrprof.dll,SetSuspendState 0,1,0");
         }
         public static void bland_title()
         {
@@ -1215,20 +1220,22 @@ namespace keyupMusic2
         public static void quick_left_right(int arraw)
         {
             IntPtr hwnd = GetForegroundWindow();
+            int tick = 100;
+
             var full = IsFullScreen(hwnd);
             if (full)
             {
                 SS().KeyPress(Keys.F11);
-                Sleep(500);
+                Sleep(tick);
             }
 
             ShowWindow((hwnd), SW.SW_SHOWNORMAL);
-            Sleep(500);
+            Sleep(tick);
 
             var pp = new Point(100, 100);
             if (arraw == 2) pp = new Point(screen2Width + 100, 100);
-            MoveProcessWindow(ProcessName, pp);
-            Sleep(500);
+            MoveProcessWindow(hwnd, pp);
+            Sleep(tick);
 
             RECT windowRect;
             GetWindowRect(hwnd, out windowRect);
@@ -1236,11 +1243,11 @@ namespace keyupMusic2
             if (windowWidth > 3000 || windowWidth < 1000)
             {
                 SetWindowPos(hwnd, IntPtr.Zero, pp.X, pp.Y, 1800, 920, SWP_FRAMECHANGED | SWP_NOMOVE);
-                Sleep(500);
+                Sleep(tick);
             }
 
             ShowWindow((hwnd), SW.SW_SHOWMAXIMIZED);
-            Sleep(500);
+            Sleep(tick);
 
             if (full)
                 SS().KeyPress(Keys.F11);
@@ -1325,5 +1332,27 @@ namespace keyupMusic2
             }
         }
         //public static List<ReplaceKey> replace = ReplaceKey.replace;
+        public static bool lock_err
+        {
+            get
+            {
+                var aaa =
+                 ProcessName == err || ProcessName == LockApp || GetWindowText() == UnlockingWindow;
+                if (aaa)
+                {
+                    string _ProcessName = ProcessName;
+                    if (_ProcessName == "err")
+                    {
+                        uint processId = 0;
+                        Native.GetWindowThreadProcessId(Native.GetForegroundWindow(), out processId);
+                        _ProcessName = "err,processId:" + processId;
+                    }
+                    Log.log("GetWindowText():" + GetWindowText() + ",ProcessName:" + ProcessName);
+                    if (ProcessName == err)
+                        play_sound_di2();
+                }
+                return aaa;
+            }
+        }
     }
 }

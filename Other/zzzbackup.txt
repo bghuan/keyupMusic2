@@ -3124,7 +3124,195 @@ namespace keyupMusic2
     partial class biu
     {
         static Point last_left = new Point(297, 680);
-        int line = 580;
+        int line = 580;using OpenCvSharp;
+
+namespace ColorObjectDetection
+{
+    class Program
+    {
+        // 在Main函数前添加全局变量
+        private static OpenCvSharp.Point? lastPosition = null;         // 上一帧的位置
+        private static bool isStationary = false;                     // 是否处于静止状态
+        private static readonly double StationaryThreshold = 5.0;     // 判断静止的距离阈值（像素）
+        private static readonly double MovementThreshold = 15.0;      // 判断移动的距离阈值（像素）
+        private static readonly int StationarySmoothFactor = 10;      // 静止时的平滑系数
+        private static readonly int MovementSmoothFactor = 3;         // 移动时的平滑系数
+        private static readonly Queue<OpenCvSharp.Point> positionHistory = new Queue<OpenCvSharp.Point>(StationarySmoothFactor);
+
+        static void Main()
+        {
+            //var server = new ScreenVideoSharingServer();
+            // 打开默认摄像头
+            using var capture = new VideoCapture(0);
+            if (!capture.IsOpened())
+            {
+                Console.WriteLine("无法打开摄像头");
+                return;
+            }
+
+            Console.WriteLine("摄像头已启动，按ESC键退出");
+            Console.WriteLine("正在检测指定颜色物体...");
+
+            // 创建窗口
+            Cv2.NamedWindow("颜色物体检测", WindowFlags.AutoSize);
+
+            // 创建Mat对象用于存储图像
+            using var frame = new Mat();
+            using var hsvFrame = new Mat();
+            using var colorMask = new Mat();
+            using var result = new Mat();
+
+            while (true)
+            {
+                // 读取一帧
+                capture.Read(frame);
+                if (frame.Empty())
+                {
+                    Console.WriteLine("无法获取画面");
+                    break;
+                }
+
+                // 转换到HSV颜色空间
+                Cv2.CvtColor(frame, hsvFrame, ColorConversionCodes.BGR2HSV);
+
+                // 定义目标颜色的HSV范围 (对应RGB: 59,59,122)
+                // HSV值: H=120, S=51, V=48（根据转换公式计算）
+                // 实际使用时需要调整范围以获得最佳效果// 超宽范围设置 - 覆盖蓝紫色、灰色和部分红色区域
+                Scalar lowerColor = new Scalar(100, 30, 80);     // 极宽的H范围，极低的S和V下限
+                Scalar upperColor = new Scalar(130, 200, 200); // 覆盖大部分H范围，高S和V上限
+
+                // 创建颜色掩码
+                Cv2.InRange(hsvFrame, lowerColor, upperColor, colorMask);
+
+                // 对掩码进行形态学操作，减少噪声
+                using var kernel = Cv2.GetStructuringElement(MorphShapes.Ellipse, new OpenCvSharp.Size(5, 5));
+                Cv2.MorphologyEx(colorMask, colorMask, MorphTypes.Open, kernel);
+                Cv2.MorphologyEx(colorMask, colorMask, MorphTypes.Close, kernel);
+
+                // 在原始画面上应用掩码
+                Cv2.BitwiseAnd(frame, frame, result, colorMask);
+
+                // 查找轮廓
+                Cv2.FindContours(colorMask, out OpenCvSharp.Point[][] contours, out HierarchyIndex[] hierarchy, RetrievalModes.External, ContourApproximationModes.ApproxSimple);
+
+                // 找到最大轮廓
+                double maxArea = 0;
+                int maxContourIndex = -1;
+                for (int i = 0; i < contours.Length; i++)
+                {
+                    double area = Cv2.ContourArea(contours[i]);
+                    if (area > maxArea && area > 10) // 忽略小面积区域
+                    {
+                        maxArea = area;
+                        maxContourIndex = i;
+                    }
+                }
+
+                // 在检测到物体后添加动态平滑处理
+                if (maxContourIndex != -1)
+                {
+                    // 计算轮廓的矩
+                    Moments moments = Cv2.Moments(contours[maxContourIndex]);
+
+                    // 计算中心点坐标
+                    int cx = (int)(moments.M10 / moments.M00);
+                    int cy = (int)(moments.M01 / moments.M00);
+                    OpenCvSharp.Point currentPosition = new OpenCvSharp.Point(cx, cy);
+
+                    // 计算与上一帧的距离
+                    double distance = lastPosition.HasValue ?
+                        Math.Sqrt(Math.Pow(currentPosition.X - lastPosition.Value.X, 2) +
+                                  Math.Pow(currentPosition.Y - lastPosition.Value.Y, 2)) : 0;
+
+                    // 更新状态机
+                    if (isStationary)
+                    {
+                        // 如果已处于静止状态，需要更大的移动才认为开始移动
+                        if (distance > MovementThreshold)
+                        {
+                            isStationary = false;
+                            // 清空历史记录以快速响应移动
+                            positionHistory.Clear();
+                        }
+                    }
+                    else
+                    {
+                        // 如果处于移动状态，较小的移动认为是抖动
+                        if (distance < StationaryThreshold)
+                        {
+                            isStationary = true;
+                        }
+                    }
+
+                    // 根据当前状态选择平滑系数
+                    int currentSmoothFactor = isStationary ? StationarySmoothFactor : MovementSmoothFactor;
+
+                    // 添加当前位置到历史队列
+                    positionHistory.Enqueue(currentPosition);
+
+                    // 如果队列已满，移除最早的位置
+                    if (positionHistory.Count > currentSmoothFactor)
+                    {
+                        positionHistory.Dequeue();
+                    }
+
+                    // 计算平均位置
+                    int avgX = (int)positionHistory.Average(p => p.X);
+                    int avgY = (int)positionHistory.Average(p => p.Y);
+                    OpenCvSharp.Point smoothedPosition = new OpenCvSharp.Point(avgX, avgY);
+
+                    // 显示状态信息
+                    string stateText = isStationary ? "00000" : "11111";
+                    Cv2.PutText(frame, stateText, new OpenCvSharp.Point(10, 90), HersheyFonts.HersheySimplex, 0.6,
+                               isStationary ? new Scalar(0, 165, 255) : new Scalar(0, 255, 0), 2);
+                    // 显示当前使用的HSV检测范围
+                    //string hsvRangeText = $"检测范围: H[{lowerColor.Val0:F0}-{upperColor.Val0:F0}], S[{lowerColor.Val1:F0}-{upperColor.Val1:F0}], V[{lowerColor.Val2:F0}-{upperColor.Val2:F0}]";
+                    //Cv2.PutText(frame, hsvRangeText, new OpenCvSharp.Point(10, 30), HersheyFonts.HersheySimplex, 0.6, new Scalar(0, 255, 0), 2);
+
+                    //// 创建掩码的ROI区域
+                    //using var maskRoi = new Mat(colorMask.Size(), MatType.CV_8UC1);
+                    //maskRoi.SetTo(0);
+                    //Cv2.DrawContours(maskRoi, new[] { contours[maxContourIndex] }, -1, Scalar.All(255), -1);
+
+                    // 计算检测到的物体区域内的平均HSV值
+                    //Scalar meanHsv = Cv2.Mean(hsvFrame, maskRoi);
+
+                    //// 显示当前检测到的颜色的HSV值
+                    //string detectedColorText = $"检测到的颜色: H{meanHsv.Val0:F0}, S{meanHsv.Val1:F0}, V{meanHsv.Val2:F0}";
+                    //Cv2.PutText(frame, detectedColorText, new OpenCvSharp.Point(10, 60), HersheyFonts.HersheySimplex, 0.6, new Scalar(0, 255, 255), 2);
+
+                    // 显示平滑后的坐标
+                    string coordinatesText = $"new: X: {avgX}, Y: {avgY}";
+                    Cv2.PutText(frame, coordinatesText, new OpenCvSharp.Point(avgX + 10, avgY + 10), HersheyFonts.HersheySimplex, 0.7, new Scalar(0, 0, 255), 2);
+
+                    // 保存当前平滑位置供下一帧使用
+                    lastPosition = smoothedPosition;
+                    keyupMusic2.TcpServer.socket_write($"opencv: X: {avgX}, Y: {avgY}---{avgX},{avgY}");
+                    //server.socket_write($"opencv: X: {avgX}, Y: {avgY}---{avgX},{avgY}");
+                }
+                else
+                {
+                    // 如果没有检测到物体，重置状态
+                    positionHistory.Clear();
+                    lastPosition = null;
+                    isStationary = false;
+                }
+
+                // 显示结果
+                Cv2.ImShow("颜色物体检测", frame);
+
+                // 按ESC键退出
+                if (Cv2.WaitKey(1) == 27)
+                {
+                    break;
+                }
+            }
+
+            // 释放资源
+            Cv2.DestroyAllWindows();
+        }
+    }
+}
         int line2 = 1980;
         public void Glass()
         {

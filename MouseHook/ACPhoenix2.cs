@@ -1,11 +1,12 @@
 ﻿using System.Timers;
 using static keyupMusic2.Common;
+using static keyupMusic2.MouseKeyboardHook;
 
 namespace keyupMusic2
 {
     partial class biu
     {
-        public void MoveStopClick()
+        public void MoveStopClick(MouseHookEventArgs e)
         {
             if (!IsMouseStopClick) return;
             //if (!isMouseStopped) return;
@@ -43,7 +44,7 @@ namespace keyupMusic2
                     huan.label1.Text = tickaaa + "," + ++tickccc + "mouse_click";
                     play_sound_di();
                 });
-                lastMousePosition = e.Pos;
+                ////////lastMousePosition = e.Pos;
                 isMouseStopped = true;
             }
             //else if (isMouseStopped && !long_mouse_down && elapsedTime.TotalMilliseconds > 600)
@@ -88,11 +89,11 @@ namespace keyupMusic2
             timer.Elapsed += timer1_Tick;
             timer.Start();
         }
-        void MoveStop()
+        void MoveStop(MouseHookEventArgs e)
         {
             if (e.Msg == MouseMsg.move)
             {
-                MoveStopClick();
+                MoveStopClick(e);
             }
             //else if (e.Msg == MouseMsg.WM_LBUTTONDOWN || e.Msg == MouseMsg.WM_RBUTTONDOWN)
             //{

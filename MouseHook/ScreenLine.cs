@@ -41,6 +41,12 @@ namespace keyupMusic2
             else if (line6.target(e.Pos)) { line = 6; }
             else if (line7.target(e.Pos)) { line = 7; }
 
+            if (line != 0 && is_down(LButton) || is_down(RButton))
+            {
+                RECTT.release();
+                return;
+            }
+
             if (line == 1)
             {
                 if (ProcessName.Equals(chrome))
@@ -73,10 +79,7 @@ namespace keyupMusic2
                 if (ProcessName == Common.chrome)
                     if (chrome_red()) press(Keys.F);
                 if (IsDiffProcess())
-                    if (GetPointName() == msedge)
-                        FocusPointProcess();
-                    else
-                        mouse_click2(0);
+                    FocusPointProcess();
             }
             else if (line == 5)
             {
@@ -95,7 +98,8 @@ namespace keyupMusic2
             }
             else if (line == 7)
             {
-                mouse_click2(0);
+                if (IsDiffProcess())
+                    FocusPointProcess();
             }
 
             line1.ignore(e.Pos);
@@ -104,7 +108,7 @@ namespace keyupMusic2
             line5.ignore(e.Pos);
             line6.ignore(e.Pos);
             line7.ignore(e.Pos);
-            if (line != 0) RECTT.release();
+            //if (line != 0) RECTT.release();
         }
 
         private static bool chrome_red()

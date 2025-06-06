@@ -35,6 +35,12 @@ namespace keyupMusic2
             else if (corner7.target(e.Pos)) { line = 7; }
             else if (corner8.target(e.Pos)) { line = 8; }
 
+            if (line != 0 && is_down(LButton) || is_down(RButton))
+            {
+                RECTT.release();
+                return;
+            }
+
             if (line == 1)
             {
                 var list = new[] { msedge, Common.chrome };

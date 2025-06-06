@@ -1,6 +1,7 @@
 ﻿using keyupMusic2;
 using System.Timers;
 using static keyupMusic2.Common;
+using static keyupMusic2.MouseKeyboardHook;
 using static System.Windows.Forms.LinkLabel;
 using static System.Windows.Forms.VisualStyles.VisualStyleElement.TrackBar;
 
@@ -10,7 +11,7 @@ namespace keyupMusic2
     {
         static Point last_left = new Point(297, 680);
         static Point aaa = new Point(1277, 743);
-        public void Glass()
+        public void Glass(MouseKeyboardHook.MouseHookEventArgs e)
         {
             if (e.Msg == MouseMsg.move) return;
             var list = new string[] { Common.Glass, Common.Glass2, Common.Glass3, };
@@ -18,18 +19,19 @@ namespace keyupMusic2
 
             if (e.Msg == MouseMsg.click)
             {
-                if (IsMouseInCircle()) return;
+                if (IsMouseInCircle(e)) return;
                 last_left = Position;
             }
             else if (e.Msg == MouseMsg.click_r_up)
             {
-                if (!IsMouseInCircle()) return;
+                if (!IsMouseInCircle(e)) return;
+                aaa = Position;
                 mouse_click();
                 mouse_move(last_left);
                 mouse_click();
                 mouse_move(aaa);
             }
-            if (e.Msg == MouseMsg.back || e.Msg == MouseMsg.go)
+            else if (e.Msg == MouseMsg.back || e.Msg == MouseMsg.go)
             {
                 int x = 2245;
                 if (e.Msg == MouseMsg.go) x = 297;
@@ -39,8 +41,13 @@ namespace keyupMusic2
                 last_left = Position;
                 mouse_move(aaa);
             }
+            else if (e.Msg == MouseMsg.wheel && IsMouseInCircle(e))
+            {
+                mouse_click();
+                mousewhell(245, 717, 524, 735, e.data);
+            }
         }
-        public bool IsMouseInCircle(int centerX = 1285, int centerY = 695, int radius = 700)
+        public bool IsMouseInCircle(MouseHookEventArgs e, int centerX = 1285, int centerY = 695, int radius = 700)
         {
             int dx = e.X - centerX;
             int dy = e.Y - centerY;

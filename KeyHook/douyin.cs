@@ -60,20 +60,6 @@ namespace keyupMusic2
                 case Keys.Left:
                     click_double_speed(e, num1222);
                     break;
-                case Keys.F4:
-                    press_close();
-                    break;
-                case Keys.LControlKey:
-                    {
-                        var k = "douyin_space";
-                        if (KeyTime.ContainsKey(k) && DateTime.Now - KeyTime[k] < TimeSpan.FromMilliseconds(300))
-                        {
-                            mouse_click();
-                        }
-
-                        KeyTime[k] = DateTime.Now;
-                    }
-                    break;
             }
 
             Common.hooked = false;

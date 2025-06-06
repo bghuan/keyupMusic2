@@ -2,6 +2,7 @@
 using System.Security.Policy;
 using System.Windows.Forms;
 using static keyupMusic2.Common;
+using static keyupMusic2.MouseKeyboardHook;
 
 namespace keyupMusic2
 {
@@ -10,25 +11,25 @@ namespace keyupMusic2
 
         Dictionary<MouseMsg, DateTime> MouseMsgTime = new Dictionary<MouseMsg, DateTime>();
         static bool is_PowerToysCropAndLock_down = false;
-        public void Other()
+        public void Other(MouseHookEventArgs e)
         {
             //bool double_click = e.Msg == MouseMsg.WM_LBUTTONUP && is_double_click();
 
             if (ProcessName == Common.PowerToysCropAndLock)
-                PowerToysCropAndLock();
+                PowerToysCropAndLock(e);
             else if (ProcessName == Common.chrome)
-                Chrome();
+                Chrome(e);
             else if (ProcessName == Common.cs2)
-                Cs2();
+                Cs2(e);
             else if (ProcessName == Common.devenv)
-                Devenv();
+                Devenv(e);
             else if (is_douyin())
-                Douyin();
+                Douyin(e);
             else if (ProcessName == Common.msedge)
-                Msedge();
+                Msedge(e);
         }
 
-        private void Douyin()
+        private void Douyin(MouseHookEventArgs e)
         {
             if (is_douyin())
             {
@@ -53,14 +54,14 @@ namespace keyupMusic2
             }
         }
 
-        private void Msedge()
+        private void Msedge(MouseHookEventArgs e)
         {
         }
 
-        private void Cs2()
+        private void Cs2(MouseHookEventArgs e)
         {
         }
-        private void Devenv()
+        private void Devenv(MouseHookEventArgs e)
         {
             if (e.Msg == MouseMsg.click_up)
                 if (is_down_vir(Keys.RButton))
@@ -75,8 +76,9 @@ namespace keyupMusic2
                 {
                     if (e.Y == 0)
                     {
-                        if (Deven_runing()) press("116,69");
-                        else press("898,71");
+                        press("116,69");
+                        //if (Deven_runing()) press("116,69");
+                        //else press("898,71");
                     }
                     else if (!catch_ed)
                         mouse_click_right();
@@ -84,7 +86,7 @@ namespace keyupMusic2
                 catch_off();
             }
         }
-        private void PowerToysCropAndLock()
+        private void PowerToysCropAndLock(MouseHookEventArgs e)
         {
             //if (!is_no_title(PowerToysCropAndLock))
             //    break;
@@ -130,7 +132,7 @@ namespace keyupMusic2
                 //HandleMouseWheel(e);
             }
         }
-        private void Chrome()
+        private void Chrome(MouseHookEventArgs e)
         {
             //if (e.Msg == MouseMsg.WM_LBUTTONUP && is_double_click() && ExsitProcess(PowerToysCropAndLock, true))
             //    quick_max_chrome(e.Pos);

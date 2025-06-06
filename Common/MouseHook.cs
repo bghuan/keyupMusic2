@@ -4,8 +4,6 @@ namespace keyupMusic2
 {
     public class MouseKeyboardHook : IDisposable
     {
-        public static Dictionary<Keys, string> handling_keys = new Dictionary<Keys, string>();
-        public static bool handling = false;
         protected virtual int KeyboardHookProc(int code, int wParam, ref Native.keyboardHookStruct lParam)
         {
             var args = new KeyboardHookEventArgs(0, (Keys)lParam.vkCode, wParam, lParam);
@@ -24,9 +22,8 @@ namespace keyupMusic2
             var args = new MouseHookEventArgs((MouseMsg)wParam, curPos.X, curPos.Y, wParam, lParam);
 
             Param_Data(lParam, args);
-            if (args.isVir) return Native.CallNextHookEx(_mouse_hookId, nCode, wParam, lParam);
 
-            if (MouseHookEvent != null)
+            if (!args.isVir)
                 MouseHookEvent(args);
 
             return args.Handled ? new IntPtr(-1) : Native.CallNextHookEx(_mouse_hookId, nCode, wParam, lParam);
