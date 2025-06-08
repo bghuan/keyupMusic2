@@ -91,6 +91,11 @@ namespace keyupMusic2
         private static void quick_wechat_or_notify(string module_name)
         {
             if (is_down(Keys.Delete) || is_ctrl()) return;
+            if (ProcessName==Common.keyupMusic2)
+            {
+                press(F12);
+                return;
+            }
             if (Common.WeChat == module_name)
             {
                 CloseProcess(module_name);

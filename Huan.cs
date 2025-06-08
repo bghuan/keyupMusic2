@@ -58,6 +58,7 @@ namespace keyupMusic2
             var flag = Chrome.judge_handled(e) || Douyin.judge_handled(e) || WinClass.judge_handled(e);
             return flag;
         }
+
         private void hook_KeyDown(KeyboardHookEventArgs e)
         {
             if (e.Type != KeyboardType.KeyDown) return;
@@ -72,6 +73,7 @@ namespace keyupMusic2
 
             print_easy_read();
             //start_record(e);
+            Log.logcache(e.key.ToString());
 
             if (e.key == Keys.F3 || e.key == Keys.F9)
             {
@@ -107,6 +109,7 @@ namespace keyupMusic2
             Invoke2(() => label1.Text = label1.Text.Replace(easy_read2(e.key), easy_read2(e.key).ToLower()));
 
             quick_replace_key(e, true);
+            keyupMusic2.KeyUp.yo(e);
         }
         private void F39(KeyboardHookEventArgs e)
         {
@@ -206,11 +209,14 @@ namespace keyupMusic2
             play_sound_di2();
             if (msg.Contains(start_check_str))
             {
-                string[] list_f1 = [StartMenuExperienceHost, SearchHost];
+                string[] list_f1 = [StartMenuExperienceHost, SearchHost, clashverge,];
                 string[] list_nothing = [devenv, Common.keyupMusic2, explorer, cs2];
-                if (Position.Y == 0)
+                if (Position.Y == 0 )
                 {
-                    //Invoke(() => { SetVisibleCore(!Visible); });
+                    Invoke(() => { SetVisibleCore(!Visible); });
+                }
+                if (Position.X == screen2Width)
+                {
                     press([Keys.LControlKey, Keys.F1]);
                 }
                 else if (Position.X == screenWidth1 && Position.Y == screenHeight1)
@@ -226,7 +232,8 @@ namespace keyupMusic2
                 else if (list_f1.Contains(ProcessName))
                 {
                     press([Keys.LControlKey, Keys.F1]);
-                    press(LWin);
+                    if (iswinopen)
+                        press(LWin);
                 }
                 else if (list_nothing.Contains(ProcessName))
                 {

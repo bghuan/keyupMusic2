@@ -19,6 +19,7 @@ namespace keyupMusic2
     {
         public static ConcurrentDictionary<string, DateTime> KeyTime = new ConcurrentDictionary<string, DateTime>();
         public const string keyupMusic2 = "keyupMusic4";
+        public const string msedgewebview2 = "msedgewebview2";
         public const string ShellExperienceHost = "ShellExperienceHost";
         public const string ElecHead = "ElecHead";
         public const string Windblown = "Windblown";
@@ -72,6 +73,7 @@ namespace keyupMusic2
         public const string TwinkleTrayexe = "C:\\Users\\bu\\AppData\\Local\\Programs\\twinkle-tray\\Twinkle Tray.exe";
         public const string androidstudio = "studio64";
         public const string cloudmusic = "cloudmusic";
+        public const string clashverge = "clash-verge";
 
         public static List<string> list_go_back = new List<string> { explorer, VSCode, msedge, chrome, devenv, androidstudio, ApplicationFrameHost, cs2, steam, Glass, Glass2, Glass3 };
 
@@ -90,6 +92,7 @@ namespace keyupMusic2
         public static int system_sleep_count = 0;
         public static bool ready_to_sleep = false;
         public static string ProcessName2 { get { FreshProcessName(); return ProcessName; } }
+        public static bool iswinopen { get { return new[] { StartMenuExperienceHost, SearchHost }.Contains(ProcessName); } }
         public static Point Position { get { return Cursor.Position; } }
         public static Point PositionMiddle = new Point(screenWidth2, screenHeight2);
         public static string FreshProcessName()
@@ -204,7 +207,7 @@ namespace keyupMusic2
             return ProcessPath != null && ProcessPath.Contains("steam");
         }
 
-        public static Dictionary<IntPtr, ProcessWrapper> ProcessMap = new Dictionary<IntPtr, ProcessWrapper>();
+        public static ConcurrentDictionary<IntPtr, ProcessWrapper> ProcessMap = new ConcurrentDictionary<IntPtr, ProcessWrapper>();
         public class ProcessWrapper
         {
             public string name { get; set; }
@@ -589,11 +592,15 @@ namespace keyupMusic2
                 dragonest_notity_click(true);
             }
         }
+
+        public static Bitmap bmpScreenshot;
+        public static string bmpScreenshot_path;
         public static void copy_screen()
         {
+            try { bmpScreenshot.Dispose(); } catch (Exception e) { }
             play_sound_di();
             Screen secondaryScreen = Screen.PrimaryScreen;
-            var bmpScreenshot = new Bitmap(secondaryScreen.Bounds.Width, secondaryScreen.Bounds.Height, PixelFormat.Format32bppArgb);
+            bmpScreenshot = new Bitmap(secondaryScreen.Bounds.Width, secondaryScreen.Bounds.Height, PixelFormat.Format32bppArgb);
             Graphics gfxScreenshot = Graphics.FromImage(bmpScreenshot);
             gfxScreenshot.CopyFromScreen(new Point(0, 0), Point.Empty, secondaryScreen.Bounds.Size);
             string user_path = "C:\\Users\\bu\\Pictures\\Screenshots\\";
@@ -602,26 +609,29 @@ namespace keyupMusic2
             if (ProcessName == Common.ACPhoenix) path = user_path + "dd\\" + file_date_name;
             else if (ProcessName == Common.chrome) path = "image\\encode\\" + file_date_name + "g";
             else path = user_path + file_date_name;
-            bmpScreenshot.Save(path, ImageFormat.Png);
+            bmpScreenshot_path = path;
+            //bmpScreenshot.Save(path, ImageFormat.Png);
             TaskRun(() => play_sound_di(), 80);
             gfxScreenshot.Dispose();
-            bmpScreenshot.Dispose();
+            //bmpScreenshot.Dispose();
         }
         public static void copy_secoed_screen(string path = "")
         {
+            try { bmpScreenshot.Dispose(); } catch (Exception e) { }
             play_sound_di();
             Screen secondaryScreen = Screen.AllScreens.FirstOrDefault(scr => !scr.Primary);
             //int start_x = 2560;
             int start_x = -1920;
             if (secondaryScreen == null) { return; }
-            var bmpScreenshot = new Bitmap(1920, 1080, PixelFormat.Format32bppArgb);
+            bmpScreenshot = new Bitmap(1920, 1080, PixelFormat.Format32bppArgb);
             Graphics gfxScreenshot = Graphics.FromImage(bmpScreenshot);
             gfxScreenshot.CopyFromScreen(new Point(start_x, 0), Point.Empty, secondaryScreen.Bounds.Size);
             path = "image\\encode\\" + path + DateTime.Now.ToString("yyyyMMddHHmmss") + ".png" + "g";
-            bmpScreenshot.Save(path, ImageFormat.Png);
+            bmpScreenshot_path = path;
+            //bmpScreenshot.Save(path, ImageFormat.Png);
             TaskRun(() => play_sound_di(), 80);
             gfxScreenshot.Dispose();
-            bmpScreenshot.Dispose();
+            //bmpScreenshot.Dispose();
         }
         public static void copy_ddzzq_screen()
         {
@@ -1354,5 +1364,13 @@ namespace keyupMusic2
                 return aaa;
             }
         }
+        // 获取当前窗口的缩放比例
+        public static double GetWindowScalingFactor(Form form)
+        {
+            uint dpi = GetDpiForWindow(form.Handle);
+            return dpi / 96.0;
+        }
+
+
     }
 }

@@ -115,7 +115,7 @@ namespace keyupMusic2
         private void label1_Click(object sender, EventArgs e)
         {
             // 创建并显示WebView2窗口
-            WebViewForm webViewWindow = new WebViewForm();
+            MoonTime webViewWindow = new MoonTime();
             webViewWindow.Show();
         }
 
@@ -151,9 +151,9 @@ namespace keyupMusic2
             Common.FocusProcess(Common.Glass2);
             Common.FocusProcess(Common.Glass3);
 
-            if (!Debugger.IsAttached) return;
+            //if (!Debugger.IsAttached) return;
             // 创建并显示WebView2窗口
-            WebViewForm webViewWindow = new WebViewForm();
+            MoonTime webViewWindow = new MoonTime();
             webViewWindow.Show();
         }
     }

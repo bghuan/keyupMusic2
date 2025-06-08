@@ -26,6 +26,12 @@ namespace keyupMusic2
                     huan.system_sleep(true);
                 });
             }
+            if (keys == Keys.Home || keys == Keys.End)
+            {
+                Common.bmpScreenshot.Save(Common.bmpScreenshot_path, ImageFormat.Png);
+                play_sound_di();
+                //bmpScreenshot.Dispose();
+            }
         }
 
     }

@@ -81,7 +81,8 @@ namespace keyupMusic2
                     change_file_last(false);
                     break;
                 case Keys.A:
-                    start_record = !start_record;
+                    //start_record = !start_record;
+                    Log.logcachesave();
                     break;
                 case Keys.S:
                     IntPtr hWnd = Native.WindowFromPoint(Position);
@@ -119,8 +120,14 @@ namespace keyupMusic2
                     huan.release_all_key(1000);
                     break;
                 case Keys.L:
+                    //huan.Invoke(() => {
+                    //    huan.webViewWindow.webView21.CoreWebView2.PostWebMessageAsString(
+                    //        $"mousePos:{Cursor.Position.X},{Cursor.Position.Y}");
+                    //});
+                    
                     break;
                 case Keys.Z:
+                    Native.SetCursorPos(Cursor.Position.X, Cursor.Position.Y);
                     //var capturer = new WindowCaptureFixed();
                     //capturer.StartLiveBackgroundRemoval(PowerToysCropAndLock);
                     break;

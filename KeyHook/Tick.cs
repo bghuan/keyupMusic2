@@ -69,6 +69,7 @@ namespace keyupMusic2
                 play_sound(Keys.D1, true);
                 if (system_sleep_count++ > 4)
                     system_hard_sleep();
+                Log.logcachesave();
             }
             else if (gcc_restart)
             {
@@ -115,7 +116,7 @@ namespace keyupMusic2
                     }
 
                     // 检查是否长按（超过1秒）
-                    if ((DateTime.Now - _keyPressTimes[key.Key]).TotalSeconds >= 1 &&
+                    if ((DateTime.Now - _keyPressTimes[key.Key]).Milliseconds >= 700 &&
                         !_longPressedKeys.Contains(key.Key)
                         && (key.Value == null || key.Value == ProcessName))
                     {

@@ -57,7 +57,7 @@ namespace keyupMusic2
             {
                 var list = new[] { ApplicationFrameHost, explorer, vlc, v2rayN, Common.QQMusic, VSCode, AIoT, RadeonSoftware, steam };
 
-                var list2 = new[] { Thunder, cloudmusic };
+                var list2 = new[] { Thunder, cloudmusic, Taskmgr };
 
                 if (is_douyin())
                     mouse_click();

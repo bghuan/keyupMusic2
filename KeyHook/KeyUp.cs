@@ -7,6 +7,14 @@ namespace keyupMusic2
     {
         public static void yo(KeyboardHookEventArgs e)
         {
+            switch (e.key)
+            {
+                case Keys.Home:
+                case Keys.End:
+                    bmpScreenshot.Dispose();
+                    break;
+            }
+
             switch (ProcessName)
             {
                 case cs2:

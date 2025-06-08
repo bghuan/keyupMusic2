@@ -1,4 +1,5 @@
-﻿using System.Runtime.InteropServices;
+﻿using System.Diagnostics;
+using System.Runtime.InteropServices;
 using static keyupMusic2.Common;
 using static keyupMusic2.MouseKeyboardHook;
 
@@ -13,6 +14,7 @@ namespace keyupMusic2
         static int cha = screenWidth1;
         static int ga2 = screen2Height1;
         static int ch2 = screen2Width;
+        private static string[] special = [Common.keyupMusic2, LosslessScaling, msedgewebview2];
         int chrome_x_min = -50;
 
         public static RECTT line1 = new RECTT(new RECT(far, 0, _fa, 0),
