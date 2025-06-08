@@ -36,11 +36,11 @@ namespace keyupMusic2
             }
             if (e.Msg == MouseMsg.click_r || e.Msg == MouseMsg.click_r_up)
             {
-                var list = new[] { chrome, devenv, Glass2, Glass3 };
+                var list = new[] { devenv, Glass2, Glass3 };
                 if (list.Contains(Common.ProcessName))
                 {
-                    if (is_down(Keys.RButton)) return false;
-                    if (GetPointName() == explorer) return false;
+                    //if (is_down(Keys.RButton)) return false;
+                    //if (!list.Contains(GetPointName())) return false;
                     return true;
                 }
             }
@@ -66,22 +66,26 @@ namespace keyupMusic2
             {
                 e.Handled = true;
                 VirKeyState(e.Msg);
-                if (IsDiffProcess()) FocusPointProcess();
+                //if (IsDiffProcess())
+                //    FocusPointProcess();
             }
+            //if (ProcessName==explorer)
+            //    if (IsDiffProcess())
+            //    FocusPointProcess();
 
             Task.Run(() =>
             {
                 easy_read(e);
 
                 biusc.Cornor(e);
-                biusc.ScreenLine(e);
+                //biusc.ScreenLine(e);
                 BottomLine(e);
                 Other(e);
 
                 Glass(e);
 
                 GoBack(e);
-                Gestures(e);
+                //Gestures(e);
                 All(e);
             });
         }

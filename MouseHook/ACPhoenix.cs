@@ -58,7 +58,7 @@ namespace keyupMusic2
             {
                 //var aaa = 1430 * 2160 / 1440;
                 if (!listen_move || (e.Y < screenHeight - 10) || (e.X > screenWidth)) { return; }
-                if (ProcessName2 == keyupMusic2.Common.ACPhoenix) { press(Keys.S, 0); ; }
+                if (ProcessName == keyupMusic2.Common.ACPhoenix) { press(Keys.S, 0); ; }
                 listen_move = false;
             }
         }

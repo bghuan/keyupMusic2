@@ -32,7 +32,20 @@ namespace keyupMusic2
         public Huan()
         {
             if (start_check()) return;
-            InitializeComponent();
+            InitializeComponent(); 
+            //FormBorderStyle = FormBorderStyle.None;
+            //this.BackColor = Color.FromArgb(255, 1, 1, 1);  // 几乎黑色，但不完全是
+            //this.TransparencyKey = this.BackColor;
+            //label1= new Label
+            //{
+            //    Text = "这是黑色文本",
+            //    Font = new Font("Arial", 24, FontStyle.Bold),
+            //    ForeColor = Color.Black,                    // 纯黑色文本
+            //    BackColor = Color.Transparent,              // 标签背景透明
+            //    Size = new Size(300, 100),
+            //    Location = new Point(50, 50),
+            //    TextAlign = ContentAlignment.MiddleCenter
+            //};        // 标签背景透明
 
             try_restart_in_admin();
             //release_all_key();
@@ -48,22 +61,22 @@ namespace keyupMusic2
             LongPress = new LongPressClass(this);
             Win = new WinClass(this);
 
-            new TcpServer(this);
+            new Socket(this);
             new Tick(this); ;
             Opencv = new OpencvReceive(this);
         }
         protected override void Dispose(bool disposing)
         {
             stopListen();
-            if (TcpServer.listener != null && TcpServer.listener.Server.IsBound)
+            if (Socket.listener != null && Socket.listener.Server.IsBound)
             {
-                TcpServer.listener.Stop();
+                Socket.listener.Stop();
             }
 
-            if (TcpServer.client != null && TcpServer.client.Connected)
+            if (Socket.client != null && Socket.client.Connected)
             {
-                TcpServer.stream?.Close();
-                TcpServer.client.Close();
+                Socket.stream?.Close();
+                Socket.client.Close();
             }
 
             if (disposing && (components != null))
@@ -86,11 +99,14 @@ namespace keyupMusic2
         {
             if (Enum.TryParse(typeof(Keys), e.ClickedItem.Text.Substring(0, 1), out object key))
             {
-                var args = new KeyboardHookEventArgs(KeyboardType.KeyDown, (Keys)key, 0, new Native.keyboardHookStruct());
-                super_listen();
-                hook_KeyDown(args);
-                args.Type = KeyboardType.KeyUp;
-                hook_KeyUp(args);
+                //var args = new KeyboardHookEventArgs(KeyboardType.KeyDown, (Keys)key, 0, new Native.keyboardHookStruct());
+                //super_listen();
+                //KeyBoardHookProc(args);
+                //args.Type = KeyboardType.KeyUp;
+                //KeyBoardHookProc(args);
+                //press((Keys)key);
+
+                SuperClass.hook_KeyDown((Keys)key);
             }
         }
         private void notifyIcon1_MouseClick(object sender, MouseEventArgs e)
@@ -115,8 +131,8 @@ namespace keyupMusic2
         private void label1_Click(object sender, EventArgs e)
         {
             // 创建并显示WebView2窗口
-            MoonTime webViewWindow = new MoonTime();
-            webViewWindow.Show();
+            //MoonTime webViewWindow = new MoonTime();
+            //webViewWindow.Show();
         }
 
         private void Form1_Load(object sender, EventArgs e)
@@ -155,6 +171,17 @@ namespace keyupMusic2
             // 创建并显示WebView2窗口
             MoonTime webViewWindow = new MoonTime();
             webViewWindow.Show();
+
+        }
+        protected override CreateParams CreateParams
+        {
+            get
+            {
+                CreateParams cp = base.CreateParams;
+                // 添加 WS_EX_TOOLWINDOW 样式
+                cp.ExStyle |= 0x80;  // WS_EX_TOOLWINDOW
+                return cp;
+            }
         }
     }
 }

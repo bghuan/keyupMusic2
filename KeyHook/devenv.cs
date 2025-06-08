@@ -29,8 +29,7 @@ namespace keyupMusic2
                     press([Keys.RControlKey, Keys.K, Keys.D]);
                     break;
                 case Keys.F2:
-                    S100.KeyPress([Keys.RControlKey, Keys.OemPeriod])
-                        .KeyPress(Keys.Enter);
+                    MessageBox.Show("sss");
                     //var aaa = (GetPointTitle() == "");
                     //if (aaa)
                     //    mouse_move(Position.X + 500, Position.Y);

@@ -21,25 +21,9 @@ namespace keyupMusic2
         public override bool judge_handled(KeyboardHookEventArgs e)
         {
             not_in_class = ProcessName != douyin
-                && (ProcessName != ApplicationFrameHost || ProcessTitle?.IndexOf("照片") < 0)
                 && ProcessTitle?.IndexOf("抖音") < 0
-                //&& (ProcessName == msedge && ProcessTitle?.IndexOf("多多自走棋") < 0)
                 ;
             if (not_in_class) return false;
-            //if (judge_handled_key.Contains(e.key)) return true;
-            if (is_down(Keys.F2)) return true;
-            if (e.key == Keys.F1) return true;
-            if (e.key == Keys.F2) return true;
-            if (e.key == Keys.F4) return true;
-            if (e.key == Keys.F5) return true;
-            if (e.key == Keys.F6) return true;
-            if (e.key == Keys.Oem3 && !is_shift()) return true;
-            if ((Special_Input_tiem != init_time && Special_Input_tiem.AddMilliseconds(1000) > DateTime.Now)) return true;
-            if (is_ctrl())
-            {
-                if (e.key == Keys.Left || e.key == Keys.Right)
-                    return true;
-            }
             return false;
         }
         public void hook_KeyDown_ddzzq(KeyboardHookEventArgs e)
@@ -51,7 +35,6 @@ namespace keyupMusic2
             //if (!handling) return;
             Common.hooked = true;
             handling_keys = e.key;
-            bool is_string_cmd = (Special_Input_tiem != init_time && Special_Input_tiem.AddMilliseconds(1000) > DateTime.Now) || Special_Input;
             switch (e.key)
             {
                 case Keys.PageDown:

@@ -66,8 +66,14 @@ namespace keyupMusic2
             if (e.key == Keys.F22 && (_ProcessName == "WeChatAppEx" || _ProcessName == "WeChat")) { return; }
             handling_keys[e.key] = ProcessName;
         }
-        private void print_easy_read()
+        private void print_easy_read(KeyboardHookEventArgs e)
         {
+            if (e.Type == KeyboardType.KeyUp)
+            {
+                Invoke2(() => label1.Text = label1.Text.Replace(easy_read2(e.key), easy_read2(e.key).ToLower()));
+                return;
+            }
+
             Dictionary<Keys, string> _stop_keys = new Dictionary<Keys, string>();
             try
             {
@@ -109,8 +115,7 @@ namespace keyupMusic2
             label2.Text = "";
 
             _mouseKbdHook = new MouseKeyboardHook();
-            _mouseKbdHook.KeyboardHookEvent += hook_KeyDown;
-            _mouseKbdHook.KeyboardHookEvent += hook_KeyUp;
+            _mouseKbdHook.KeyboardHookEvent += KeyBoardHookProc;
 
             if (is_mouse_hook)
             {

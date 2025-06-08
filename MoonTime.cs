@@ -1,4 +1,5 @@
 ﻿using Microsoft.Web.WebView2.Core;
+using System.Runtime.InteropServices;
 
 namespace keyupMusic2
 {
@@ -122,6 +123,16 @@ namespace keyupMusic2
 
             string location = File.ReadAllText(moontime_location);
             Location = new Point(int.Parse(location.Split(',')[0]), int.Parse(location.Split(',')[1]));
+        }
+        protected override CreateParams CreateParams
+        {
+            get
+            {
+                CreateParams cp = base.CreateParams;
+                // 添加 WS_EX_TOOLWINDOW 样式
+                cp.ExStyle |= 0x80;  // WS_EX_TOOLWINDOW
+                return cp;
+            }
         }
     }
 }

@@ -20,7 +20,7 @@ namespace keyupMusic2
             switch (e.key)
             {
                 case Keys.F4:
-                    quick_close(); fresh_name(); break;
+                    quick_close(); break;
                 case Keys.F9:
                     quick_sleep(); break;
                 case Keys.F10:
@@ -40,10 +40,6 @@ namespace keyupMusic2
                 case Keys.Delete:
                 case Keys.Escape:
                     clean(); break;
-
-                case Keys.LMenu:
-                case Keys.Tab:
-                    fresh_name(); break;
 
                 case Keys.OemPeriod:
                     if (is_down(Keys.RControlKey)) SS().KeyPress(Keys.Apps); break;
@@ -67,7 +63,7 @@ namespace keyupMusic2
             quick_max_chrome(e.Pos);
         }
 
-        public static void quick_sleep()
+        private static void quick_sleep()
         {
             if (lock_err)
                 system_hard_sleep();
@@ -75,17 +71,7 @@ namespace keyupMusic2
 
         private static void quick_close()
         {
-            //if (ProcessName == Common.keyupMusic2) return;
-            //if (lock_err) { system_hard_sleep(); return; }
             CloseProcess();
-            fresh_name();
-            clean();
-        }
-
-        private static void fresh_name()
-        {
-            Sleep(100);
-            FreshProcessName();
         }
 
         private static void quick_wechat_or_notify(string module_name)
@@ -108,7 +94,7 @@ namespace keyupMusic2
             {
                 Common.FocusProcess(Common.WeChat);
                 Thread.Sleep(10);
-                if (ProcessName2 == Common.WeChat) return;
+                if (ProcessName == Common.WeChat) return;
                 run_wei();
             }
         }
@@ -129,9 +115,7 @@ namespace keyupMusic2
 
         private static void clean()
         {
-            Special_Input = false;
             DaleyRun_stop = true;
-            special_delete_key_time = DateTime.Now;
             KeyTime[system_sleep_string] = DateTime.MinValue;
             player.Stop();
             CleanMouseState();

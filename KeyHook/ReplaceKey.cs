@@ -7,13 +7,13 @@ namespace keyupMusic2
 {
     public partial class Huan
     {
-        public static bool quick_replace_key(KeyboardHookEventArgs e, bool up = false)
+        public static bool quick_replace_key(KeyboardHookEventArgs e)
         {
             for (int i = 0; i < replace.Count; i++)
             {
                 if (ProcessName == replace[i].process && e.key == replace[i].defore)
                 {
-                    if (!up) down_press(replace[i].after);
+                    if (e.Type == KeyboardType.KeyDown) down_press(replace[i].after);
                     else up_press(replace[i].after);
                     return true;
                 }
@@ -22,8 +22,8 @@ namespace keyupMusic2
         }
 
         public static List<ReplaceKey> replace = new List<ReplaceKey> {
-           //new ReplaceKey( msedge,Keys.A,Keys.D),
-           //new ReplaceKey( msedge,Keys.D,Keys.A),
+           new ReplaceKey( steam,Keys.D7,Keys.D8),
+           new ReplaceKey( steam,Keys.D8,Keys.D7),
            new ReplaceKey( Windblown,Keys.W,Keys.S),
            new ReplaceKey( Windblown,Keys.S,Keys.W),
         };

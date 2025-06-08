@@ -41,7 +41,7 @@ namespace keyupMusic2
                 else if (key == Keys.F3)
                     key = Keys.X;
             }
-            else if (ProcessName2 == Common.msedge)
+            else if (ProcessName == Common.msedge)
             {
                 if (key == Keys.Up)
                     key = Keys.PageUp;
@@ -51,7 +51,7 @@ namespace keyupMusic2
                     else if (key == Keys.Up)
                         key = Keys.F11;
             }
-            else if (ProcessName2 == Common.steam)
+            else if (ProcessName == Common.steam)
             {
                 if (key == Keys.PageDown)
                     key = Keys.Down;
@@ -65,7 +65,7 @@ namespace keyupMusic2
                     key = Keys.MediaPreviousTrack;
                 }
             }
-            else if (ProcessName2 == Common.vlc)
+            else if (ProcessName == Common.vlc)
             {
                 if (key == Keys.PageDown)
                     key = Keys.D2;

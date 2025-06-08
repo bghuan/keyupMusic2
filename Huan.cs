@@ -59,22 +59,22 @@ namespace keyupMusic2
             return flag;
         }
 
-        private void hook_KeyDown(KeyboardHookEventArgs e)
+        private void KeyBoardHookProc(KeyboardHookEventArgs e)
         {
-            if (e.Type != KeyboardType.KeyDown) return;
-            if (is_alt() && (e.key == Keys.F4 || e.key == Keys.Tab)) { return; }
-
+            //if (e.Type != KeyboardType.KeyDown) return;
             FreshProcessName();
-            if (judge_handled(e)) { e.Handled = true; VirKeyState(e.key); }
+            if (judge_handled(e)) { e.Handled = true; VirKeyState(e); }
             if (quick_replace_key(e)) return;
+            if (deal_handilngkey(e)) return;
+            print_easy_read(e);
 
-            if (handling_keys.ContainsKey(e.key)) return;
-            handling_keys[e.key] = ProcessName;
-
-            print_easy_read();
-            //start_record(e);
             Log.logcache(e.key.ToString());
+            //start_record(e);
 
+            if (e.Type == KeyboardType.KeyUp){
+                keyupMusic2.KeyUp.yo(e);
+                return;
+            }
             if (e.key == Keys.F3 || e.key == Keys.F9)
             {
                 F39(e);
@@ -87,7 +87,6 @@ namespace keyupMusic2
                     if (keyupMusic2_onlisten) return;
 
                     Devenv.hook_KeyDown_ddzzq(e);
-                    ACPhoenix.hook_KeyDown_ddzzq(e);
                     Douyin.hook_KeyDown_ddzzq(e);
                     Chrome.handlehandle(e);
 
@@ -100,17 +99,18 @@ namespace keyupMusic2
             }
         }
 
-        public void hook_KeyUp(KeyboardHookEventArgs e)
+        private bool deal_handilngkey(KeyboardHookEventArgs e)
         {
-            if (e.Type == KeyboardType.KeyDown) return;
-            if (judge_handled(e)) { e.Handled = true; VirKeyState(e.key, true); }
-            handling_keys.Remove(e.key);
-
-            Invoke2(() => label1.Text = label1.Text.Replace(easy_read2(e.key), easy_read2(e.key).ToLower()));
-
-            quick_replace_key(e, true);
-            keyupMusic2.KeyUp.yo(e);
+            if (e.Type == KeyboardType.KeyDown)
+            {
+                if (handling_keys.ContainsKey(e.key)) return true;
+                handling_keys[e.key] = ProcessName;
+            }
+            else
+                handling_keys.Remove(e.key);
+            return false;
         }
+
         private void F39(KeyboardHookEventArgs e)
         {
             play_sound_di();
@@ -191,9 +191,9 @@ namespace keyupMusic2
             {
                 if (process.Id != currentProcessId)
                 {
-                    TcpServer.socket_run = false;
-                    TcpServer.socket_write(start_check_str);
-                    TcpServer.close();
+                    Socket.socket_run = false;
+                    Socket.socket_write(start_check_str);
+                    Socket.close();
                     Environment.Exit(0);
                     return true;
                 }
@@ -202,6 +202,7 @@ namespace keyupMusic2
         }
         public static string start_check_str = "starting";
         public static string start_check_str2 = "sleep";
+        public static string huan_invoke = "huan_invoke";
         public bool temp_visiable = false;
 
         public void start_catch(string msg)
@@ -211,11 +212,11 @@ namespace keyupMusic2
             {
                 string[] list_f1 = [StartMenuExperienceHost, SearchHost, clashverge,];
                 string[] list_nothing = [devenv, Common.keyupMusic2, explorer, cs2];
-                if (Position.Y == 0 )
+                if (Position.Y == 0)
                 {
                     Invoke(() => { SetVisibleCore(!Visible); });
                 }
-                if (Position.X == screen2Width)
+                else if (Position.X == screen2Width)
                 {
                     press([Keys.LControlKey, Keys.F1]);
                 }

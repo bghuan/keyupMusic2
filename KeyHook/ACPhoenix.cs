@@ -129,7 +129,7 @@ namespace keyupMusic2
                 //    break;
                 case Keys.F4:
                     if (is_alt()) break;
-                    if (ProcessName2 != keyupMusic2.Common.ACPhoenix) { break; }
+                    if (ProcessName != keyupMusic2.Common.ACPhoenix) { break; }
                     press("2478,51;2492,1299;1625.1078", 201);
                     break;
                 case Keys.F5:
@@ -185,7 +185,7 @@ namespace keyupMusic2
             }
             else if (e.Msg == MouseMsg.click_r)
             {
-                if (ProcessName2 != Common.ACPhoenix) return;
+                if (ProcessName != Common.ACPhoenix) return;
                 //if (ACPhoenix_mouse_down == false) mouse_down();
                 //else mouse_up();
                 //ACPhoenix_mouse_down = !ACPhoenix_mouse_down;

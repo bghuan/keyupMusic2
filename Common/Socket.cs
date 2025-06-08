@@ -5,7 +5,7 @@ using System.Text;
 
 namespace keyupMusic2
 {
-    public class TcpServer
+    public class Socket
     {
         private const string Hostname = "127.0.0.1";
         private const int pport = 13000;
@@ -15,7 +15,7 @@ namespace keyupMusic2
         public static TcpClient client;
         public static NetworkStream stream;
         public static bool socket_run = true;
-        public TcpServer(Form parentForm)
+        public Socket(Form parentForm)
         {
             if (!socket_run) return;
             huan = (Huan)parentForm;
@@ -119,6 +119,8 @@ namespace keyupMusic2
             {
                 if (msg.Contains(Huan.start_check_str) || msg.Contains(Huan.start_check_str2))
                     huan.start_catch(msg);
+                else if (msg.StartsWith(Huan.huan_invoke))
+                    huan.Invoke(() => { huan.label1.Text = msg.Substring(11); });
                 //else if (msg.Contains(OpencvReceive.opencvstr))
                 //    huan.Opencv.deal(msg);
                 else if (Band.band_handle(msg))
@@ -128,14 +130,12 @@ namespace keyupMusic2
         }
         public static void socket_write(string msg)
         {
-            if (client == null || stream == null || client.Connected == false)
+            using (var client = new TcpClient(Hostname, pport))
+            using (var stream = client.GetStream())
             {
-                client = new TcpClient(Hostname, pport);
-                stream = client.GetStream();
+                byte[] data = Encoding.UTF8.GetBytes(msg);
+                stream.Write(data, 0, data.Length);
             }
-
-            byte[] data = Encoding.UTF8.GetBytes(msg);
-            stream.Write(data, 0, data.Length);
         }
         public static void close()
         {

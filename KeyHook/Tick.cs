@@ -30,11 +30,24 @@ namespace keyupMusic2
             System.Timers.Timer timer = new(1000 * 60);
             timer.Elapsed += (sender, e) =>
             {
-                if (lock_err) return;
+                //if (lock_err) return;
                 if (DateTime.Now.Minute == 0)
                 {
                     press(Keys.MediaStop);
+                    float volume = GetSystemVolume();
+                    if (volume > 0.5) { SetSystemVolume(0.48f); press(VolumeUp); }
                     play_sound(DateTime.Now.Hour % 10);
+                    Task.Run(() =>
+                    {
+                        float volume2 = GetSystemVolume();
+                        Sleep((player_time.Seconds + 1) * 1000);
+                        if (volume > 0.5 && volume2 == 0.5) { SetSystemVolume(volume - 0.02f); press(VolumeUp); }
+                    });
+                }
+                if (!Wifi.connected())
+                {
+                    play_sound_di2();
+                    huan.Invoke(new Action(() => { huan.label1.Text = "wifi no connected"; }));
                 }
             };
             timer.AutoReset = true;
@@ -53,7 +66,7 @@ namespace keyupMusic2
 
         private static void NewMethod()
         {
-            if (ProcessName2 == cs2)
+            if (ProcessName == cs2)
             {
                 if (!is_ctrl() && !is_down(Keys.LWin))
                     press(Keys.F1);

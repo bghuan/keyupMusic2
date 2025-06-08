@@ -9,6 +9,7 @@ using System.Runtime.InteropServices;
 using System.Security.Principal;
 using System.Text;
 using System.Windows.Forms;
+using static keyupMusic2.MouseKeyboardHook;
 using static keyupMusic2.Native;
 using Point = System.Drawing.Point;
 
@@ -77,13 +78,6 @@ namespace keyupMusic2
             Thread.Sleep(tick);
             mouse_event(MOUSEEVENTF_ABSOLUTE | MOUSEEVENTF_MOVE, point.X * 65536 / screenWidth, point.Y * 65536 / screenHeight, 0, 0);
         }
-        public static void mouse_move2(int x, int y, int tick = 0)
-        {
-            x += Cursor.Position.X;
-            y += Cursor.Position.Y;
-            Thread.Sleep(tick);
-            mouse_event(MOUSEEVENTF_ABSOLUTE | MOUSEEVENTF_MOVE, x * 65536 / screenWidth, y * 65536 / screenHeight, 0, 0);
-        }
         public static void mouse_click(int tick = 10)
         {
             if (tick > 0)
@@ -116,7 +110,10 @@ namespace keyupMusic2
         }
         public static int mouse_event(int dwFlags, int dx, int dy, int cButtons, int dwExtraInfo)
         {
-            return Native.mouse_event(dwFlags, dx, dy, cButtons, (int)isVir);
+            var aa = Native.mouse_event(dwFlags, dx, dy, cButtons, (int)isVir);
+            //if ((dwFlags & MOUSEEVENTF_LEFTDOWN) == 1) { Sleep(10); FreshProcessName(); }
+            //if ((dwFlags & MOUSEEVENTF_MOVE) == 0) { FreshProcessName(); Task.Run(() => { Sleep(100); FreshProcessName(); }); }
+            return aa;
         }
         public static int mouse_event2(int dwFlags, int dx, int dy, int cButtons, int dwExtraInfo)
         {
@@ -190,6 +187,13 @@ namespace keyupMusic2
                 || (VirMouseStateKey.ContainsKey(key) && VirMouseStateKey[key] == ProcessName);
         }
         public static Dictionary<Keys, string> VirMouseStateKey = new Dictionary<Keys, string>();
+        public static void VirKeyState(KeyboardHookEventArgs e)
+        {
+            if (e.Type == KeyboardType.KeyUp)
+                VirMouseStateKey.Remove(e.key);
+            else
+                VirMouseStateKey[e.key] = ProcessName;
+        }
         public static void VirKeyState(Keys key, bool up = false)
         {
             if (up)
@@ -283,10 +287,6 @@ namespace keyupMusic2
             }
             Thread.Sleep(tick);
         }
-        public static void press_close()
-        {
-            press([Keys.LMenu, Keys.F4]);
-        }
         public static void altab(int tick = 0)
         {
             press([Keys.LMenu, Keys.Tab]);
@@ -328,6 +328,7 @@ namespace keyupMusic2
         public static Point lastPosition;
         public static void press_middle_bottom()
         {
+            //biuCL.RECTT.release();
             press(middle_bottom, 0);
             biuCL.RECTT.release();
         }
@@ -402,8 +403,6 @@ namespace keyupMusic2
                     Thread.Sleep(100);
                     //ctrl_shift(false);
                 }
-                else if (item == "close")
-                    CloseProcess();
                 else if (item == "zh")
                     ctrl_shift_win_search(true);
                 else if (item == "en")

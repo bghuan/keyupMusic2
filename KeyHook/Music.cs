@@ -21,6 +21,7 @@ namespace keyupMusic2
         public static void hook_KeyDown_keyupMusic2(KeyboardHookEventArgs e)
         {
             hook_KeyDown_keyupMusic2222(e);
+            return;
             if (!key_sound) return;
             if (!keys.Contains(e.key)) return;
             if (expect.ContainsKey(ProcessName) && expect[ProcessName].Contains(e.key)) return;
@@ -45,11 +46,11 @@ namespace keyupMusic2
             last_key_sound_time = DateTime.Now;
             Common.hooked = false;
         }
-        static Keys[] keys2 = { Keys.D1, Keys.D2, Keys.D3, Keys.D4, Keys.D5, Keys.D6, Keys.D7, Keys.D8, Keys.D9, Keys.D0};
+        static Keys[] keys2 = { Keys.D1, Keys.D2, Keys.D3, Keys.D4, Keys.D5, Keys.D6, Keys.D7, Keys.D8, Keys.D9, Keys.D0 };
         public static void hook_KeyDown_keyupMusic2222(KeyboardHookEventArgs e)
         {
-            if(!keys2.Contains(e.key)) return;
-            if(Common.hooked)return;
+            if (!keys2.Contains(e.key)) return;
+            if (Common.hooked) return;
 
             play_sound_bongocat(e.key);
         }

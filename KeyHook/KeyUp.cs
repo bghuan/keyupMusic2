@@ -11,7 +11,7 @@ namespace keyupMusic2
             {
                 case Keys.Home:
                 case Keys.End:
-                    bmpScreenshot.Dispose();
+                    try { bmpScreenshot.Dispose(); } catch (NullReferenceException eee) { }
                     break;
             }
 
