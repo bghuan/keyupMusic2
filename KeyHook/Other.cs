@@ -126,22 +126,6 @@ namespace keyupMusic2
                 case Common.cs2:
                     switch (e.key)
                     {
-                        //case Keys.MediaPreviousTrack:
-                        //    if (is_down(Keys.LButton)) break;
-                        //    if (is_down(Keys.D1)) press("B;1243,699;1483,429;1483,568;1483,828;1483,696;1483,969;B;D3;");
-                        //    else if (is_down(Keys.D5)) press("B;985,969;1483,429;1483,568;1483,696;1483,969;B;D3;");
-                        //    else
-                        //        press("B;985,699;1483,429;1483,568;1483,828;1483,696;1483,969;B;D3;");
-                        //    //("B;930,962;1483,568;1483,696;1483,828;1483,969;B;D3;");
-                        //    break;
-                        //case Keys.MediaNextTrack:
-                        //    if (is_down(Keys.LButton)) break;
-                        //    press("Escape;");
-                        //    break;
-                        //case Keys.MediaNextTrack:
-                        //    if (is_down(Native.VK_LBUTTON)) break;
-                        //    press("B;1241,692;1483,568;1483,696;1483,828;1483,969;B;D3;", 50);
-                        //    break;
                         case Keys.F1:
                             break;
                         case Keys.F2:

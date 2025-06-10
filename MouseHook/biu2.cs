@@ -21,7 +21,7 @@ namespace keyupMusic2
                 last_hwnd = hwnd;
                 string message = ProcessName + " " + name + " " + title;
                 if (huan.label1.Text != message 
-                    //&& !huan.label1.Text.Contains("line") && !huan.label1.Text.Contains("corner")
+                    && !huan.label1.Text.Contains("line") && !huan.label1.Text.Contains("corner")
                     )
                 {
                     if (name != ProcessName && name != explorer)

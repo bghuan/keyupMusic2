@@ -90,8 +90,7 @@ namespace keyupMusic2
                         SetSystemVolume(0.5f);
                         break;
                     case Keys.F:
-
-                        huan.Invoke2(() => { var aaa = new Common().IsAnyAudioPlaying(); huan.label1.Text = aaa + ""; }, 5000);
+                        huan.Invoke2(() => { var aaa = IsAnyAudioPlaying(); huan.label1.Text = aaa + ""; }, 300);
                         break;
                     case Keys.G:
                         var keys = new List<Keys>();

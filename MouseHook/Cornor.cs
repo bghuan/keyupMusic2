@@ -26,7 +26,7 @@ namespace keyupMusic2
             var list2 = new[] { Thunder, cloudmusic, Taskmgr, wemeetapp, ApplicationFrameHost, explorer, vlc, v2rayN, Common.QQMusic, VSCode, AIoT, RadeonSoftware, steam };
 
             if (is_douyin())
-                mouse_click();
+                press_close();
             //else if (list.Contains(Common.ProcessName))
             //    mouse_click();
             else if (ProcessName == Common.devenv && Deven_runing())
@@ -39,7 +39,9 @@ namespace keyupMusic2
                 HideProcess();
             else if (Common.ACPhoenix.Equals(Common.ProcessName))
                 press([Keys.Space]);
-            else //if (list2.Contains(Common.ProcessName))
+            //else if (list2.Contains(Common.ProcessName))
+            //    press_close();
+            else if(!IsFullScreen())
                 press_close();
         }
 
@@ -47,17 +49,19 @@ namespace keyupMusic2
         {
             mouse_click();
             if (ProcessName == Common.chrome)
-                if (judge_color(-1783, 51, Color.FromArgb(162, 37, 45)))
-                    press("20;-2625.38;-2625,39");
+                if (judge_color(6095, 56, Color.FromArgb(162, 37, 45)))
+                    press("20;4026, 44;4026, 45");
                 else
                     press([Keys.F11]);
         }
 
         private void _corner6()
         {
+            mouse_click();
             var list = new[] { Common.chrome };
             if (list.Contains(Common.ProcessName))
-                press(Keys.Escape);
+                press([Keys.LControlKey, Keys.F1]);
+            //press(Keys.Escape);
         }
     }
 }

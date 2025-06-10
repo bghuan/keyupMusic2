@@ -32,7 +32,7 @@ namespace keyupMusic2
                     break;
                 case Keys.Right:
                 case Keys.Left:
-                    int arraw = e.key == Keys.Left ? 2 : 1;
+                    int arraw = e.key == Keys.Left ? 1 : 2;
                     quick_left_right(arraw);
                     break;
                 default: catched = false; break;

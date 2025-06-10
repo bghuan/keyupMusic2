@@ -15,7 +15,7 @@ namespace keyupMusic2
     public partial class Common
     {
         public static ConcurrentDictionary<string, DateTime> KeyTime = new ConcurrentDictionary<string, DateTime>();
-        
+
 
         public static List<string> list_go_back = new List<string> { explorer, VSCode, msedge, chrome, devenv, androidstudio, ApplicationFrameHost, cs2, steam, Glass, Glass2, Glass3 };
 
@@ -28,9 +28,9 @@ namespace keyupMusic2
         public static string system_sleep_string = "system_sleep";
         public static int system_sleep_count = 0;
         public static bool ready_to_sleep = false;
-          public static Point Position { get { return Cursor.Position; } }
+        public static Point Position { get { return Cursor.Position; } }
         public static Point PositionMiddle = new Point(screenWidth2, screenHeight2);
-        
+
         public static void CleanMouseState()
         {
             biu.catch_off();
@@ -38,7 +38,7 @@ namespace keyupMusic2
             CleanVirMouseState();
             biu.r_down_x = Point.Empty;
         }
-      
+
         static string proc_info = "";
         public static string process_and_log(string key = "")
         {
@@ -133,8 +133,8 @@ namespace keyupMusic2
                 action();
             }
         }
-      
-      
+
+
         public static void TaskRun(Action action, int tick)
         {
             Task.Run(() =>
@@ -265,8 +265,9 @@ namespace keyupMusic2
             try { if (!Debugger.IsAttached) bmpScreenshot.Dispose(); } catch (NullReferenceException e) { }
             play_sound_di();
             Screen secondaryScreen = Screen.AllScreens.FirstOrDefault(scr => !scr.Primary);
-            //int start_x = 2560;
-            int start_x = -1920;
+            int start_x = 2560;
+            if (screen2Width < 0)
+                start_x = -1920;
             if (secondaryScreen == null) { return; }
             bmpScreenshot = new Bitmap(1920, 1080, PixelFormat.Format32bppArgb);
             Graphics gfxScreenshot = Graphics.FromImage(bmpScreenshot);
@@ -368,15 +369,18 @@ namespace keyupMusic2
             {
                 return false;
             }
-
-            int screenWidth = Native.GetSystemMetrics(Native.SM_CXSCREEN);
-            int screenHeight = Native.GetSystemMetrics(Native.SM_CYSCREEN);
-
-            if (Position.X < 0 || Position.X > screenWidth)
+            if (Position.X < 0)
             {
                 return windowRect.Left == screen2Width &&
                    windowRect.Top == 0 &&
                    windowRect.Right == 0 &&
+                   windowRect.Bottom == screen2Height;
+            }
+            if (Position.X > Common.screenHeight)
+            {
+                return windowRect.Left == screen2Width0 &&
+                   windowRect.Top == 0 &&
+                   windowRect.Right == screen2Width &&
                    windowRect.Bottom == screen2Height;
             }
             //Thread.Sleep(1000); 
@@ -501,10 +505,10 @@ namespace keyupMusic2
             return flag;
         }
         /// <summary>
-         /// 获取指定类型中所有 public const string 成员
-         /// </summary>
-         /// <param name="type">要检查的类型</param>
-         /// <returns>一个字典，键为常量名，值为常量值</returns>
+        /// 获取指定类型中所有 public const string 成员
+        /// </summary>
+        /// <param name="type">要检查的类型</param>
+        /// <returns>一个字典，键为常量名，值为常量值</returns>
         public static Dictionary<string, string> GetPublicConstStrings(Type type)
         {
             var result = new Dictionary<string, string>();
@@ -805,7 +809,7 @@ namespace keyupMusic2
                 ProcessRun(LosslessScalingexe);
             press([Keys.LControlKey, Keys.F2]);
 
-            if (Position.X > 0) 
+            if (Position.X > 0)
                 press_middle_bottom();
         }
         public static void system_hard_sleep()
@@ -833,7 +837,7 @@ namespace keyupMusic2
             Sleep(tick);
 
             var pp = new Point(100, 100);
-            if (arraw == 2) pp = new Point(screen2Width + 100, 100);
+            if (arraw == 2) pp = new Point(screen2Width0 + 100, 100);
             MoveProcessWindow(hwnd, pp);
             Sleep(tick);
 
@@ -960,7 +964,7 @@ namespace keyupMusic2
             uint dpi = GetDpiForWindow(form.Handle);
             return dpi / 96.0;
         }
-        
+
         public static void Show(string msg)
         {
             Socket.socket_write(Huan.huan_invoke + ProcessName + " " + msg);

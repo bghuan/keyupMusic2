@@ -43,10 +43,15 @@
   <ItemGroup>
     <None Remove=".gitattributes" />
     <None Remove=".gitignore" />
+    <None Remove="fantasy\VirtualKeyboardHtml.html" />
   </ItemGroup>
 
   <ItemGroup>
     <Content Include="Other\b.ico" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <EmbeddedResource Include="fantasy\VirtualKeyboardHtml.html" />
   </ItemGroup>
 
   <ItemGroup>

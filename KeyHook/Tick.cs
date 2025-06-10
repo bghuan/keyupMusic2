@@ -11,37 +11,32 @@ namespace keyupMusic2
             StartKeyPressLoop();
             EveryMinite();
             Every100ms();
-            Every1000ms();
         }
         public static Huan huan;
-        public static void Every1000ms()
-        {
-            System.Timers.Timer timer = new(1000);
-            timer.Elapsed += (sender, e) =>
-            {
-                //var currentKeys = GetVirPressedKeys();
-                //log(string.Join(", ", currentKeys) + ProcessName);
-            };
-            timer.AutoReset = true;
-            timer.Start();
-        }
         public static void EveryMinite()
         {
             System.Timers.Timer timer = new(1000 * 60);
             timer.Elapsed += (sender, e) =>
             {
-                //if (lock_err) return;
                 if (DateTime.Now.Minute == 0)
                 {
-                    press(Keys.MediaStop);
+                    var is_music = IsAnyAudioPlaying();
+                    if (is_music) press(Keys.MediaPlayPause);
                     float volume = GetSystemVolume();
                     if (volume > 0.5) { SetSystemVolume(0.48f); press(VolumeUp); }
+
                     play_sound(DateTime.Now.Hour % 10);
+
                     Task.Run(() =>
                     {
-                        float volume2 = GetSystemVolume();
                         Sleep((player_time.Seconds + 1) * 1000);
-                        if (volume > 0.5 && volume2 == 0.5) { SetSystemVolume(volume - 0.02f); press(VolumeUp); }
+                        float volume2 = GetSystemVolume();
+                        if (volume > 0.5 && volume2 == 0.5)
+                        {
+                            SetSystemVolume(volume - 0.02f);
+                            press(VolumeUp);
+                        }
+                        if (is_music) press(Keys.MediaPlayPause);
                     });
                 }
                 if (!Wifi.connected())

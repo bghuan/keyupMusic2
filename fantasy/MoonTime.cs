@@ -5,8 +5,8 @@ namespace keyupMusic2
 {
     public sealed partial class MoonTime : Form
     {
-        private string url1 = "C:\\Users\\bu\\Documents\\fantasy\\fantasy\\moon\\index2.html";
-        private string url2 = "http://localhost/fantasy/moon/index2.html";
+        private string url1 = "C:\\Users\\bu\\Documents\\fantasy\\fantasy\\moon\\index.html";
+        private string url2 = "http://localhost/fantasy/moon/index.html";
         private string moontime_url = "log\\moontimeurl.txt";
         private string moontime_location = "log\\moontimelocation.txt";
         double scalingFactor;

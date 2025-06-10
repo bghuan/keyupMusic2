@@ -63,6 +63,7 @@ namespace keyupMusic2
         {
             //if (e.Type != KeyboardType.KeyDown) return;
             FreshProcessName();
+            vkForm?.TriggerKey(e.key, e.Type == KeyboardType.KeyUp);
             if (judge_handled(e)) { e.Handled = true; VirKeyState(e); }
             if (quick_replace_key(e)) return;
             if (deal_handilngkey(e)) return;
@@ -71,7 +72,8 @@ namespace keyupMusic2
             Log.logcache(e.key.ToString());
             //start_record(e);
 
-            if (e.Type == KeyboardType.KeyUp){
+            if (e.Type == KeyboardType.KeyUp)
+            {
                 keyupMusic2.KeyUp.yo(e);
                 return;
             }

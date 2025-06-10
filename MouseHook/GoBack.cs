@@ -42,7 +42,7 @@ namespace keyupMusic2
         private void chromeasd(bool go, bool back)
         {
             if (back)
-                if (judge_color(26, 94, Color.FromArgb(120, 123, 117)))
+                if (judge_color(3876, 95, Color.FromArgb(104, 107, 101)))
                     press([Keys.LControlKey, Keys.W]);
             if (go) press(Keys.F);
         }

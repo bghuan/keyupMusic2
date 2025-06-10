@@ -28,17 +28,17 @@ namespace keyupMusic2
                     Sleep(100);
                     press([Keys.RControlKey, Keys.K, Keys.D]);
                     break;
-                case Keys.F2:
-                    MessageBox.Show("sss");
-                    //var aaa = (GetPointTitle() == "");
-                    //if (aaa)
-                    //    mouse_move(Position.X + 500, Position.Y);
-                    //SS(1000).KeyPress(Keys.Down)
-                    //    .KeyPress(Keys.Enter)
-                    //    .KeyPress(Keys.Enter);
-                    //if (aaa)
-                    //    mouse_move(Position.X - 500, Position.Y);
-                    break;
+                //case Keys.F2:
+                //    MessageBox.Show("sss");
+                //    //var aaa = (GetPointTitle() == "");
+                //    //if (aaa)
+                //    //    mouse_move(Position.X + 500, Position.Y);
+                //    //SS(1000).KeyPress(Keys.Down)
+                //    //    .KeyPress(Keys.Enter)
+                //    //    .KeyPress(Keys.Enter);
+                //    //if (aaa)
+                //    //    mouse_move(Position.X - 500, Position.Y);
+                //    break;
             }
             Common.hooked = false;
         }

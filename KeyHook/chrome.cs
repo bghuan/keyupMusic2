@@ -23,9 +23,9 @@ namespace keyupMusic2
         {
             switch (e.key)
             {
-                case Keys.F2:
-                    CenterWindowOnScreen2(chrome, true);
-                    break;
+                //case Keys.F2:
+                //    CenterWindowOnScreen2(chrome, true);
+                //    break;
                 case Keys.PageUp:
                     LossScale();
                     break;

@@ -29,6 +29,7 @@ namespace keyupMusic2
         private Point endPoint = new Point(2250, 100);
         private DateTime startTime;
 
+        VirtualKeyboardForm vkForm;
         public Huan()
         {
             if (start_check()) return;
@@ -159,6 +160,16 @@ namespace keyupMusic2
             endPoint = Location;
             after_load();
         }
+        protected override CreateParams CreateParams
+        {
+            get
+            {
+                CreateParams cp = base.CreateParams;
+                // 添加 WS_EX_TOOLWINDOW 样式
+                cp.ExStyle |= 0x80;  // WS_EX_TOOLWINDOW
+                return cp;
+            }
+        }
         void after_load()
         {
             bland_title();
@@ -172,16 +183,8 @@ namespace keyupMusic2
             MoonTime webViewWindow = new MoonTime();
             webViewWindow.Show();
 
-        }
-        protected override CreateParams CreateParams
-        {
-            get
-            {
-                CreateParams cp = base.CreateParams;
-                // 添加 WS_EX_TOOLWINDOW 样式
-                cp.ExStyle |= 0x80;  // WS_EX_TOOLWINDOW
-                return cp;
-            }
+            vkForm = new keyupMusic2.VirtualKeyboardForm();
+            vkForm.Show();
         }
     }
 }

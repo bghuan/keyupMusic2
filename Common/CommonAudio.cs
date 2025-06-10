@@ -1,22 +1,6 @@
-﻿using NAudio.CoreAudioApi.Interfaces;
-using NAudio.CoreAudioApi;
+﻿using NAudio.CoreAudioApi;
+using NAudio.CoreAudioApi.Interfaces;
 using NAudio.Wave;
-using NAudio.CoreAudioApi;
-using System.Collections.Concurrent;
-using System.Diagnostics;
-using System.Drawing.Imaging;
-using System.Media;
-using System.Net;
-using System.Reflection;
-using System.Runtime.InteropServices;
-using System.Security.Principal;
-using System.Text;
-using System.Windows.Forms;
-using System.Xml.Linq;
-using static keyupMusic2.Native;
-using static System.Windows.Forms.LinkLabel;
-using static System.Windows.Forms.VisualStyles.VisualStyleElement.Window;
-using Point = System.Drawing.Point;
 
 namespace keyupMusic2
 {
@@ -67,21 +51,36 @@ namespace keyupMusic2
             string wav = "wav\\bongocat\\keyboard" + key.ToString().Replace("D", "") + ".wav";
             if (!File.Exists(wav)) return;
 
-            player_reader_bongo = new WaveFileReader(wav);
-            player_bongo.Stop();
-            player_bongo.Init(player_reader_bongo);
-            player_bongo.Play();
+            try
+            {
+                player_reader_bongo = new WaveFileReader(wav);
+                player_bongo.Stop();
+                player_bongo.Init(player_reader_bongo);
+                player_bongo.Play();
+            }
+            catch (Exception ex)
+            {
+                // 可以根据需要记录日志或提示用户
+                Console.WriteLine($"播放bongocat音效时发生异常: {ex.Message}");
+            }
         }
         static string wav_di = "wav\\d2.wav";
         static bool is_di = File.Exists(wav_di);
         public static void play_sound_di(int tick = 0)
         {
             if (!is_di) return;
-
-            player_reader_di = new WaveFileReader(wav_di);
-            player_di.Stop();
-            player_di.Init(player_reader_di);
-            player_di.Play();
+            try
+            {
+                player_reader_di = new WaveFileReader(wav_di);
+                player_di.Stop();
+                player_di.Init(player_reader_di);
+                player_di.Play();
+            }
+            catch (Exception ex)
+            {
+                // 可以根据需要记录日志或提示用户
+                Console.WriteLine($"播放bongocat音效时发生异常: {ex.Message}");
+            }
             Sleep(tick);
         }
         public static void play_sound_di2(int tick = 0)
@@ -111,30 +110,20 @@ namespace keyupMusic2
                 device.AudioEndpointVolume.MasterVolumeLevelScalar = volume;
             }
         }
-        public bool IsAnyAudioPlaying()
+        public static bool IsAnyAudioPlaying()
         {
-            try
+            using (var enumerator = new MMDeviceEnumerator())
+            using (var device = enumerator.GetDefaultAudioEndpoint(DataFlow.Render, Role.Console))
             {
-                using (var enumerator = new MMDeviceEnumerator())
+                var sessions = device.AudioSessionManager.Sessions;
+                for (var i = 0; i < sessions.Count; i++)
                 {
-                    var device = enumerator.GetDefaultAudioEndpoint(DataFlow.Render, Role.Console);
-                    var sessions = device.AudioSessionManager.Sessions;
-
-                    for (global::System.Int32 i = 0; i < sessions.Count; i++)
-                    {
-                        var session = sessions [i];
-                        if (session.State == AudioSessionState.AudioSessionStateActive)
-                        {
-                            return true;
-                        }
-                    }
+                    var session = sessions[i];
+                    if (session.State == AudioSessionState.AudioSessionStateActive
+                        && session.GetSessionIdentifier.Contains("music"))
+                        return true;
                 }
             }
-            catch (Exception)
-            {
-                // 处理异常（如权限不足）
-            }
-
             return false;
         }
 

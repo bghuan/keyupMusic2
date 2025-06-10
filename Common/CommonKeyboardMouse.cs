@@ -58,7 +58,12 @@ namespace keyupMusic2
         public static int screenWidth2 = Screen.PrimaryScreen.Bounds.Width / 2;
         public static int screenHeight2 = Screen.PrimaryScreen.Bounds.Height / 2;
 
-        public static int screen2Width = -2880;
+        //public static int screen2Width = -2880;
+        //public static int screen2Height = 1620;
+        //public static int screen2Height1 = 1619;
+
+        public static int screen2Width0 = 3840;
+        public static int screen2Width = 6719;
         public static int screen2Height = 1620;
         public static int screen2Height1 = 1619;
 

@@ -12,7 +12,8 @@ namespace keyupMusic2
             if (ProcessName == Common.chrome)
             {
                 if (chrome_red()) press(Keys.F);
-                if (ProcessPosition(chrome).X >= chrome_x_min)
+                //if (ProcessPosition(chrome).X >= chrome_x_min)
+                if (ProcessPosition(chrome).X < screenWidth2)
                 {
                     if (!judge_color(1840, 51, Color.FromArgb(162, 37, 45)))
                         press(Keys.F);
@@ -56,7 +57,7 @@ namespace keyupMusic2
         public void Cornor(MouseHookEventArgs e)
         {
             if (e.Msg != MouseMsg.move) { RECTT.release(); return; }
-            if (e.X < screen2Width || e.Y < 0 || e.Y > screen2Height1) return;
+            if (e.X > screen2Width || e.Y < 0 || e.Y > screen2Height1) return;
 
             RECTT rect = RECTT.get(e.Pos);
 
@@ -89,28 +90,35 @@ namespace keyupMusic2
         static int _fa = screenWidth - far;
         static int gao = screenHeight1;
         static int cha = screenWidth1;
+
         static int ga2 = screen2Height1;
         static int ch2 = screen2Width;
-        private static string[] special = [Common.keyupMusic2, LosslessScaling, msedgewebview2];
+        static int ch0 = screen2Width0;
         int chrome_x_min = -50;
 
         //public static RECTT line1 = new RECTT(new RECT(far, 0, _fa, 0),
         //                        new RECT(0, 0, cha, far));
-        public static RECTT line2 = new RECTT(nameof(line2), 
+        public static RECTT line2 = new RECTT(nameof(line2),
                                 new RECT(0, gao, _fa - 200, gao),
                                 new RECT(0, gao - far + 100, cha, gao));
         public static RECTT line3 = new RECTT(nameof(line3),
-                                new RECT(cha, far, cha, gao - far),
-                                new RECT(cha - far, 0, cha, gao));
+                                new RECT(0, far, 0, gao),
+                                new RECT(0, 0, far, gao));
 
         //public static RECTT line5 = new RECTT(new RECT(ch2 + far, 0, -far, 0),
         //new RECT(ch2 - 1, 0 - 1, 0, far));
         public static RECTT line6 = new RECTT(nameof(line6),
-                                new RECT(ch2, ga2, 0, ga2),
-                                new RECT(ch2, ga2 - far, 0, ga2));
+                                new RECT(screen2Width0, ga2, ch2, ga2),
+                                new RECT(screen2Width0, ga2 - far, ch2, ga2));
         public static RECTT line7 = new RECTT(nameof(line7),
                                 new RECT(ch2, far, ch2, ga2),
-                                new RECT(ch2, 0, ch2 + far, ga2));
+                                new RECT(ch2-far, 0, ch2, ga2));
+        //public static RECTT line6 = new RECTT(nameof(line6),
+        //                        new RECT(ch2, ga2, 0, ga2),
+        //                        new RECT(ch2, ga2 - far, 0, ga2));
+        //public static RECTT line7 = new RECTT(nameof(line7),
+        //                        new RECT(ch2, far, ch2, ga2),
+        //                        new RECT(ch2, 0, ch2 + far, ga2));
 
 
 
@@ -122,11 +130,11 @@ namespace keyupMusic2
         //RECTT corner4 = new RECTT(new RECT(0, gao, 0, gao), new RECT(0, gao - far, far, gao));
 
         RECTT corner5 = new RECTT(nameof(corner5),
-                                new RECT(ch2, 0, ch2, 0),
-                                new RECT(ch2, 0, ch2 + far, far));//
+                                new RECT(ch0, 0, ch0, 0),
+                                new RECT(ch0, 0, ch0 + far, far));//
         RECTT corner6 = new RECTT(nameof(corner6),
-                                new RECT(-1, 0, -1, 0),
-                                new RECT(-1 - far, 0, -1, far));
+                                new RECT(ch2, 0, ch2, 0),
+                                new RECT(ch2 - far, 0, ch2, far));
         //RECTT corner7 = new RECTT(new RECT(-1, ga2, -1, ga2), new RECT(-1 - far, ga2 - far, -1, ga2));
         //RECTT corner8 = new RECTT(new RECT(ch2, ga2, ch2, ga2), new RECT(ch2, ga2 - far, ch2 + far, ga2));//
 
@@ -237,8 +245,10 @@ namespace keyupMusic2
 
         public static bool chrome_red()
         {
-            return (judge_color(-1783, 51, Color.FromArgb(162, 37, 45))
-                       && judge_color(-645, 45, Color.FromArgb(162, 37, 45)));
+            return judge_color(6095, 56, Color.FromArgb(162, 37, 45))
+                       && judge_color(4646, 56, Color.FromArgb(162, 37, 45));
+            //return (judge_color(-1783, 51, Color.FromArgb(162, 37, 45))
+            //           && judge_color(-645, 45, Color.FromArgb(162, 37, 45)));
         }
 
         public struct RECT
@@ -318,8 +328,11 @@ namespace keyupMusic2
                     item.can = false;
                 }
             }
+            public static int[] special_int = [0, screenWidth1, screenHeight1, screen2Width, screen2Height1];
             public static RECTT get(Point testPoint)
             {
+                if (!(special_int.Contains(testPoint.X) || special_int.Contains(testPoint.Y))) return null;
+
                 foreach (var item in All)
                 {
                     if (item.target(testPoint)) return item;
