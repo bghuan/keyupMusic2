@@ -26,6 +26,10 @@ namespace keyupMusic2
                 press("808,651;close", 1);
             else if (ProcessName == StartMenuExperienceHost)
                 _StartMenuExperienceHost(go, back);
+            else if (ProcessName == SearchHost)
+                _StartMenuExperienceHost(go, back);
+            else if (ProcessName == vlc)
+                raw(go, back);
 
             if (list_go_back.Contains(ProcessName)) return;
 
@@ -35,6 +39,14 @@ namespace keyupMusic2
                 press(Keys.MediaPreviousTrack);
         }
 
+        private void raw(bool go, bool back)
+        {
+            if (go)
+                press_raw(Keys.MediaNextTrack);
+            else if (back)
+                press_raw(Keys.MediaPreviousTrack);
+        }
+
         private void _StartMenuExperienceHost(bool go, bool back)
         {
             press(Keys.LWin);
@@ -42,7 +54,8 @@ namespace keyupMusic2
         private void chromeasd(bool go, bool back)
         {
             if (back)
-                if (judge_color(3876, 95, Color.FromArgb(104, 107, 101)))
+                if ((judge_color(3876, 95, Color.FromArgb(104, 107, 101)))
+                    && judge_color(6437, 147, Color.FromArgb(55, 61, 53)))
                     press([Keys.LControlKey, Keys.W]);
             if (go) press(Keys.F);
         }

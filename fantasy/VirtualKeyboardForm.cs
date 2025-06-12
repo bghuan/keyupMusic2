@@ -7,7 +7,7 @@ namespace keyupMusic2
     {
         private WebView2 webView;
         private string url = "http://localhost/fantasy/moon/keyboardlight.html";
-        private string url1 = "C:\\Users\\bu\\Documents\\fantasy\\fantasy\\moon\\keyboardlight.html";
+        private string url2 = "C:\\Users\\bu\\Documents\\fantasy\\fantasy\\moon\\keyboardlight.html";
         private NotifyIcon trayIcon;
 
         public VirtualKeyboardForm()
@@ -22,7 +22,7 @@ namespace keyupMusic2
             this.Height = 500;
 
             this.StartPosition = FormStartPosition.Manual;
-            this.Location = new Point(654, 533);
+            this.Location = new Point(654, 883);
 
             webView = new WebView2
             {
@@ -56,11 +56,31 @@ namespace keyupMusic2
         private async void VirtualKeyboardForm_Load(object sender, EventArgs e)
         {
             await webView.EnsureCoreWebView2Async(null);
-            webView.CoreWebView2.Navigate(url);
-            webView.CoreWebView2.NavigationCompleted += (s, args) =>
+
+            // 先加载本地文件
+            webView.CoreWebView2.Navigate(url2);
+            //webView.CoreWebView2.OpenDevToolsWindow();
+
+            // 尝试加载远程url，只有成功才切换
+            webView.CoreWebView2.NavigationCompleted += async (s, args) =>
             {
-                if (!args.IsSuccess)
-                    webView.CoreWebView2.Navigate(url1);
+                // 只在本地页面加载完成后尝试远程
+                if (args.IsSuccess && webView.Source.AbsoluteUri == new Uri(url2).AbsoluteUri)
+                {
+                    // 新开一个WebView2环境尝试远程加载
+                    var testWebView = new WebView2();
+                    await testWebView.EnsureCoreWebView2Async(null);
+                    testWebView.CoreWebView2.NavigationCompleted += (sender2, args2) =>
+                    {
+                        if (args2.IsSuccess)
+                        {
+                            // 远程url可用，切换主webView显示
+                            webView.CoreWebView2.Navigate(url);
+                        }
+                        testWebView.Dispose();
+                    };
+                    testWebView.CoreWebView2.Navigate(url);
+                }
             };
         }
 
@@ -132,6 +152,16 @@ namespace keyupMusic2
             }
         }
 
+        protected override CreateParams CreateParams
+        {
+            get
+            {
+                var cp = base.CreateParams;
+                cp.ExStyle |= 0x80;
+                return cp;
+            }
+        }
+
         private void VirtualKeyboardForm_KeyDown(object sender, KeyEventArgs e)
         {
             string id = KeyCodeToId(e.KeyCode, e.Modifiers);
@@ -153,6 +183,11 @@ namespace keyupMusic2
                 VirtualKeyboardForm_KeyUp(this, args);
             else
                 VirtualKeyboardForm_KeyDown(this, args);
+        }// 在 C# 中调用 JS 的方法
+        public void SetInitClean()
+        {
+            string js = $"clean();";
+            webView.Invoke(new Action(() => webView.CoreWebView2.ExecuteScriptAsync(js)));
         }
     }
 }

@@ -14,6 +14,12 @@ namespace keyupMusic2
         {
             if (e.Msg == MouseMsg.move)
             {
+                if (isctrl())
+                {
+                    Show(e.X + " " + e.Y);
+                    return;
+                }
+
                 IntPtr hwnd = Native.WindowFromPoint(Position);
                 //if (hwnd == last_hwnd) return;
                 string name = GetWindowName(hwnd);

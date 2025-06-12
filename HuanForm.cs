@@ -1,3 +1,4 @@
+using Microsoft.Win32;
 using System.Diagnostics;
 using System.Runtime.InteropServices;
 using static keyupMusic2.Common;
@@ -29,24 +30,13 @@ namespace keyupMusic2
         private Point endPoint = new Point(2250, 100);
         private DateTime startTime;
 
-        VirtualKeyboardForm vkForm;
+        public VirtualKeyboardForm vkForm;
+        public MoonTime moontimeForm;
         public Huan()
         {
             if (start_check()) return;
-            InitializeComponent(); 
-            //FormBorderStyle = FormBorderStyle.None;
-            //this.BackColor = Color.FromArgb(255, 1, 1, 1);  // 几乎黑色，但不完全是
-            //this.TransparencyKey = this.BackColor;
-            //label1= new Label
-            //{
-            //    Text = "这是黑色文本",
-            //    Font = new Font("Arial", 24, FontStyle.Bold),
-            //    ForeColor = Color.Black,                    // 纯黑色文本
-            //    BackColor = Color.Transparent,              // 标签背景透明
-            //    Size = new Size(300, 100),
-            //    Location = new Point(50, 50),
-            //    TextAlign = ContentAlignment.MiddleCenter
-            //};        // 标签背景透明
+            _instance = this;
+            InitializeComponent();
 
             try_restart_in_admin();
             //release_all_key();
@@ -54,17 +44,23 @@ namespace keyupMusic2
 
             ACPhoenix = new ACPhoenixClass();
             Devenv = new DevenvClass();
-            Douyin = new DouyinClass(this);
+            Douyin = new DouyinClass();
             Other = new OtherClass();
             All = new AllClass();
-            Super = new SuperClass(this);
+            Super = new SuperClass();
             Chrome = new ChromeClass();
-            LongPress = new LongPressClass(this);
-            Win = new WinClass(this);
+            LongPress = new LongPressClass();
+            Win = new WinClass();
 
-            new Socket(this);
-            new Tick(this); ;
-            Opencv = new OpencvReceive(this);
+            new Socket();
+            new Tick(); ;
+            Opencv = new OpencvReceive();
+
+            Application.ApplicationExit += (s, e) => {
+                if (!Debugger.IsAttached) return;
+                string executablePath = Process.GetCurrentProcess().MainModule.FileName;
+                Process.Start(executablePath);
+            };
         }
         protected override void Dispose(bool disposing)
         {
@@ -113,6 +109,12 @@ namespace keyupMusic2
         private void notifyIcon1_MouseClick(object sender, MouseEventArgs e)
         {
             if (e.Button == MouseButtons.Left) SetVisibleCore(!Visible);
+            if (e.Button == MouseButtons.Right)
+            {
+                var mousePos = Control.MousePosition;
+                int menuHeight = contextMenuStrip1.GetPreferredSize(contextMenuStrip1.Size).Height;
+                contextMenuStrip1.Show(mousePos.X, mousePos.Y  - menuHeight);
+            }
         }
         private void Huan_Resize(object sender, EventArgs e)
         {
@@ -158,8 +160,21 @@ namespace keyupMusic2
 
             startPoint = new Point(Location.X - 252, Location.Y);
             endPoint = Location;
+            SystemEvents.PowerModeChanged += SystemEvents_PowerModeChanged;
+            SystemEvents.SessionSwitch += SystemEvents_SessionSwitch;
+
             after_load();
         }
+        private bool justResumed = false;
+
+        private void SystemEvents_PowerModeChanged(object sender, PowerModeChangedEventArgs e)
+        {
+            if (e.Mode == PowerModes.Resume)
+            {
+                justResumed = true; // 系统刚从睡眠唤醒_di
+            }
+        }
+
         protected override CreateParams CreateParams
         {
             get
@@ -180,11 +195,11 @@ namespace keyupMusic2
 
             //if (!Debugger.IsAttached) return;
             // 创建并显示WebView2窗口
-            MoonTime webViewWindow = new MoonTime();
-            webViewWindow.Show();
-
             vkForm = new keyupMusic2.VirtualKeyboardForm();
             vkForm.Show();
+
+            moontimeForm = new MoonTime();
+            moontimeForm.Show();
         }
     }
 }

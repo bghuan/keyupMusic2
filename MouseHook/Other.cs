@@ -154,7 +154,7 @@ namespace keyupMusic2
             //        press([Keys.LControlKey, Keys.W]);
             //    }
             //}
-            else if (e.Msg == MouseMsg.wheel && e.X == screenWidth1)
+            else if (e.Msg == MouseMsg.wheel && e.X == 0)
             {
                 Keys keys = Keys.Right;
                 if (e.data > 0) keys = Keys.Left;

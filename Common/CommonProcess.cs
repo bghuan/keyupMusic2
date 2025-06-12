@@ -69,6 +69,7 @@ namespace keyupMusic2
         public const string TwinkleTrayexe = "C:\\Users\\bu\\AppData\\Local\\Programs\\twinkle-tray\\Twinkle Tray.exe";
         public const string androidstudio = "studio64";
         public const string cloudmusic = "cloudmusic";
+        public const string cloudmusicexe = "C:\\Program Files (x86)\\Netease\\CloudMusic\\cloudmusic.exe";
         public const string clashverge = "clash-verge";
 
 

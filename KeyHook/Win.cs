@@ -5,22 +5,17 @@ namespace keyupMusic2
 {
     public class WinClass
     {
-        public WinClass(Form parentForm)
-        {
-            huan = (Huan)parentForm;
-        }
-        public static Huan huan;
-        public static List<Keys> keys = new List<Keys> { Q, Left, Right, W };
+        public static List<Keys> keys = new List<Keys> { Q, Left, Right, W, L, Keys.Enter };
         public static bool handling = false;
         public static bool judge_handled(KeyboardHookEventArgs e)
         {
-            if (!is_down(Keys.LWin)) return false;
+            if (!is_down(Keys.LWin)|| !is_down(Keys.RWin)) return false;
             if (keys.Contains(e.key)) return true;
             return false;
         }
         public void hook_KeyDown_ddzzq(KeyboardHookEventArgs e)
         {
-            if (!is_down(Keys.LWin)) return;
+            if (!is_down(Keys.LWin) && !is_down(Keys.RWin)) return ;
             // 发送无效 Win + Key 事件,使当前 Win 键无效
             if (keys.Contains(e.key)) press(Keys.LControlKey);
             bool catched = true;
@@ -34,6 +29,12 @@ namespace keyupMusic2
                 case Keys.Left:
                     int arraw = e.key == Keys.Left ? 1 : 2;
                     quick_left_right(arraw);
+                    break;
+                case Keys.L:
+                    Native.LockWorkStation();
+                    break;
+                case Keys.Enter:
+                    press([RMenu, Enter]);
                     break;
                 default: catched = false; break;
             }

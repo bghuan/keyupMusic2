@@ -146,7 +146,18 @@ namespace keyupMusic2
                 }
             }
             public static INPUT CreateKeyDown(ushort virtualKey, bool Extend = false)
-            {
+            { 
+                // 自动判断是否需要 ExtendedKey
+                bool needExtended = Extend || virtualKey == 0xA5 // RMenu
+                                             || virtualKey == 0xA4 // LMenu
+                                             || virtualKey == 0xA3 // RControl
+                                             || virtualKey == 0xA2 // LControl
+                                             || virtualKey == 0x5B // LWin
+                                             || virtualKey == 0x5C // RWin
+                                             || virtualKey == 0x2D // Insert
+                                             || virtualKey == 0x2E // Delete
+                                             || (virtualKey >= 0x25 && virtualKey <= 0x28); // 方向键
+
                 return new INPUT
                 {
                     Type = INPUTTYPE.Keyboard,
@@ -156,7 +167,7 @@ namespace keyupMusic2
                         {
                             wVk = virtualKey,
                             ScanCode = (ushort)(Native.MapVirtualKey(virtualKey, 0) & 0xFFU),
-                            Flags = Extend ? KeyboardFlag.KeyDown | KeyboardFlag.ExtendedKey : KeyboardFlag.KeyDown,
+                            Flags = needExtended ? KeyboardFlag.KeyDown | KeyboardFlag.ExtendedKey : KeyboardFlag.KeyDown,
                             time = 0,
                             dwExtraInfo = (nint)Common.isVir
                         }
@@ -165,6 +176,16 @@ namespace keyupMusic2
             }
             public static INPUT CreateKeyUp(ushort virtualKey, bool Extend = false)
             {
+                // 自动判断是否需要 ExtendedKey
+                bool needExtended = Extend || virtualKey == 0xA5 // RMenu
+                                             || virtualKey == 0xA4 // LMenu
+                                             || virtualKey == 0xA3 // RControl
+                                             || virtualKey == 0xA2 // LControl
+                                             || virtualKey == 0x5B // LWin
+                                             || virtualKey == 0x5C // RWin
+                                             || virtualKey == 0x2D // Insert
+                                             || virtualKey == 0x2E // Delete
+                                             || (virtualKey >= 0x25 && virtualKey <= 0x28); // 方向键
                 return new INPUT
                 {
                     Type = INPUTTYPE.Keyboard,

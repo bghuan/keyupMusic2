@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Microsoft.Win32;
+using System;
 using System.Diagnostics;
 using static keyupMusic2.Common;
 using static keyupMusic2.MouseKeyboardHook;
@@ -7,6 +8,9 @@ namespace keyupMusic2
 {
     public partial class Huan
     {
+        private static Huan _instance;
+        public static Huan Instance => _instance;
+
         public bool judge_handled(KeyboardHookEventArgs e)
         {
             if (is_alt() && is_down(Keys.Tab)) return false;
@@ -14,7 +18,7 @@ namespace keyupMusic2
             if (e.key == Keys.F9) return true;
             if (keyupMusic2_onlisten) { e.Handled = true; }
 
-            if (replace.Any(t => ProcessName == t.process && e.key == t.defore))
+            if (replace.Any(t => e.key == t.defore && (string.IsNullOrEmpty(t.process) || ProcessName == t.process)))
                 return true;
             if (e.key == Keys.F2 && ProcessName == Common.chrome)
                 return true;
@@ -109,7 +113,7 @@ namespace keyupMusic2
                 handling_keys[e.key] = ProcessName;
             }
             else
-                handling_keys.Remove(e.key);
+                handling_keys.TryRemove(e.key, out _);
             return false;
         }
 
@@ -195,7 +199,6 @@ namespace keyupMusic2
                 {
                     Socket.socket_run = false;
                     Socket.socket_write(start_check_str);
-                    Socket.close();
                     Environment.Exit(0);
                     return true;
                 }
@@ -207,6 +210,16 @@ namespace keyupMusic2
         public static string huan_invoke = "huan_invoke";
         public bool temp_visiable = false;
 
+        // 此时为唤醒后登录 
+        private void SystemEvents_SessionSwitch(object sender, SessionSwitchEventArgs e)
+        {
+            if (e.Reason == SessionSwitchReason.SessionUnlock)
+            {
+                justResumed = false;
+                moontimeForm.SetInitAngle();
+                vkForm.SetInitClean();
+            }
+        }
         public void start_catch(string msg)
         {
             play_sound_di2();
@@ -218,15 +231,11 @@ namespace keyupMusic2
                 {
                     Invoke(() => { SetVisibleCore(!Visible); });
                 }
-                else if (Position.X == screen2Width)
-                {
-                    press([Keys.LControlKey, Keys.F1]);
-                }
                 else if (Position.X == screenWidth1 && Position.Y == screenHeight1)
                 {
                     system_sleep(true);
                 }
-                else if (Position.X == screenWidth1)
+                else if (Position.X == 0)
                 {
                     string executablePath = Process.GetCurrentProcess().MainModule.FileName;
                     Process.Start(executablePath);
@@ -234,9 +243,7 @@ namespace keyupMusic2
                 }
                 else if (list_f1.Contains(ProcessName))
                 {
-                    press([Keys.LControlKey, Keys.F1]);
-                    if (iswinopen)
-                        press(LWin);
+                    openClash();
                 }
                 else if (list_nothing.Contains(ProcessName))
                 {

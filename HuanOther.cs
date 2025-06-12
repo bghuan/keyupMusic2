@@ -1,4 +1,5 @@
-﻿using System.Diagnostics;
+﻿using System.Collections.Concurrent;
+using System.Diagnostics;
 using static keyupMusic2.Common;
 using static keyupMusic2.MouseKeyboardHook;
 
@@ -6,21 +7,18 @@ namespace keyupMusic2
 {
     public partial class Huan
     {
-        public static Dictionary<Keys, string> handling_keys = new Dictionary<Keys, string>();
-        public void Invoke2(Action action, int tick = 0)
+        public static ConcurrentDictionary<Keys, string> handling_keys = new();
+        public async void Invoke2(Action action, int tick = 0)
         {
-            Task.Run(() =>
-            {
-                Thread.Sleep(tick); 
-                this.Invoke(action);
-            });
+            await Task.Delay(tick);
+            Invoke(action);
         }
 
         public void Invoke(Action method)
         {
             if (IsDisposed) return;
             try { base.Invoke(method); }
-            catch (Exception ex){}
+            catch (Exception ex) { }
         }
         public void release_all_key(int tick = 1000)
         {
@@ -74,10 +72,9 @@ namespace keyupMusic2
                 return;
             }
 
-            Dictionary<Keys, string> _stop_keys = new Dictionary<Keys, string>();
             try
             {
-                _stop_keys = handling_keys?.ToList().ToDictionary(kv => kv.Key, kv => kv.Value);
+                var _stop_keys = new Dictionary<Keys, string>(handling_keys);
                 Invoke(() =>
                     {
                         string asd = string.Join(" ", _stop_keys?.Select(key => easy_read(key.Key.ToString())));
@@ -119,7 +116,7 @@ namespace keyupMusic2
 
             if (is_mouse_hook)
             {
-                var b = new biu(this);
+                var b = new biu();
                 _mouseKbdHook.MouseHookEvent += b.MouseHookProc;
                 //Invoke(() => { b.MoveStopClickListen(); }); 
                 //_mouseKbdHook.MouseHookEvent += new Douyin_game(this).MouseHookProc;
@@ -156,8 +153,11 @@ namespace keyupMusic2
             if (!ready_to_sleep) return;
             ready_to_sleep = false;
             Invoke(() => { SetVisibleCore(false); });
-            press("500;LWin;1650,1300;1650,1140", tick);
+            //press("500;LWin;1650,1300;1650,1140", tick);
             //press("500;LWin;1650,1300;", tick);
+
+            CloseDesktopWindow();
+            press(100, 500, Up, Return);
         }
 
     }

@@ -179,11 +179,11 @@ namespace keyupMusic2
         public static void run_vis()
         {
             press("LWin;VISUAL;en;100;Apps;100;Enter;1000;1271.654;", 100);
-            DaleyRun(
-                () => GetPointTitle() == "Microsoft Visual Studio(管理员)",
-                () => press("100;Tab;Down;Enter;", 100),
-                3000, 200);
-            //TaskRun(() => { press("Tab;Down;Enter;", 100); }, 1800);
+            //DaleyRun(
+            //    () => GetPointTitle() == "Microsoft Visual Studio(管理员)",
+            //    () => press("100;Tab;Down;Enter;", 100),
+            //    3000, 200);
+            TaskRun(() => { press("Tab;Down;Enter;", 100); }, 2000);
         }
     }
 }

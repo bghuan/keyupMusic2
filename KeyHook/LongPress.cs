@@ -5,14 +5,9 @@ namespace keyupMusic2
 {
     public class LongPressClass
     {
-        public LongPressClass(Form parentForm)
-        {
-            huan = (Huan)parentForm;
-        }
         public LongPressClass()
         {
         }
-        public static Huan huan;
         public void deal(Keys keys)
         {
             //return;

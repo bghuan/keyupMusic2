@@ -7,13 +7,8 @@ namespace keyupMusic2
 {
     public class OpencvReceive
     {
-        public static Huan huan;
         public static string opencvstr = "opencv";
 
-        public OpencvReceive(Form parentForm)
-        {
-            huan = (Huan)parentForm;
-        }
         public void deal(string msg)
         {
             var x = int.Parse(msg.Substring(msg.IndexOf("---") + 3).Split(",")[0]);

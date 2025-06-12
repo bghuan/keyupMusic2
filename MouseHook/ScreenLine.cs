@@ -7,61 +7,86 @@ namespace keyupMusic2
 {
     partial class biuCL
     {
-        private void _line2()
+        private void _line2(MouseHookEventArgs e)
         {
             if (ProcessName == Common.chrome)
             {
                 if (chrome_red()) press(Keys.F);
-                //if (ProcessPosition(chrome).X >= chrome_x_min)
-                if (ProcessPosition(chrome).X < screenWidth2)
+                var pos = ProcessPosition(chrome).X;
+                if (pos < screenWidth2 && IsFullScreen())
                 {
                     if (!judge_color(1840, 51, Color.FromArgb(162, 37, 45)))
-                        press(Keys.F);
-                    SS().MouseWhell(-120 * 12);
+                        press(Keys.F, 11);
+                    SS().MouseWhell(-1440);
                 }
             }
             if (IsFullScreen()) return;
             mouse_click2(0);
         }
 
-        private void _line3()
+        private void _line3(MouseHookEventArgs e)
         {
-            if (is_douyin()) return;
-            if (ProcessTitle.Contains(bilibili)) return;
-            if (ProcessTitle.Contains(Ghostrunner2)) return;
-            if (ProcessTitle.Contains(ItTakesTwo)) return;
+            if (is_douyin())
+                return;
             if (ProcessName == Common.chrome)
+            {
                 if (chrome_red()) press(Keys.F);
+                var pos = ProcessPosition(chrome).X;
+                if (pos < screenWidth2 && IsFullScreen())
+                {
+                    press(Keys.F, 11);
+                    SS().MouseWhell(1440);
+                }
+            }
+            if (ProcessName == Common.vlc)
+            {
+                press(Keys.Space, 11);
+            }
             if (IsDiffProcess())
                 mouse_click2(0);
-            //FocusPointProcess();
         }
-        private void _line6()
+
+        private void _line6(MouseHookEventArgs e)
         {
             if (IsDiffProcess())
                 mouse_click2(0);
             if (!chrome_red())
                 press(Keys.F, 20);
-            SS().MouseWhell(-120 * 12);
+            SS().MouseWhell(-1440);
         }
 
-        private void _line7()
+        private void _line7(MouseHookEventArgs e)
         {
             if (IsDiffProcess())
                 mouse_click2(0);
             press(Keys.F);
-            SS().MouseWhell(120 * 12);
+            SS().MouseWhell(1440);
         }
 
+        public biuCL()
+        {
+            line2.aMouseHookEvent += _line2;
+            line3.aMouseHookEvent += _line3;
+            line6.aMouseHookEvent += _line6;
+            line7.aMouseHookEvent += _line7;
 
+            corner1.aMouseHookEvent += _corner1;
+            corner2.aMouseHookEvent += _corner2;
+            corner5.aMouseHookEvent += _corner5;
+            corner6.aMouseHookEvent += _corner6;
+        }
         public void Cornor(MouseHookEventArgs e)
         {
             if (e.Msg != MouseMsg.move) { RECTT.release(); return; }
             if (e.X > screen2Width || e.Y < 0 || e.Y > screen2Height1) return;
 
-            RECTT rect = RECTT.get(e.Pos);
-
-            if (rect == null) { RECTT.ignoreAll(e.Pos); return; }
+            var rect = RECTT.get(e.Pos);
+            if (rect == null)
+            {
+                var rect2 = RECTT.ignoreAll(e.Pos);
+                rect?.doo2(e);
+                return;
+            }
 
             FreshProcessName();
             di = false;
@@ -70,21 +95,10 @@ namespace keyupMusic2
             if (is_down(LButton) || is_down(RButton)) { RECTT.release(); return; }
             Show(rect.name);
 
-            switch (rect.name)
-            {
-                case nameof(corner1): _corner1(); break;
-                case nameof(corner2): _corner2(); break;
-                case nameof(corner5): _corner5(); break;
-                case nameof(corner6): _corner6(); break;
-                case nameof(line2): _line2(); break;
-                case nameof(line3): _line3(); break;
-                case nameof(line6): _line6(); break;
-                case nameof(line7): _line7(); break;
-            }
+            rect.doo(e);
 
-            if (rect != null) RECTT.release();
+            RECTT.release();
         }
-
 
         static int far = 300;
         static int _fa = screenWidth - far;
@@ -96,152 +110,36 @@ namespace keyupMusic2
         static int ch0 = screen2Width0;
         int chrome_x_min = -50;
 
-        //public static RECTT line1 = new RECTT(new RECT(far, 0, _fa, 0),
-        //                        new RECT(0, 0, cha, far));
+        //public static RECTT line2 = new RECTT(nameof(line2),
+        //                        new RECT(0, gao - 60, cha, gao - 25),
+        //                        new RECT(0, 0, cha, gao - 5));
         public static RECTT line2 = new RECTT(nameof(line2),
                                 new RECT(0, gao, _fa - 200, gao),
                                 new RECT(0, gao - far + 100, cha, gao));
         public static RECTT line3 = new RECTT(nameof(line3),
                                 new RECT(0, far, 0, gao),
                                 new RECT(0, 0, far, gao));
-
-        //public static RECTT line5 = new RECTT(new RECT(ch2 + far, 0, -far, 0),
-        //new RECT(ch2 - 1, 0 - 1, 0, far));
         public static RECTT line6 = new RECTT(nameof(line6),
                                 new RECT(screen2Width0, ga2, ch2, ga2),
-                                new RECT(screen2Width0, ga2 - far, ch2, ga2));
+                                new RECT(screen2Width0, ga2 - far + 100, ch2, ga2));
         public static RECTT line7 = new RECTT(nameof(line7),
                                 new RECT(ch2, far, ch2, ga2),
-                                new RECT(ch2-far, 0, ch2, ga2));
-        //public static RECTT line6 = new RECTT(nameof(line6),
-        //                        new RECT(ch2, ga2, 0, ga2),
-        //                        new RECT(ch2, ga2 - far, 0, ga2));
-        //public static RECTT line7 = new RECTT(nameof(line7),
-        //                        new RECT(ch2, far, ch2, ga2),
-        //                        new RECT(ch2, 0, ch2 + far, ga2));
-
-
+                                new RECT(ch2 - far, 0, ch2, ga2));
 
         RECTT corner1 = new RECTT(nameof(corner1),
-                                new RECT(0, 0, 0, 0), new RECT(0, 0, far, far));//
+                                new RECT(0, 0, 0, 0), new RECT(0, 0, far, far));
         RECTT corner2 = new RECTT(nameof(corner2),
-                                new RECT(cha, 0, cha, 0), new RECT(cha - far, 0, cha, far));//
-        //RECTT corner3 = new RECTT(new RECT(cha, gao, cha, gao), new RECT(cha - far, gao - far, cha, gao));
-        //RECTT corner4 = new RECTT(new RECT(0, gao, 0, gao), new RECT(0, gao - far, far, gao));
-
+                                new RECT(cha, 0, cha, 0), new RECT(cha - far, 0, cha, far));
         RECTT corner5 = new RECTT(nameof(corner5),
                                 new RECT(ch0, 0, ch0, 0),
-                                new RECT(ch0, 0, ch0 + far, far));//
+                                new RECT(ch0, 0, ch0 + far, far));
         RECTT corner6 = new RECTT(nameof(corner6),
                                 new RECT(ch2, 0, ch2, 0),
                                 new RECT(ch2 - far, 0, ch2, far));
-        //RECTT corner7 = new RECTT(new RECT(-1, ga2, -1, ga2), new RECT(-1 - far, ga2 - far, -1, ga2));
-        //RECTT corner8 = new RECTT(new RECT(ch2, ga2, ch2, ga2), new RECT(ch2, ga2 - far, ch2 + far, ga2));//
 
         bool di = false;
         DateTime di_time = DateTime.MinValue;
 
-
-        public void ScreenLine(MouseHookEventArgs e)
-        {
-            if (e.Msg != MouseMsg.move) return;
-            if (ProcessName.Equals(err)) return;
-            if (e.X < screen2Width || e.Y < 0 || e.Y > screen2Height1) return;
-            int line = 0;
-            di = false;
-            //if (line1.target(e.Pos)) { line = 1; }
-            if (line2.target(e.Pos)) { line = 2; }
-            else if (line3.target(e.Pos)) { line = 3; }
-            //else if (line5.target(e.Pos)) { line = 5; }
-            else if (line6.target(e.Pos)) { line = 6; }
-            else if (line7.target(e.Pos)) { line = 7; }
-
-            //if (corner1.target(e.Pos)) { line = 1; }
-            //else if (corner2.target(e.Pos)) { line = 2; }
-            ////else if (corner3.target(e.Pos)) { line = 3; }
-            ////else if (corner4.target(e.Pos)) { line = 4; }
-            //else if (corner5.target(e.Pos)) { line = 5; }
-            //else if (corner6.target(e.Pos)) { line = 6; }
-            ////else if (corner7.target(e.Pos)) { line = 7; }
-            ////else if (corner8.target(e.Pos)) { line = 8; }
-
-            //else if (line2.target(e.Pos)) { line = 2; }
-            //else if (line3.target(e.Pos)) { line = 3; }
-            ////else if (line5.target(e.Pos)) { line = 5; }
-            //else if (line6.target(e.Pos)) { line = 6; }
-            //else if (line7.target(e.Pos)) { line = 7; }
-
-            if (line != 0 && is_down(LButton) || is_down(RButton))
-            {
-                RECTT.release();
-                return;
-            }
-
-            //if (line == 1)
-            //{
-            //    if (ProcessName.Equals(chrome))
-            //        if (ProcessPosition(chrome).X >= chrome_x_min)
-            //            press(Keys.F);
-            //}
-            if (line == 2)
-            {
-                if (is_douyin() && IsFullScreen()) return;
-                if (ProcessName == Common.chrome && IsFullScreen())
-                {
-                    if (chrome_red()) press(Keys.F);
-                    if (ProcessPosition(chrome).X >= chrome_x_min)
-                    {
-                        if (!judge_color(1840, 51, Color.FromArgb(162, 37, 45)))
-                            press(Keys.F);
-                        SS().MouseWhell(-120 * 12);
-                        return;
-                    }
-                }
-                if (IsFullScreen()) return;
-                mouse_click2(0);
-            }
-            else if (line == 3)
-            {
-                if (is_douyin()) return;
-                if (ProcessTitle.Contains(bilibili)) return;
-                if (ProcessTitle.Contains(Ghostrunner2)) return;
-                if (ProcessTitle.Contains(ItTakesTwo)) return;
-                if (ProcessName == Common.chrome)
-                    if (chrome_red()) press(Keys.F);
-                if (IsDiffProcess())
-                    FocusPointProcess();
-            }
-            //else if (line == 5)
-            //{
-            //    if (IsDiffProcess())
-            //        mouse_click2(0);
-            //    press(Keys.F);
-            //    SS().MouseWhell(120 * 12);
-            //}
-            else if (line == 6)
-            {
-                if (IsDiffProcess())
-                    mouse_click2(0);
-                if (!chrome_red())
-                    press(Keys.F, 20);
-                SS().MouseWhell(-120 * 12);
-            }
-            else if (line == 7)
-            {
-                if (IsDiffProcess())
-                    mouse_click2(0);
-                press(Keys.F);
-                SS().MouseWhell(120 * 12);
-            }
-
-            //line1.ignore(e.Pos);
-            line2.ignore(e.Pos);
-            line3.ignore(e.Pos);
-            //line5.ignore(e.Pos);
-            line6.ignore(e.Pos);
-            line7.ignore(e.Pos);
-            //if (line != 0) RECTT.release();
-        }
 
         public static bool chrome_red()
         {
@@ -253,90 +151,104 @@ namespace keyupMusic2
 
         public struct RECT
         {
-            public int Left;
-            public int Top;
-            public int Right;
-            public int Bottom;
+            public int Left, Top, Right, Bottom;
             public RECT(int Left, int Top, int Right, int Bottom)
             {
-                this.Left = Left;
-                this.Top = Top;
-                this.Right = Right;
-                this.Bottom = Bottom;
+                this.Left = Left; this.Top = Top; this.Right = Right; this.Bottom = Bottom;
             }
         }
         public class RECTT
         {
             public bool can = true;
-            readonly RECT a;
-            readonly RECT b;
+            public readonly RECT a, b;
             public static List<RECTT> All = new List<RECTT>();
             public string name;
+            public Task aTask;
+
+            public delegate void aEventHandler(MouseHookEventArgs e);
+            public event aEventHandler aMouseHookEvent;
+
+            public delegate void bEventHandler(MouseHookEventArgs e);
+            public event bEventHandler bMouseHookEvent;
+            public void doo(MouseHookEventArgs e)
+            {
+                int music = 0;
+                if (a.Left == a.Right)
+                {
+                    int total = Math.Abs(a.Bottom - a.Top);
+                    if (total > 0)
+                    {
+                        int yOffset = Math.Abs(e.Y - Math.Min(a.Top, a.Bottom));
+                        // 1~9, 最上为1，最下为0
+                        music = Math.Min(yOffset * 10 / total, 10);
+                        if (music < 1) music = 1;
+                        if (music > 9) music = 0;
+                    }
+                }
+                else if (a.Top == a.Bottom)
+                {
+                    int total = Math.Abs(a.Right - a.Left);
+                    if (total > 0)
+                    {
+                        int xOffset = Math.Abs(e.X - Math.Min(a.Left, a.Right));
+                        // 1~9, 最左为1，最右为0
+                        music = Math.Min(xOffset * 10 / total, 10);
+                        if (music < 1) music = 1;
+                        if (music > 9) music = 0;
+                    }
+                }
+                play_sound_bongocat(music);
+                aMouseHookEvent?.Invoke(e);
+            }
+            public void doo2(MouseHookEventArgs e)
+            {
+                bMouseHookEvent?.Invoke(e);
+            }
             public RECTT(string name, RECT a, RECT b)
             {
-                this.name = name;
-                this.a = a;
-                this.b = b;
-                All.Add(this);
+                this.name = name; this.a = a; this.b = b; All.Add(this);
             }
-            ~RECTT()
-            {
-                All.Remove(this);
-            }
-            public override string ToString()
-            {
-                return base.ToString();
-            }
+            ~RECTT() { All.Remove(this); }
+            public override string ToString() => base.ToString();
             public bool target(Point testPoint)
             {
-                if (can == false) return false;
-
-                RECT a = this.a;
-
-                var aaa = (testPoint.X >= a.Left && testPoint.X <= a.Right &&
-                       testPoint.Y >= a.Top && testPoint.Y <= a.Bottom);
-
-                if (aaa) can = false;
-                return aaa;
+                if (!can) return false;
+                var hit = (testPoint.X >= a.Left && testPoint.X <= a.Right &&
+                           testPoint.Y >= a.Top && testPoint.Y <= a.Bottom);
+                if (hit) can = false;
+                return hit;
             }
-            public void ignore(Point testPoint)
+            public bool ignore(Point testPoint)
             {
-                if (can == true) return;
-
-                var aaa = !(testPoint.X >= b.Left && testPoint.X <= b.Right &&
-                       testPoint.Y >= b.Top && testPoint.Y <= b.Bottom);
-
-                if (aaa) can = true;
-                return;
+                if (can) return false;
+                var outB = !(testPoint.X >= b.Left && testPoint.X <= b.Right &&
+                             testPoint.Y >= b.Top && testPoint.Y <= b.Bottom);
+                if (outB) can = true;
+                return outB;
             }
-            public static void ignoreAll(Point testPoint)
+            public static RECTT ignoreAll(Point testPoint)
             {
+                //foreach (var item in All)
+                //{
+                //    if (item.can) continue;
+                //    var outB = !(testPoint.X >= item.b.Left && testPoint.X <= item.b.Right &&
+                //                 testPoint.Y >= item.b.Top && testPoint.Y <= item.b.Bottom);
+                //    if (outB) item.can = true;
+                //}
                 foreach (var item in All)
-                {
-                    if (item.can == true) continue;
-
-                    var aaa = !(testPoint.X >= item.b.Left && testPoint.X <= item.b.Right &&
-                           testPoint.Y >= item.b.Top && testPoint.Y <= item.b.Bottom);
-
-                    if (aaa) item.can = true;
-                }
+                    if (item.ignore(testPoint)) return item;
+                return null;
             }
             public static void release()
             {
-                foreach (var item in All)
-                {
-                    item.can = false;
-                }
+                foreach (var item in All) item.can = false;
             }
-            public static int[] special_int = [0, screenWidth1, screenHeight1, screen2Width, screen2Height1];
+            public static int[] special_int = [0, screenWidth1, screenHeight1, screenHeight1 - 1, screen2Width, screen2Height1];
             public static RECTT get(Point testPoint)
             {
-                if (!(special_int.Contains(testPoint.X) || special_int.Contains(testPoint.Y))) return null;
-
+                //if (!(special_int.Contains(testPoint.X) || special_int.Contains(testPoint.Y))) return null;
                 foreach (var item in All)
-                {
                     if (item.target(testPoint)) return item;
-                }
                 return null;
             }
         }
@@ -346,13 +258,11 @@ namespace keyupMusic2
             dii();
             Common.press(str, tick, force);
         }
-
         public void press(Keys keys, int tick = 0)
         {
             dii();
             Common.press(keys, tick);
         }
-
         public void press_close()
         {
             dii();
@@ -385,9 +295,11 @@ namespace keyupMusic2
         }
         public void dii()
         {
-            if (!di && DateTime.Now - di_time > TimeSpan.FromMilliseconds(200)) play_sound_di();
-            di = true;
-            di_time = DateTime.Now;
+            //if (!di) play_sound_di();
+            //di = true;
+            //if (!di && DateTime.Now - di_time > TimeSpan.FromMilliseconds(200)) play_sound_di();
+            //di = true;
+            //di_time = DateTime.Now;
             //if (di_time.AddMilliseconds(100) > DateTime.Now) play_sound_di();
             //di_time = DateTime.Now;
         }

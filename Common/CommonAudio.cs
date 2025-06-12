@@ -64,6 +64,24 @@ namespace keyupMusic2
                 Console.WriteLine($"播放bongocat音效时发生异常: {ex.Message}");
             }
         }
+        public static void play_sound_bongocat(int key)
+        {
+            string wav = "wav\\bongocat\\keyboard" + key + ".wav";
+            if (!File.Exists(wav)) return;
+
+            try
+            {
+                player_reader_bongo = new WaveFileReader(wav);
+                player_bongo.Stop();
+                player_bongo.Init(player_reader_bongo);
+                player_bongo.Play();
+            }
+            catch (Exception ex)
+            {
+                // 可以根据需要记录日志或提示用户
+                Console.WriteLine($"播放bongocat音效时发生异常: {ex.Message}");
+            }
+        }
         static string wav_di = "wav\\d2.wav";
         static bool is_di = File.Exists(wav_di);
         public static void play_sound_di(int tick = 0)

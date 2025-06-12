@@ -1,23 +1,25 @@
-﻿using System.Collections.Concurrent;
+﻿using Microsoft.Win32;
+using System.Collections.Concurrent;
 using System.Diagnostics;
 using System.Drawing.Imaging;
 using System.Net;
 using System.Reflection;
 using System.Runtime.InteropServices;
 using System.Security.Principal;
-using System.Text;
+using System.Text.Json;
 using static keyupMusic2.Native;
 using Point = System.Drawing.Point;
 using RECT = keyupMusic2.Native.RECT;
-
 namespace keyupMusic2
 {
     public partial class Common
     {
+        public static Huan huan => Huan.Instance;
+
         public static ConcurrentDictionary<string, DateTime> KeyTime = new ConcurrentDictionary<string, DateTime>();
 
 
-        public static List<string> list_go_back = new List<string> { explorer, VSCode, msedge, chrome, devenv, androidstudio, ApplicationFrameHost, cs2, steam, Glass, Glass2, Glass3 };
+        public static List<string> list_go_back = new List<string> { explorer, VSCode, msedge, chrome, devenv, androidstudio, ApplicationFrameHost, cs2, steam, Glass, Glass2, Glass3, vlc ,};
 
 
         public static bool hooked = false;
@@ -964,12 +966,104 @@ namespace keyupMusic2
             uint dpi = GetDpiForWindow(form.Handle);
             return dpi / 96.0;
         }
-
-        public static void Show(string msg)
+        public static int LabelTick = 0;
+        public static bool LabelTicking = false;
+        public static void Show(string msg, int tick = 0)
         {
-            Socket.socket_write(Huan.huan_invoke + ProcessName + " " + msg);
+            Common.LabelTick = tick;
+            Common.LabelTicking = true;
+            huan.Invoke(() => { huan.label1.Text = msg; });
+            //Socket.socket_write(Huan.huan_invoke + ProcessName + " " + msg);
         }
 
+        static string token = "ssssssssssidiii32ii323dcds";
+        public static async Task<string> GetClashVergeStatusAsync()
+        {
+            using var client = new HttpClient();
+            var url = "http://127.0.0.1:9097/configs";
+            if (!string.IsNullOrEmpty(token))
+            {
+                client.DefaultRequestHeaders.Add("Authorization", "Bearer " + token);
+            }
+            try
+            {
+                var response = await client.GetAsync(url);
+                response.EnsureSuccessStatusCode();
+                var content = await response.Content.ReadAsStringAsync();
+                return content;
+            }
+            catch
+            {
+                return "Clash Verge API 不可用或未启动";
+            }
+        }
+        public static async Task<bool> IsClashVergeSystemProxyOn()
+        {
+            // 1. 解析 mixed-port
+            int mixedPort = 0;
+            try
+            {
+                var aa = await GetClashVergeStatusAsync();
+                using var doc = JsonDocument.Parse(aa);
+                if (doc.RootElement.TryGetProperty("mixed-port", out var portElem))
+                    mixedPort = portElem.GetInt32();
+            }
+            catch { }
 
+            if (mixedPort == 0) return false; // 没有监听端口
+
+            // 2. 检查注册表
+            using (var key = Registry.CurrentUser.OpenSubKey(@"Software\Microsoft\Windows\CurrentVersion\Internet Settings"))
+            {
+                if (key != null)
+                {
+                    object enable = key.GetValue("ProxyEnable");
+                    object server = key.GetValue("ProxyServer");
+                    if (enable is int && (int)enable == 1 && server is string s)
+                    {
+                        return s.Contains("127.0.0.1:" + mixedPort) || s.Contains("localhost:" + mixedPort);
+                    }
+                }
+            }
+            return false;
+        }
+        public static void openClash()
+        {
+            press([Keys.LControlKey, Keys.F1]); 
+            bool isProxyOn = Common.IsClashVergeSystemProxyOn().GetAwaiter().GetResult();
+            Keys keys = isProxyOn ? Keys.D0 : D1;
+            play_sound_bongocat(keys);
+            if (iswinopen)
+                press(LWin);
+        }
+        //顺便进入睡眠
+        public static void CloseDesktopWindow()
+        {
+            IntPtr desktopHwnd = FindWindow("Progman", null);
+            if (desktopHwnd != IntPtr.Zero)
+            {
+                PostMessage(desktopHwnd, (uint)WM_CLOSE, IntPtr.Zero, IntPtr.Zero);
+            }
+        }// 判断是否有音乐播放软件在运行
+        public static bool IsAnyMusicPlayerRunning()
+        {
+            // 可根据实际需求添加更多音乐软件进程名
+            string[] musicProcesses = { "cloudmusic", "QQMusic", "KuGou", "酷我音乐" };
+            foreach (var proc in System.Diagnostics.Process.GetProcesses())
+            {
+                foreach (var name in musicProcesses)
+                {
+                    if (proc.ProcessName.IndexOf(name, StringComparison.OrdinalIgnoreCase) >= 0)
+                        return true;
+                }
+            }
+            return false;
+        }
+
+        // 启动网易云音乐
+        public static void StartNeteaseCloudMusic()
+        {
+            ProcessRun(cloudmusicexe);
+        }
     }
 }

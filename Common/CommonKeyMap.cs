@@ -3,7 +3,7 @@
     public partial class Common
     {
         //press(100, LWin, "chrome", "en", Enter, _(Keys.LControlKey, Keys.A));
-        public static Keys[] _(params Keys[] keys) => keys;
+        public static Keys[] KC(params Keys[] keys) => keys;
 
         public static Keys None = Keys.None;
         public static Keys LButton = Keys.LButton;

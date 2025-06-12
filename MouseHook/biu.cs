@@ -9,12 +9,10 @@ namespace keyupMusic2
 {
     public partial class biu
     {
-        public biu(Form parentForm)
+        public biu()
         {
-            huan = (Huan)parentForm;
             biusc = new biuCL();
         }
-        public Huan huan;
         biuCL biusc;
         public static Point r_down_x = Point.Empty;
         bool menu_opened = false;
@@ -95,7 +93,13 @@ namespace keyupMusic2
             if (e.Msg == MouseMsg.move) return;
 
             if (e.Msg == MouseMsg.middle)
+            {
                 press(Keys.MediaPlayPause);
+                if (!IsAnyMusicPlayerRunning())
+                {
+                    StartNeteaseCloudMusic();
+                }
+            }
             if (e.Msg == MouseMsg.wheel && e.Y == 0)
             {
                 Keys keys = Keys.F7;

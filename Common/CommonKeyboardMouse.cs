@@ -375,6 +375,8 @@ namespace keyupMusic2
                     press_str(str, tick);
                 else if (item is Keys[] ks)
                     press(ks, tick);
+                else if (item is int num)
+                    Sleep(num);
             }
         }
         public static void press_str(string str, int tick = 100)
@@ -463,12 +465,59 @@ namespace keyupMusic2
         {
             keybd_event((byte)keys, 0, 2, 0);
         }
+        public static void down_press(Keys keys, bool raw)
+        {
+            if (!raw)
+            {
+                down_press(keys);
+                return;
+            }
+            isVir = 0;
+            keybd_event((byte)keys, 0, 0, 0);
+            isVir = isVirConst;
+        }
+        public static void up_press(Keys keys, bool raw)
+        {
+            if (!raw)
+            {
+                up_press(keys);
+                return;
+            }
+            isVir = 0;
+            keybd_event((byte)keys, 0, 2, 0);
+            isVir = isVirConst;
+        }
         static ConcurrentDictionary<byte, byte> MapVirtualKey = new ConcurrentDictionary<byte, byte>();
         private static void keybd_event(byte bVk, byte bScan, uint dwFlags, uint dwExtraInfo)
         {
+            //// 判断是否需要 ExtendedKey
+            //bool needExtended = bVk == 0xA5 // RMenu
+            //                 || bVk == 0xA4 // LMenu
+            //                 || bVk == 0xA3 // RControl
+            //                 || bVk == 0xA2 // LControl
+            //                 || bVk == 0x5B // LWin
+            //                 || bVk == 0x5C // RWin
+            //                 || bVk == 0x2D // Insert
+            //                 || bVk == 0x2E // Delete
+            //                 || (bVk >= 0x25 && bVk <= 0x28); // 方向键
+
+            //if (needExtended)
+            //    dwFlags |= (uint)KeyboardFlag.ExtendedKey;
+
             if (!MapVirtualKey.ContainsKey(bVk))
                 MapVirtualKey[bVk] = (byte)(MapVirtualKey(bVk, 0) & 0xFFU);
+
             Native.keybd_event(bVk, MapVirtualKey[bVk], dwFlags, isVir);
+        }
+        [Flags]
+        public enum KeyboardFlag : uint
+        {
+            None = 0x0000,
+            KeyDown = 0x000,
+            ExtendedKey = 0x0001,
+            KeyUp = 0x0002,
+            Unicode = 0x0004,
+            ScanCode = 0x0008,
         }
     }
 }

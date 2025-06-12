@@ -7,7 +7,7 @@ namespace keyupMusic2
 {
     partial class biuCL
     {
-        private void _corner1()
+        private void _corner1(MouseHookEventArgs e)
         {
             var list = new[] { msedge, Common.chrome };
             //var list = new[] { msedge };
@@ -19,7 +19,7 @@ namespace keyupMusic2
             else if (Common.ACPhoenix.Equals(Common.ProcessName))
                 press([Keys.Tab]);
         }
-        private void _corner2()
+        private void _corner2(MouseHookEventArgs e)
         {
             var list = new[] { ApplicationFrameHost, explorer, vlc, v2rayN, Common.QQMusic, VSCode, AIoT, RadeonSoftware, steam };
 
@@ -37,6 +37,8 @@ namespace keyupMusic2
             }
             else if (ProcessName == Common.devenv)
                 HideProcess();
+            else if (ProcessName == Common.keyupMusic2)
+                HideProcess();
             else if (Common.ACPhoenix.Equals(Common.ProcessName))
                 press([Keys.Space]);
             //else if (list2.Contains(Common.ProcessName))
@@ -45,7 +47,7 @@ namespace keyupMusic2
                 press_close();
         }
 
-        private void _corner5()
+        private void _corner5(MouseHookEventArgs e)
         {
             mouse_click();
             if (ProcessName == Common.chrome)
@@ -55,12 +57,12 @@ namespace keyupMusic2
                     press([Keys.F11]);
         }
 
-        private void _corner6()
+        private void _corner6(MouseHookEventArgs e)
         {
-            mouse_click();
-            var list = new[] { Common.chrome };
-            if (list.Contains(Common.ProcessName))
-                press([Keys.LControlKey, Keys.F1]);
+            //mouse_click();
+            //var list = new[] { Common.chrome };
+            //if (list.Contains(Common.ProcessName))
+            openClash();
             //press(Keys.Escape);
         }
     }

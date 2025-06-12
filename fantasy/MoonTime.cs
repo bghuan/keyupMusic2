@@ -5,8 +5,8 @@ namespace keyupMusic2
 {
     public sealed partial class MoonTime : Form
     {
-        private string url1 = "C:\\Users\\bu\\Documents\\fantasy\\fantasy\\moon\\index.html";
-        private string url2 = "http://localhost/fantasy/moon/index.html";
+        private string url = "http://localhost/fantasy/moon/index.html";
+        private string url2 = "C:\\Users\\bu\\Documents\\fantasy\\fantasy\\moon\\index.html";
         private string moontime_url = "log\\moontimeurl.txt";
         private string moontime_location = "log\\moontimelocation.txt";
         double scalingFactor;
@@ -34,8 +34,30 @@ namespace keyupMusic2
             webView21.CoreWebView2.NavigationCompleted += CoreWebView2_NavigationCompleted;
             webView21.CoreWebView2.WebMessageReceived += CoreWebView2_WebMessageReceived;
             webView21.DefaultBackgroundColor = Color.Transparent;
+
+            // 先加载本地页面
             webView21.CoreWebView2.Navigate(url2);
+
+            // 尝试加载远程页面，成功后切换
+            TryNavigateRemote();
         }
+
+        private async void TryNavigateRemote()
+        {
+            var testWebView = new Microsoft.Web.WebView2.WinForms.WebView2();
+            await testWebView.EnsureCoreWebView2Async(null);
+            testWebView.CoreWebView2.NavigationCompleted += (sender, args) =>
+            {
+                if (args.IsSuccess)
+                {
+                    // 远程url可用，切换主webView21显示
+                    webView21.CoreWebView2.Navigate(url);
+                }
+                testWebView.Dispose();
+            };
+            testWebView.CoreWebView2.Navigate(url);
+        }
+
         private void CoreWebView2_WebMessageReceived(object sender, CoreWebView2WebMessageReceivedEventArgs e)
         {
             string message = e.TryGetWebMessageAsString();
@@ -91,7 +113,7 @@ namespace keyupMusic2
         private void CoreWebView2_NavigationCompleted(object sender, CoreWebView2NavigationCompletedEventArgs e)
         {
             if (!e.IsSuccess || (int)e.HttpStatusCode >= 300)
-                webView21.CoreWebView2.Navigate(url1);
+                webView21.CoreWebView2.Navigate(url2);
         }
         protected override void Dispose(bool disposing)
         {
@@ -132,6 +154,20 @@ namespace keyupMusic2
                 // 添加 WS_EX_TOOLWINDOW 样式
                 cp.ExStyle |= 0x80;  // WS_EX_TOOLWINDOW
                 return cp;
+            }
+        }
+
+        // 在 C# 中调用 JS 的方法
+        public void SetInitAngle(int num = 0)
+        {
+            string js = $"init_angle({num});";
+            if (webView21.InvokeRequired)
+            {
+                webView21.Invoke(new Action(() => webView21.CoreWebView2.ExecuteScriptAsync(js)));
+            }
+            else
+            {
+                webView21.CoreWebView2.ExecuteScriptAsync(js);
             }
         }
     }
