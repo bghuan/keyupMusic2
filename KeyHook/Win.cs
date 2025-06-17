@@ -5,11 +5,11 @@ namespace keyupMusic2
 {
     public class WinClass
     {
-        public static List<Keys> keys = new List<Keys> { Q, Left, Right, W, L, Keys.Enter };
+        public static readonly HashSet<Keys> keys = new() { Q, Left, Right, W, L, Keys.Enter };
         public static bool handling = false;
         public static bool judge_handled(KeyboardHookEventArgs e)
         {
-            if (!is_down(Keys.LWin)|| !is_down(Keys.RWin)) return false;
+            if (!is_down(Keys.LWin) && !is_down(Keys.RWin)) return false;
             if (keys.Contains(e.key)) return true;
             return false;
         }

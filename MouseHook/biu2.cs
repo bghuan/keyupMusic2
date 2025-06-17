@@ -41,8 +41,8 @@ namespace keyupMusic2
             }
             if (ProcessName == VSCode) return;
 
-            if (e.Msg != MouseMsg.wheel)
-                Log.logcache(e.Msg.ToString());
+            //if (e.Msg != MouseMsg.wheel)
+            //    Log.logcache(e.Msg.ToString());
             //process_and_log(e.Msg.ToString());
 
             string msg = e.Msg.ToString();

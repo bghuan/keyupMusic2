@@ -16,7 +16,7 @@ namespace keyupMusic2
                 if (pos < screenWidth2 && IsFullScreen())
                 {
                     if (!judge_color(1840, 51, Color.FromArgb(162, 37, 45)))
-                        press(Keys.F, 11);
+                        press(Keys.F, 51);
                     SS().MouseWhell(-1440);
                 }
             }
@@ -34,7 +34,7 @@ namespace keyupMusic2
                 var pos = ProcessPosition(chrome).X;
                 if (pos < screenWidth2 && IsFullScreen())
                 {
-                    press(Keys.F, 11);
+                    press(Keys.F, 51);
                     SS().MouseWhell(1440);
                 }
             }
@@ -51,7 +51,7 @@ namespace keyupMusic2
             if (IsDiffProcess())
                 mouse_click2(0);
             if (!chrome_red())
-                press(Keys.F, 20);
+                press(Keys.F, 50);
             SS().MouseWhell(-1440);
         }
 
@@ -59,7 +59,7 @@ namespace keyupMusic2
         {
             if (IsDiffProcess())
                 mouse_click2(0);
-            press(Keys.F);
+            press(Keys.F, 50);
             SS().MouseWhell(1440);
         }
 
@@ -93,7 +93,7 @@ namespace keyupMusic2
             //log(rect.name + " " + e.X + " " + e.Y);
 
             if (is_down(LButton) || is_down(RButton)) { RECTT.release(); return; }
-            Show(rect.name);
+            Show(rect.name,2);
 
             rect.doo(e);
 
@@ -114,28 +114,28 @@ namespace keyupMusic2
         //                        new RECT(0, gao - 60, cha, gao - 25),
         //                        new RECT(0, 0, cha, gao - 5));
         public static RECTT line2 = new RECTT(nameof(line2),
-                                new RECT(0, gao, _fa - 200, gao),
-                                new RECT(0, gao - far + 100, cha, gao));
+                                new JU(0, gao, _fa - 200, gao),
+                                new JU(0, gao - far + 100, cha, gao));
         public static RECTT line3 = new RECTT(nameof(line3),
-                                new RECT(0, far, 0, gao),
-                                new RECT(0, 0, far, gao));
+                                new JU(0, far, 0, gao),
+                                new JU(0, 0, far, gao));
         public static RECTT line6 = new RECTT(nameof(line6),
-                                new RECT(screen2Width0, ga2, ch2, ga2),
-                                new RECT(screen2Width0, ga2 - far + 100, ch2, ga2));
+                                new JU(screen2Width0, ga2, ch2, ga2),
+                                new JU(screen2Width0, ga2 - far + 100, ch2, ga2));
         public static RECTT line7 = new RECTT(nameof(line7),
-                                new RECT(ch2, far, ch2, ga2),
-                                new RECT(ch2 - far, 0, ch2, ga2));
+                                new JU(ch2, far, ch2, ga2),
+                                new JU(ch2 - far, 0, ch2, ga2));
 
         RECTT corner1 = new RECTT(nameof(corner1),
-                                new RECT(0, 0, 0, 0), new RECT(0, 0, far, far));
+                                new JU(0, 0, 0, 0), new JU(0, 0, far, far));
         RECTT corner2 = new RECTT(nameof(corner2),
-                                new RECT(cha, 0, cha, 0), new RECT(cha - far, 0, cha, far));
+                                new JU(cha, 0, cha, 0), new JU(cha - far, 0, cha, far));
         RECTT corner5 = new RECTT(nameof(corner5),
-                                new RECT(ch0, 0, ch0, 0),
-                                new RECT(ch0, 0, ch0 + far, far));
+                                new JU(ch0, 0, ch0, 0),
+                                new JU(ch0, 0, ch0 + far, far));
         RECTT corner6 = new RECTT(nameof(corner6),
-                                new RECT(ch2, 0, ch2, 0),
-                                new RECT(ch2 - far, 0, ch2, far));
+                                new JU(ch2, 0, ch2, 0),
+                                new JU(ch2 - far, 0, ch2, far));
 
         bool di = false;
         DateTime di_time = DateTime.MinValue;
@@ -149,10 +149,10 @@ namespace keyupMusic2
             //           && judge_color(-645, 45, Color.FromArgb(162, 37, 45)));
         }
 
-        public struct RECT
+        public struct JU
         {
             public int Left, Top, Right, Bottom;
-            public RECT(int Left, int Top, int Right, int Bottom)
+            public JU(int Left, int Top, int Right, int Bottom)
             {
                 this.Left = Left; this.Top = Top; this.Right = Right; this.Bottom = Bottom;
             }
@@ -160,7 +160,7 @@ namespace keyupMusic2
         public class RECTT
         {
             public bool can = true;
-            public readonly RECT a, b;
+            public readonly JU a, b;
             public static List<RECTT> All = new List<RECTT>();
             public string name;
             public Task aTask;
@@ -204,7 +204,7 @@ namespace keyupMusic2
             {
                 bMouseHookEvent?.Invoke(e);
             }
-            public RECTT(string name, RECT a, RECT b)
+            public RECTT(string name, JU a, JU b)
             {
                 this.name = name; this.a = a; this.b = b; All.Add(this);
             }

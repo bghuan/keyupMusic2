@@ -32,15 +32,13 @@ namespace keyupMusic2
             //HomeProcess(chrome);
 
             ready_to_sleep = true;
-            system_sleep_count = 1;
-            KeyTime[system_sleep_string] = DateTime.Now;
             Invoke(() => { SetVisibleCore(true); });
             int sleep = 0;
 
             if (!force)
             {
                 play_sound(Keys.D0);
-                sleep = 70000;
+                sleep = player_time;
             }
             Task.Run(() =>
             {
@@ -152,6 +150,7 @@ namespace keyupMusic2
         {
             if (!ready_to_sleep) return;
             ready_to_sleep = false;
+            system_sleep_count = 1;
             Invoke(() => { SetVisibleCore(false); });
             //press("500;LWin;1650,1300;1650,1140", tick);
             //press("500;LWin;1650,1300;", tick);

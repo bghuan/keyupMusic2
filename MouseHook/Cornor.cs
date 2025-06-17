@@ -14,6 +14,10 @@ namespace keyupMusic2
 
             if (is_douyin())
                 press(Keys.H);
+            else if(IsDiffProcess())
+                mouse_click2(0);
+            else if (ProcessName == Common.chrome && (judge_color(825, 44, Color.FromArgb(162, 37, 45))))
+                press("20;216,42;216,43");
             else if (list.Contains(Common.ProcessName))
                 press([Keys.F11]);
             else if (Common.ACPhoenix.Equals(Common.ProcessName))
@@ -35,15 +39,19 @@ namespace keyupMusic2
                 mouse_click(80, 70);
                 mouse_move(PositionMiddle);
             }
-            else if (ProcessName == Common.devenv)
-                HideProcess();
+            //else if (ProcessName == Common.devenv)
+            //    HideProcess();
             else if (ProcessName == Common.keyupMusic2)
                 HideProcess();
             else if (Common.ACPhoenix.Equals(Common.ProcessName))
                 press([Keys.Space]);
             //else if (list2.Contains(Common.ProcessName))
             //    press_close();
-            else if(!IsFullScreen())
+            else if (ProcessName == Common.explorer && GetPointTitle() == FolderView)
+            { }
+            else if (ProcessName == Common.chrome && ProcessPosition(chrome).X >= screenWidth)
+            { }
+            else if (!IsFullScreen())
                 press_close();
         }
 

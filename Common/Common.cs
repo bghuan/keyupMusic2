@@ -16,10 +16,7 @@ namespace keyupMusic2
     {
         public static Huan huan => Huan.Instance;
 
-        public static ConcurrentDictionary<string, DateTime> KeyTime = new ConcurrentDictionary<string, DateTime>();
-
-
-        public static List<string> list_go_back = new List<string> { explorer, VSCode, msedge, chrome, devenv, androidstudio, ApplicationFrameHost, cs2, steam, Glass, Glass2, Glass3, vlc ,};
+        public static List<string> list_go_back = new List<string> { explorer, VSCode, msedge, chrome, devenv, androidstudio, ApplicationFrameHost, cs2, steam, Glass, Glass2, Glass3, vlc, PowerToysCropAndLock, };
 
 
         public static bool hooked = false;
@@ -147,31 +144,36 @@ namespace keyupMusic2
         }
         public static Color get_mouse_postion_color(Point point)
         {
-            if (point.X > screenWidth)
+            try
             {
-                Screen currentScreen = Screen.FromPoint(point);
-                int relativeX = (point.X - currentScreen.Bounds.X) * 1920 / currentScreen.Bounds.Width;
-                int relativeY = (point.Y - currentScreen.Bounds.Y) * 1080 / currentScreen.Bounds.Height;
-                Console.WriteLine($"相对坐标：({relativeX}, {relativeY})");
-
-                Bitmap bmpScreenshot = new Bitmap(1920, 1080, PixelFormat.Format32bppArgb);
-                Graphics gfxScreenshot = Graphics.FromImage(bmpScreenshot);
-                gfxScreenshot.CopyFromScreen(new Point(screenWidth, 0), Point.Empty, currentScreen.Bounds.Size);
-
-                return bmpScreenshot.GetPixel(relativeX, relativeY);
-            }
-            if (point.X < 0)
-            {
-                point = new Point((int)(point.X / 1.5), (int)(point.Y / 1.5));
-            }
-            using (Bitmap bitmap = new Bitmap(1, 1))
-            {
-                using (Graphics g = Graphics.FromImage(bitmap))
+                if (point.X > screenWidth)
                 {
-                    g.CopyFromScreen(point.X, point.Y, 0, 0, new System.Drawing.Size(1, 1));
-                    return bitmap.GetPixel(0, 0);
+                    Screen currentScreen = Screen.FromPoint(point);
+                    int relativeX = (point.X - currentScreen.Bounds.X) * 1920 / currentScreen.Bounds.Width;
+                    int relativeY = (point.Y - currentScreen.Bounds.Y) * 1080 / currentScreen.Bounds.Height;
+                    Console.WriteLine($"相对坐标：({relativeX}, {relativeY})");
+
+                    Bitmap bmpScreenshot = new Bitmap(1920, 1080, PixelFormat.Format32bppArgb);
+                    Graphics gfxScreenshot = Graphics.FromImage(bmpScreenshot);
+                    gfxScreenshot.CopyFromScreen(new Point(screenWidth, 0), Point.Empty, currentScreen.Bounds.Size);
+
+                    return bmpScreenshot.GetPixel(relativeX, relativeY);
+                }
+                if (point.X < 0)
+                {
+                    point = new Point((int)(point.X / 1.5), (int)(point.Y / 1.5));
+                }
+                using (Bitmap bitmap = new Bitmap(1, 1))
+                {
+                    using (Graphics g = Graphics.FromImage(bitmap))
+                    {
+                        g.CopyFromScreen(point.X, point.Y, 0, 0, new System.Drawing.Size(1, 1));
+                        return bitmap.GetPixel(0, 0);
+                    }
                 }
             }
+            catch(Exception e) { }
+            return Color.Black;
         }
         public static bool try_press(Color color, Action action = null)
         {
@@ -806,6 +808,7 @@ namespace keyupMusic2
         }
         public static void LossScale()
         {
+            if (IsDiffProcess()) mouse_click();
             //press([Keys.LControlKey, Keys.F2]);return;
             if (!ExistProcess(LosslessScaling))
                 ProcessRun(LosslessScalingexe);
@@ -817,7 +820,6 @@ namespace keyupMusic2
         public static void system_hard_sleep()
         {
             gcc_restart = true;
-            KeyTime[system_sleep_string] = DateTime.Now;
             system_sleep_count = 0;
             Process.Start("rundll32.exe", "powrprof.dll,SetSuspendState 0,1,0");
         }

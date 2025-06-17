@@ -93,6 +93,10 @@ namespace keyupMusic2
             }
             mouse_event(MOUSEEVENTF_LEFTDOWN | MOUSEEVENTF_LEFTUP, 0, 0, 0, 0);
         }
+        public static void mouse_middle()
+        {
+            mouse_event(MOUSEEVENTF_MIDDLEDOWN | MOUSEEVENTF_MIDDLEUP, 0, 0, 0, 0);
+        }
         public static void mousewhell(int x, int y, int num)
         {
             var p = Position;
@@ -333,7 +337,7 @@ namespace keyupMusic2
         public static Point lastPosition;
         public static void press_middle_bottom()
         {
-            //biuCL.RECTT.release();
+            biuCL.RECTT.release();
             press(middle_bottom, 0);
             biuCL.RECTT.release();
         }
@@ -410,6 +414,8 @@ namespace keyupMusic2
                     Thread.Sleep(100);
                     //ctrl_shift(false);
                 }
+                else if (item == "close")
+                    CloseProcess();
                 else if (item == "zh")
                     ctrl_shift_win_search(true);
                 else if (item == "en")

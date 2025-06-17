@@ -5,6 +5,8 @@ namespace keyupMusic2
 {
     public sealed partial class MoonTime : Form
     {
+        private static MoonTime _instance;
+        public static MoonTime Instance => _instance;
         private string url = "http://localhost/fantasy/moon/index.html";
         private string url2 = "C:\\Users\\bu\\Documents\\fantasy\\fantasy\\moon\\index.html";
         private string moontime_url = "log\\moontimeurl.txt";
@@ -14,6 +16,7 @@ namespace keyupMusic2
         private System.Timers.Timer timer_Every100ms;
         public MoonTime()
         {
+            _instance = this;
             InitializeComponent();
             FormBorderStyle = FormBorderStyle.None;
             TransparencyKey = Color.Red;
@@ -127,24 +130,19 @@ namespace keyupMusic2
 
         private void WebViewForm_Load(object sender, EventArgs e)
         {
-            notifyIcon1.MouseClick += (object sender, MouseEventArgs e) =>
-            {
-                if (e.Button == MouseButtons.Left) SetVisibleCore(!Visible);
-                if (e.Button == MouseButtons.Right)
-                {
-                    MoonTime form1 = new MoonTime();
-                    form1.Show();
-                    Dispose();
-                }
-            };
-            notifyIcon1.MouseDoubleClick += (object sender, MouseEventArgs e) =>
-            {
-                Dispose();
-            };
             Every100ms();
 
             string location = File.ReadAllText(moontime_location);
             Location = new Point(int.Parse(location.Split(',')[0]), int.Parse(location.Split(',')[1]));
+        }
+        public static void vkMenuItem_Click(object sender, EventArgs e)
+        {
+            MoonTime.Instance.Visible = !MoonTime.Instance.Visible;
+        }
+        public static void vkMenuItem_DoubleClick(object sender, EventArgs e)
+        {
+            MoonTime.Instance.Dispose();
+            new MoonTime().Show();
         }
         protected override CreateParams CreateParams
         {

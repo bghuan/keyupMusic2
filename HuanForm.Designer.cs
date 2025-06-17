@@ -1,4 +1,6 @@
-﻿namespace keyupMusic2
+﻿using System.Windows.Forms;
+
+namespace keyupMusic2
 {
     partial class Huan
     {
@@ -83,6 +85,23 @@
             contextMenuStrip1.Name = "contextMenuStrip1";
             contextMenuStrip1.Size = new Size(171, 784);
             contextMenuStrip1.ItemClicked += contextMenuStrip1_ItemClicked;
+
+            // 在 contextMenuStrip1 初始化后添加
+            contextMenuStrip1.Items.Add(new ToolStripSeparator());
+
+            var vkMenuItem1 = new ToolStripMenuItem("月亮表(显示隐藏)");
+            vkMenuItem1.Click += MoonTime.vkMenuItem_Click;
+            vkMenuItem1.Name ="moontimmeshow";
+            var vkMenuItem2 = new ToolStripMenuItem("月亮表(重启)");
+            vkMenuItem2.Click += MoonTime.vkMenuItem_DoubleClick;
+            var vkMenuItem3 = new ToolStripMenuItem("微亮键盘(显示隐藏)");
+            vkMenuItem3.Click += VirtualKeyboardForm.vkMenuItem_Click;
+            vkMenuItem3.Name = "keyboardlightshow";
+            var vkMenuItem4 = new ToolStripMenuItem("微亮键盘(重启)");
+            vkMenuItem4.Click += VirtualKeyboardForm.vkMenuItem_DoubleClick;
+
+            letterMenuItems2= new ToolStripMenuItem[] { vkMenuItem1 , vkMenuItem2 , vkMenuItem3 , vkMenuItem4 };
+            contextMenuStrip1.Items.AddRange(letterMenuItems2);
             // 
             // label2
             // 
@@ -126,6 +145,7 @@
         private NotifyIcon notifyIcon1;
         private ContextMenuStrip contextMenuStrip1;
         private ToolStripMenuItem[] letterMenuItems;
+        private ToolStripMenuItem[] letterMenuItems2;
         public System.Windows.Forms.Timer timerMove;
         public Label label2;
     }

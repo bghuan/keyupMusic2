@@ -5,6 +5,8 @@ namespace keyupMusic2
 {
     public partial class VirtualKeyboardForm : Form
     {
+        private static VirtualKeyboardForm _instance;
+        public static VirtualKeyboardForm Instance => _instance;
         private WebView2 webView;
         private string url = "http://localhost/fantasy/moon/keyboardlight.html";
         private string url2 = "C:\\Users\\bu\\Documents\\fantasy\\fantasy\\moon\\keyboardlight.html";
@@ -12,17 +14,18 @@ namespace keyupMusic2
 
         public VirtualKeyboardForm()
         {
+            _instance = this;
             FormBorderStyle = FormBorderStyle.None;
             TransparencyKey = Color.Fuchsia;
             BackColor = Color.Fuchsia;
             TopMost = true;
             ShowInTaskbar = false;
             this.Text = "Î¢ÁÁ¼üÅÌ";
-            this.Width = 1300;
-            this.Height = 500;
+            this.Width = 2560;
+            this.Height = 1100;
 
             this.StartPosition = FormStartPosition.Manual;
-            this.Location = new Point(654, 883);
+            this.Location = new Point(0, 360);
 
             webView = new WebView2
             {
@@ -32,27 +35,17 @@ namespace keyupMusic2
             this.Controls.Add(webView);
 
             this.Load += VirtualKeyboardForm_Load;
-            this.KeyPreview = true;
 
-            // ÍÐÅÌÍ¼±ê³õÊ¼»¯
-            trayIcon = new NotifyIcon();
-            trayIcon.Text = "Î¢ÁÁ¼üÅÌ";
-            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(MoonTime));
-            trayIcon.Icon = (Icon)resources.GetObject("notifyIcon1.Icon");
-            trayIcon.Visible = true;
-
-            // ÍÐÅÌÊÂ¼þ
-            trayIcon.MouseClick += (object sender, MouseEventArgs e) =>
-            {
-                if (e.Button == MouseButtons.Left) SetVisibleCore(!Visible);
-            };
-            trayIcon.MouseDoubleClick += (object sender, MouseEventArgs e) =>
-            {
-                trayIcon.Visible = false;
-                Dispose();
-            };
         }
-
+        public static void vkMenuItem_Click(object sender, EventArgs e)
+        {
+            VirtualKeyboardForm.Instance.Visible = !VirtualKeyboardForm.Instance.Visible;
+        }
+        public static void vkMenuItem_DoubleClick(object sender, EventArgs e)
+        {
+            VirtualKeyboardForm.Instance.Dispose();
+            new VirtualKeyboardForm().Show();
+        }
         private async void VirtualKeyboardForm_Load(object sender, EventArgs e)
         {
             await webView.EnsureCoreWebView2Async(null);

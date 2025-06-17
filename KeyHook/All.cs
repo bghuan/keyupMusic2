@@ -77,7 +77,7 @@ namespace keyupMusic2
         private static void quick_wechat_or_notify(string module_name)
         {
             if (is_down(Keys.Delete) || is_ctrl()) return;
-            if (ProcessName==Common.keyupMusic2)
+            if (ProcessName == Common.keyupMusic2)
             {
                 press(F12);
                 return;
@@ -116,10 +116,10 @@ namespace keyupMusic2
         private static void clean()
         {
             DaleyRun_stop = true;
-            KeyTime[system_sleep_string] = DateTime.MinValue;
             player.Stop();
             CleanMouseState();
             ready_to_sleep = false;
+            system_sleep_count = 0;
         }
 
         private static void quick_go_back(KeyboardHookEventArgs e)
@@ -183,7 +183,7 @@ namespace keyupMusic2
             //    () => GetPointTitle() == "Microsoft Visual Studio(管理员)",
             //    () => press("100;Tab;Down;Enter;", 100),
             //    3000, 200);
-            TaskRun(() => { press("Tab;Down;Enter;", 100); }, 2000);
+            TaskRun(() => { press("Tab;Down;Enter;", 50); }, 1000);
         }
     }
 }

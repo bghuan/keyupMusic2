@@ -19,7 +19,6 @@
             components = new System.ComponentModel.Container();
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(MoonTime));
             webView21 = new Microsoft.Web.WebView2.WinForms.WebView2();
-            notifyIcon1 = new NotifyIcon(components);
             ((System.ComponentModel.ISupportInitialize)webView21).BeginInit();
             SuspendLayout();
             // 
@@ -34,12 +33,6 @@
             webView21.Size = new Size(936, 803);
             webView21.TabIndex = 0;
             webView21.ZoomFactor = 1D;
-            // 
-            // notifyIcon1
-            // 
-            notifyIcon1.Icon = (Icon)resources.GetObject("notifyIcon1.Icon");
-            notifyIcon1.Text = "月亮表";
-            notifyIcon1.Visible = true;
             // 
             // MoonTime
             // 
@@ -59,6 +52,5 @@
         #endregion
 
         public Microsoft.Web.WebView2.WinForms.WebView2 webView21;
-        private NotifyIcon notifyIcon1;
     }
 }

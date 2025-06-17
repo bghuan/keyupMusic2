@@ -10,14 +10,8 @@
   <ItemGroup>
     <PackageReference Include="NAudio" Version="2.2.1" />
     <PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
-    <PackageReference Include="SharpDX.DirectInput" Version="4.2.0" />
-    <PackageReference Include="SharpPcap" Version="6.3.0" />
     <PackageReference Include="System.Management" Version="9.0.5" />
     <PackageReference Include="WebSocketSharp-netstandard" Version="1.0.1" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <ProjectReference Include="..\..\WindowsInput\WindowsInput\WindowsInput.csproj" />
   </ItemGroup>
 
 </Project>

@@ -20,7 +20,7 @@ namespace keyupMusic2
         public bool judge_handled(MouseHookEventArgs e)
         {
             if (e.Msg == MouseMsg.move) return false;
-            if (e.Msg == MouseMsg.middle) return true;
+            if (e.Msg == MouseMsg.middle && !raw_middle) return true;
             if (e.Msg == MouseMsg.middle_up) return true;
             if (e.Msg == MouseMsg.wheel && e.Y == 0) return true;
 
@@ -42,15 +42,15 @@ namespace keyupMusic2
                     return true;
                 }
             }
-            if (e.Msg == MouseMsg.wheel && e.X == screenWidth1)
-            {
-                var list = new[] { chrome };
-                if (list.Contains(Common.ProcessName))
-                    return true;
-            }
             if (e.Msg == MouseMsg.wheel)
             {
-                var list = new[] { Glass2 };
+                if (e.X == 0)
+                {
+                    var list2 = new[] { chrome };
+                    if (list2.Contains(Common.ProcessName))
+                        return true;
+                }
+                var list = new[] { Glass2, vlc };
                 if (list.Contains(Common.ProcessName))
                     return true;
             }
@@ -76,7 +76,6 @@ namespace keyupMusic2
                 easy_read(e);
 
                 biusc.Cornor(e);
-                //biusc.ScreenLine(e);
                 BottomLine(e);
                 Other(e);
 
@@ -87,12 +86,11 @@ namespace keyupMusic2
                 All(e);
             });
         }
-
         private void All(MouseHookEventArgs e)
         {
             if (e.Msg == MouseMsg.move) return;
 
-            if (e.Msg == MouseMsg.middle)
+            if (e.Msg == MouseMsg.middle && !raw_middle)
             {
                 press(Keys.MediaPlayPause);
                 if (!IsAnyMusicPlayerRunning())

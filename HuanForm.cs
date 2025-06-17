@@ -30,8 +30,6 @@ namespace keyupMusic2
         private Point endPoint = new Point(2250, 100);
         private DateTime startTime;
 
-        public VirtualKeyboardForm vkForm;
-        public MoonTime moontimeForm;
         public Huan()
         {
             if (start_check()) return;
@@ -56,7 +54,8 @@ namespace keyupMusic2
             new Tick(); ;
             Opencv = new OpencvReceive();
 
-            Application.ApplicationExit += (s, e) => {
+            Application.ApplicationExit += (s, e) =>
+            {
                 if (!Debugger.IsAttached) return;
                 string executablePath = Process.GetCurrentProcess().MainModule.FileName;
                 Process.Start(executablePath);
@@ -96,13 +95,6 @@ namespace keyupMusic2
         {
             if (Enum.TryParse(typeof(Keys), e.ClickedItem.Text.Substring(0, 1), out object key))
             {
-                //var args = new KeyboardHookEventArgs(KeyboardType.KeyDown, (Keys)key, 0, new Native.keyboardHookStruct());
-                //super_listen();
-                //KeyBoardHookProc(args);
-                //args.Type = KeyboardType.KeyUp;
-                //KeyBoardHookProc(args);
-                //press((Keys)key);
-
                 SuperClass.hook_KeyDown((Keys)key);
             }
         }
@@ -111,9 +103,17 @@ namespace keyupMusic2
             if (e.Button == MouseButtons.Left) SetVisibleCore(!Visible);
             if (e.Button == MouseButtons.Right)
             {
+                // 假设“微亮键盘(显示隐藏)”是你要修改的项
+                foreach (ToolStripItem item in contextMenuStrip1.Items)
+                {
+                    if (item is ToolStripMenuItem menuItem && menuItem.Name.Equals("moontimmeshow"))
+                        menuItem.Text = $"月亮表({(MoonTime.Instance.Visible ? "已显示" : "已隐藏")})";
+                    if (item is ToolStripMenuItem menuItem2 && menuItem2.Name.Equals("keyboardlightshow"))
+                        menuItem2.Text = $"微亮键盘({(VirtualKeyboardForm.Instance.Visible ? "已显示" : "已隐藏")})";
+                }
                 var mousePos = Control.MousePosition;
                 int menuHeight = contextMenuStrip1.GetPreferredSize(contextMenuStrip1.Size).Height;
-                contextMenuStrip1.Show(mousePos.X, mousePos.Y  - menuHeight);
+                contextMenuStrip1.Show(mousePos.X, mousePos.Y - menuHeight);
             }
         }
         private void Huan_Resize(object sender, EventArgs e)
@@ -195,10 +195,10 @@ namespace keyupMusic2
 
             //if (!Debugger.IsAttached) return;
             // 创建并显示WebView2窗口
-            vkForm = new keyupMusic2.VirtualKeyboardForm();
-            vkForm.Show();
+            VirtualKeyboardForm virtualKeyboardForm = new VirtualKeyboardForm();
+            virtualKeyboardForm.Show();
 
-            moontimeForm = new MoonTime();
+            MoonTime moontimeForm = new MoonTime();
             moontimeForm.Show();
         }
     }

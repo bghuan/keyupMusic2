@@ -10,23 +10,22 @@ namespace keyupMusic2
             if (!args.isVir)
                 KeyboardHookEvent(args);
             if (args.Handled)
-                return 1;
+                return -1;
 
             return Native.CallNextHookEx(_key_hookId, code, wParam, ref lParam);
         }
 
         protected virtual IntPtr MouseHookProc(int nCode, IntPtr wParam, IntPtr lParam)
         {
-            Point curPos;
-            Native.GetCursorPos(out curPos);
-            var args = new MouseHookEventArgs((MouseMsg)wParam, curPos.X, curPos.Y, wParam, lParam);
-
+            var args = new MouseHookEventArgs((MouseMsg)wParam, Cursor.Position.X, Cursor.Position.Y, wParam, lParam);
             Param_Data(lParam, args);
 
             if (!args.isVir)
                 MouseHookEvent(args);
+            if (args.Handled)
+                return new IntPtr(-1);
 
-            return args.Handled ? new IntPtr(-1) : Native.CallNextHookEx(_mouse_hookId, nCode, wParam, lParam);
+            return Native.CallNextHookEx(_mouse_hookId, nCode, wParam, lParam);
         }
         private static void Param_Data(nint lParam, MouseHookEventArgs args)
         {

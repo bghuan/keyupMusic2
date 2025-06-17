@@ -10,6 +10,7 @@ namespace keyupMusic2
         private readonly System.Windows.Forms.Timer timer8000ms = new() { Interval = 8000 };
         private readonly System.Windows.Forms.Timer timer60000ms = new() { Interval = 60_000 };
 
+        int long_press_tick = 500;
         public Tick()
         {
             timer100msKeyPress.Tick += (s, e) => Every100msHandler();
@@ -34,7 +35,7 @@ namespace keyupMusic2
 
                 Task.Run(() =>
                 {
-                    Sleep((player_time.Seconds + 1) * 1000);
+                    Sleep(player_time);
                     float volume2 = GetSystemVolume();
                     if (volume > 0.5 && volume2 == 0.5)
                     {
@@ -43,11 +44,6 @@ namespace keyupMusic2
                     }
                     if (is_music) press(Keys.MediaPlayPause);
                 });
-            }
-            if (!Wifi.connected())
-            {
-                play_sound_di2();
-                SafeInvoke(() => huan.label1.Text = "wifi no connected");
             }
         }
 
@@ -59,13 +55,9 @@ namespace keyupMusic2
             foreach (var key in currentKeys)
             {
                 if (!_keyPressTimes.ContainsKey(key.Key))
-                {
                     _keyPressTimes[key.Key] = DateTime.Now;
-                    // 不要在这里加到 _longPressedKeys
-                }
 
-                // 检查是否长按（超过1秒）
-                if ((DateTime.Now - _keyPressTimes[key.Key]).Milliseconds >= 700 &&
+                if ((DateTime.Now - _keyPressTimes[key.Key]).Milliseconds >= long_press_tick &&
                     !_longPressedKeys.ContainsKey(key.Key)
                     && (key.Value == null || key.Value == ProcessName))
                 {
@@ -74,7 +66,6 @@ namespace keyupMusic2
                 }
             }
 
-            // 移除已释放的按键
             var keysToRemove = _keyPressTimes.Keys
                 .Where(k => !currentKeys.ContainsKey(k))
                 .ToList();
@@ -103,28 +94,23 @@ namespace keyupMusic2
                 if (Position != PositionMiddle)
                     PositionMiddle = Position;
             }
-            else if (!KeyTime.ContainsKey(system_sleep_string))
+            else if (system_sleep_count > 0)
             {
-                KeyTime[system_sleep_string] = DateTime.MinValue;
-            }
-            else if (lock_err && KeyTime.ContainsKey(system_sleep_string) && KeyTime[system_sleep_string].AddMinutes(5) > DateTime.Now)
-            {
-                if (system_sleep_count++ > 1)
-                    play_sound(Keys.D1, true);
-                if (system_sleep_count++ > 4)
+                if (system_sleep_count > 1)
+                    play_sound(Keys.D2, true);
+                if (system_sleep_count > 5)
                     system_hard_sleep();
+                system_sleep_count++;
                 Log.logcachesave();
             }
             else if (gcc_restart)
             {
                 for (int i = 0; i < 30; i++)
-                {
                     if (ExistProcess(gcc))
                     {
                         CloseProcessFoce(gcc);
                         Sleep(100);
                     }
-                }
                 ProcessRun(gccexe);
                 Sleep(5000);
                 HideProcess(gccexe);

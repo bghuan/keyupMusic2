@@ -71,12 +71,16 @@ namespace keyupMusic2
         public const string cloudmusic = "cloudmusic";
         public const string cloudmusicexe = "C:\\Program Files (x86)\\Netease\\CloudMusic\\cloudmusic.exe";
         public const string clashverge = "clash-verge";
+        public const string FolderView = "FolderView";
+        public const string RSG = "RSG-Win64-Shipping";
 
 
         public static string ProcessName = "";
         public static string ProcessTitle = "";
         public static string ProcessPath = "";
         public static bool iswinopen { get { return new[] { StartMenuExperienceHost, SearchHost }.Contains(ProcessName); } }
+        public static HashSet<string> middle_str = new() { RSG };
+        public static bool raw_middle => middle_str.Contains(ProcessName);
         public static string FreshProcessName()
         {
             IntPtr hwnd = Native.GetForegroundWindow(); // 获取当前活动窗口的句柄
@@ -285,6 +289,12 @@ namespace keyupMusic2
             string targetClassName = window;
             IntPtr hWnd = GetProcessID(targetClassName);
             bool result = SetWindowText(hWnd, title);
+            return result;
+        }
+        public static bool SetWindowTitle()
+        {
+            IntPtr hWnd = GetForegroundWindow();
+            bool result = SetWindowText(hWnd, "");
             return result;
         }
         public static bool ExistProcess(string procName, bool front = false)

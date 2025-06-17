@@ -33,20 +33,21 @@ namespace keyupMusic2
                         {
                             client = listener.AcceptTcpClient();
                             stream = client.GetStream();
-                            byte[] bytes = new byte[256];
-                            int i;
-                            while ((i = stream.Read(bytes, 0, bytes.Length)) > 0)
-                            {
-                                string dataReceived = Encoding.UTF8.GetString(bytes, 0, i);
-                                //Log.log(dataReceived);
-                                Invoke(dataReceived);
-                            }
+
+                            byte[] buffer = new byte[1024];
+                            int i = stream.Read(buffer, 0, buffer.Length);
+                            string request = Encoding.UTF8.GetString(buffer, 0, i);
+
+                            int idx = request.IndexOf("\r\n\r\n");
+                            if (idx >= 0) request = request.Substring(idx + 4);
+
+                            Invoke(request);
                         }
                     }
                 }
                 catch (Exception ex)
                 {
-                    
+
                 }
             });
         }
@@ -76,4 +77,5 @@ namespace keyupMusic2
             }
         }
     }
+
 }

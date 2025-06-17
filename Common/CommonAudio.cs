@@ -1,6 +1,7 @@
 ﻿using NAudio.CoreAudioApi;
 using NAudio.CoreAudioApi.Interfaces;
 using NAudio.Wave;
+using static System.Windows.Forms.VisualStyles.VisualStyleElement;
 
 namespace keyupMusic2
 {
@@ -8,7 +9,8 @@ namespace keyupMusic2
     {
         public static WaveOutEvent player = new WaveOutEvent();
         public static WaveFileReader player_reader;
-        public static TimeSpan player_time;
+        public static TimeSpan _player_time;
+        public static int player_time => (int)(_player_time.TotalSeconds + 1) * 1000;
         public static bool is_playing { get { return player != null && player.PlaybackState == PlaybackState.Playing; } }
 
         public static WaveFileReader player_reader_di;
@@ -29,7 +31,7 @@ namespace keyupMusic2
                 if (!File.Exists(wav)) return;
 
                 player_reader = new WaveFileReader(wav);
-                player_time = player_reader.TotalTime;
+                _player_time = player_reader.TotalTime;
                 player.Stop();
                 player.Init(player_reader);
                 player.Play();
@@ -41,7 +43,7 @@ namespace keyupMusic2
             if (!File.Exists(wav)) return;
 
             player_reader = new WaveFileReader(wav);
-            player_time = player_reader.TotalTime;
+            _player_time = player_reader.TotalTime;
             player.Stop();
             player.Init(player_reader);
             player.Play();
@@ -72,8 +74,11 @@ namespace keyupMusic2
             try
             {
                 player_reader_bongo = new WaveFileReader(wav);
+                float volume = GetSystemVolume();
+                if (volume > 0.2) { volume = 0.2f / volume; }
+                var volumeProvider2 = new VolumeWaveProvider16(player_reader_bongo) { Volume = volume };
                 player_bongo.Stop();
-                player_bongo.Init(player_reader_bongo);
+                player_bongo.Init(volumeProvider2);
                 player_bongo.Play();
             }
             catch (Exception ex)
@@ -84,14 +89,17 @@ namespace keyupMusic2
         }
         static string wav_di = "wav\\d2.wav";
         static bool is_di = File.Exists(wav_di);
-        public static void play_sound_di(int tick = 0)
+        public static void play_sound_di(float little = 1)
         {
             if (!is_di) return;
             try
             {
                 player_reader_di = new WaveFileReader(wav_di);
+                float volume = GetSystemVolume();
+                if (volume > 0.2) { volume = little / volume; }
+                var volumeProvider2 = new VolumeWaveProvider16(player_reader_di) { Volume = volume };
                 player_di.Stop();
-                player_di.Init(player_reader_di);
+                player_di.Init(volumeProvider2);
                 player_di.Play();
             }
             catch (Exception ex)
@@ -99,7 +107,6 @@ namespace keyupMusic2
                 // 可以根据需要记录日志或提示用户
                 Console.WriteLine($"播放bongocat音效时发生异常: {ex.Message}");
             }
-            Sleep(tick);
         }
         public static void play_sound_di2(int tick = 0)
         {

@@ -20,22 +20,17 @@ namespace keyupMusic2
 
             if (replace.Any(t => e.key == t.defore && (string.IsNullOrEmpty(t.process) || ProcessName == t.process)))
                 return true;
-            if (e.key == Keys.F2 && ProcessName == Common.chrome)
-                return true;
             if (e.key == Keys.F10 || e.key == Keys.F11 || e.key == Keys.F12)
-            {
                 if (!is_down(Keys.Delete))
                     return true;
-            }
             if (e.key == Keys.OemPeriod)
-            {
                 if (is_down(Keys.RControlKey))
                     return true;
-            }
+            if (e.key == Keys.Escape)
+                if (is_playing)
+                    return true;
             if (e.key == Keys.MediaPreviousTrack || e.key == Keys.MediaNextTrack)
             {
-                List<string> list = new() { steam, cs2, Glass2, PowerToysCropAndLock, vlc };
-                if (list.Contains(ProcessName)) return true;
                 if (list_go_back.Contains(ProcessName)) return true;
             }
             if ((e.key == Keys.Right || e.key == Keys.Left) && is_ctrl())
@@ -59,6 +54,12 @@ namespace keyupMusic2
                 if (e.key == Keys.Q && isctrl())
                     return true;
             }
+            if (ProcessName == Common.msedge && !is_douyin())
+            {
+                if (e.key == Keys.VolumeUp || e.key == Keys.VolumeDown)
+                    if (e.X == screenWidth1 || e.Y == screenHeight1)
+                        return true;
+            }
             var flag = Chrome.judge_handled(e) || Douyin.judge_handled(e) || WinClass.judge_handled(e);
             return flag;
         }
@@ -67,13 +68,13 @@ namespace keyupMusic2
         {
             //if (e.Type != KeyboardType.KeyDown) return;
             FreshProcessName();
-            vkForm?.TriggerKey(e.key, e.Type == KeyboardType.KeyUp);
+            VirtualKeyboardForm.Instance?.TriggerKey(e.key, e.Type == KeyboardType.KeyUp);
             if (judge_handled(e)) { e.Handled = true; VirKeyState(e); }
             if (quick_replace_key(e)) return;
             if (deal_handilngkey(e)) return;
             print_easy_read(e);
 
-            Log.logcache(e.key.ToString());
+            //Log.logcache(e.key.ToString());
             //start_record(e);
 
             if (e.Type == KeyboardType.KeyUp)
@@ -216,8 +217,13 @@ namespace keyupMusic2
             if (e.Reason == SessionSwitchReason.SessionUnlock)
             {
                 justResumed = false;
-                moontimeForm.SetInitAngle();
-                vkForm.SetInitClean();
+                MoonTime.Instance?.SetInitAngle();
+                VirtualKeyboardForm.Instance?.SetInitClean();
+                system_sleep_count = 0;
+                DaleyRun_stop = true;
+                player.Stop();
+                CleanMouseState();
+                ready_to_sleep = false;
             }
         }
         public void start_catch(string msg)

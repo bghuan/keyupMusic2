@@ -27,6 +27,29 @@ namespace keyupMusic2
                 Douyin(e);
             else if (ProcessName == Common.msedge)
                 Msedge(e);
+            else if (ProcessName == Common.RSG)
+                _Rsg(e);
+            else if (ProcessName == Common.vlc)
+                _vlc(e);
+        }
+
+        private void _vlc(MouseHookEventArgs e)
+        {
+            if (e.Msg == MouseMsg.wheel)
+            {
+                if (e.data > 0)
+                    press(Keys.Left);
+                else
+                    press(Keys.Right);
+            }
+        }
+
+        private void _Rsg(MouseHookEventArgs e)
+        {
+            if (e.Msg == MouseMsg.middle)
+            {
+                mouse_middle();
+            }
         }
 
         private void Douyin(MouseHookEventArgs e)

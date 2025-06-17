@@ -78,6 +78,7 @@ namespace keyupMusic2
                     Log.logcachesave();
                     break;
                 case Keys.S:
+                    SetWindowTitle();
                     break;
                 case Keys.D:
                     break;
@@ -168,7 +169,7 @@ namespace keyupMusic2
                 case Keys.F6:
                     play_sound(Keys.D2);
                     press(Keys.LWin);
-                    Sleep(150);
+                    Sleep(180);
                     mouse_click(1062, 899);
                     break;
                 case Keys.F10:

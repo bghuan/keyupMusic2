@@ -26,7 +26,7 @@ namespace keyupMusic2
             else if (msg.Contains("\"msg\":2"))
             {
                 key = Keys.F3;
-                //HideProcess(chrome);
+                HideProcess(chrome);
             }
             else
             {
@@ -80,6 +80,7 @@ namespace keyupMusic2
 
             if (key == Keys.None) return;
 
+            //play_sound_di(0.1f);
             press_raw(key);
             //log(msg + "-" + ProcessName2 + "-" + key);
         }

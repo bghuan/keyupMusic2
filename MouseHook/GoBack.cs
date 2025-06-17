@@ -1,4 +1,6 @@
-﻿using System.Windows.Forms;
+﻿using System.Drawing.Imaging;
+using System.Runtime.InteropServices;
+using System.Windows.Forms;
 using static keyupMusic2.Common;
 using static keyupMusic2.MouseKeyboardHook;
 using static keyupMusic2.Native;
@@ -53,10 +55,10 @@ namespace keyupMusic2
         }
         private void chromeasd(bool go, bool back)
         {
-            if (back)
-                if ((judge_color(3876, 95, Color.FromArgb(104, 107, 101)))
-                    && judge_color(6437, 147, Color.FromArgb(55, 61, 53)))
-                    press([Keys.LControlKey, Keys.W]);
+            //if (back)
+            //    if ((judge_color(3876, 95, Color.FromArgb(104, 107, 101)))
+            //        && judge_color(6437, 147, Color.FromArgb(55, 61, 53)))
+            //        press([Keys.LControlKey, Keys.W]);
             if (go) press(Keys.F);
         }
         private void Msedge(bool go, bool back)
@@ -66,6 +68,20 @@ namespace keyupMusic2
                     //if (judge_color(92, 73, Color.FromArgb(0, 0, 0), null, 0))
                     press([Keys.LControlKey, Keys.W]);
             if (go) press(Keys.Right);
+            //if (back)
+            //{
+
+            //    IntPtr hwnd = GetForegroundWindow();
+            //    Bitmap before = CaptureWindow(hwnd);
+            //    Thread.Sleep(200);
+            //    Bitmap after = CaptureWindow(hwnd);
+            //    bool changed = !BitmapsAreSimilar(before, after);
+            //    before.Dispose();
+            //    after.Dispose();
+
+            //    if (!changed)
+            //        press_raw([LControlKey, W]);
+            //}
         }
         private void cs2(bool go, bool back)
         {
