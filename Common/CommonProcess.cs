@@ -1,5 +1,6 @@
 ﻿using System.Collections.Concurrent;
 using System.Diagnostics;
+using System.Drawing;
 using System.Drawing.Imaging;
 using System.Net;
 using System.Reflection;
@@ -45,14 +46,12 @@ namespace keyupMusic2
         public const string Glass2 = "Illusions";
         public const string Glass3 = "Glass Masquerade 3";
         public const string steam = "steamwebhelper";
-        public const string Kingdom = "Kingdom Rush Vengeance";
         public const string Human = "Human";
         public const string ItTakesTwo = "ItTakesTwo";
         public const string Ghostrunner2 = "Ghostrunner2-Win64-Shipping";
         public const string bilibili = "bilibili";
         public const string UnlockingWindow = "UnlockingWindow";
         public const string LockApp = "LockApp";
-        public const string Kingdom5 = "Kingdom Rush Alliance";
         public const string err = "err";
         public const string WeChatAppEx = "WeChatAppEx";
         public const string cs2 = "cs2";
@@ -73,11 +72,21 @@ namespace keyupMusic2
         public const string clashverge = "clash-verge";
         public const string FolderView = "FolderView";
         public const string RSG = "RSG-Win64-Shipping";
+        public const string KingdomRush = "Kingdom Rush";
+        public const string KingdomRush1 = "Kingdom Rush";
+        public const string KingdomRushFrontiers = "Kingdom Rush Frontiers";
+        public const string Kingdom = "Kingdom Rush Vengeance";
+        public const string Kingdom5 = "Kingdom Rush Alliance";
+        public const string Progman = "Progman";
+        public const string lz_image_downloadexe = "C:\\Users\\bu\\source\\repos\\lz_image_download\\bin\\Debug\\net8.0\\lz_image_download.exe";
+        public const string PhotoApps = "PhotoApps";
+        public const string BandiView = "BandiView";
 
 
         public static string ProcessName = "";
         public static string ProcessTitle = "";
         public static string ProcessPath = "";
+        public static ProcessWrapper processWrapper;
         public static bool iswinopen { get { return new[] { StartMenuExperienceHost, SearchHost }.Contains(ProcessName); } }
         public static HashSet<string> middle_str = new() { RSG };
         public static bool raw_middle => middle_str.Contains(ProcessName);
@@ -89,12 +98,18 @@ namespace keyupMusic2
                 return Common.ProcessName;
             if (!ProcessMap.ContainsKey(hwnd))
             {
-                uint processId;
-                Native.GetWindowThreadProcessId(hwnd, out processId);
-                using (Process process = Process.GetProcessById((int)processId))
-                {
-                    ProcessMap[hwnd] = new ProcessWrapper(process.ProcessName, GetWindowTitle(hwnd), process.MainModule.FileName);
-                }
+                //uint processId;
+                //Native.GetWindowThreadProcessId(hwnd, out processId);
+
+                //StringBuilder className = new StringBuilder(256);
+                //GetClassName(hwnd, className, className.Capacity);
+                //string classNameStr = className.ToString();
+
+                //using (Process process = Process.GetProcessById((int)processId))
+                //{
+                //    ProcessMap[hwnd] = new ProcessWrapper(process.ProcessName, GetWindowTitle(hwnd), process.MainModule.FileName, classNameStr);
+                //}
+                ProcessMap[hwnd] = new ProcessWrapper(hwnd);
             }
             FreshProcessNameByMap(hwnd);
 
@@ -109,18 +124,13 @@ namespace keyupMusic2
                 Common.ProcessName = ProcessMap[hwnd].name;
                 ProcessTitle = ProcessMap[hwnd].title;
                 ProcessPath = ProcessMap[hwnd].path;
-                if (Common.ProcessName == msedge)
-                    ProcessTitle = GetWindowTitle(hwnd); ;
+                if (Common.ProcessName == msedge || ProcessName == chrome)
+                {
+                    ProcessTitle = GetWindowTitle(hwnd);
+                    ProcessMap[hwnd].title = ProcessTitle;
+                }
+                processWrapper = ProcessMap[hwnd];
             }
-        }
-        public static string GetWindowText()
-        {
-            IntPtr hwnd = Native.GetForegroundWindow(); // 获取当前活动窗口的句柄
-
-            string windowTitle = GetWindowTitle(hwnd);
-            //Console.WriteLine("当前活动窗口名称: " + windowTitle);
-
-            return windowTitle;
         }
         public static bool IsDiffProcess()
         {
@@ -154,16 +164,17 @@ namespace keyupMusic2
         public static IntPtr GetPointProcessHwnd()
         {
             IntPtr point_hwnd = Native.WindowFromPoint(Position);
-            IntPtr hwnd = IntPtr.Zero;
-            uint processId;
-            Native.GetWindowThreadProcessId(point_hwnd, out processId);
-            using (Process process = Process.GetProcessById((int)processId))
-            {
-                hwnd = process.MainWindowHandle;
-                ProcessMap[point_hwnd] = ProcessMap[hwnd] = new ProcessWrapper(process.ProcessName, GetWindowTitle(hwnd), process.MainModule.FileName);
-            }
+            //IntPtr hwnd = IntPtr.Zero;
+            //uint processId;
+            //Native.GetWindowThreadProcessId(point_hwnd, out processId);
+            //using (Process process = Process.GetProcessById((int)processId))
+            //{
+            //    hwnd = process.MainWindowHandle;
+            //    ProcessMap[point_hwnd] = ProcessMap[hwnd] = new ProcessWrapper(point_hwnd);
+            //}
+            ProcessMap[point_hwnd] = ProcessMap[point_hwnd] = new ProcessWrapper(point_hwnd);
             //FreshProcessNameByMap(hwnd);
-            return hwnd;
+            return point_hwnd;
         }
         public static string GetWindowName(IntPtr hwnd)
         {
@@ -191,19 +202,37 @@ namespace keyupMusic2
             public string name { get; set; }
             public string title { get; set; }
             public string path { get; set; }
+            public string classname { get; set; }
 
-            public ProcessWrapper(string name, string title, string path)
+            //public ProcessWrapper(string name, string title, string path, string classname)
+            //{
+            //    this.name = name;
+            //    this.title = title;
+            //    this.path = path;
+            //    this.classname = classname;
+            //}
+            public ProcessWrapper(IntPtr hwnd)
             {
-                this.name = name;
-                this.title = title;
-                this.path = path;
+                uint processId;
+                Native.GetWindowThreadProcessId(hwnd, out processId);
+
+                StringBuilder className = new StringBuilder(256);
+                GetClassName(hwnd, className, className.Capacity);
+                string classNameStr = className.ToString();
+
+                Process process = Process.GetProcessById((int)processId);
+                this.name = process.ProcessName;
+                this.title = GetWindowTitle(hwnd);
+                this.path = process.MainModule.FileName;
+                this.classname = classNameStr;
+                process.Dispose();
             }
             public string ToString()
             {
-                return this.name + " " + this.title + " " + this.path;
+                return this.name + " " + this.title + " " + this.path + " " + this.classname;
             }
         }
-      
+
         public static void FocusPointProcess()
         {
             IntPtr hwnd = GetPointProcessHwnd();
@@ -358,6 +387,15 @@ namespace keyupMusic2
             IntPtr hwnd = Native.GetForegroundWindow();
             PostMessage(hwnd, (uint)WM_CLOSE, IntPtr.Zero, IntPtr.Zero);
         }
+        public static string GetWindowTitle()
+        {
+            IntPtr hwnd = Native.GetForegroundWindow(); // 获取当前活动窗口的句柄
+
+            string windowTitle = GetWindowTitle(hwnd);
+            //Console.WriteLine("当前活动窗口名称: " + windowTitle);
+
+            return windowTitle;
+        }
         public static string GetWindowTitle(IntPtr hWnd)
         {
             const int nChars = 256;
@@ -368,7 +406,7 @@ namespace keyupMusic2
             }
             return "";
         }
-      
+
         public static Point ProcessPosition(string pro)
         {
             IntPtr targetWindowHandle = GetProcessID(pro);
@@ -381,21 +419,30 @@ namespace keyupMusic2
             }
             return new Point(0, 0);
         }
-      
+
         public static bool Deven_runing()
         {
             return (ProcessTitle?.IndexOf("正在运行") >= 0 || ProcessTitle == "");
         }
-       
-      
+
+
         public static void bland_title()
         {
             //SetWindowTitle(Common.devenv, "");
-            SetWindowTitle(Common.chrome, "");
-            SetWindowTitle(Common.PowerToysCropAndLock, "");
-            SetWindowTitle(Common.wemeetapp, "");
+            //SetWindowTitle(Common.chrome, "");
+            //SetWindowTitle(Common.PowerToysCropAndLock, "");
+            //SetWindowTitle(Common.wemeetapp, "");
         }
-
+        public static bool IsDesktopFocused()
+        {
+            string classNameStr = processWrapper?.classname;
+            var title = GetPointTitle() == FolderView;
+            var aa = classNameStr == "Progman" || classNameStr == "WorkerW";
+            if ((classNameStr == "Shell_TrayWnd" || classNameStr == "CabinetWClass") && title) aa = true;
+            aa = aa && title;
+            //aa = aa || ProcessName == Common.keyupMusic2;
+            return aa;
+        }
 
     }
 }

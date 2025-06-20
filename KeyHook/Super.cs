@@ -75,7 +75,7 @@ namespace keyupMusic2
                     break;
                 case Keys.A:
                     //start_record = !start_record;
-                    Log.logcachesave();
+                    //Log.logcachesave();
                     break;
                 case Keys.S:
                     SetWindowTitle();
@@ -116,7 +116,7 @@ namespace keyupMusic2
 
                     break;
                 case Keys.Z:
-                    Native.SetCursorPos(Cursor.Position.X, Cursor.Position.Y);
+                    IsDesktopFocused();
                     //var capturer = new WindowCaptureFixed();
                     //capturer.StartLiveBackgroundRemoval(PowerToysCropAndLock);
                     break;
@@ -349,7 +349,7 @@ namespace keyupMusic2
 
                 var color = bmpScreenshot.GetPixel(relativeX, relativeY);
                 string asd = $"({mousePosition.X},{mousePosition.Y}, Color.FromArgb({color.R},{color.G},{color.B}))";
-                log(ProcessName + " " + GetPointName() + " " + GetPointTitle() + " " + asd);
+                log(processWrapper.ToString() + " " + asd);
                 //process_and_log(e?.key.ToString());
                 Invoke(() => Clipboard.SetText(asd));
                 return;
@@ -361,7 +361,7 @@ namespace keyupMusic2
                     g.CopyFromScreen(last_x, last_y, 0, 0, new System.Drawing.Size(1, 1));
                     var color = bitmap.GetPixel(0, 0);
                     string asd = $"({mousePosition.X},{mousePosition.Y}, Color.FromArgb({color.R},{color.G},{color.B}))";
-                    log(ProcessName + " " + GetPointName() + " " + GetPointTitle() + " " + asd);
+                    log(processWrapper.ToString() + " " + asd);
                     //process_and_log(e?.key.ToString());
                     asd = $"{mousePosition.X},{mousePosition.Y}";
                     Invoke(() => Clipboard.SetText(asd));

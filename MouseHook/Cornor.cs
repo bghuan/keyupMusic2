@@ -14,7 +14,9 @@ namespace keyupMusic2
 
             if (is_douyin())
                 press(Keys.H);
-            else if(IsDiffProcess())
+            else if (ProcessName.Equals(ApplicationFrameHost))
+                press(Keys.F11);
+            else if (IsDiffProcess())
                 mouse_click2(0);
             else if (ProcessName == Common.chrome && (judge_color(825, 44, Color.FromArgb(162, 37, 45))))
                 press("20;216,42;216,43");
@@ -30,7 +32,7 @@ namespace keyupMusic2
             var list2 = new[] { Thunder, cloudmusic, Taskmgr, wemeetapp, ApplicationFrameHost, explorer, vlc, v2rayN, Common.QQMusic, VSCode, AIoT, RadeonSoftware, steam };
 
             if (is_douyin())
-                press_close();
+                CloseProcess();
             //else if (list.Contains(Common.ProcessName))
             //    mouse_click();
             else if (ProcessName == Common.devenv && Deven_runing())
@@ -38,6 +40,10 @@ namespace keyupMusic2
                 Sleep(200);
                 mouse_click(80, 70);
                 mouse_move(PositionMiddle);
+            }
+            else if (IsDesktopFocused())
+            {
+                FocusPointProcess();
             }
             //else if (ProcessName == Common.devenv)
             //    HideProcess();
@@ -52,7 +58,7 @@ namespace keyupMusic2
             else if (ProcessName == Common.chrome && ProcessPosition(chrome).X >= screenWidth)
             { }
             else if (!IsFullScreen())
-                press_close();
+                CloseProcess();
         }
 
         private void _corner5(MouseHookEventArgs e)

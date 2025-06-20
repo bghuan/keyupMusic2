@@ -38,14 +38,32 @@ namespace keyupMusic2
                     quick_gamg_alttab(e, module_name); break;
 
                 case Keys.Delete:
+                    clean(); DeleteCurrentWallpaper(); break;
                 case Keys.Escape:
-                    clean(); break;
+                    clean(); SetDesktopToBlack(); break;
+
+                case Keys.Up:
+                    quick_next_image(); break;
+                case Keys.Down:
+                    quick_prix_image(); break;
 
                 case Keys.OemPeriod:
                     if (is_down(Keys.RControlKey)) SS().KeyPress(Keys.Apps); break;
             }
 
             Common.hooked = false;
+        }
+
+        private void quick_prix_image()
+        {
+            if (!isctrl()) return;
+            SetDesktopWallpaper(GetNextWallpaper(), WallpaperStyle.Fit);
+        }
+
+        private void quick_next_image()
+        {
+            if (!isctrl()) return;
+            SetDesktopWallpaper(GetPreviousWallpaper(), WallpaperStyle.Fit);
         }
 
         private static void quick_what()
@@ -86,7 +104,7 @@ namespace keyupMusic2
             {
                 CloseProcess(module_name);
             }
-            else if (GetWindowText() == UnlockingWindow || ProcessName == LockApp || ProcessName == err)
+            else if (GetWindowTitle() == UnlockingWindow || ProcessName == LockApp || ProcessName == err)
             {
                 SuperClass.hook_KeyDown(Keys.N);
             }
@@ -183,7 +201,7 @@ namespace keyupMusic2
             //    () => GetPointTitle() == "Microsoft Visual Studio(管理员)",
             //    () => press("100;Tab;Down;Enter;", 100),
             //    3000, 200);
-            TaskRun(() => { press("Tab;Down;Enter;", 50); }, 1000);
+            TaskRun(() => { press("Tab;Down;Enter;", 50); }, 800);
         }
     }
 }

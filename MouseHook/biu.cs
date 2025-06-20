@@ -34,7 +34,7 @@ namespace keyupMusic2
             }
             if (e.Msg == MouseMsg.click_r || e.Msg == MouseMsg.click_r_up)
             {
-                var list = new[] { devenv, Glass2, Glass3 };
+                var list = new[] { devenv, Glass2, Glass3, BandiView };
                 if (list.Contains(Common.ProcessName))
                 {
                     //if (is_down(Keys.RButton)) return false;

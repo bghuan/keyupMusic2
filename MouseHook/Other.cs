@@ -30,17 +30,47 @@ namespace keyupMusic2
             else if (ProcessName == Common.RSG)
                 _Rsg(e);
             else if (ProcessName == Common.vlc)
-                _vlc(e);
+                wheelleftright(e);
+            else if (ProcessName == Common.ApplicationFrameHost && ProcessTitle.Contains("png") || GetPointName() == PhotoApps)
+                wheelleftright(e);
+            else if (ProcessName.Contains(KingdomRush))
+                _KingdomRush(e);
+            else if (ProcessName == Common.BandiView)
+                HandleBandiView(e);
+
+            if (IsDesktopFocused() || ProcessName == Common.keyupMusic2)
+                change_image(e);
         }
 
-        private void _vlc(MouseHookEventArgs e)
+        private void HandleBandiView(MouseHookEventArgs e)
+        {
+            if (e.Msg == MouseMsg.click_r)
+                press(10, Delete, 200, Return);
+                //press(10, 400, Escape, Delete, 200, Return);
+        }
+
+        private static void change_image(MouseHookEventArgs e)
         {
             if (e.Msg == MouseMsg.wheel)
             {
-                if (e.data > 0)
-                    press(Keys.Left);
-                else
-                    press(Keys.Right);
+                string nextWallpaper = "";
+                if (e.data < 0) nextWallpaper = GetNextWallpaper();
+                if (e.data > 0) nextWallpaper = GetPreviousWallpaper();
+                SetDesktopWallpaper(nextWallpaper, WallpaperStyle.Fit);
+            }
+            if (e.Msg == MouseMsg.click_r)
+                if (ProcessName == explorer && e.Y == 0)
+                {
+                    DeleteCurrentWallpaper();
+                    press(Escape);
+                }
+        }
+
+        private void _KingdomRush(MouseHookEventArgs e)
+        {
+            if (e.Msg == MouseMsg.click_r_up)
+            {
+                press(Keys.D2);
             }
         }
 
@@ -179,10 +209,31 @@ namespace keyupMusic2
             //}
             else if (e.Msg == MouseMsg.wheel && e.X == 0)
             {
-                Keys keys = Keys.Right;
-                if (e.data > 0) keys = Keys.Left;
-                press(keys);
+                wheelleftright(e);
             }
+
+            //if (e.Msg == MouseMsg.wheel && (ProcessTitle.Contains("荔枝") && !ProcessTitle.Contains("分类")))
+            //{
+            //    //int aa = screenWidth / 20;
+            //    //int a = (e.X - screenWidth2) / aa;
+            //    //if (a < 1) a = 1;
+            //    if (e.X < 1300)
+            //    { }
+            //    else// if (e.X < 1800)
+            //        mousewhell(e.data * 3);
+            //    //else if (e.X < 2200)
+            //    //    mousewhell(e.data * 1300 / 120);
+            //    //else if (e.X < screenWidth)
+            //    //    mousewhell(e.data * 12);
+            //}
+        }
+
+        public static void wheelleftright(MouseHookEventArgs e)
+        {
+            if (e.Msg != MouseMsg.wheel) return;
+            Keys keys = Keys.Right;
+            if (e.data > 0) keys = Keys.Left;
+            press(keys);
         }
     }
 }

@@ -1,184 +1,121 @@
 ﻿using System;
-using System.Net;
-using System.Net.Sockets;
+using System.Collections.Generic;
+using System.Diagnostics;
+using System.Net.Http;
+using System.Net.WebSockets;
 using System.Text;
+using System.Text.Json;
 using System.Threading;
 using System.Threading.Tasks;
-using System.Windows;
 
-namespace P2PCommunication
+namespace ChromeUrlReader
 {
     class Program
     {
-        public static TcpListener listener;
-        public static TcpClient client2;
-        public static NetworkStream stream;
-        private const string Hostname = "127.0.0.1";
-        private const int pport = 13000;
-        private const string WebSocketUrl = "wss://bghuan.cn/ws";
-        // 中继服务器配置
-        private const string RelayServerUrl = "wss://bghuan.cn/ws3"; // 替换为实际中继服务器地址
-        private const int TcpPort = 5000; // 点对点通信使用的 TCP 端口
-        ScreenVideoSharingServer server;
+        // Chrome可执行文件路径
+        private const string ChromePath = @"C:\Program Files\Google\Chrome\Application\chrome.exe";
 
-        static void Main(string[] args)
+        // 远程调试端口
+        private const int DebugPort = 9222;
+
+        // 临时数据目录（避免干扰正常Chrome会话）
+        private const string TempDataDir = @"C:\Temp\ChromeDebugSession";
+
+        static async Task Main(string[] args)
         {
-            new Program().StartTargetHost();
-        }
+            try
+            {
+                // 启动Chrome并启用远程调试
+                Process chromeProcess = StartChromeWithDebugging();
 
+                // 等待Chrome启动
+                await Task.Delay(2000);
 
-        // 目标主机逻辑（接收消息）
-        void StartTargetHost()
-        {
-            string serverId = "Server1"; 
+                // 获取当前URL
+                string currentUrl = await GetCurrentChromeUrl();
 
-             server = new ScreenVideoSharingServer() {};
+                Console.WriteLine($"当前Chrome URL: {currentUrl}");
 
-            Console.WriteLine($"目标主机 {serverId} 已连接到中继服务器");
+                // 清理：关闭Chrome
+                // chromeProcess.Kill();
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"错误: {ex.Message}");
+            }
 
-            StartTcpListener();
-
-            Console.WriteLine("按 Enter 退出...");
             Console.ReadLine();
         }
 
-        //// 向中继服务器注册
-        //void RegisterWithRelay(string clientId)
-        //{
-        //    string publicIp = GetPublicIp(); // 获取公网 IP
-        //    string message = $"{{\"type\":\"register\",\"id\":\"{clientId}\",\"address\":\"{publicIp}:{TcpPort}\"}}";
-        //    //ws.Send(message);
-        //    server.socket_write(message);
-        //    Console.WriteLine($"已向中继服务器注册: {message}");
-        //}
-
-        // 处理从中继服务器收到的消息
-        void HandleRelayMessage(string message, string clientId, string targetId)
+        static Process StartChromeWithDebugging()
         {
-            try
+            // 创建临时数据目录
+            Directory.CreateDirectory(TempDataDir);
+
+            // 启动Chrome并启用远程调试
+            ProcessStartInfo startInfo = new ProcessStartInfo
             {
-                dynamic msg = Newtonsoft.Json.JsonConvert.DeserializeObject(message);
+                FileName = ChromePath,
+                Arguments = $"--remote-debugging-port={DebugPort} --user-data-dir=\"{TempDataDir}\"",
+                UseShellExecute = true
+            };
 
-                if (msg.type == "success")
-                {
-                    Console.WriteLine($"注册成功: {msg.message}");
-
-                    // 如果是客户端，发送请求获取目标主机地址
-                    if (targetId != null)
-                    {
-                        string request = $"{{\"type\":\"request\",\"targetId\":\"{targetId}\"}}";
-                        server.socket_write(request);
-                        Console.WriteLine($"已请求目标主机 {targetId} 的地址");
-                    }
-                }
-                else if (msg.type == "targetInfo")
-                {
-                    string targetAddress = msg.address;
-                    Console.WriteLine($"获取到目标主机地址: {targetAddress}");
-
-                    // 尝试建立点对点连接
-                    TryConnectToTarget(targetAddress);
-                }
-                else if (msg.type == "connectionRequest")
-                {
-                    string fromId = msg.from;
-                    Console.WriteLine($"收到来自 {fromId} 的连接请求");
-                }
-                else if (msg.type == "forwarded")
-                {
-                    string fromId = msg.from;
-                    string data = msg.data;
-                    Console.WriteLine($"收到来自 {fromId} 的转发消息: {data}");
-                }
-                else if (msg.type == "error")
-                {
-                    Console.WriteLine($"中继服务器错误: {msg.message}");
-                }
-                else
-                {
-                    Console.WriteLine($"未知消息类型: {message}");
-                }
-            }
-            catch (Exception ex)
-            {
-                Console.WriteLine($"处理消息时出错: {ex.Message}");
-            }
+            return Process.Start(startInfo);
         }
 
-        // 尝试连接到目标主机
-        void TryConnectToTarget(string targetAddress)
+        static async Task<string> GetCurrentChromeUrl()
         {
-            try
+            using var httpClient = new HttpClient();
+
+            // 获取调试端点列表
+            var response = await httpClient.GetStringAsync($"http://localhost:{DebugPort}/json");
+            var tabs = JsonSerializer.Deserialize<List<ChromeTab>>(response);
+
+            // 查找活跃的标签页
+            foreach (var tab in tabs)
             {
-                string[] parts = targetAddress.Split(':');
-                string ip = parts[0];
-                int port = int.Parse(parts[1]);
+                if (tab.Type == "page" && !string.IsNullOrEmpty(tab.WebSocketDebuggerUrl))
+                {
+                    // 获取标签页的当前URL
+                    return tab.Url;
 
-                using var tcpClient = new TcpClient();
-                Console.WriteLine($"尝试连接到目标主机: {targetAddress}");
-                tcpClient.Connect(IPAddress.Parse(ip), port);
-                Console.WriteLine("点对点连接成功！");
-
-                // 发送消息
-                using var stream = tcpClient.GetStream();
-                byte[] data = Encoding.UTF8.GetBytes("hello");
-                stream.Write(data, 0, data.Length);
-                Console.WriteLine("已发送消息: hello");
+                    // 或者，如果你想通过WebSocket实时监控URL变化，可以连接到调试器URL
+                    // await MonitorUrlChanges(tab.WebSocketDebuggerUrl);
+                }
             }
-            catch (Exception ex)
-            {
-                Console.WriteLine($"连接目标主机失败: {ex.Message}");
 
-                // 这里可以添加重试逻辑或回退到中继转发模式
-            }
+            return "未找到活跃标签页";
         }
 
-        // 启动 TCP 监听器
-        void StartTcpListener()
+        static async Task MonitorUrlChanges(string webSocketUrl)
         {
-            Task.Run(() =>
+            using var clientWebSocket = new ClientWebSocket();
+            await clientWebSocket.ConnectAsync(new Uri(webSocketUrl), CancellationToken.None);
+
+            // 发送命令获取当前URL
+            string command = JsonSerializer.Serialize(new
             {
-                try
-                {
-                    using var listener = new TcpListener(IPAddress.Any, TcpPort);
-                    listener.Start();
-                    Console.WriteLine($"TCP 监听器已启动，端口: {TcpPort}");
-
-                    while (true)
-                    {
-                        using var client = listener.AcceptTcpClient();
-                        Console.WriteLine("收到新的点对点连接");
-
-                        using var stream = client.GetStream();
-                        byte[] buffer = new byte[1024];
-                        int bytesRead = stream.Read(buffer, 0, buffer.Length);
-                        string message = Encoding.UTF8.GetString(buffer, 0, bytesRead);
-                        Console.WriteLine($"收到消息: {message}");
-                    }
-                }
-                catch (Exception ex)
-                {
-                    Console.WriteLine($"TCP 监听错误: {ex.Message}");
-                }
+                id = 1,
+                method = "Page.getNavigationHistory"
             });
-        }
 
-        // 获取公网 IP
-        string GetPublicIp()
-        {
-            try
-            {
-                using var client = new WebClient();
-                return client.DownloadString("http://icanhazip.com").Trim();
-            }
-            catch (Exception)
-            {
-                // 如果无法获取公网 IP，使用本地 IP
-                return Dns.GetHostEntry(Dns.GetHostName())
-                    .AddressList
-                    .FirstOrDefault(a => a.AddressFamily == AddressFamily.InterNetwork)?
-                    .ToString() ?? "127.0.0.1";
-            }
+            var commandBytes = Encoding.UTF8.GetBytes(command);
+            await clientWebSocket.SendAsync(new ArraySegment<byte>(commandBytes),
+                WebSocketMessageType.Text, true, CancellationToken.None);
+
+            // 接收响应
+            var buffer = new byte[4096];
+            var result = await clientWebSocket.ReceiveAsync(new ArraySegment<byte>(buffer), CancellationToken.None);
+            string response = Encoding.UTF8.GetString(buffer, 0, result.Count);
+
+            Console.WriteLine($"URL变化: {response}");
         }
+    }
+
+    class ChromeTab
+    {
+        public string Url { get; set; }
+        public string Type { get; set; }
+        public string WebSocketDebuggerUrl { get; set; }
     }
 }

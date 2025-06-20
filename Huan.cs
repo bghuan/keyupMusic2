@@ -68,7 +68,8 @@ namespace keyupMusic2
         {
             //if (e.Type != KeyboardType.KeyDown) return;
             FreshProcessName();
-            VirtualKeyboardForm.Instance?.TriggerKey(e.key, e.Type == KeyboardType.KeyUp);
+            if (!is_steam_game())
+                VirtualKeyboardForm.Instance?.TriggerKey(e.key, e.Type == KeyboardType.KeyUp);
             if (judge_handled(e)) { e.Handled = true; VirKeyState(e); }
             if (quick_replace_key(e)) return;
             if (deal_handilngkey(e)) return;
@@ -233,7 +234,11 @@ namespace keyupMusic2
             {
                 string[] list_f1 = [StartMenuExperienceHost, SearchHost, clashverge,];
                 string[] list_nothing = [devenv, Common.keyupMusic2, explorer, cs2];
-                if (Position.Y == 0)
+                if (Position.X == 0 && Position.Y == screenHeight1)
+                {
+                    AllClass.run_vis();
+                }
+                else if (Position.Y == 0)
                 {
                     Invoke(() => { SetVisibleCore(!Visible); });
                 }
@@ -252,6 +257,10 @@ namespace keyupMusic2
                     openClash();
                 }
                 else if (list_nothing.Contains(ProcessName))
+                {
+                    return;
+                }
+                else if (IsDesktopFocused())
                 {
                     return;
                 }

@@ -30,6 +30,7 @@ namespace keyupMusic2
                 return;
             if (ProcessName == Common.chrome)
             {
+                if (!ProcessTitle.Contains("chat")) return;
                 if (chrome_red()) press(Keys.F);
                 var pos = ProcessPosition(chrome).X;
                 if (pos < screenWidth2 && IsFullScreen())
@@ -96,6 +97,7 @@ namespace keyupMusic2
             Show(rect.name,2);
 
             rect.doo(e);
+            FreshProcessName();
 
             RECTT.release();
         }
@@ -251,62 +253,6 @@ namespace keyupMusic2
                     if (item.target(testPoint)) return item;
                 return null;
             }
-        }
-
-        public void press(string str, int tick = 100, bool force = false)
-        {
-            dii();
-            Common.press(str, tick, force);
-        }
-        public void press(Keys keys, int tick = 0)
-        {
-            dii();
-            Common.press(keys, tick);
-        }
-        public void press_close()
-        {
-            dii();
-            Common.CloseProcess();
-        }
-        public void mouse_click(int tick = 10)
-        {
-            dii();
-            Common.mouse_click(tick);
-        }
-        public void press(Keys[] keys, int tick = 10)
-        {
-            dii();
-            Common.press(keys, tick);
-        }
-        public void HideProcess()
-        {
-            dii();
-            Common.HideProcess();
-        }
-        public void mouse_click(int x, int y)
-        {
-            dii();
-            Common.mouse_click(x, y);
-        }
-        public void mouse_click2(int tick = 0)
-        {
-            dii();
-            Common.mouse_click2(tick);
-        }
-        public void dii()
-        {
-            //if (!di) play_sound_di();
-            //di = true;
-            //if (!di && DateTime.Now - di_time > TimeSpan.FromMilliseconds(200)) play_sound_di();
-            //di = true;
-            //di_time = DateTime.Now;
-            //if (di_time.AddMilliseconds(100) > DateTime.Now) play_sound_di();
-            //di_time = DateTime.Now;
-        }
-        public void FocusPointProcess()
-        {
-            dii();
-            Common.FocusPointProcess();
         }
     }
 }

@@ -2334,7 +2334,231 @@ namespace keyupMusic2
         }
         public static bool SetWindowTitle(string window, string title)
         {
-            string targetClassName = window;
+            string targetClassNameusing System;
+using System.Collections.Generic;
+using System.IO;
+using System.IO.Compression;
+using System.Net.Http;
+using System.Text.RegularExpressions;
+using System.Threading.Tasks;
+
+namespace lz_image_download
+{
+    class Program
+    {
+        static string id = "15614";
+        static string id2 = "no";
+        static string url = "https://bghuan.cn?id=";
+        static string url2 = "";
+        static async Task Main(string[] args)
+        {
+            bool continueRunning = true;
+
+            if (args.Length > 0 && args[0].Length is > 1 and < 10)
+            {
+                id = args[0];
+                await image_download();
+                if (success_times < 1 || fail_times > 1)
+                    Console.ReadLine();
+            }
+            else return;
+            //while (continueRunning)
+            //{
+            //    await image_download();
+
+            //    // 询问用户是否继续
+            //    Console.Write("按回车键重新执行，输入其他内容并回车退出程序: ");
+            //    string input = Console.ReadLine();
+            //    continueRunning = string.IsNullOrEmpty(input); // 空输入表示继续
+            //}
+
+            //Console.ReadLine();
+            Console.WriteLine("程序已退出，感谢使用！");
+        }
+
+        static string saveDir = Path.Combine(Directory.GetCurrentDirectory(), "image/downloaded_images");
+        private static async Task image_download()
+        {
+            success_times = 0;
+            fail_times = 0;
+            first = true;
+            var url = Program.url + id;
+            string htmlContent = await GetHtmlContentAsync(url);
+            if (htmlContent.IndexOf("node_name") > 0)
+                htmlContent = htmlContent.Substring(0, htmlContent.IndexOf("node_name"));
+
+            List<string> imageUrls = ExtractImageUrls(htmlContent);
+
+            Directory.CreateDirectory(saveDir);
+            string saveDirectory2 = Path.Combine(Directory.GetCurrentDirectory(), "image/downloaded_images/" + id);
+            Directory.CreateDirectory(saveDirectory2);
+
+            await DownloadImagesAsync(imageUrls, saveDirectory2);
+
+            Console.WriteLine("\n=== 下载任务完成 ===");
+            Console.WriteLine($"成功: {success_times}  失败: {fail_times}");
+        }
+
+        static async Task<string> GetHtmlContentAsync(string url)
+        {
+            using (HttpClient client = new HttpClient())
+            {
+                // 设置请求头，模拟现代浏览器
+                client.DefaultRequestHeaders.Add("Accept", "text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.7");
+                client.DefaultRequestHeaders.Add("Accept-Encoding", "gzip, deflate, br, zstd");
+                client.DefaultRequestHeaders.Add("Accept-Language", "zh-CN,zh;q=0.9,en;q=0.8");
+                client.DefaultRequestHeaders.Add("Connection", "keep-alive");
+                client.DefaultRequestHeaders.Add("Sec-Ch-Ua", "\"Google Chrome\";v=\"137\", \"Chromium\";v=\"137\", \"Not/A)Brand\";v=\"24\"");
+                client.DefaultRequestHeaders.Add("Sec-Ch-Ua-Mobile", "?0");
+                client.DefaultRequestHeaders.Add("Sec-Ch-Ua-Platform", "\"Windows\"");
+                client.DefaultRequestHeaders.Add("Sec-Fetch-Dest", "document");
+                client.DefaultRequestHeaders.Add("Sec-Fetch-Mode", "navigate");
+                client.DefaultRequestHeaders.Add("Sec-Fetch-Site", "none");
+                client.DefaultRequestHeaders.Add("Sec-Fetch-User", "?1");
+                client.DefaultRequestHeaders.Add("Upgrade-Insecure-Requests", "1");
+                client.DefaultRequestHeaders.Add("User-Agent", "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/137.0.0.0 Safari/537.36");
+                string refererUrl = url2;
+                client.DefaultRequestHeaders.Referrer = new Uri(refererUrl);
+
+                using (HttpResponseMessage response = await client.GetAsync(url))
+                {
+                    response.EnsureSuccessStatusCode();
+
+                    // 处理压缩响应
+                    using (Stream contentStream = await response.Content.ReadAsStreamAsync())
+                    {
+                        using (Stream decompressedStream = DecompressStream(contentStream, response.Content.Headers.ContentEncoding))
+                        {
+                            using (StreamReader reader = new StreamReader(decompressedStream, System.Text.Encoding.UTF8))
+                            {
+                                return await reader.ReadToEndAsync();
+                            }
+                        }
+                    }
+                }
+            }
+        }
+
+        // 提取HTML中所有图片的src属性
+        static List<string> ExtractImageUrls(string htmlContent)
+        {
+            List<string> imageUrls = new List<string>();
+
+            // 使用正则表达式匹配img标签的src属性
+            string pattern = @"\""image_src\"":\s*\""([^\""]+)\""";
+            MatchCollection matches = Regex.Matches(htmlContent, pattern, RegexOptions.IgnoreCase);
+
+            foreach (Match match in matches)
+            {
+                if (match.Groups.Count > 1)
+                {
+                    string imageUrl = match.Groups[1].Value;
+                    imageUrl = System.Text.RegularExpressions.Regex.Unescape(imageUrl);
+
+                    if (imageUrls.Count == 0) firstscr = imageUrl;
+                    imageUrls.Add(imageUrl);
+                    Console.WriteLine($"找到图片URL: {imageUrl}");
+                }
+            }
+
+            return imageUrls;
+        }
+        static int fail_times = 0;
+        static int success_times = 0;
+        static bool first = true;
+        static string firstscr;
+        // 限制并发数量的异步下载方法
+        static async Task DownloadImagesAsync(List<string> imageUrls, string saveDirectory, int maxConcurrency = 36)
+        {
+            // 使用SemaphoreSlim控制最大并发数
+            using var semaphore = new SemaphoreSlim(maxConcurrency);
+            var tasks = new List<Task>();
+
+            using (HttpClient client = new HttpClient())
+            {
+                // 设置超时时间
+                client.Timeout = TimeSpan.FromSeconds(2);
+
+                // 设置请求头，模拟现代浏览器
+                client.DefaultRequestHeaders.Add("Accept", "image/avif,image/webp,image/apng,image/svg+xml,image/*,*/*;q=0.8");
+                client.DefaultRequestHeaders.Add("Accept-Encoding", "gzip, deflate, br, zstd");
+                client.DefaultRequestHeaders.Add("Accept-Language", "zh-CN,zh;q=0.9,en;q=0.8");
+                client.DefaultRequestHeaders.Add("Connection", "keep-alive");
+                client.DefaultRequestHeaders.Add("Sec-Ch-Ua", "\"Google Chrome\";v=\"137\", \"Chromium\";v=\"137\", \"Not/A)Brand\";v=\"24\"");
+                client.DefaultRequestHeaders.Add("Sec-Ch-Ua-Mobile", "?0");
+                client.DefaultRequestHeaders.Add("Sec-Ch-Ua-Platform", "\"Windows\"");
+                client.DefaultRequestHeaders.Add("Sec-Fetch-Dest", "image");
+                client.DefaultRequestHeaders.Add("Sec-Fetch-Mode", "no-cors");
+                client.DefaultRequestHeaders.Add("Sec-Fetch-Site", "cross-site");
+                client.DefaultRequestHeaders.Add("Sec-Fetch-Storage-Access", "active");
+                client.DefaultRequestHeaders.Add("User-Agent", "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/137.0.0.0 Safari/537.36");
+                string refererUrl = url2;
+                client.DefaultRequestHeaders.Referrer = new Uri(refererUrl);
+
+                foreach (string imageUrl in imageUrls)
+                {
+                    await semaphore.WaitAsync();
+
+                    tasks.Add(Task.Run(async () =>
+                    {
+                        try
+                        {
+                            string fileName = Path.GetFileName(new Uri(imageUrl).AbsolutePath);
+                            string savePath = Path.Combine(saveDirectory, fileName);
+                            savePath = savePath.Replace(".js", ".png");
+
+                            if (File.Exists(savePath) || File.Exists(savePath.Replace(id, id2)))
+                            {
+                                success_times++;
+                                return;
+                            }
+
+                            HttpResponseMessage response = await client.GetAsync(imageUrl);
+                            response.EnsureSuccessStatusCode();
+
+                            using var contentStream = await response.Content.ReadAsStreamAsync();
+                            using var decompressedStream = DecompressStream(contentStream, response.Content.Headers.ContentEncoding);
+
+                            using var fileStream = new FileStream(savePath, FileMode.Create);
+                            await decompressedStream.CopyToAsync(fileStream);
+
+                            if (firstscr == imageUrl)
+                            {
+                                //first = false;
+                                Thread.Sleep(100);
+                                string savePath2 = Path.Combine(saveDir, id + ".png");
+                                File.Copy(savePath, savePath2, true);
+                            }
+
+                            Console.WriteLine($"已下载: {fileName}");
+                            success_times++;
+                        }
+                        catch (Exception ex)
+                        {
+                            Console.WriteLine($"下载失败: {imageUrl} - {ex.Message}");
+                            fail_times++;
+                        }
+                        finally
+                        {
+                            // 释放信号量，允许其他任务继续
+                            semaphore.Release();
+                        }
+                    }));
+                }
+
+                // 等待所有任务完成
+                await Task.WhenAll(tasks);
+            }
+        }
+        static Stream DecompressStream(Stream inputStream, IEnumerable<string> contentEncodings)
+        {
+            Stream resultStream = inputStream;
+
+            resultStream = new GZipStream(resultStream, CompressionMode.Decompress);
+            return resultStream;
+        }
+    }
+} = window;
             IntPtr hWnd = GetProcessID(targetClassName);
             bool result = SetWindowText(hWnd, title);
             return result;

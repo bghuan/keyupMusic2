@@ -16,7 +16,7 @@ namespace keyupMusic2
     {
         public static Huan huan => Huan.Instance;
 
-        public static List<string> list_go_back = new List<string> { explorer, VSCode, msedge, chrome, devenv, androidstudio, ApplicationFrameHost, cs2, steam, Glass, Glass2, Glass3, vlc, PowerToysCropAndLock, };
+        public static List<string> list_go_back = new List<string> { explorer, VSCode, msedge, chrome, devenv, androidstudio, ApplicationFrameHost, cs2, steam, Glass, Glass2, Glass3, vlc, PowerToysCropAndLock, KingdomRush1, };
 
 
         public static bool hooked = false;
@@ -172,7 +172,7 @@ namespace keyupMusic2
                     }
                 }
             }
-            catch(Exception e) { }
+            catch (Exception e) { }
             return Color.Black;
         }
         public static bool try_press(Color color, Action action = null)
@@ -295,13 +295,18 @@ namespace keyupMusic2
                 bmpScreenshot.Save("C:\\Users\\bu\\Pictures\\Screenshots\\dd\\" + DateTime.Now.ToString("yyyyMMddHHmmss") + ".png", ImageFormat.Png);
             }
         }
-        public static void ProcessRun(string str)
+        public static void ProcessRun(string str, string arg = "")
         {
             try
             {
                 ProcessStartInfo startInfo2 = new ProcessStartInfo(str);
                 startInfo2.UseShellExecute = true;
+                //startInfo2.UseShellExecute = false;
+                //startInfo2.CreateNoWindow = true;
+                //startInfo2.WindowStyle = ProcessWindowStyle.Hidden;
                 startInfo2.Verb = "runas";
+                if (!string.IsNullOrEmpty(arg))
+                    startInfo2.Arguments = arg;
                 Process.Start(startInfo2);
             }
             catch { }
@@ -391,8 +396,8 @@ namespace keyupMusic2
             // Check if the window covers the entire screen  
             return windowRect.Left == 0 &&
                    windowRect.Top == 0 &&
-                   windowRect.Right == screenWidth &&
-                   windowRect.Bottom == screenHeight;
+                   windowRect.Right >= screenWidth1 &&
+                   windowRect.Bottom >= screenHeight1;
         }
         public static void change_file_last(bool pngg)
         {
@@ -945,7 +950,7 @@ namespace keyupMusic2
             get
             {
                 var aaa =
-                 ProcessName == err || ProcessName == LockApp || GetWindowText() == UnlockingWindow;
+                 ProcessName == err || ProcessName == LockApp || GetWindowTitle() == UnlockingWindow;
                 if (aaa)
                 {
                     string _ProcessName = ProcessName;
@@ -955,7 +960,7 @@ namespace keyupMusic2
                         Native.GetWindowThreadProcessId(Native.GetForegroundWindow(), out processId);
                         _ProcessName = "err,processId:" + processId;
                     }
-                    Log.log("GetWindowText():" + GetWindowText() + ",ProcessName:" + ProcessName);
+                    Log.log("GetWindowTitle():" + GetWindowTitle() + ",ProcessName:" + ProcessName);
                     if (ProcessName == err)
                         play_sound_di2();
                 }
@@ -1031,7 +1036,7 @@ namespace keyupMusic2
         }
         public static void openClash()
         {
-            press([Keys.LControlKey, Keys.F1]); 
+            press([Keys.LControlKey, Keys.F1]);
             bool isProxyOn = Common.IsClashVergeSystemProxyOn().GetAwaiter().GetResult();
             Keys keys = isProxyOn ? Keys.D0 : D1;
             play_sound_bongocat(keys);

@@ -32,6 +32,8 @@ namespace keyupMusic2
                 _StartMenuExperienceHost(go, back);
             else if (ProcessName == vlc)
                 raw(go, back);
+            else if (ProcessName.Contains(KingdomRush))
+                _KingdomRush(go, back);
 
             if (list_go_back.Contains(ProcessName)) return;
 
@@ -39,6 +41,14 @@ namespace keyupMusic2
                 press(Keys.MediaNextTrack);
             else if (back)
                 press(Keys.MediaPreviousTrack);
+        }
+
+        private void _KingdomRush(bool go, bool back)
+        {
+            if (go)
+                press(Keys.D2);
+            else if (back)
+                press(Keys.D1);
         }
 
         private void raw(bool go, bool back)
@@ -59,13 +69,24 @@ namespace keyupMusic2
             //    if ((judge_color(3876, 95, Color.FromArgb(104, 107, 101)))
             //        && judge_color(6437, 147, Color.FromArgb(55, 61, 53)))
             //        press([Keys.LControlKey, Keys.W]);
+            if (back)
+                if ((judge_color(27, 95, Color.FromArgb(120, 123, 117))
+                    && judge_color(2496, 121, Color.FromArgb(55, 61, 53))))
+                    press([Keys.LControlKey, Keys.W]);
+                else if ((ProcessTitle.Contains("荔枝") && !ProcessTitle.Contains("分类")))
+                {
+                    press([Keys.LControlKey, Keys.W]);
+                }
             if (go) press(Keys.F);
+
         }
         private void Msedge(bool go, bool back)
         {
             if (back)
                 if (judge_color(33, 80, Color.FromArgb(204, 204, 204), 0))
                     //if (judge_color(92, 73, Color.FromArgb(0, 0, 0), null, 0))
+                    press([Keys.LControlKey, Keys.W]);
+                else if (ProcessTitle.Contains("首发起点中文网"))
                     press([Keys.LControlKey, Keys.W]);
             if (go) press(Keys.Right);
             //if (back)

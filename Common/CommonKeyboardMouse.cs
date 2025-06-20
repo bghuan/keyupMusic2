@@ -117,6 +117,10 @@ namespace keyupMusic2
         {
             mouse_event2(MOUSEEVENTF_WHEEL, 0, 0, WHEEL_DELTA * num, 0);
         }
+        public static void mousewhell(decimal num)
+        {
+            mouse_event2(MOUSEEVENTF_WHEEL, 0, 0, (int)(WHEEL_DELTA * num), 0);
+        }
         public static int mouse_event(int dwFlags, int dx, int dy, int cButtons, int dwExtraInfo)
         {
             var aa = Native.mouse_event(dwFlags, dx, dy, cButtons, (int)isVir);

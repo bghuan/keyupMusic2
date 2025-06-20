@@ -27,6 +27,8 @@ namespace keyupMusic2
         {
             if (DateTime.Now.Minute == 0)
             {
+                if (ProcessName == wemeetapp) return;
+
                 var is_music = IsAnyAudioPlaying();
                 if (is_music) press(Keys.MediaPlayPause);
                 float volume = GetSystemVolume();
@@ -44,6 +46,11 @@ namespace keyupMusic2
                     }
                     if (is_music) press(Keys.MediaPlayPause);
                 });
+            }
+            if (DateTime.Now.Minute % 10 == 0)
+            {
+                if (!ishide_DesktopWallpaper)
+                    SetDesktopWallpaper(GetNextWallpaper(), WallpaperStyle.Fit);
             }
         }
 
@@ -77,14 +84,6 @@ namespace keyupMusic2
             }
         }
 
-        private void SafeInvoke(Action action)
-        {
-            if (huan.InvokeRequired)
-                huan.Invoke(action);
-            else
-                action();
-        }
-
         private void Every8000ms()
         {
             if (ProcessName == cs2)
@@ -101,7 +100,7 @@ namespace keyupMusic2
                 if (system_sleep_count > 5)
                     system_hard_sleep();
                 system_sleep_count++;
-                Log.logcachesave();
+                //Log.logcachesave();
             }
             else if (gcc_restart)
             {
@@ -112,8 +111,8 @@ namespace keyupMusic2
                         Sleep(100);
                     }
                 ProcessRun(gccexe);
-                Sleep(5000);
-                HideProcess(gccexe);
+                //Sleep(5000);
+                //HideProcess(gccexe);
                 //Sleep(1100);
                 //CloseProcess(gccexe);
 

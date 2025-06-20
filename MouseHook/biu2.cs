@@ -25,8 +25,8 @@ namespace keyupMusic2
                 string name = GetWindowName(hwnd);
                 string title = GetWindowTitle(hwnd);
                 last_hwnd = hwnd;
-                string message = ProcessName + " " + name + " " + title;
-                if (huan.label1.Text != message 
+                string message = ProcessName + " " + name + " " + title + " " + processWrapper?.classname;
+                if (huan.label1.Text != message
                     && !huan.label1.Text.Contains("line") && !huan.label1.Text.Contains("corner")
                     )
                 {

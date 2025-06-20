@@ -149,7 +149,7 @@ namespace keyupMusic2
                         process.Kill();
                 //mouse_move(screenWidth2,screenHeight2);
             }
-            is_init_show = Debugger.IsAttached ? !is_init_show : is_init_show;
+            //is_init_show = Debugger.IsAttached ? !is_init_show : is_init_show;
             if (is_init_show)
             {
                 //SetVisibleCore(false);
@@ -200,6 +200,7 @@ namespace keyupMusic2
 
             MoonTime moontimeForm = new MoonTime();
             moontimeForm.Show();
+            InitializeFromCurrentWallpaper();
         }
     }
 }

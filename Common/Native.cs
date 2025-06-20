@@ -213,5 +213,9 @@ namespace keyupMusic2
         public static extern uint GetDpiForWindow(IntPtr hWnd);
         [DllImport("user32.dll")]
         public static extern bool LockWorkStation();
+        [DllImport("user32.dll")]
+        public static extern int GetClassName(IntPtr hWnd, StringBuilder lpClassName, int nMaxCount);
+        [DllImport("user32.dll", CharSet = CharSet.Auto)]
+        public static extern int SystemParametersInfo(int uAction, int uParam, string lpvParam, int fuWinIni);
     }
 }

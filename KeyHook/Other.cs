@@ -85,9 +85,49 @@ namespace keyupMusic2
                 case Common.VSCode:
                     HandleVSCode(e);
                     break;
+                case Common.explorer:
+                case Common.keyupMusic2:
+                    HandleProgman(e);
+                    break;
+                case Common.BandiView:
+                    HandleBandiView(e);
+                    break;
             }
 
             Common.hooked = false;
+        }
+
+        private void HandleBandiView(KeyboardHookEventArgs e)
+        {
+            if (e.key == Delete)
+            {
+                Sleep(200);
+                press(Return);
+            }
+        }
+
+        private void HandleProgman(KeyboardHookEventArgs e)
+        {
+            if (!IsDesktopFocused() && ProcessName != Common.keyupMusic2) return;
+            switch (e.key)
+            {
+                case Keys.Down:
+                    string nextWallpaper = GetNextWallpaper();
+                    SetDesktopWallpaper(nextWallpaper, WallpaperStyle.Fit);
+                    break;
+                case Keys.Up:
+                    string nextWallpaper2 = GetPreviousWallpaper();
+                    SetDesktopWallpaper(nextWallpaper2, WallpaperStyle.Fit);
+                    break;
+                case Keys.Left:
+                    string nextWallpaper3 = GetPreviousIdFolder();
+                    SetDesktopWallpaper(nextWallpaper3, WallpaperStyle.Fit);
+                    break;
+                case Keys.Right:
+                    string nextWallpaper4 = GetNextIdFolder();
+                    SetDesktopWallpaper(nextWallpaper4, WallpaperStyle.Fit);
+                    break;
+            }
         }
 
         private void HandleQQLive(Keys key)

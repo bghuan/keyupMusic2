@@ -27,6 +27,7 @@ namespace keyupMusic2
             {
                 key = Keys.F3;
                 HideProcess(chrome);
+                SetDesktopToBlack();
             }
             else
             {
