@@ -44,7 +44,7 @@ namespace keyupMusic2
             {
                 Invoke(() => { label1.Text = "系统即将进入睡眠状态"; });
                 Sleep(sleep);
-                Timer_Tick();
+                system_sleep_timer();
             });
         }
 
@@ -146,7 +146,7 @@ namespace keyupMusic2
             }
         }
 
-        public void Timer_Tick(int tick = 200)
+        public void system_sleep_timer(int tick = 200)
         {
             if (!ready_to_sleep) return;
             ready_to_sleep = false;
@@ -155,6 +155,8 @@ namespace keyupMusic2
             //press("500;LWin;1650,1300;1650,1140", tick);
             //press("500;LWin;1650,1300;", tick);
 
+            if (!IsDesktopFocused())
+                press([LWin, D]);
             CloseDesktopWindow();
             press(100, 500, Up, Return);
         }

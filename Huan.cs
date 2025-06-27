@@ -31,7 +31,7 @@ namespace keyupMusic2
                     return true;
             if (e.key == Keys.MediaPreviousTrack || e.key == Keys.MediaNextTrack)
             {
-                if (list_go_back.Contains(ProcessName)) return true;
+                if (biu.list_go_back.Contains(ProcessName)) return true;
             }
             if ((e.key == Keys.Right || e.key == Keys.Left) && is_ctrl())
             {
@@ -235,39 +235,25 @@ namespace keyupMusic2
                 string[] list_f1 = [StartMenuExperienceHost, SearchHost, clashverge,];
                 string[] list_nothing = [devenv, Common.keyupMusic2, explorer, cs2];
                 if (Position.X == 0 && Position.Y == screenHeight1)
-                {
                     AllClass.run_vis();
-                }
                 else if (Position.Y == 0)
-                {
                     Invoke(() => { SetVisibleCore(!Visible); });
-                }
                 else if (Position.X == screenWidth1 && Position.Y == screenHeight1)
-                {
                     system_sleep(true);
-                }
-                else if (Position.X == 0)
+                else if (Position.X == 0 || ProcessName == devenv)
                 {
                     string executablePath = Process.GetCurrentProcess().MainModule.FileName;
                     Process.Start(executablePath);
                     Environment.Exit(0);
                 }
                 else if (list_f1.Contains(ProcessName))
-                {
                     openClash();
-                }
-                else if (list_nothing.Contains(ProcessName))
-                {
-                    return;
-                }
-                else if (IsDesktopFocused())
-                {
-                    return;
-                }
+                else if (list_nothing.Contains(ProcessName)) { }
+                else if (IsDesktopFocused()) { }
+                else if (ProcessName == Honeyview)
+                    press_raw(OemPeriod);
                 else
-                {
                     LossScale();
-                }
             }
             else if (msg.Contains(start_check_str2))
             {

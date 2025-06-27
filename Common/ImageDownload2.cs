@@ -1,15 +1,9 @@
-﻿using System;
-using System.IO;
-using System.Collections.Generic;
-using System.Linq;
-using Newtonsoft.Json;
-
+﻿using Microsoft.VisualBasic.FileIO;
 using Microsoft.Win32;
 using Newtonsoft.Json;
-using System.Runtime.InteropServices;
+using System.Diagnostics;
 using static keyupMusic2.Native;
-using static keyupMusic2.winBinWallpaper;
-using Microsoft.VisualBasic.FileIO; // 需要添加引用
+using SearchOption = System.IO.SearchOption; // 需要添加引用
 
 namespace keyupMusic2
 {
@@ -19,6 +13,8 @@ namespace keyupMusic2
         Directory.GetCurrentDirectory(), "image", "downloaded_images");
         private static string stateFilePath = Path.Combine(
             Directory.GetCurrentDirectory(), "log", "wallpaper_state.json");
+        private static string smallPath = Path.Combine(
+            Directory.GetCurrentDirectory(), "image", "downloaded_images", "0small");
 
         // 缓存目录结构和文件信息
         private static Dictionary<string, List<string>> idToFilesMap = new Dictionary<string, List<string>>();
@@ -26,6 +22,145 @@ namespace keyupMusic2
         private static int currentIdIndex = -1;
         private static int currentFileIndex = -1;
 
+        public static void OpenDir(string id)
+        {
+            if (id.Length != 5) return;
+            string idPath = Path.Combine(wallpapersPath, id);
+            //if (Directory.Exists(idPath)) { Directory.Delete(idPath, recursive: true); }
+            Process.Start("explorer.exe", idPath);
+        }
+        public static void DeleteDir(string id)
+        {
+            if (id.Length != 5) return;
+            string idPath = Path.Combine(wallpapersPath, id);
+            //if (Directory.Exists(idPath)) { Directory.Delete(idPath, recursive: true); }
+
+            try
+            {
+                FileSystem.DeleteDirectory(
+                    idPath,
+                    UIOption.OnlyErrorDialogs,
+                    RecycleOption.SendToRecycleBin
+                );
+            }
+            catch(Exception e) {
+                MessageBox.Show("can't delete");
+            }
+        }
+
+        public static int min_size = 40;
+        static int iii = 0;
+        public static void MoveSmallFilesRecursive(string sourceDir = "", string destDir = "")
+        {
+            if ((iii++ > 1000)) { MessageBox.Show("MoveSmallFilesRecursive over 1000"); return; }
+            if (string.IsNullOrEmpty(sourceDir))
+                sourceDir = wallpapersPath;
+            if (string.IsNullOrEmpty(destDir))
+                destDir = smallPath;
+            if (sourceDir.Contains("small")) return;
+            // 创建目标目录（如果不存在）
+            if (!Directory.Exists(destDir))
+            {
+                Directory.CreateDirectory(destDir);
+            }
+
+            try
+            {
+                // 处理当前目录下的文件
+                foreach (string filePath in Directory.GetFiles(sourceDir))
+                {
+                    FileInfo fileInfo = new FileInfo(filePath);
+
+                    // 检查文件大小（100KB = 100 * 1024 字节）
+                    if (fileInfo.Length < min_size * 1024)
+                    {
+                        string destFilePath = Path.Combine(destDir, fileInfo.Name);
+
+                        // 处理同名文件（添加数字后缀）
+                        if (File.Exists(destFilePath))
+                        {
+                            destFilePath = GetUniqueFilePath(destDir, fileInfo.Name);
+                        }
+
+                        // 移动文件
+                        fileInfo.MoveTo(destFilePath);
+                        Console.WriteLine($"已移动: {filePath} -> {destFilePath}");
+                    }
+                }
+
+                // 递归处理子目录
+                foreach (string subDir in Directory.GetDirectories(sourceDir))
+                {
+                    string subDirName = Path.GetFileName(subDir);
+                    //string destSubDir = Path.Combine(destDir, subDirName);
+
+                    MoveSmallFilesRecursive(subDir, destDir);
+                }
+            }
+            catch (UnauthorizedAccessException)
+            {
+                Console.WriteLine($"警告: 访问被拒绝 - {sourceDir}");
+            }
+            catch (DirectoryNotFoundException)
+            {
+                Console.WriteLine($"警告: 目录不存在 - {sourceDir}");
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"处理目录 {sourceDir} 时出错: {ex.Message}");
+            }
+        }
+
+        // 生成唯一文件名（处理同名冲突）
+        static string GetUniqueFilePath(string directory, string originalName)
+        {
+            string fileName = Path.GetFileNameWithoutExtension(originalName);
+            string fileExt = Path.GetExtension(originalName);
+            int counter = 1;
+
+            string newPath;
+            do
+            {
+                newPath = Path.Combine(directory, $"{fileName}({counter}){fileExt}");
+                counter++;
+            } while (File.Exists(newPath));
+
+            return newPath;
+        }
+        public static List<string> GetAllFiles(string directoryPath, bool includeSubdirectories = true)
+        {
+            try
+            {
+                // 检查目录是否存在
+                if (!Directory.Exists(directoryPath))
+                {
+                    Console.WriteLine($"错误：目录 '{directoryPath}' 不存在");
+                    return new List<string>();
+                }
+
+                // 获取文件的搜索选项（是否包含子目录）
+                SearchOption searchOption = includeSubdirectories
+                    ? SearchOption.AllDirectories
+                    : SearchOption.TopDirectoryOnly;
+
+                // 获取所有文件的完整路径
+                string[] filePaths = Directory.GetFiles(directoryPath, "*", searchOption);
+
+                // 提取文件名（不包含路径）
+                List<string> fileNames = new List<string>();
+                foreach (string filePath in filePaths)
+                {
+                    fileNames.Add(Path.GetFileName(filePath));
+                }
+
+                return fileNames;
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"获取文件时发生错误: {ex.Message}");
+                return new List<string>();
+            }
+        }
         // 初始化壁纸管理器（异步加载目录结构）
         public static async Task InitializeFromCurrentWallpaper()
         {
@@ -321,10 +456,13 @@ namespace keyupMusic2
             public string CurrentId { get; set; }
             public string CurrentFile { get; set; }
         }
-        public static bool ishide_DesktopWallpaper = false;
+        public static int ishide_DesktopWallpaper = 0;
         // 在 WallpaperManager 类中添加以下方法
         public static void DeleteCurrentWallpaper()
         {
+            if (!can_set_wallpaper)
+                return;
+            if ((ishide_DesktopWallpaper != 2)) return;
             if (!IsDesktopFocused() && !isctrl()) return;
             string currentPath = GetCurrentWallpaperPath();
             if (string.IsNullOrEmpty(currentPath) || !File.Exists(currentPath))
@@ -340,6 +478,9 @@ namespace keyupMusic2
                 string currentFile = idToFilesMap[currentId][currentFileIndex];
                 idToFilesMap[currentId].Remove(currentFile);
 
+                //SetDesktopToBlack();
+                //Sleep(100);
+                play_sound_di2();
                 // 移动到下一个壁纸
                 SetDesktopWallpaper(GetCurrentWallpaperPath(), WallpaperStyle.Fit);
 
@@ -370,9 +511,12 @@ namespace keyupMusic2
         }
         public static void SetDesktopToBlack()
         {
+            if (!can_set_wallpaper)
+                return;
+            if (ishide_DesktopWallpaper == 1) return;
             try
             {
-                ishide_DesktopWallpaper = true;
+                ishide_DesktopWallpaper = 1;
                 // 步骤 1: 设置壁纸为空
                 SystemParametersInfo(SPI_SETDESKWALLPAPER, 0, "", SPIF_UPDATEINIFILE | SPIF_SENDCHANGE);
 
@@ -405,6 +549,56 @@ namespace keyupMusic2
                 Console.WriteLine($"设置桌面背景时出错: {ex.Message}");
             }
         }
+        public static void DeleteDuplicateFiles(string rootDirectory)
+        {
+            // 用于记录已存在的文件名
+            Dictionary<string, string> existingFiles = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase);
+
+            try
+            {
+                // 获取所有文件路径（包括子目录）
+                string[] allFiles = Directory.GetFiles(rootDirectory, "*", SearchOption.AllDirectories);
+
+                // 遍历所有文件，按文件名去重
+                foreach (string filePath in allFiles)
+                {
+                    string fileName = Path.GetFileName(filePath);
+
+                    // 检查文件名是否已存在
+                    if (existingFiles.ContainsKey(fileName))
+                    {
+                        Console.WriteLine($"发现重复文件: {filePath}");
+                        Console.WriteLine($"保留第一个文件: {existingFiles[fileName]}");
+
+                        // 删除重复文件
+                        try
+                        {
+                            //File.Delete(filePath);
+                            FileSystem.DeleteFile(filePath, UIOption.OnlyErrorDialogs, RecycleOption.SendToRecycleBin
+                          );
+                            Console.WriteLine($"已删除: {filePath}");
+                        }
+                        catch (Exception ex)
+                        {
+                            Console.WriteLine($"删除失败: {filePath} - {ex.Message}");
+                        }
+                    }
+                    else
+                    {
+                        // 记录首次出现的文件名和路径
+                        existingFiles.Add(fileName, filePath);
+                        Console.WriteLine($"首次发现文件: {filePath}");
+                    }
+                }
+
+                Console.WriteLine($"处理完成，共检查 {allFiles.Length} 个文件，保留 {existingFiles.Count} 个唯一文件");
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"处理过程中发生错误: {ex.Message}");
+            }
+        }
+
 
     }
 }

@@ -4,6 +4,9 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 VisualStudioVersion = 17.8.34330.188
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "keyupMusic4", "keyupMusic4.csproj", "{829C2FBB-9DC7-407C-AD20-DAAE8AD0A4AF}"
+	ProjectSection(ProjectDependencies) = postProject
+		{02E39258-D7A5-48B2-898D-0C853878B8AA} = {02E39258-D7A5-48B2-898D-0C853878B8AA}
+	EndProjectSection
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "keyupmusic4_test", "keyupmusic2_test\keyupmusic4_test.csproj", "{0CB97F3D-19FD-4AC5-8F59-8C6755235530}"
 EndProject

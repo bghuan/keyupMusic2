@@ -1,70 +1,15 @@
-﻿using System.Diagnostics;
+﻿using Microsoft.VisualBasic.Devices;
+using System.Diagnostics;
 using System.Runtime.InteropServices;
+using System.Security.Cryptography;
 using static keyupMusic2.Common;
 using static keyupMusic2.MouseKeyboardHook;
 
 namespace keyupMusic2
 {
-    partial class biuCL
+    partial class biu
     {
-        private void _line2(MouseHookEventArgs e)
-        {
-            if (ProcessName == Common.chrome)
-            {
-                if (chrome_red()) press(Keys.F);
-                var pos = ProcessPosition(chrome).X;
-                if (pos < screenWidth2 && IsFullScreen())
-                {
-                    if (!judge_color(1840, 51, Color.FromArgb(162, 37, 45)))
-                        press(Keys.F, 51);
-                    SS().MouseWhell(-1440);
-                }
-            }
-            if (IsFullScreen()) return;
-            mouse_click2(0);
-        }
-
-        private void _line3(MouseHookEventArgs e)
-        {
-            if (is_douyin())
-                return;
-            if (ProcessName == Common.chrome)
-            {
-                if (!ProcessTitle.Contains("chat")) return;
-                if (chrome_red()) press(Keys.F);
-                var pos = ProcessPosition(chrome).X;
-                if (pos < screenWidth2 && IsFullScreen())
-                {
-                    press(Keys.F, 51);
-                    SS().MouseWhell(1440);
-                }
-            }
-            if (ProcessName == Common.vlc)
-            {
-                press(Keys.Space, 11);
-            }
-            if (IsDiffProcess())
-                mouse_click2(0);
-        }
-
-        private void _line6(MouseHookEventArgs e)
-        {
-            if (IsDiffProcess())
-                mouse_click2(0);
-            if (!chrome_red())
-                press(Keys.F, 50);
-            SS().MouseWhell(-1440);
-        }
-
-        private void _line7(MouseHookEventArgs e)
-        {
-            if (IsDiffProcess())
-                mouse_click2(0);
-            press(Keys.F, 50);
-            SS().MouseWhell(1440);
-        }
-
-        public biuCL()
+        public void init()
         {
             line2.aMouseHookEvent += _line2;
             line3.aMouseHookEvent += _line3;
@@ -73,33 +18,13 @@ namespace keyupMusic2
 
             corner1.aMouseHookEvent += _corner1;
             corner2.aMouseHookEvent += _corner2;
+            corner4.aMouseHookEvent += _corner4;
             corner5.aMouseHookEvent += _corner5;
             corner6.aMouseHookEvent += _corner6;
-        }
-        public void Cornor(MouseHookEventArgs e)
-        {
-            if (e.Msg != MouseMsg.move) { RECTT.release(); return; }
-            if (e.X > screen2Width || e.Y < 0 || e.Y > screen2Height1) return;
 
-            var rect = RECTT.get(e.Pos);
-            if (rect == null)
-            {
-                var rect2 = RECTT.ignoreAll(e.Pos);
-                rect?.doo2(e);
-                return;
-            }
-
-            FreshProcessName();
-            di = false;
-            //log(rect.name + " " + e.X + " " + e.Y);
-
-            if (is_down(LButton) || is_down(RButton)) { RECTT.release(); return; }
-            Show(rect.name,2);
-
-            rect.doo(e);
-            FreshProcessName();
-
-            RECTT.release();
+            //block1.aMouseHookEvent += _block1;
+            //block2.aMouseHookEvent += _block2;
+            //block3.aMouseHookEvent += _block3;
         }
 
         static int far = 300;
@@ -109,12 +34,11 @@ namespace keyupMusic2
 
         static int ga2 = screen2Height1;
         static int ch2 = screen2Width;
-        static int ch0 = screen2Width0;
+        static int ch0 = screen2X;
+        static int ga0 = screen2Y;
         int chrome_x_min = -50;
 
-        //public static RECTT line2 = new RECTT(nameof(line2),
-        //                        new RECT(0, gao - 60, cha, gao - 25),
-        //                        new RECT(0, 0, cha, gao - 5));
+
         public static RECTT line2 = new RECTT(nameof(line2),
                                 new JU(0, gao, _fa - 200, gao),
                                 new JU(0, gao - far + 100, cha, gao));
@@ -122,8 +46,8 @@ namespace keyupMusic2
                                 new JU(0, far, 0, gao),
                                 new JU(0, 0, far, gao));
         public static RECTT line6 = new RECTT(nameof(line6),
-                                new JU(screen2Width0, ga2, ch2, ga2),
-                                new JU(screen2Width0, ga2 - far + 100, ch2, ga2));
+                                new JU(screen2X, ga2, ch2, ga2),
+                                new JU(screen2X, ga2 - far + 100, ch2, ga2));
         public static RECTT line7 = new RECTT(nameof(line7),
                                 new JU(ch2, far, ch2, ga2),
                                 new JU(ch2 - far, 0, ch2, ga2));
@@ -132,16 +56,35 @@ namespace keyupMusic2
                                 new JU(0, 0, 0, 0), new JU(0, 0, far, far));
         RECTT corner2 = new RECTT(nameof(corner2),
                                 new JU(cha, 0, cha, 0), new JU(cha - far, 0, cha, far));
+        RECTT corner4 = new RECTT(nameof(corner4),
+                                new JU(cha, gao, cha, gao), new JU(cha - far, gao - far, cha, gao));
         RECTT corner5 = new RECTT(nameof(corner5),
-                                new JU(ch0, 0, ch0, 0),
-                                new JU(ch0, 0, ch0 + far, far));
+                                new JU(ch0, ga0, ch0, ga0),
+                                new JU(ch0, ga0, ch0 + far, far + ga0));
         RECTT corner6 = new RECTT(nameof(corner6),
-                                new JU(ch2, 0, ch2, 0),
-                                new JU(ch2 - far, 0, ch2, far));
+                                new JU(ch2, ga0, ch2, ga0),
+                                new JU(ch2 - far, ga0, ch2, far + ga0));
 
-        bool di = false;
-        DateTime di_time = DateTime.MinValue;
+        public void Cornor(MouseHookEventArgs e)
+        {
+            if (e.Msg != MouseMsg.move) { RECTT.release(); return; }
+            //if (e.X > screen2Width || e.Y < 0 || e.Y > screenHeightMax) return;
 
+            var rect = RECTT.get(e.Pos);
+            if (rect == null)
+            {
+                var rect2 = RECTT.ignoreAll(e.Pos);
+                rect?.doo2(e);
+                return;
+            }
+            if (is_down(LButton) || is_down(RButton)) { RECTT.release(); return; }
+
+            //log(rect.name + " " + e.X + " " + e.Y);
+
+            rect.doo(e);// Main
+
+            RECTT.release();
+        }
 
         public static bool chrome_red()
         {
@@ -158,6 +101,10 @@ namespace keyupMusic2
             {
                 this.Left = Left; this.Top = Top; this.Right = Right; this.Bottom = Bottom;
             }
+            public JU(Point a, Point b)
+            {
+                this.Left = a.X; this.Top = a.Y; this.Right = b.X; this.Bottom = b.Y;
+            }
         }
         public class RECTT
         {
@@ -167,12 +114,30 @@ namespace keyupMusic2
             public string name;
             public Task aTask;
 
-            public delegate void aEventHandler(MouseHookEventArgs e);
+            public delegate int aEventHandler(MouseHookEventArgs e);
             public event aEventHandler aMouseHookEvent;
 
             public delegate void bEventHandler(MouseHookEventArgs e);
             public event bEventHandler bMouseHookEvent;
             public void doo(MouseHookEventArgs e)
+            {
+                int music = di_tune(e);
+                e.data = music;
+
+                Show(name, 2);
+
+                if (aMouseHookEvent != null)
+                {
+                    FreshProcessName();
+                    int result = aMouseHookEvent.Invoke(e);
+                    FreshProcessName();
+
+                    if (result == 0) return;
+                    play_sound_bongocat(result);
+                }
+            }
+
+            private int di_tune(MouseHookEventArgs e)
             {
                 int music = 0;
                 if (a.Left == a.Right)
@@ -199,16 +164,20 @@ namespace keyupMusic2
                         if (music > 9) music = 0;
                     }
                 }
-                play_sound_bongocat(music);
-                aMouseHookEvent?.Invoke(e);
+
+                return music;
             }
+
             public void doo2(MouseHookEventArgs e)
             {
                 bMouseHookEvent?.Invoke(e);
             }
             public RECTT(string name, JU a, JU b)
             {
-                this.name = name; this.a = a; this.b = b; All.Add(this);
+                this.name = name; this.a = a; this.b = b;
+
+                if (ScreenSecond == Rectangle.Empty && (name.Contains("5") || name.Contains("6") || name.Contains("7") || name.Contains("8"))) { return; }
+                All.Add(this);
             }
             ~RECTT() { All.Remove(this); }
             public override string ToString() => base.ToString();

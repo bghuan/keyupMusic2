@@ -5,6 +5,8 @@ namespace keyupMusic2
 {
     public class LongPressClass
     {
+        public static int long_press_tick = 300;
+        public static bool long_press_lbutton = false;
         public LongPressClass()
         {
         }
@@ -21,11 +23,15 @@ namespace keyupMusic2
                     huan.system_sleep(true);
                 });
             }
-            if (keys == Keys.Home || keys == Keys.End)
+            else if (keys == Keys.Home || keys == Keys.End)
             {
-                Common.bmpScreenshot.Save(Common.bmpScreenshot_path, ImageFormat.Png);
+                Common.bmpScreenshot?.Save(Common.bmpScreenshot_path, ImageFormat.Png);
                 play_sound_di();
                 //bmpScreenshot.Dispose();
+            }
+            else if (keys == Keys.LButton)
+            {
+                long_press_lbutton = true;
             }
         }
 

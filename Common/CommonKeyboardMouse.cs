@@ -15,7 +15,7 @@ using Point = System.Drawing.Point;
 
 namespace keyupMusic2
 {
-    public partial class Common
+    public static partial class Common
     {
         public static int[] deal_size_x_y(int x, int y, bool puls_one = true)
         {
@@ -51,28 +51,37 @@ namespace keyupMusic2
             Thread.Sleep(tick);
         }
 
-        public static int screenWidth = Screen.PrimaryScreen.Bounds.Width;
-        public static int screenHeight = Screen.PrimaryScreen.Bounds.Height;
-        public static int screenWidth1 = Screen.PrimaryScreen.Bounds.Width - 1;
-        public static int screenHeight1 = Screen.PrimaryScreen.Bounds.Height - 1;
-        public static int screenWidth2 = Screen.PrimaryScreen.Bounds.Width / 2;
-        public static int screenHeight2 = Screen.PrimaryScreen.Bounds.Height / 2;
+        public static Rectangle ScreenPrimary = Screen.PrimaryScreen.Bounds;
+        public static Rectangle ScreenSecond =
+       Screen.AllScreens.FirstOrDefault(scr => !scr.Primary)?.Bounds ?? Rectangle.Empty;
+
+        public static int screenWidth = ScreenPrimary.Width;
+        public static int screenHeight = ScreenPrimary.Height;
+        public static int screenWidth1 = ScreenPrimary.Width - 1;
+        public static int screenHeight1 = ScreenPrimary.Height - 1;
+        public static int screenWidth2 = ScreenPrimary.Width / 2;
+        public static int screenHeight2 = ScreenPrimary.Height / 2;
 
         //public static int screen2Width = -2880;
         //public static int screen2Height = 1620;
         //public static int screen2Height1 = 1619;
 
-        public static int screen2Width0 = 3840;
-        public static int screen2Width = 6719;
-        public static int screen2Height = 1620;
-        public static int screen2Height1 = 1619;
+        public static int screen2X = ScreenSecond.X;
+        public static int screen2Y = ScreenSecond.Y;
+        public static int screen2Width = screen2X + ScreenSecond.Width - 1;
+        public static int screen2Height = ScreenSecond.Height + screen2Y;
+        public static int screen2Height1 = screen2Height - 1;
+        public static int screenHeightMax = Math.Max(screenHeight1, screen2Height1);
+
 
         public static int screen3Width = -1920;
         public static int screen3Height = 1080;
         public static int screen3Height1 = 1079;
 
+
         public static void mouse_move_center(int tick = 0)
         {
+
             int x = screenWidth / 2;
             int y = screenHeight / 2;
             Thread.Sleep(tick);
@@ -217,24 +226,24 @@ namespace keyupMusic2
         public static void VirKeyState(MouseMsg msg)
         {
             if (!mousekeymap.ContainsKey(msg)) return;
-            bool up = msg.ToString().Contains("up");
+            //bool up = msg.ToString().Contains("up");
             Keys key = mousekeymap[msg];
-            if (up)
+            if (msg.IsUpEvent())
                 VirMouseStateKey.Remove(key);
             else
                 VirMouseStateKey[key] = ProcessName;
         }
         public static Dictionary<MouseMsg, Keys> mousekeymap = new Dictionary<MouseMsg, Keys>() {
-           { MouseMsg.click,Keys.LButton},
-           { MouseMsg.click_up,Keys.LButton},
-           { MouseMsg.click_r,Keys.RButton},
-           { MouseMsg.click_r_up,Keys.RButton},
-           { MouseMsg.go,Keys.XButton2},
-           { MouseMsg.go_up,Keys.XButton2},
-           { MouseMsg.back,Keys.XButton1},
-           { MouseMsg.back_up,Keys.XButton1},
-           { MouseMsg.middle,Keys.MButton},
-           { MouseMsg.middle_up,Keys.MButton},
+           { MouseMsg.click,            Keys.LButton},
+           { MouseMsg.click_up,         Keys.LButton},
+           { MouseMsg.click_r,          Keys.RButton},
+           { MouseMsg.click_r_up,       Keys.RButton},
+           { MouseMsg.go,               Keys.XButton2},
+           { MouseMsg.go_up,            Keys.XButton2},
+           { MouseMsg.back,             Keys.XButton1},
+           { MouseMsg.back_up,          Keys.XButton1},
+           { MouseMsg.middle,           Keys.MButton},
+           { MouseMsg.middle_up,        Keys.MButton},
         };
         public static void CleanVirMouseState()
         {
@@ -341,9 +350,9 @@ namespace keyupMusic2
         public static Point lastPosition;
         public static void press_middle_bottom()
         {
-            biuCL.RECTT.release();
+            biu.RECTT.release();
             press(middle_bottom, 0);
-            biuCL.RECTT.release();
+            biu.RECTT.release();
         }
         public static string middle_bottom = "1333.1439";
         public static string middle_bottom_last_position = "1333.1439";
@@ -362,7 +371,8 @@ namespace keyupMusic2
         {
             //var _zh = (judge_color(2290, 1411, Color.FromArgb(242, 242, 242)));
             //var _zh = (judge_color(2281, 1413, Color.FromArgb(242, 242, 242)));
-            var _zh = (judge_color(1397, 419, Color.FromArgb(255, 255, 255)));
+            //var _zh = (judge_color(1397, 419, Color.FromArgb(255, 255, 255)));
+            var _zh = (judge_color(980, 420, Color.FromArgb(255, 255, 255)));
             var _en = !_zh;
             if (zh && _en)
                 press(Keys.LShiftKey, 10);
@@ -498,24 +508,48 @@ namespace keyupMusic2
             isVir = isVirConst;
         }
         static ConcurrentDictionary<byte, byte> MapVirtualKey = new ConcurrentDictionary<byte, byte>();
+        private static readonly HashSet<byte> ExtendedKeys = new HashSet<byte>
+{
+    0xA5, // RMenu
+    0xA4, // LMenu
+    0xAE, // 可能是VolumeDown
+    0xAF, // 可能是VolumeUp
+    0xA3, // RControl
+    0xA2, // LControl
+    0x5B, // LWin
+    0x5C, // RWin
+    0x2D, // Insert
+    0x2E, // Delete
+    0x25, // Left
+    0x26, // Up
+    0x27, // Right
+    0x28, // Down
+    0x20, // Space (在数字键盘上需要扩展标志)
+    0x21, // PageUp
+    0x22, // PageDown
+    0x23, // End
+    0x24, // Home
+    0x90, // NumLock
+    0x91, // ScrollLock
+    // 可以根据需要添加更多扩展键
+};
+
         private static void keybd_event(byte bVk, byte bScan, uint dwFlags, uint dwExtraInfo)
         {
-            //bool needExtended = bVk == 0xA5 // RMenu
-            //                 || bVk == 0xA4 // LMenu
-            //                 || bVk == 0xA3 // RControl
-            //                 || bVk == 0xA2 // LControl
-            //                 || bVk == 0x5B // LWin
-            //                 || bVk == 0x5C // RWin
-            //                 || bVk == 0x2D // Insert
-            //                 || bVk == 0x2E // Delete
-            //                 || (bVk >= 0x25 && bVk <= 0x28); // 方向键
 
-            //if (needExtended)
+            // 使用HashSet判断是否为扩展键，提高性能和可维护性
+            if (ExtendedKeys.Contains(bVk))
+                dwFlags |= (uint)KeyboardFlag.ExtendedKey;
+            //else if (is_douyin())
             //    dwFlags |= (uint)KeyboardFlag.ExtendedKey;
 
+            // 缓存虚拟键到扫描码的映射，避免重复调用MapVirtualKey
             if (!MapVirtualKey.ContainsKey(bVk))
+            {
                 MapVirtualKey[bVk] = (byte)(MapVirtualKey(bVk, 0) & 0xFFU);
+            }
 
+            // 修正：传递原始的dwExtraInfo参数，而不是isVir
             Native.keybd_event(bVk, MapVirtualKey[bVk], dwFlags, isVir);
         }
         [Flags]
@@ -528,5 +562,18 @@ namespace keyupMusic2
             Unicode = 0x0004,
             ScanCode = 0x0008,
         }
+        private static readonly HashSet<MouseMsg> UpEvents = new HashSet<MouseMsg>
+        {
+            MouseMsg.click_up,
+            MouseMsg.middle_up,
+            MouseMsg.click_r_up,
+            MouseMsg.back_up,
+            MouseMsg.go_up
+        };
+        public static bool IsUpEvent(this MouseMsg msg)
+        {
+            return UpEvents.Contains(msg);
+        }
+
     }
 }

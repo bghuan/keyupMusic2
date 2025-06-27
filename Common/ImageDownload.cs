@@ -9,6 +9,16 @@ namespace keyupMusic2
     public partial class Common
     {
         public static string download_image_prix = "#/picture/";
+        public static void download_image(List<string> mmm)
+        {
+            //foreach(var msg in mmm)
+            //{
+            //    string id = msg.Replace(".png","").Replace(download_image_prix,"");
+            //    ProcessRun(lz_image_downloadexe, id,true);
+            //    Sleep(2000);
+            //}
+            ProcessRun(lz_image_downloadexe, string.Join(" ", mmm), true);
+        }
         public static void download_image(string msg)
         {
             play_sound_di();
@@ -17,8 +27,9 @@ namespace keyupMusic2
                 string id = msg.Substring(download_image_prix.Length);
                 _download_image(id);
             }
-            play_sound_di(); 
+            play_sound_di();
             //press([Keys.LControlKey, Keys.W]);
+            //mousego();
         }
         public static void _download_image(string id)
         {
@@ -47,9 +58,12 @@ namespace keyupMusic2
             public CancellationToken Token { get; set; }
             public int RequestId { get; set; }
         }
+        public static bool can_set_wallpaper = false; // 是否可以设置壁纸
         // 优化后的壁纸设置方法（最后触发的请求会使之前的无效）
         public static void SetDesktopWallpaper(string filePath, WallpaperStyle style = WallpaperStyle.Stretched, Action<bool, string> callback = null)
         {
+            if (!can_set_wallpaper)
+                return;
             // 检查文件是否存在
             if (!File.Exists(filePath))
             {
@@ -79,7 +93,8 @@ namespace keyupMusic2
                 currentRequest = newRequest;
 
                 // 重置防抖计时器
-                ResetDebounceTimer(() => {
+                ResetDebounceTimer(() =>
+                {
                     // 检查请求是否仍然有效
                     if (currentRequest == newRequest && !newRequest.Token.IsCancellationRequested)
                     {
@@ -96,7 +111,8 @@ namespace keyupMusic2
 
             // 创建新计时器
             debounceTimer = new System.Threading.Timer(
-                _ => {
+                _ =>
+                {
                     debounceTimer.Dispose();
                     debounceTimer = null;
                     action();
@@ -148,7 +164,7 @@ namespace keyupMusic2
                     throw new Exception("设置壁纸失败");
                 }
 
-                ishide_DesktopWallpaper = false;
+                ishide_DesktopWallpaper = 2;
                 Console.WriteLine($"成功: 请求 {request.RequestId} 壁纸已设置为 {request.FilePath}");
 
                 // 执行回调（成功）

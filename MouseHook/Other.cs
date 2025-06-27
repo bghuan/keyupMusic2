@@ -37,16 +37,40 @@ namespace keyupMusic2
                 _KingdomRush(e);
             else if (ProcessName == Common.BandiView)
                 HandleBandiView(e);
+            else if (ProcessName == Common.explorer)
+                Handleexplorer(e);
 
-            if (IsDesktopFocused() || ProcessName == Common.keyupMusic2)
-                change_image(e);
+            if (e.Msg != MouseMsg.move)
+                if (IsDesktopFocused())
+                    change_image(e);
+        }
+
+        private void Handleexplorer(MouseHookEventArgs e)
+        {
+            if (e.Msg == MouseMsg.move) return;
+            if (e.Msg == MouseMsg.click_up)
+            {
+                if (LongPressClass.long_press_lbutton && e.Y == screenHeight1)
+                    press(Delete);
+                LongPressClass.long_press_lbutton = false;
+            }
         }
 
         private void HandleBandiView(MouseHookEventArgs e)
         {
+            if (e.Msg == MouseMsg.move) return;
+            if (GetPointName() != Honeyview) return;
+
+            if (e.Msg == MouseMsg.click_up)
+                press([LControlKey, D0]);
             if (e.Msg == MouseMsg.click_r)
-                press(10, Delete, 200, Return);
-                //press(10, 400, Escape, Delete, 200, Return);
+                press(Delete);
+            if (e.Msg == MouseMsg.wheel)
+            {
+                if (e.data > 0 && Common.ProcessTitle.IndexOf("id") == 0) press(Delete);
+                else mousewhell(e.data);
+            }
+            //press(10, 400, Escape, Delete, 200, Return);
         }
 
         private static void change_image(MouseHookEventArgs e)
@@ -59,9 +83,10 @@ namespace keyupMusic2
                 SetDesktopWallpaper(nextWallpaper, WallpaperStyle.Fit);
             }
             if (e.Msg == MouseMsg.click_r)
-                if (ProcessName == explorer && e.Y == 0)
+                if (e.Y == 0 && IsDesktopFocused())
                 {
                     DeleteCurrentWallpaper();
+                    Sleep(100);
                     press(Escape);
                 }
         }
@@ -129,8 +154,8 @@ namespace keyupMusic2
                 {
                     if (e.Y == 0)
                     {
-                        press("116,69");
-                        //if (Deven_runing()) press("116,69");
+                        if (Deven_runing()) press("583,74");
+                        else press("116,69");
                         //else press("898,71");
                     }
                     else if (!catch_ed)
@@ -193,8 +218,8 @@ namespace keyupMusic2
             //    CenterWindowOnScreen(chrome);
             //else if (e.Msg == MouseMsg.WM_LBUTTONUP && (e.X == screenWidth1 && e.Y >= screenHeight2))
             //    CenterWindowOnScreen(chrome, true); 
-            if (e.Msg == MouseMsg.click_up && (e.X == screenWidth1))
-                CenterWindowOnScreen(chrome, e.Y >= screenHeight2);
+            //if (e.Msg == MouseMsg.click_up && (e.X == screenWidth1))
+            //    CenterWindowOnScreen(chrome, e.Y >= screenHeight2);
             //else if (e.Msg == MouseMsg.click_r_up && ExistProcess(Common.PowerToysCropAndLock, true))
             //{
             //    if (e.X == 0) { press(Keys.OemPeriod); return; }
@@ -207,7 +232,7 @@ namespace keyupMusic2
             //        press([Keys.LControlKey, Keys.W]);
             //    }
             //}
-            else if (e.Msg == MouseMsg.wheel && e.X == 0)
+            if (e.Msg == MouseMsg.wheel && e.X == 0)
             {
                 wheelleftright(e);
             }

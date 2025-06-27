@@ -18,6 +18,7 @@ namespace keyupMusic2
             get => base.Text;
             set
             {
+                // ʧЧ
                 if (LabelTicking && Common.LabelTick > 0)
                 {
                     base.Text = value;

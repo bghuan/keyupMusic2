@@ -143,7 +143,7 @@ namespace keyupMusic2
         private static void quick_go_back(KeyboardHookEventArgs e)
         {
             {
-                if (!list_go_back.Contains(ProcessName)) return;
+                if (!biu.list_go_back.Contains(ProcessName)) return;
 
                 if (e.key == Keys.MediaNextTrack && ProcessName == msedge)
                     press(Keys.Right);

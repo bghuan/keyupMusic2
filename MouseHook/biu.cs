@@ -11,9 +11,9 @@ namespace keyupMusic2
     {
         public biu()
         {
-            biusc = new biuCL();
+            ReplaceKey2.init();
+            init();
         }
-        biuCL biusc;
         public static Point r_down_x = Point.Empty;
         bool menu_opened = false;
 
@@ -24,9 +24,9 @@ namespace keyupMusic2
             if (e.Msg == MouseMsg.middle_up) return true;
             if (e.Msg == MouseMsg.wheel && e.Y == 0) return true;
 
-            if (e.Msg == MouseMsg.back || e.Msg == MouseMsg.back_up
-             || e.Msg == MouseMsg.go || e.Msg == MouseMsg.go_up)
+            if (go_back_keys.Contains(e.Msg) && ReplaceKey2.Catched(ProcessName, e.Msg))
             {
+                return true;
                 if (is_down(Keys.XButton1) || is_down(Keys.XButton2)) { return false; }
                 if (!list_go_back.Contains(ProcessName)) return true;
                 if (Common.cs2.Equals(ProcessName)) return true;
@@ -38,7 +38,7 @@ namespace keyupMusic2
                 if (list.Contains(Common.ProcessName))
                 {
                     //if (is_down(Keys.RButton)) return false;
-                    //if (!list.Contains(GetPointName())) return false;
+                    if (!list.Contains(GetPointName())) return false;
                     return true;
                 }
             }
@@ -50,7 +50,7 @@ namespace keyupMusic2
                     if (list2.Contains(Common.ProcessName))
                         return true;
                 }
-                var list = new[] { Glass2, vlc };
+                var list = new[] { Glass2, vlc, Honeyview };
                 if (list.Contains(Common.ProcessName))
                     return true;
             }
@@ -75,13 +75,14 @@ namespace keyupMusic2
             {
                 easy_read(e);
 
-                biusc.Cornor(e);
+                Cornor(e);
                 BottomLine(e);
                 Other(e);
 
                 Glass(e);
 
                 GoBack(e);
+                GoBack2(e);
                 //Gestures(e);
                 All(e);
             });

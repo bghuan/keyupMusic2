@@ -56,7 +56,7 @@ namespace keyupMusic2
                     break;
                 case Keys.Y:
                     Common.cmd($"/c start ms-settings:taskbar");
-                    press("200;978,1042;10;907,1227;2500,32;", 801);
+                    press("100;978,1042;978,1044;907,1227;2500,32;", 501);
                     break;
                 case Keys.U:
                     Common.cmd($"/c start ms-settings:personalization");
@@ -76,11 +76,20 @@ namespace keyupMusic2
                 case Keys.A:
                     //start_record = !start_record;
                     //Log.logcachesave();
+                    string path = "";
+                    Invoke(() =>
+                    {
+                        path = Clipboard.GetText();
+                    });
+                    var a = GetAllFiles(path, false);
+                    download_image(a);
                     break;
                 case Keys.S:
-                    SetWindowTitle();
+                    //SetWindowTitle();
+                    MoveSmallFilesRecursive();
                     break;
                 case Keys.D:
+                    can_set_wallpaper = !can_set_wallpaper;
                     break;
                 case Keys.F:
                     huan.Invoke2(() => { var aaa = IsAnyAudioPlaying(); huan.label1.Text = aaa + ""; }, 300);
@@ -100,7 +109,7 @@ namespace keyupMusic2
                     }
                     break;
                 case Keys.H:
-                    press(Keys.BrowserHome);
+                    press(H);
                     break;
                 case Keys.J:
                     mousewhell(245, 717, 524, 735, -2);

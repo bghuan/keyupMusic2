@@ -80,7 +80,9 @@ namespace keyupMusic2
         public const string Progman = "Progman";
         public const string lz_image_downloadexe = "C:\\Users\\bu\\source\\repos\\lz_image_download\\bin\\Debug\\net8.0\\lz_image_download.exe";
         public const string PhotoApps = "PhotoApps";
-        public const string BandiView = "BandiView";
+        public const string BandiView = "Honeyview";
+        public const string Honeyview = "Honeyview";
+        public const string lz_image_download = "lz_image_download";
 
 
         public static string ProcessName = "";
@@ -95,20 +97,13 @@ namespace keyupMusic2
             IntPtr hwnd = Native.GetForegroundWindow(); // 获取当前活动窗口的句柄
             if (hwnd == IntPtr.Zero) return "";
             if (ProcessMap.ContainsKey(hwnd) && ProcessMap[hwnd].name == Common.ProcessName)
+            {
+                if (refreshTitleList.Contains(ProcessName))
+                    FreshProcessNameByMap(hwnd);
                 return Common.ProcessName;
+            }
             if (!ProcessMap.ContainsKey(hwnd))
             {
-                //uint processId;
-                //Native.GetWindowThreadProcessId(hwnd, out processId);
-
-                //StringBuilder className = new StringBuilder(256);
-                //GetClassName(hwnd, className, className.Capacity);
-                //string classNameStr = className.ToString();
-
-                //using (Process process = Process.GetProcessById((int)processId))
-                //{
-                //    ProcessMap[hwnd] = new ProcessWrapper(process.ProcessName, GetWindowTitle(hwnd), process.MainModule.FileName, classNameStr);
-                //}
                 ProcessMap[hwnd] = new ProcessWrapper(hwnd);
             }
             FreshProcessNameByMap(hwnd);
@@ -117,6 +112,7 @@ namespace keyupMusic2
 
             return ProcessName;
         }
+        public static HashSet<string> refreshTitleList = new HashSet<string> { msedge, chrome, Honeyview, };
         public static void FreshProcessNameByMap(IntPtr hwnd)
         {
             if (ProcessMap.ContainsKey(hwnd))
@@ -124,7 +120,7 @@ namespace keyupMusic2
                 Common.ProcessName = ProcessMap[hwnd].name;
                 ProcessTitle = ProcessMap[hwnd].title;
                 ProcessPath = ProcessMap[hwnd].path;
-                if (Common.ProcessName == msedge || ProcessName == chrome)
+                if (refreshTitleList.Contains(ProcessName))
                 {
                     ProcessTitle = GetWindowTitle(hwnd);
                     ProcessMap[hwnd].title = ProcessTitle;
@@ -189,7 +185,7 @@ namespace keyupMusic2
         }
         public static bool is_douyin()
         {
-            return ProcessName == douyin || ProcessTitle?.IndexOf("抖音") >= 0;
+            return ProcessName == douyin || (ProcessName == msedge && ProcessTitle?.IndexOf("抖音") >= 0);
         }
         public static bool is_steam_game()
         {
@@ -320,6 +316,19 @@ namespace keyupMusic2
             bool result = SetWindowText(hWnd, title);
             return result;
         }
+        public static bool SetWindowTitle2(string window)
+        {
+            string targetClassName = window;
+            IntPtr hWnd = GetProcessID(targetClassName);
+            string title = GetWindowTitle(hWnd);
+            if (title == null || title == "") return false;
+            if (title.IndexOf(")") >= 0)
+                title = title.Substring(title.IndexOf(")") + 1, title.Length - title.IndexOf(")") - 1);
+            if (title.IndexOf("主") > 0)
+                title = title.Substring(0, title.IndexOf("主"));
+            bool result = SetWindowText(hWnd, title);
+            return result;
+        }
         public static bool SetWindowTitle()
         {
             IntPtr hWnd = GetForegroundWindow();
@@ -329,11 +338,15 @@ namespace keyupMusic2
         public static bool ExistProcess(string procName, bool front = false)
         {
             Process[] objProcesses = Process.GetProcessesByName(procName);
-            if (objProcesses.Length > 0)
-            {
-                if (objProcesses[0].MainWindowHandle == 0 && front)
-                    return false;
-                return true;
+            //if (objProcesses.Length > 0)
+            //{
+            //    if (objProcesses[0].MainWindowHandle == 0 && front)
+            //        return false;
+            //    return true;
+            //}
+            foreach (Process proc in objProcesses) {
+                if (!front|| proc.MainWindowHandle != 0)
+                    return true;
             }
             return false;
         }
@@ -430,19 +443,24 @@ namespace keyupMusic2
         {
             //SetWindowTitle(Common.devenv, "");
             //SetWindowTitle(Common.chrome, "");
+            SetWindowTitle2(Common.chrome);
             //SetWindowTitle(Common.PowerToysCropAndLock, "");
             //SetWindowTitle(Common.wemeetapp, "");
         }
         public static bool IsDesktopFocused()
         {
+            if (ProcessName != explorer) return false;
             string classNameStr = processWrapper?.classname;
-            var title = GetPointTitle() == FolderView;
+            var title = GetPointTitle();
+            var istitle = title == FolderView;
+            //istitle = istitle || title == "Program Manager";
             var aa = classNameStr == "Progman" || classNameStr == "WorkerW";
-            if ((classNameStr == "Shell_TrayWnd" || classNameStr == "CabinetWClass") && title) aa = true;
-            aa = aa && title;
+            if ((classNameStr == "Shell_TrayWnd" || classNameStr == "CabinetWClass") && istitle) aa = true;
+            aa = aa && istitle;
             //aa = aa || ProcessName == Common.keyupMusic2;
             return aa;
         }
+        public static bool is_lizhi => (ProcessTitle.Contains("荔枝") && !ProcessTitle.Contains("分类"));
 
     }
 }

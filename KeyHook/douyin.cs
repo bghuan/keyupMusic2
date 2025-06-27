@@ -5,14 +5,6 @@ namespace keyupMusic2
 {
     public class DouyinClass : Default
     {
-        public DouyinClass(Form parentForm)
-        {
-            huan = (Huan)parentForm;
-        }
-        public DouyinClass()
-        {
-        }
-        public static Huan huan;
         bool signle = true;
         public static Keys[] judge_handled_key = { Keys.X, Keys.H, };
         int num;

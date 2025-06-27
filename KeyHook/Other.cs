@@ -99,16 +99,24 @@ namespace keyupMusic2
 
         private void HandleBandiView(KeyboardHookEventArgs e)
         {
-            if (e.key == Delete)
+            if (e.key == OemPeriod)
             {
-                Sleep(200);
-                press(Return);
+                var title = ProcessTitle;
+                var id = title.Substring(0, 5);
+                press(Oem6);
+                DeleteDir(id);
+            }
+            if (e.key == Space)
+            {
+                var title = ProcessTitle;
+                var id = title.Substring(0, 5);
+                OpenDir(id);
             }
         }
 
         private void HandleProgman(KeyboardHookEventArgs e)
         {
-            if (!IsDesktopFocused() && ProcessName != Common.keyupMusic2) return;
+            if (!IsDesktopFocused()) return;
             switch (e.key)
             {
                 case Keys.Down:

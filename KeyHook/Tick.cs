@@ -10,7 +10,6 @@ namespace keyupMusic2
         private readonly System.Windows.Forms.Timer timer8000ms = new() { Interval = 8000 };
         private readonly System.Windows.Forms.Timer timer60000ms = new() { Interval = 60_000 };
 
-        int long_press_tick = 500;
         public Tick()
         {
             timer100msKeyPress.Tick += (s, e) => Every100msHandler();
@@ -28,18 +27,22 @@ namespace keyupMusic2
             if (DateTime.Now.Minute == 0)
             {
                 if (ProcessName == wemeetapp) return;
+                if (ExistProcess(wemeetapp, true)) return;
+                float vol = 0.3f;
 
                 var is_music = IsAnyAudioPlaying();
                 if (is_music) press(Keys.MediaPlayPause);
                 float volume = GetSystemVolume();
-                if (volume > 0.5) { SetSystemVolume(0.48f); press(VolumeUp); }
-                play_sound(DateTime.Now.Hour % 10);
+                if (volume > vol) { SetSystemVolume(vol - 0.02f); press(VolumeUp); }
+                int num_music = DateTime.Now.Hour % 10;
+                if (DateTime.Now.Hour > 12) num_music = (DateTime.Now.Hour - 12) % 10;
+                play_sound(num_music);
 
                 Task.Run(() =>
                 {
                     Sleep(player_time);
                     float volume2 = GetSystemVolume();
-                    if (volume > 0.5 && volume2 == 0.5)
+                    if (volume > vol && volume2 == vol)
                     {
                         SetSystemVolume(volume - 0.02f);
                         press(VolumeUp);
@@ -47,15 +50,21 @@ namespace keyupMusic2
                     if (is_music) press(Keys.MediaPlayPause);
                 });
             }
+            if (DateTime.Now.Minute % 9 == 0)
+            {
+                if (ishide_DesktopWallpaper == 2)
+                    SetDesktopWallpaper(GetNextWallpaper(), WallpaperStyle.Fit);
+            }
             if (DateTime.Now.Minute % 10 == 0)
             {
-                if (!ishide_DesktopWallpaper)
+                if (ishide_DesktopWallpaper == 2)
                     SetDesktopWallpaper(GetNextWallpaper(), WallpaperStyle.Fit);
             }
         }
 
         private void Every100msHandler()
         {
+            if (is_steam_game()) return;
             var currentKeys = GetVirPressedKeys();
 
             // 处理新按下的按键
@@ -64,10 +73,14 @@ namespace keyupMusic2
                 if (!_keyPressTimes.ContainsKey(key.Key))
                     _keyPressTimes[key.Key] = DateTime.Now;
 
-                if ((DateTime.Now - _keyPressTimes[key.Key]).Milliseconds >= long_press_tick &&
+                if ((DateTime.Now - _keyPressTimes[key.Key]).Milliseconds >= LongPressClass.long_press_tick &&
                     !_longPressedKeys.ContainsKey(key.Key)
                     && (key.Value == null || key.Value == ProcessName))
                 {
+                    //if (ReplaceKey2.proName.Contains(ProcessName)) { }
+                    //if (ReplaceKey2.proNameMap.ContainsKey(ProcessName)) { }
+                    //mousekeymap.ContainsValue
+
                     huan.LongPress.deal(key.Key); // 执行长按方法
                     _longPressedKeys.TryAdd(key.Key, 1); // 标记为已触发
                 }
@@ -86,21 +99,28 @@ namespace keyupMusic2
 
         private void Every8000ms()
         {
+            FreshProcessName();
             if (ProcessName == cs2)
             {
-                if (!is_ctrl() && !is_down(Keys.LWin))
+                if (!is_ctrl() && !is_down(Keys.LWin) && PositionMiddle == Position)
                     press(Keys.F1);
                 if (Position != PositionMiddle)
                     PositionMiddle = Position;
+                //VirtualKeyboardForm.Instance?.SetInitClean();
             }
             else if (system_sleep_count > 0)
             {
-                if (system_sleep_count > 1)
-                    play_sound(Keys.D2, true);
-                if (system_sleep_count > slow)
+                int slow = 5;
+                int end = 5 + slow;
+                if (system_sleep_count >= slow)
+                    for (int i = end - system_sleep_count; i > 0; i--)
+                    {
+                        play_sound_di();
+                        Sleep(100);
+                    }
+                if (system_sleep_count >= end)
                     system_hard_sleep();
                 system_sleep_count++;
-                //Log.logcachesave();
             }
             else if (gcc_restart)
             {
@@ -121,6 +141,11 @@ namespace keyupMusic2
             else if (ExistProcess(cs2) && Position == PositionMiddle)
             {
                 press_middle_bottom();
+            }
+            else if (Position.X == 0 && IsDesktopFocused())
+            {
+                if (ishide_DesktopWallpaper == 2)
+                    SetDesktopWallpaper(GetNextWallpaper(), WallpaperStyle.Fit);
             }
             bland_title();
         }

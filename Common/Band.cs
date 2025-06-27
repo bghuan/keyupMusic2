@@ -78,6 +78,39 @@ namespace keyupMusic2
                 else if (key == Keys.Left)
                     key = Keys.Space;
             }
+            else if (ProcessName == Common.Honeyview)
+            {
+                if (key == Keys.F3)
+                    key = Keys.OemPeriod;
+                if (key == Keys.Left)
+                    key = Keys.Oem4;
+                if (key == Keys.Right)
+                    key = Keys.Oem6;
+                if (key == Keys.Down)
+                    key = Keys.Delete;
+            }
+            else if (ProcessName == Common.keyupMusic2)
+            {
+                if (key == Keys.PageDown)
+                    key = Keys.Space;
+            }
+
+            if (ProcessName == Common.chrome && ProcessTitle.Contains("荔枝"))
+            {
+                if (key == Keys.PageDown)
+                    mousewhell(-1);
+                else if (key == Keys.Up)
+                    mousewhell(1);
+                else if (key == Keys.Down)
+                    press([Keys.LControlKey, Keys.W]);
+                else if (key == Keys.Left)
+                    mouseback();
+                else if (key == Keys.Right)
+                    press([Keys.F]);
+                else if (key == Keys.F3)
+                    press([Keys.LWin, Keys.D]);
+                return;
+            }
 
             if (key == Keys.None) return;
 

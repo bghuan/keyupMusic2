@@ -16,9 +16,6 @@ namespace keyupMusic2
     {
         public static Huan huan => Huan.Instance;
 
-        public static List<string> list_go_back = new List<string> { explorer, VSCode, msedge, chrome, devenv, androidstudio, ApplicationFrameHost, cs2, steam, Glass, Glass2, Glass3, vlc, PowerToysCropAndLock, KingdomRush1, };
-
-
         public static bool hooked = false;
         public static bool stop_listen = false;
         public static bool ACPhoenix_mouse_hook = false;
@@ -295,21 +292,40 @@ namespace keyupMusic2
                 bmpScreenshot.Save("C:\\Users\\bu\\Pictures\\Screenshots\\dd\\" + DateTime.Now.ToString("yyyyMMddHHmmss") + ".png", ImageFormat.Png);
             }
         }
-        public static void ProcessRun(string str, string arg = "")
+        public static bool ProcessRun(string str, string arg = "", bool waitForExit = false)
         {
+            Process process = null;
             try
             {
-                ProcessStartInfo startInfo2 = new ProcessStartInfo(str);
-                startInfo2.UseShellExecute = true;
-                //startInfo2.UseShellExecute = false;
-                //startInfo2.CreateNoWindow = true;
-                //startInfo2.WindowStyle = ProcessWindowStyle.Hidden;
-                startInfo2.Verb = "runas";
+                ProcessStartInfo startInfo = new ProcessStartInfo(str)
+                {
+                    UseShellExecute = true,
+                    Verb = "runas" // 请求管理员权限
+                };
+
                 if (!string.IsNullOrEmpty(arg))
-                    startInfo2.Arguments = arg;
-                Process.Start(startInfo2);
+                    startInfo.Arguments = arg;
+
+                process = Process.Start(startInfo);
+
+                if (process != null && waitForExit)
+                {
+                    process.WaitForExit(); // 等待进程退出
+                    return process.ExitCode == 0; // 返回进程退出状态
+                }
+
+                return true; // 不等待时默认返回成功
             }
-            catch { }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"启动进程时出错: {ex.Message}");
+                return false;
+            }
+            finally
+            {
+                // 释放资源
+                process?.Dispose();
+            }
         }
         public static void DaleyRun(Func<bool> action, int alltime, int tick)
         {
@@ -371,6 +387,7 @@ namespace keyupMusic2
         }
         public static bool IsFullScreen(IntPtr hWnd = 0)
         {
+            if (ProcessName == explorer) return false;
             if (hWnd == 0)
                 hWnd = Native.GetForegroundWindow();
             Native.RECT windowRect;
@@ -385,9 +402,9 @@ namespace keyupMusic2
                    windowRect.Right == 0 &&
                    windowRect.Bottom == screen2Height;
             }
-            if (Position.X > Common.screenHeight)
+            if (Position.X > Common.screenWidth)
             {
-                return windowRect.Left == screen2Width0 &&
+                return windowRect.Left == screen2X &&
                    windowRect.Top == 0 &&
                    windowRect.Right == screen2Width &&
                    windowRect.Bottom == screen2Height;
@@ -492,6 +509,7 @@ namespace keyupMusic2
         }
         public static Dictionary<Keys, string> GetVirPressedKeys()
         {
+            //return VirMouseStateKey;
             IEnumerable<Keys> keys = GetPressedKeys();
             Dictionary<Keys, string> virPressedKeys = VirMouseStateKey;
             var mergedDictionary = virPressedKeys
@@ -813,7 +831,8 @@ namespace keyupMusic2
         }
         public static void LossScale()
         {
-            if (IsDiffProcess()) mouse_click();
+            if (is_douyin()) { }
+            else if (IsDiffProcess()) mouse_click();
             //press([Keys.LControlKey, Keys.F2]);return;
             if (!ExistProcess(LosslessScaling))
                 ProcessRun(LosslessScalingexe);
@@ -832,7 +851,7 @@ namespace keyupMusic2
         public static void quick_left_right(int arraw)
         {
             IntPtr hwnd = GetForegroundWindow();
-            int tick = 100;
+            int tick = 200;
             Sleep(tick);
 
             var full = IsFullScreen(hwnd);
@@ -846,7 +865,7 @@ namespace keyupMusic2
             Sleep(tick);
 
             var pp = new Point(100, 100);
-            if (arraw == 2) pp = new Point(screen2Width0 + 100, 100);
+            if (arraw == 2) pp = new Point(screen2X + 100, 100);
             MoveProcessWindow(hwnd, pp);
             Sleep(tick);
 

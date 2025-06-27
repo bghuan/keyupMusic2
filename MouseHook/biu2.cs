@@ -26,9 +26,7 @@ namespace keyupMusic2
                 string title = GetWindowTitle(hwnd);
                 last_hwnd = hwnd;
                 string message = ProcessName + " " + name + " " + title + " " + processWrapper?.classname;
-                if (huan.label1.Text != message
-                    && !huan.label1.Text.Contains("line") && !huan.label1.Text.Contains("corner")
-                    )
+                if (huan.label1.Text != message)
                 {
                     if (name != ProcessName && name != explorer)
                         CleanMouseState();
@@ -40,6 +38,7 @@ namespace keyupMusic2
                 return;
             }
             if (ProcessName == VSCode) return;
+            if (ProcessName == chrome && e.Msg == MouseMsg.click) return;
 
             //if (e.Msg != MouseMsg.wheel)
             //    Log.logcache(e.Msg.ToString());

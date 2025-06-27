@@ -37,7 +37,7 @@ namespace keyupMusic2
             InitializeComponent();
 
             try_restart_in_admin();
-            //release_all_key();
+            release_all_key();
             startListen();
 
             ACPhoenix = new ACPhoenixClass();
@@ -104,13 +104,14 @@ namespace keyupMusic2
             if (e.Button == MouseButtons.Right)
             {
                 // 假设“微亮键盘(显示隐藏)”是你要修改的项
-                foreach (ToolStripItem item in contextMenuStrip1.Items)
-                {
-                    if (item is ToolStripMenuItem menuItem && menuItem.Name.Equals("moontimmeshow"))
-                        menuItem.Text = $"月亮表({(MoonTime.Instance.Visible ? "已显示" : "已隐藏")})";
-                    if (item is ToolStripMenuItem menuItem2 && menuItem2.Name.Equals("keyboardlightshow"))
-                        menuItem2.Text = $"微亮键盘({(VirtualKeyboardForm.Instance.Visible ? "已显示" : "已隐藏")})";
-                }
+                if (VirtualKeyboardForm.Instance != null)
+                    foreach (ToolStripItem item in contextMenuStrip1.Items)
+                    {
+                        if (item is ToolStripMenuItem menuItem && menuItem.Name.Equals("moontimmeshow"))
+                            menuItem.Text = $"月亮表({(MoonTime.Instance.Visible ? "已显示" : "已隐藏")})";
+                        if (item is ToolStripMenuItem menuItem2 && menuItem2.Name.Equals("keyboardlightshow"))
+                            menuItem2.Text = $"微亮键盘({(VirtualKeyboardForm.Instance.Visible ? "已显示" : "已隐藏")})";
+                    }
                 var mousePos = Control.MousePosition;
                 int menuHeight = contextMenuStrip1.GetPreferredSize(contextMenuStrip1.Size).Height;
                 contextMenuStrip1.Show(mousePos.X, mousePos.Y - menuHeight);
@@ -155,8 +156,8 @@ namespace keyupMusic2
                 //SetVisibleCore(false);
                 TaskRun(() => { Invoke(() => SetVisibleCore(false)); }, 100);
             }
-            //Location = new Point(Screen.PrimaryScreen.Bounds.Width - 310, 100);
-            Location = new Point(2255, 37);
+            Location = new Point(Screen.PrimaryScreen.Bounds.Width - 310, 100);
+            //Location = new Point(2255, 37);
 
             startPoint = new Point(Location.X - 252, Location.Y);
             endPoint = Location;
@@ -194,13 +195,18 @@ namespace keyupMusic2
             Common.FocusProcess(Common.Glass3);
 
             //if (!Debugger.IsAttached) return;
-            // 创建并显示WebView2窗口
+            //创建并显示WebView2窗口
             VirtualKeyboardForm virtualKeyboardForm = new VirtualKeyboardForm();
             virtualKeyboardForm.Show();
 
             MoonTime moontimeForm = new MoonTime();
             moontimeForm.Show();
             InitializeFromCurrentWallpaper();
+
+            if (!Debugger.IsAttached)
+            {
+                HideProcess(devenv);
+            }
         }
     }
 }
