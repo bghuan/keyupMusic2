@@ -500,7 +500,6 @@ namespace keyupMusic2
         static ConcurrentDictionary<byte, byte> MapVirtualKey = new ConcurrentDictionary<byte, byte>();
         private static void keybd_event(byte bVk, byte bScan, uint dwFlags, uint dwExtraInfo)
         {
-            //// 判断是否需要 ExtendedKey
             //bool needExtended = bVk == 0xA5 // RMenu
             //                 || bVk == 0xA4 // LMenu
             //                 || bVk == 0xA3 // RControl

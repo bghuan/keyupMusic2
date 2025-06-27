@@ -97,7 +97,7 @@ namespace keyupMusic2
             {
                 if (system_sleep_count > 1)
                     play_sound(Keys.D2, true);
-                if (system_sleep_count > 5)
+                if (system_sleep_count > slow)
                     system_hard_sleep();
                 system_sleep_count++;
                 //Log.logcachesave();

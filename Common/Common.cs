@@ -269,7 +269,7 @@ namespace keyupMusic2
             try { if (!Debugger.IsAttached) bmpScreenshot.Dispose(); } catch (NullReferenceException e) { }
             play_sound_di();
             Screen secondaryScreen = Screen.AllScreens.FirstOrDefault(scr => !scr.Primary);
-            int start_x = 2560;
+            int start_x = screenWidth;
             if (screen2Width < 0)
                 start_x = -1920;
             if (secondaryScreen == null) { return; }
