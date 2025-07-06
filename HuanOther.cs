@@ -7,7 +7,7 @@ namespace keyupMusic2
 {
     public partial class Huan
     {
-        public static ConcurrentDictionary<Keys, string> handling_keys = new();
+        public static ConcurrentDictionary<Keys, DateTime> handling_keys = new();
         public async void Invoke2(Action action, int tick = 0)
         {
             await Task.Delay(tick);
@@ -60,7 +60,7 @@ namespace keyupMusic2
             string _ProcessName = "";
             if (special_key.Contains(e.key)) _ProcessName = process_and_log(e.key.ToString());
             if (e.key == Keys.F22 && (_ProcessName == "WeChatAppEx" || _ProcessName == "WeChat")) { return; }
-            handling_keys[e.key] = ProcessName;
+            handling_keys[e.key] = DateTime.Now;
         }
         private void print_easy_read(KeyboardHookEventArgs e)
         {
@@ -72,7 +72,7 @@ namespace keyupMusic2
 
             try
             {
-                var _stop_keys = new Dictionary<Keys, string>(handling_keys);
+                var _stop_keys = new Dictionary<Keys, DateTime>(handling_keys);
                 Invoke(() =>
                     {
                         string asd = string.Join(" ", _stop_keys?.Select(key => easy_read(key.Key.ToString())));

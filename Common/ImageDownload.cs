@@ -52,23 +52,26 @@ namespace keyupMusic2
 
         private class WallpaperRequest
         {
+            public bool Force { get; set; }
             public string FilePath { get; set; }
             public WallpaperStyle Style { get; set; }
             public Action<bool, string> Callback { get; set; }
             public CancellationToken Token { get; set; }
             public int RequestId { get; set; }
         }
-        public static bool can_set_wallpaper = false; // 是否可以设置壁纸
         // 优化后的壁纸设置方法（最后触发的请求会使之前的无效）
-        public static void SetDesktopWallpaper(string filePath, WallpaperStyle style = WallpaperStyle.Stretched, Action<bool, string> callback = null)
+        public static void SetDesktopWallpaper(string filePath, WallpaperStyle style = WallpaperStyle.Stretched, bool force = false)
         {
-            if (!can_set_wallpaper)
-                return;
+            if (!force)
+            {
+                var currentPath = GetWallpaperFromRegistry();
+                if (!currentPath.Contains(Common.keyupMusic)) return;
+            }
+
             // 检查文件是否存在
             if (!File.Exists(filePath))
             {
                 Console.WriteLine("错误: 文件不存在 - " + filePath);
-                callback?.Invoke(false, "文件不存在");
                 return;
             }
 
@@ -82,9 +85,9 @@ namespace keyupMusic2
                 // 创建新请求
                 var newRequest = new WallpaperRequest
                 {
+                    Force = force,
                     FilePath = filePath,
                     Style = style,
-                    Callback = callback,
                     Token = cancellationToken.Token,
                     RequestId = Interlocked.Increment(ref requestCounter)
                 };
@@ -122,6 +125,9 @@ namespace keyupMusic2
                 Timeout.Infinite
             );
         }
+
+        static string _wallpapersPath = Path.Combine(
+         Directory.GetCurrentDirectory(), "image", "downloaded_images", "1", "output.png");
         // 处理壁纸请求
         private static void ProcessRequest(WallpaperRequest request)
         {
@@ -136,6 +142,13 @@ namespace keyupMusic2
                 }
 
                 Console.WriteLine($"开始处理请求 {request.RequestId}: {request.FilePath}");
+
+                if (!request.Force)
+                {
+                    var sourPath = request.FilePath;
+                    request.FilePath = _wallpapersPath;
+                    ConvertAndResize(sourPath, _wallpapersPath);
+                }
 
                 // 设置壁纸样式和平铺选项
                 using (RegistryKey key = Registry.CurrentUser.OpenSubKey(@"Control Panel\Desktop", true))
@@ -158,13 +171,14 @@ namespace keyupMusic2
 
                 // 应用壁纸
                 int result = SystemParametersInfo(SPI_SETDESKWALLPAPER, 0, request.FilePath, SPIF_UPDATEINIFILE | SPIF_SENDCHANGE);
+                //int result = SystemParametersInfo(SPI_SETDESKWALLPAPER, 0, request.FilePath, SPIF_UPDATEINIFILE | SPIF_SENDCHANGE);
 
                 if (result == 0)
                 {
                     throw new Exception("设置壁纸失败");
                 }
+                //ConvertAndResize(sourPath, _wallpapersPath);
 
-                ishide_DesktopWallpaper = 2;
                 Console.WriteLine($"成功: 请求 {request.RequestId} 壁纸已设置为 {request.FilePath}");
 
                 // 执行回调（成功）
@@ -214,6 +228,20 @@ namespace keyupMusic2
                     break;
             }
         }
+        public static void GoodDesktopWallpaper()
+        {
+            var currentPath = GetWallpaperFromRegistry();
+            if (!currentPath.Contains(Common.keyupMusic)) return;
+            string GoodWallpapersPath = Path.Combine(
+Directory.GetCurrentDirectory(), "image", "downloaded_images", "2");
+            Directory.CreateDirectory(GoodWallpapersPath);
+            var CurrentWallpaperPath = GetCurrentWallpaperPath();
+            var fileName = Path.GetFileName(GetCurrentWallpaperPath());
+            GoodWallpapersPath = Path.Combine(GoodWallpapersPath, fileName);
+            if(File.Exists(GoodWallpapersPath)) return;
+            File.Copy(CurrentWallpaperPath, GoodWallpapersPath);
+            play_sound_di();
+        }
     }
 
     // 壁纸样式枚举
@@ -226,6 +254,4 @@ namespace keyupMusic2
         Fill,      // 填充屏幕（保持比例，可能裁剪）
         Original   // 原始大小（不拉伸，可能只显示部分）
     }
-
-
 }

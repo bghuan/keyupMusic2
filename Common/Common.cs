@@ -1053,7 +1053,7 @@ namespace keyupMusic2
             }
             return false;
         }
-        public static void openClash()
+        public static void changeClash()
         {
             press([Keys.LControlKey, Keys.F1]);
             bool isProxyOn = Common.IsClashVergeSystemProxyOn().GetAwaiter().GetResult();

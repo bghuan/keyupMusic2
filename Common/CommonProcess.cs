@@ -15,6 +15,7 @@ namespace keyupMusic2
 {
     public partial class Common
     {
+        public const string keyupMusic = "keyupMusic";
         public const string keyupMusic2 = "keyupMusic4";
         public const string msedgewebview2 = "msedgewebview2";
         public const string ShellExperienceHost = "ShellExperienceHost";
@@ -177,7 +178,7 @@ namespace keyupMusic2
             uint processId;
             string Name;
             Native.GetWindowThreadProcessId(hwnd, out processId);
-            using (Process process = Process.GetProcessById((int)processId))
+            Process process = Process.GetProcessById((int)processId);
             {
                 Name = process.ProcessName;
             }

@@ -81,7 +81,7 @@ namespace keyupMusic2
             //mouse_click();
             //var list = new[] { Common.chrome };
             //if (list.Contains(Common.ProcessName))
-            openClash();
+            changeClash();
             //press(Keys.Escape);
             return e.data;
         }

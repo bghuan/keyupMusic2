@@ -54,12 +54,12 @@ namespace keyupMusic2
             new Tick(); ;
             Opencv = new OpencvReceive();
 
-            Application.ApplicationExit += (s, e) =>
-            {
-                if (!Debugger.IsAttached) return;
-                string executablePath = Process.GetCurrentProcess().MainModule.FileName;
-                Process.Start(executablePath);
-            };
+            //Application.ApplicationExit += (s, e) =>
+            //{
+            //    if (!Debugger.IsAttached) return;
+            //    string executablePath = Process.GetCurrentProcess().MainModule.FileName;
+            //    Process.Start(executablePath);
+            //};
         }
         protected override void Dispose(bool disposing)
         {

@@ -40,7 +40,7 @@ namespace keyupMusic2
                 case Keys.Delete:
                     clean(); DeleteCurrentWallpaper(); break;
                 case Keys.Escape:
-                    clean(); SetDesktopToBlack(); break;
+                    clean(); break;
 
                 case Keys.Up:
                     quick_next_image(); break;
@@ -57,13 +57,13 @@ namespace keyupMusic2
         private void quick_prix_image()
         {
             if (!isctrl()) return;
-            SetDesktopWallpaper(GetNextWallpaper(), WallpaperStyle.Fit);
+            SetDesktopWallpaper(GetNextWallpaper(), WallpaperStyle.Fit, true);
         }
 
         private void quick_next_image()
         {
             if (!isctrl()) return;
-            SetDesktopWallpaper(GetPreviousWallpaper(), WallpaperStyle.Fit);
+            SetDesktopWallpaper(GetPreviousWallpaper(), WallpaperStyle.Fit, true);
         }
 
         private static void quick_what()

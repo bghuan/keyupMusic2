@@ -62,12 +62,20 @@ namespace keyupMusic2
                     var judge = () =>
                     {
                         //FreshProcessName();
-                        return 
+                        return
                         judge_color(156, 958, Color.FromArgb(22, 24, 35), 0)
                         && !judge_color(525, 417, Color.FromArgb(22, 24, 35), 0)
                         && !judge_color(525, 417, Color.FromArgb(255, 255, 255), 0);
                     };
-                    var run = () => { press("100;525.417;525,418;500;H;100;2277,1404;2272,1171;1703.1439", 200); };
+                    var run = () =>
+                    {
+                        press("100;525.417;525,418;500;H;100;", 200);
+                        if (!IsFullScreen())
+                            press("100;525.417;525,418;500;H", 200);
+                        press("100;2277,1404;2272,1171;1703.1439", 200);
+
+                        LossScale();
+                    };
                     var action2 = () => DaleyRun(judge, run, 3222, 100);
                     action2();
 

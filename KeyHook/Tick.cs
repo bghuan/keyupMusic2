@@ -50,50 +50,25 @@ namespace keyupMusic2
                     if (is_music) press(Keys.MediaPlayPause);
                 });
             }
-            if (DateTime.Now.Minute % 9 == 0)
-            {
-                if (ishide_DesktopWallpaper == 2)
-                    SetDesktopWallpaper(GetNextWallpaper(), WallpaperStyle.Fit);
-            }
             if (DateTime.Now.Minute % 10 == 0)
             {
-                if (ishide_DesktopWallpaper == 2)
-                    SetDesktopWallpaper(GetNextWallpaper(), WallpaperStyle.Fit);
+                SetDesktopWallpaper(GetNextWallpaper(), WallpaperStyle.Fit);
             }
         }
 
         private void Every100msHandler()
         {
-            if (is_steam_game()) return;
-            var currentKeys = GetVirPressedKeys();
+            if (Huan.handling_keys.Count == 0) return;
 
-            // 处理新按下的按键
-            foreach (var key in currentKeys)
+            var handling_keys = Huan.handling_keys;
+            //if (is_steam_game()) return;
+            foreach (var key in handling_keys)
             {
-                if (!_keyPressTimes.ContainsKey(key.Key))
-                    _keyPressTimes[key.Key] = DateTime.Now;
-
-                if ((DateTime.Now - _keyPressTimes[key.Key]).Milliseconds >= LongPressClass.long_press_tick &&
-                    !_longPressedKeys.ContainsKey(key.Key)
-                    && (key.Value == null || key.Value == ProcessName))
+                if (DateTime.Now - key.Value > TimeSpan.FromMilliseconds(LongPressClass.long_press_tick))
                 {
-                    //if (ReplaceKey2.proName.Contains(ProcessName)) { }
-                    //if (ReplaceKey2.proNameMap.ContainsKey(ProcessName)) { }
-                    //mousekeymap.ContainsValue
-
                     huan.LongPress.deal(key.Key); // 执行长按方法
-                    _longPressedKeys.TryAdd(key.Key, 1); // 标记为已触发
+                    handling_keys[key.Key] = DateTime.Now.AddDays(1);
                 }
-            }
-
-            var keysToRemove = _keyPressTimes.Keys
-                .Where(k => !currentKeys.ContainsKey(k))
-                .ToList();
-
-            foreach (var key in keysToRemove)
-            {
-                _keyPressTimes.TryRemove(key, out _);
-                _longPressedKeys.TryRemove(key, out _);
             }
         }
 
@@ -102,6 +77,7 @@ namespace keyupMusic2
             FreshProcessName();
             if (ProcessName == cs2)
             {
+                if (ExistProcess(wemeetapp, true)) return;
                 if (!is_ctrl() && !is_down(Keys.LWin) && PositionMiddle == Position)
                     press(Keys.F1);
                 if (Position != PositionMiddle)
@@ -138,14 +114,13 @@ namespace keyupMusic2
 
                 gcc_restart = false;
             }
-            else if (ExistProcess(cs2) && Position == PositionMiddle)
+            else if (ExistProcess(cs2) && Position == PositionMiddle && IsFullScreen())
             {
                 press_middle_bottom();
             }
-            else if (Position.X == 0 && IsDesktopFocused())
+            else if (Position.X == 0)
             {
-                if (ishide_DesktopWallpaper == 2)
-                    SetDesktopWallpaper(GetNextWallpaper(), WallpaperStyle.Fit);
+                SetDesktopWallpaper(GetNextWallpaper(), WallpaperStyle.Fit);
             }
             bland_title();
         }

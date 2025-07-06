@@ -22,6 +22,7 @@ namespace keyupMusic2
            new ReplaceKey2(Honeyview,       MouseMsg.go,        Keys.Oem6),
            new ReplaceKey2(Honeyview,       MouseMsg.back,      Keys.Oem4),
            new ReplaceKey2(chrome,          MouseMsg.go,        Keys.F),
+           new ReplaceKey2(Common.cs2,      MouseMsg.go,        Keys.Escape),
            //new ReplaceKey2(msedge,          MouseMsg.go,        Keys.Home,       ()=>{ }),
            //new ReplaceKey(msedge,          MouseMsg.go_up,   Keys.Home,       ()=>{ }),
            //new ReplaceKey(string.Empty,    MouseMsg.go,        Keys.MediaNextTrack),
@@ -75,7 +76,8 @@ namespace keyupMusic2
             else if (ProcessName == (lz_image_download))
                 _lz_image_download(go, back);
 
-            if (list_go_back.Contains(ProcessName)) return;
+            if (!IsDesktopFocused() && list_go_back.Contains(ProcessName)) 
+                return;
 
             if (go)
                 press(Keys.MediaNextTrack);
@@ -124,10 +126,10 @@ namespace keyupMusic2
                 if ((judge_color(27, 95, Color.FromArgb(120, 123, 117))
                     && judge_color(2496, 121, Color.FromArgb(55, 61, 53))))
                     press([Keys.LControlKey, Keys.W]);
-                else if (is_lizhi)
-                {
-                    press([Keys.LControlKey, Keys.W]);
-                }
+                //else if (is_lizhi)
+                //{
+                //    press([Keys.LControlKey, Keys.W]);
+                //}
             //if (go) press(Keys.F);
 
         }
@@ -162,9 +164,9 @@ namespace keyupMusic2
             {
                 if (is_down(Keys.D1)) press("B;1243,699;1483,429;1483,568;1483,828;1483,696;1483,969;B;D3;");
                 else if (is_down(Keys.D5)) press("B;985,969;1483,429;1483,568;1483,696;1483,969;B;D3;");
-                else press("B;985,699;1483,429;1483,568;1483,828;1483,696;1483,969;B;D3;");
+                else press("B;985,699;1483,429;1483,568;1483,696;1483,828;1483,969;B;D3;");
             }
-            if (go) press("Escape;", 100);
+            //if (go) press("Escape;", 100);
         }
     }
 }

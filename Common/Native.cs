@@ -103,6 +103,8 @@ namespace keyupMusic2
         public const int WM_APPCOMMAND = 0x319;
         public const uint MAX_VOLUME = 0xFFFF;
         public const int APPCOMMAND_VOLUME_UNMUTE = 0x80000;
+        public const uint WM_KEYDOWN = 0x0100;
+        public const uint WM_KEYUP = 0x0101;
 
         [DllImport("winmm.dll")]
         public static extern uint waveOutSetVolume(IntPtr hwo, uint dwVolume);

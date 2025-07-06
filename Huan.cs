@@ -112,7 +112,7 @@ namespace keyupMusic2
             if (e.Type == KeyboardType.KeyDown)
             {
                 if (handling_keys.ContainsKey(e.key)) return true;
-                handling_keys[e.key] = ProcessName;
+                handling_keys[e.key] = DateTime.Now;
             }
             else
                 handling_keys.TryRemove(e.key, out _);
@@ -247,7 +247,7 @@ namespace keyupMusic2
                     Environment.Exit(0);
                 }
                 else if (list_f1.Contains(ProcessName))
-                    openClash();
+                    changeClash();
                 else if (list_nothing.Contains(ProcessName)) { }
                 else if (IsDesktopFocused()) { }
                 else if (ProcessName == Honeyview)

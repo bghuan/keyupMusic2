@@ -61,7 +61,7 @@ namespace keyupMusic2
             if (e.Msg == MouseMsg.move) return;
             if (GetPointName() != Honeyview) return;
 
-            if (e.Msg == MouseMsg.click_up)
+            if (e.Msg == MouseMsg.click_up && !isctrl())
                 press([LControlKey, D0]);
             if (e.Msg == MouseMsg.click_r)
                 press(Delete);
@@ -80,7 +80,7 @@ namespace keyupMusic2
                 string nextWallpaper = "";
                 if (e.data < 0) nextWallpaper = GetNextWallpaper();
                 if (e.data > 0) nextWallpaper = GetPreviousWallpaper();
-                SetDesktopWallpaper(nextWallpaper, WallpaperStyle.Fit);
+                SetDesktopWallpaper(nextWallpaper, WallpaperStyle.Fit, true);
             }
             if (e.Msg == MouseMsg.click_r)
                 if (e.Y == 0 && IsDesktopFocused())
@@ -237,6 +237,14 @@ namespace keyupMusic2
                 wheelleftright(e);
             }
 
+            if (e.Msg == MouseMsg.click_r_up && e.Y < 200 && (ProcessTitle.Contains("荔枝") && ProcessTitle.Contains("详情")))
+            {
+                var pos = Position;
+                mouse_move_to(80, 80, 10);
+                mouse_click(500);
+                press(Enter);
+                mouse_move(pos, 10);
+            }
             //if (e.Msg == MouseMsg.wheel && (ProcessTitle.Contains("荔枝") && !ProcessTitle.Contains("分类")))
             //{
             //    //int aa = screenWidth / 20;

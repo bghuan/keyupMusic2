@@ -2,6 +2,7 @@
 using Microsoft.Win32;
 using Newtonsoft.Json;
 using System.Diagnostics;
+using System.Text;
 using static keyupMusic2.Native;
 using SearchOption = System.IO.SearchOption; // 需要添加引用
 
@@ -14,7 +15,7 @@ namespace keyupMusic2
         private static string stateFilePath = Path.Combine(
             Directory.GetCurrentDirectory(), "log", "wallpaper_state.json");
         private static string smallPath = Path.Combine(
-            Directory.GetCurrentDirectory(), "image", "downloaded_images", "0small");
+            Directory.GetCurrentDirectory(), "image", "downloaded_images", "3small");
 
         // 缓存目录结构和文件信息
         private static Dictionary<string, List<string>> idToFilesMap = new Dictionary<string, List<string>>();
@@ -43,7 +44,8 @@ namespace keyupMusic2
                     RecycleOption.SendToRecycleBin
                 );
             }
-            catch(Exception e) {
+            catch (Exception e)
+            {
                 MessageBox.Show("can't delete");
             }
         }
@@ -52,7 +54,7 @@ namespace keyupMusic2
         static int iii = 0;
         public static void MoveSmallFilesRecursive(string sourceDir = "", string destDir = "")
         {
-            if ((iii++ > 1000)) { MessageBox.Show("MoveSmallFilesRecursive over 1000"); return; }
+            if ((iii++ > 1000)) { MessageBox.Show("MoveSmallFilesRecursive over 1000" + sourceDir + destDir); return; }
             if (string.IsNullOrEmpty(sourceDir))
                 sourceDir = wallpapersPath;
             if (string.IsNullOrEmpty(destDir))
@@ -187,6 +189,7 @@ namespace keyupMusic2
             {
                 // 获取所有ID目录（按名称排序）
                 allIds = Directory.GetDirectories(wallpapersPath)
+                    .Where(d => !d.Contains("small"))
                     .Select(d => Path.GetFileName(d))
                     .OrderBy(d => d)
                     .ToList();
@@ -224,7 +227,9 @@ namespace keyupMusic2
             // 尝试获取当前ID中的下一个文件
             if (currentFileIndex < idToFilesMap[allIds[currentIdIndex]].Count - 1)
             {
-                currentFileIndex++;
+                var currentPath = GetWallpaperFromRegistry();
+                if (currentPath.Contains(Common.keyupMusic))
+                    currentFileIndex++;
             }
             else
             {
@@ -294,7 +299,9 @@ namespace keyupMusic2
             }
 
             // 移动到下一个ID
-            currentIdIndex = (currentIdIndex + 1) % allIds.Count;
+            //currentIdIndex = (currentIdIndex + 1) % allIds.Count;
+            lastId = currentIdIndex;
+            currentIdIndex = new Random().Next(0, allIds.Count);
             currentFileIndex = 0;
 
             // 跳过空的ID文件夹
@@ -306,6 +313,7 @@ namespace keyupMusic2
             SaveState();
             return GetCurrentWallpaperPath();
         }
+        static int lastId = 0;
 
         // 获取上一个ID文件夹的最后一张壁纸（O(1) 时间复杂度）
         public static string GetPreviousIdFolder()
@@ -320,7 +328,10 @@ namespace keyupMusic2
             }
 
             // 移动到上一个ID
-            currentIdIndex = (currentIdIndex - 1 + allIds.Count) % allIds.Count;
+            //currentIdIndex = (currentIdIndex - 1 + allIds.Count) % allIds.Count;
+            if (currentIdIndex == lastId) currentIdIndex = (currentIdIndex - 1 + allIds.Count) % allIds.Count;
+            else
+                currentIdIndex = lastId;
             currentFileIndex = 0;
 
             // 跳过空的ID文件夹
@@ -335,7 +346,7 @@ namespace keyupMusic2
         }
 
         // 辅助方法
-        private static string GetCurrentWallpaperPath()
+        public static string GetCurrentWallpaperPath()
         {
             if (currentIdIndex < 0 || currentIdIndex >= allIds.Count)
                 return null;
@@ -398,25 +409,19 @@ namespace keyupMusic2
         {
             if (File.Exists(stateFilePath))
             {
-                try
+                var state = JsonConvert.DeserializeObject<WallpaperState>(File.ReadAllText(stateFilePath));
+                if (state != null)
                 {
-                    var state = JsonConvert.DeserializeObject<WallpaperState>(File.ReadAllText(stateFilePath));
-                    if (state != null)
+                    if (allIds.Contains(state.CurrentId))
                     {
-                        if (allIds.Contains(state.CurrentId))
+                        currentIdIndex = allIds.IndexOf(state.CurrentId);
+                        var files = idToFilesMap[state.CurrentId];
+                        if (files.Contains(state.CurrentFile))
                         {
-                            currentIdIndex = allIds.IndexOf(state.CurrentId);
-                            var files = idToFilesMap[state.CurrentId];
-                            if (files.Contains(state.CurrentFile))
-                            {
-                                currentFileIndex = files.IndexOf(state.CurrentFile);
-                            }
+                            currentFileIndex = files.IndexOf(state.CurrentFile);
                         }
+                        else { currentFileIndex = 0; }
                     }
-                }
-                catch (Exception ex)
-                {
-                    Console.WriteLine($"加载状态时出错: {ex.Message}");
                 }
             }
         }
@@ -446,6 +451,20 @@ namespace keyupMusic2
             if (currentIdIndex < 0 || currentIdIndex >= allIds.Count ||
                 currentFileIndex < 0 || currentFileIndex >= idToFilesMap[allIds[currentIdIndex]].Count)
             {
+                var state = JsonConvert.DeserializeObject<WallpaperState>(File.ReadAllText(stateFilePath));
+                if (state != null)
+                {
+                    if (allIds.Contains(state.CurrentId))
+                    {
+                        currentIdIndex = allIds.IndexOf(state.CurrentId);
+                        var files = idToFilesMap[state.CurrentId];
+                        if (files.Contains(state.CurrentFile))
+                        {
+                            currentFileIndex = files.IndexOf(state.CurrentFile);
+                        }
+                    }
+                }
+                throw new Exception("当前状态无效，重置到第一个文件" + currentIdIndex + " " + currentFileIndex + " " + state.CurrentId + " " + state.CurrentFile);
                 ResetToFirstFile();
             }
         }
@@ -456,13 +475,13 @@ namespace keyupMusic2
             public string CurrentId { get; set; }
             public string CurrentFile { get; set; }
         }
-        public static int ishide_DesktopWallpaper = 0;
         // 在 WallpaperManager 类中添加以下方法
         public static void DeleteCurrentWallpaper()
         {
-            if (!can_set_wallpaper)
-                return;
-            if ((ishide_DesktopWallpaper != 2)) return;
+            //if (!can_set_wallpaper)
+            //    return;
+            var _currentPath = GetWallpaperFromRegistry();
+            if (!_currentPath.Contains(keyupMusic)) return;
             if (!IsDesktopFocused() && !isctrl()) return;
             string currentPath = GetCurrentWallpaperPath();
             if (string.IsNullOrEmpty(currentPath) || !File.Exists(currentPath))
@@ -508,15 +527,52 @@ namespace keyupMusic2
             {
                 Console.WriteLine($"删除壁纸时出错: {ex.Message}");
             }
+        }// 查找相同的 PNG 文件
+        public static List<string> FindDuplicatePNGs(string targetFile, string searchDirectory)
+        {
+            var duplicates = new List<string>();
+
+            // 检查目标文件是否存在
+            if (!File.Exists(targetFile) || Path.GetExtension(targetFile).ToLower() != ".png")
+            {
+                throw new ArgumentException("目标文件不存在或不是 PNG 格式");
+            }
+
+            // 获取目标文件的大小和哈希
+            long targetSize = new FileInfo(targetFile).Length;
+
+
+            // 递归处理子目录
+            foreach (string subDir in Directory.GetDirectories(searchDirectory))
+            {
+                string subDirName = Path.GetFileName(subDir);
+                //string destSubDir = Path.Combine(destDir, subDirName);
+                // 遍历目录下的所有 PNG 文件
+                foreach (string file in Directory.EnumerateFiles(subDir, "*.png", SearchOption.AllDirectories))
+                {
+                    // 跳过自身
+                    if (file.Equals(targetFile, StringComparison.OrdinalIgnoreCase))
+                        continue;
+
+                    // 比较文件大小
+                    long fileSize = new FileInfo(file).Length;
+                    //if (!(fileSize < targetSize+10&&fileSize>targetSize-10))
+                    if (fileSize != targetSize)
+                        continue;
+                    duplicates.Add(file);
+                }
+
+            }
+
+            return duplicates;
         }
         public static void SetDesktopToBlack()
         {
-            if (!can_set_wallpaper)
-                return;
-            if (ishide_DesktopWallpaper == 1) return;
+            var currentPath = GetWallpaperFromRegistry();
+            if (!currentPath.Contains(keyupMusic)) return;
+
             try
             {
-                ishide_DesktopWallpaper = 1;
                 // 步骤 1: 设置壁纸为空
                 SystemParametersInfo(SPI_SETDESKWALLPAPER, 0, "", SPIF_UPDATEINIFILE | SPIF_SENDCHANGE);
 
@@ -598,7 +654,28 @@ namespace keyupMusic2
                 Console.WriteLine($"处理过程中发生错误: {ex.Message}");
             }
         }
-
-
+        private const int SPI_GETDESKWALLPAPER = 0x0073;
+        private const int MAX_PATH = 260;
+        public static string GetDesktopWallpaperPath()
+        {
+            StringBuilder wallpaperPath = new StringBuilder(MAX_PATH);
+            var result = SystemParametersInfo(SPI_GETDESKWALLPAPER, MAX_PATH, wallpaperPath.ToString(), 0);
+            if (result > 0)
+                return wallpaperPath.ToString();
+            else
+                throw new Exception("获取壁纸路径失败");
+        }
+        public static string GetWallpaperFromRegistry()
+        {
+            using (RegistryKey key = Registry.CurrentUser.OpenSubKey(@"Control Panel\Desktop"))
+            {
+                if (key != null)
+                {
+                    var wallpaper = key.GetValue("WallPaper") as string;
+                    return wallpaper ?? string.Empty;
+                }
+            }
+            return string.Empty;
+        }
     }
 }

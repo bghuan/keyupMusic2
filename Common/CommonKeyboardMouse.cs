@@ -536,20 +536,14 @@ namespace keyupMusic2
 
         private static void keybd_event(byte bVk, byte bScan, uint dwFlags, uint dwExtraInfo)
         {
-
-            // 使用HashSet判断是否为扩展键，提高性能和可维护性
             if (ExtendedKeys.Contains(bVk))
                 dwFlags |= (uint)KeyboardFlag.ExtendedKey;
             //else if (is_douyin())
             //    dwFlags |= (uint)KeyboardFlag.ExtendedKey;
 
-            // 缓存虚拟键到扫描码的映射，避免重复调用MapVirtualKey
             if (!MapVirtualKey.ContainsKey(bVk))
-            {
                 MapVirtualKey[bVk] = (byte)(MapVirtualKey(bVk, 0) & 0xFFU);
-            }
 
-            // 修正：传递原始的dwExtraInfo参数，而不是isVir
             Native.keybd_event(bVk, MapVirtualKey[bVk], dwFlags, isVir);
         }
         [Flags]

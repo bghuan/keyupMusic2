@@ -11,7 +11,7 @@ namespace keyupMusic2
         {
             if (ProcessName == Common.chrome)
             {
-                if (is_lizhi) return 0;
+                if (is_lizhi && GetPointName() != explorer) return 0;
                 if (chrome_red()) press(Keys.F);
                 var pos = ProcessPosition(chrome).X;
                 if (pos < screenWidth2 && IsFullScreen())
@@ -19,7 +19,7 @@ namespace keyupMusic2
                     if (!judge_color(1840, 51, Color.FromArgb(162, 37, 45)))
                         press(Keys.F, 51);
                     SS().MouseWhell(-1440);
-                } 
+                }
             }
             else if (ProcessName == Common.Honeyview)
             {

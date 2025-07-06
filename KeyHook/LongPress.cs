@@ -15,7 +15,7 @@ namespace keyupMusic2
             //return;
             huan.Invoke2(() => { huan.label1.Text = ProcessName + " longpress " + keys; });
 
-            if (keys == Keys.F3 || keys == Keys.F9)
+            if (keys == Keys.F9)
             {
                 huan.Invoke2(() =>
                 {
@@ -32,6 +32,11 @@ namespace keyupMusic2
             else if (keys == Keys.LButton)
             {
                 long_press_lbutton = true;
+            }
+            else if (keys == Keys.Escape)
+            {
+                HideProcess(chrome);
+                SetDesktopToBlack();
             }
         }
 

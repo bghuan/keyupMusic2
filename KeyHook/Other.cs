@@ -54,6 +54,8 @@ namespace keyupMusic2
                         press(Keys.LWin);
                     break;
                 case Common.cs2:
+                case Common.explorer:
+                    HandleProgman(e);
                     HandleCS2(e);
                     break;
                 case Common.steam:
@@ -85,10 +87,6 @@ namespace keyupMusic2
                 case Common.VSCode:
                     HandleVSCode(e);
                     break;
-                case Common.explorer:
-                case Common.keyupMusic2:
-                    HandleProgman(e);
-                    break;
                 case Common.BandiView:
                     HandleBandiView(e);
                     break;
@@ -116,24 +114,28 @@ namespace keyupMusic2
 
         private void HandleProgman(KeyboardHookEventArgs e)
         {
-            if (!IsDesktopFocused()) return;
+            if (!IsDesktopFocused() && ProcessName != cs2) return;
             switch (e.key)
             {
                 case Keys.Down:
                     string nextWallpaper = GetNextWallpaper();
-                    SetDesktopWallpaper(nextWallpaper, WallpaperStyle.Fit);
+                    SetDesktopWallpaper(nextWallpaper, WallpaperStyle.Fit, true);
                     break;
                 case Keys.Up:
                     string nextWallpaper2 = GetPreviousWallpaper();
-                    SetDesktopWallpaper(nextWallpaper2, WallpaperStyle.Fit);
+                    SetDesktopWallpaper(nextWallpaper2, WallpaperStyle.Fit, true);
                     break;
                 case Keys.Left:
                     string nextWallpaper3 = GetPreviousIdFolder();
-                    SetDesktopWallpaper(nextWallpaper3, WallpaperStyle.Fit);
+                    SetDesktopWallpaper(nextWallpaper3, WallpaperStyle.Fit, true);
                     break;
                 case Keys.Right:
                     string nextWallpaper4 = GetNextIdFolder();
-                    SetDesktopWallpaper(nextWallpaper4, WallpaperStyle.Fit);
+                    SetDesktopWallpaper(nextWallpaper4, WallpaperStyle.Fit, true);
+                    break;
+                case Keys.Z:
+                    if (ProcessName == cs2) break;
+                    GoodDesktopWallpaper();
                     break;
             }
         }
@@ -227,6 +229,7 @@ namespace keyupMusic2
 
         private void HandleCS2(KeyboardHookEventArgs e)
         {
+            if (ProcessName != cs2) return;
             switch (e.key)
             {
                 case Keys.F1:

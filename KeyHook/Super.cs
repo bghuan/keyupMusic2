@@ -5,6 +5,7 @@ using System.Windows.Forms;
 using static keyupMusic2.Common;
 using static keyupMusic2.MouseKeyboardHook;
 using static keyupMusic2.Native;
+using static System.Runtime.CompilerServices.RuntimeHelpers;
 
 namespace keyupMusic2
 {
@@ -89,10 +90,10 @@ namespace keyupMusic2
                     MoveSmallFilesRecursive();
                     break;
                 case Keys.D:
-                    can_set_wallpaper = !can_set_wallpaper;
                     break;
                 case Keys.F:
-                    huan.Invoke2(() => { var aaa = IsAnyAudioPlaying(); huan.label1.Text = aaa + ""; }, 300);
+                    var aasad = "C:\\Users\\bu\\source\\repos\\keyupMusic2\\bin\\Debug\\net8.0-windows\\image\\downloaded_images\\33084\\0f4702772dd8fff945d5b066.png";
+                    FindDuplicatePNGs(aasad, "C:\\Users\\bu\\source\\repos\\keyupMusic2\\bin\\Debug\\net8.0-windows\\image\\downloaded_images");
                     break;
                 case Keys.G:
                     var keys = new List<Keys>();
@@ -109,10 +110,17 @@ namespace keyupMusic2
                     }
                     break;
                 case Keys.H:
-                    press(H);
+                    string sourceImage = "input.png";
+                    string targetImage = "output.png";
+                    //ConvertAndResize(sourceImage, targetImage);
+                    //ShowFadeInWallpaper(targetImage);
+                    var aaa = GetWallpaperFromRegistry();
+                    targetImage = "output.png";
+
                     break;
                 case Keys.J:
-                    mousewhell(245, 717, 524, 735, -2);
+                    var hWnd = GetProcessID("msedge");
+                    SendMessage(hWnd, WM_KEYDOWN, 0x41, (IntPtr)0x00010001);
                     break;
                 case Keys.K:
                     huan.release_all_key(1000);
@@ -122,13 +130,9 @@ namespace keyupMusic2
                     //    huan.webViewWindow.webView21.CoreWebView2.PostWebMessageAsString(
                     //        $"mousePos:{Cursor.Position.X},{Cursor.Position.Y}");
                     //});
-
                     break;
                 case Keys.Z:
-                    IsDesktopFocused();
-                    //var capturer = new WindowCaptureFixed();
-                    //capturer.StartLiveBackgroundRemoval(PowerToysCropAndLock);
-                    break;
+                    GoodDesktopWallpaper(); break;
                 case Keys.X:
                     AllClass.run_vis();
                     break;
@@ -142,7 +146,7 @@ namespace keyupMusic2
                     var pressedKeys = release_all_keydown();
                     if (pressedKeys.Any())
                         huan.Invoke2(() => { huan.label1.Text = "relese: " + string.Join(", ", pressedKeys); });
-                    Huan.handling_keys = new ConcurrentDictionary<Keys, string>();
+                    Huan.handling_keys = new ();
                     break;
                 case Keys.M:
                     chrome_m();

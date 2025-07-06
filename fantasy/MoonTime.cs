@@ -99,7 +99,7 @@ namespace keyupMusic2
         }
         public void Every100ms()
         {
-            timer_Every100ms = new(100);
+            timer_Every100ms = new(1000);
             timer_Every100ms.Elapsed += (sender, e) =>
             {
                 if (TransparencyKey == Color.Red) return;
@@ -134,6 +134,7 @@ namespace keyupMusic2
 
             string location = File.ReadAllText(moontime_location);
             Location = new Point(int.Parse(location.Split(',')[0]), int.Parse(location.Split(',')[1]));
+            if (Location.X > Screen.PrimaryScreen.Bounds.Width && Screen.AllScreens.Length == 1) Location = new Point(500, 500);
         }
         public static void vkMenuItem_Click(object sender, EventArgs e)
         {
@@ -160,13 +161,10 @@ namespace keyupMusic2
         {
             string js = $"init_angle({num});";
             if (webView21.InvokeRequired)
-            {
                 webView21.Invoke(new Action(() => webView21.CoreWebView2.ExecuteScriptAsync(js)));
-            }
             else
-            {
                 webView21.CoreWebView2.ExecuteScriptAsync(js);
-            }
+
         }
     }
 }

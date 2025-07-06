@@ -27,6 +27,9 @@ namespace keyupMusic2
             if (go_back_keys.Contains(e.Msg) && ReplaceKey2.Catched(ProcessName, e.Msg))
             {
                 return true;
+            }
+            if (go_back_keys.Contains(e.Msg))
+            {
                 if (is_down(Keys.XButton1) || is_down(Keys.XButton2)) { return false; }
                 if (!list_go_back.Contains(ProcessName)) return true;
                 if (Common.cs2.Equals(ProcessName)) return true;
