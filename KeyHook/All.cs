@@ -50,9 +50,26 @@ namespace keyupMusic2
                 case Keys.OemPeriod:
                     if (is_down(Keys.RControlKey)) SS().KeyPress(Keys.Apps); break;
             }
+            //if (Position.Y == 0)
+            //    switch (e.key)
+            //    {
+            //        case Keys.Left:
+            //        case Keys.Down:
+            //        case Keys.Right:
+            //            quick_number2(e.key); break;
+            //    }
 
             Common.hooked = false;
         }
+        //static Dictionary<int, Keys[]> numkey = new Dictionary<int, Keys[]>()
+        //{
+
+        //};
+        //var requestBody = new
+        //{
+        //    A1 = new Keys[] { Keys.Left },
+        //    A2 = new Keys[] { Keys.Down },
+        //};
 
         private void quick_prix_image()
         {

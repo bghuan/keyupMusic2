@@ -198,9 +198,12 @@ namespace keyupMusic2
             //创建并显示WebView2窗口
             VirtualKeyboardForm virtualKeyboardForm = new VirtualKeyboardForm();
             virtualKeyboardForm.Show();
+            if (Screen.AllScreens.Length > 1)
+            {
+                MoonTime moontimeForm = new MoonTime();
+                moontimeForm.Show();
+            }
 
-            MoonTime moontimeForm = new MoonTime();
-            moontimeForm.Show();
             InitializeFromCurrentWallpaper();
 
             if (!Debugger.IsAttached)

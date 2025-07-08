@@ -114,7 +114,9 @@ namespace keyupMusic2
 
         private void HandleProgman(KeyboardHookEventArgs e)
         {
-            if (!IsDesktopFocused() && ProcessName != cs2) return;
+            var desk = IsDesktopFocused();
+            if (!desk && ProcessName != cs2) return;
+            if (desk && isctrl()) return;
             switch (e.key)
             {
                 case Keys.Down:
@@ -136,6 +138,14 @@ namespace keyupMusic2
                 case Keys.Z:
                     if (ProcessName == cs2) break;
                     GoodDesktopWallpaper();
+                    break;
+                case Keys.PageUp:
+                    if (ProcessName == cs2) break;
+                    SetDesktopWallpaperAli(GetCurrentWallpaperPath(), WallpaperStyle.Fit);
+                    break;
+                case Keys.PageDown:
+                    if (ProcessName == cs2) break;
+                    SetDesktopWallpaperAli(GetNextWallpaper(), WallpaperStyle.Fit);
                     break;
             }
         }

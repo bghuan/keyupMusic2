@@ -69,10 +69,12 @@ namespace keyupMusic2
                     };
                     var run = () =>
                     {
-                        press("100;525.417;525,418;500;H;100;", 200);
+                        press("200;525.417;525,418;500;H;100;", 200);
                         if (!IsFullScreen())
                             press("100;525.417;525,418;500;H", 200);
                         press("100;2277,1404;2272,1171;1703.1439", 200);
+
+                        if (!IsFullScreen()) return;
 
                         LossScale();
                     };

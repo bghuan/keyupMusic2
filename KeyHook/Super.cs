@@ -1,4 +1,6 @@
-﻿using System.Collections.Concurrent;
+﻿using Microsoft.VisualBasic.FileIO;
+using Newtonsoft.Json.Linq;
+using System.Collections.Concurrent;
 using System.Diagnostics;
 using System.Drawing.Imaging;
 using System.Windows.Forms;
@@ -77,13 +79,14 @@ namespace keyupMusic2
                 case Keys.A:
                     //start_record = !start_record;
                     //Log.logcachesave();
-                    string path = "";
-                    Invoke(() =>
-                    {
-                        path = Clipboard.GetText();
-                    });
-                    var a = GetAllFiles(path, false);
-                    download_image(a);
+                    //string path = "";
+                    //Invoke(() =>
+                    //{
+                    //    path = Clipboard.GetText();
+                    //});
+                    //var a = GetAllFiles(path, false);
+                    //download_image(a);
+                    //start_listen_to_word();
                     break;
                 case Keys.S:
                     //SetWindowTitle();
@@ -93,7 +96,7 @@ namespace keyupMusic2
                     break;
                 case Keys.F:
                     var aasad = "C:\\Users\\bu\\source\\repos\\keyupMusic2\\bin\\Debug\\net8.0-windows\\image\\downloaded_images\\33084\\0f4702772dd8fff945d5b066.png";
-                    FindDuplicatePNGs(aasad, "C:\\Users\\bu\\source\\repos\\keyupMusic2\\bin\\Debug\\net8.0-windows\\image\\downloaded_images");
+                    FindDuplicatewebps(aasad, "C:\\Users\\bu\\source\\repos\\keyupMusic2\\bin\\Debug\\net8.0-windows\\image\\downloaded_images");
                     break;
                 case Keys.G:
                     var keys = new List<Keys>();
@@ -119,17 +122,16 @@ namespace keyupMusic2
 
                     break;
                 case Keys.J:
-                    var hWnd = GetProcessID("msedge");
-                    SendMessage(hWnd, WM_KEYDOWN, 0x41, (IntPtr)0x00010001);
+                    SetDesktopWallpaperAli(GetCurrentWallpaperPath(), WallpaperStyle.Fit);
                     break;
                 case Keys.K:
                     huan.release_all_key(1000);
                     break;
                 case Keys.L:
-                    //huan.Invoke(() => {
-                    //    huan.webViewWindow.webView21.CoreWebView2.PostWebMessageAsString(
-                    //        $"mousePos:{Cursor.Position.X},{Cursor.Position.Y}");
-                    //});
+                    //RemoveWebpWhiteBorder(GetCurrentWallpaperPath(), "a.webp");
+                    var mp3Path = "C:\\Users\\bu\\Desktop\\a\\爸(19523708410)_20230728213046.mp3";
+                    var wavPath = "C:\\Users\\bu\\Desktop\\b\\爸(19523708410)_20230728213046.wav";
+                    ConvertMp3ToWav(mp3Path, wavPath);
                     break;
                 case Keys.Z:
                     GoodDesktopWallpaper(); break;
@@ -146,7 +148,7 @@ namespace keyupMusic2
                     var pressedKeys = release_all_keydown();
                     if (pressedKeys.Any())
                         huan.Invoke2(() => { huan.label1.Text = "relese: " + string.Join(", ", pressedKeys); });
-                    Huan.handling_keys = new ();
+                    Huan.handling_keys = new();
                     break;
                 case Keys.M:
                     chrome_m();
@@ -201,7 +203,12 @@ namespace keyupMusic2
                     huan._mouseKbdHook.ChangeMouseHooks();
                     break;
                 case Keys.Delete:
-                    Application.Exit();
+                    //Application.Exit();
+                    FileSystem.DeleteFile(
+                   wallpapersPath_big_current,
+                   UIOption.OnlyErrorDialogs,
+                   RecycleOption.SendToRecycleBin
+               );
                     break;
                 case Keys.F11:
                 case Keys.F12:
@@ -384,11 +391,11 @@ namespace keyupMusic2
 
         private void start_listen_to_word()
         {
-            //Listen.is_listen = !Listen.is_listen;
+            Listen.is_listen = !Listen.is_listen;
             //Invoke(() => huan.SetVisibleCore2(Listen.is_listen));
-            ////Listen.aaaEvent += huan.handle_word;
-            //if (Listen.is_listen) Task.Run(() => Listen.listen_word(new string[] { }, (string deal, int a) => { }));
-            //Listen.speak_word = "";
+            //Listen.aaaEvent += huan.handle_word;
+            if (Listen.is_listen) Task.Run(() => Listen.listen_word(new string[] { }, (string deal, int a) => { }));
+            Listen.speak_word = "";
         }
 
         private static void dragonest_run()

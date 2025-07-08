@@ -61,8 +61,8 @@ namespace keyupMusic2
             if (e.Msg == MouseMsg.move) return;
             if (GetPointName() != Honeyview) return;
 
-            if (e.Msg == MouseMsg.click_up && !isctrl())
-                press([LControlKey, D0]);
+            //if (e.Msg == MouseMsg.click_up && !isctrl())
+            //    press([LControlKey, D0]);
             if (e.Msg == MouseMsg.click_r)
                 press(Delete);
             if (e.Msg == MouseMsg.wheel)
@@ -78,17 +78,27 @@ namespace keyupMusic2
             if (e.Msg == MouseMsg.wheel)
             {
                 string nextWallpaper = "";
-                if (e.data < 0) nextWallpaper = GetNextWallpaper();
-                if (e.data > 0) nextWallpaper = GetPreviousWallpaper();
+                if (e.data < 0 && e.X == 0) nextWallpaper = GetNextIdFolder();
+                else if (e.data > 0 && e.X == 0) nextWallpaper = GetPreviousIdFolder();
+                else if (e.data < 0) nextWallpaper = GetNextWallpaper();
+                else if (e.data > 0) nextWallpaper = GetPreviousWallpaper();
                 SetDesktopWallpaper(nextWallpaper, WallpaperStyle.Fit, true);
             }
             if (e.Msg == MouseMsg.click_r)
-                if (e.Y == 0 && IsDesktopFocused())
+            {
+                if (e.Y == 0)
                 {
                     DeleteCurrentWallpaper();
                     Sleep(100);
                     press(Escape);
                 }
+                else if (e.X == 0)
+                {
+                    SetDesktopWallpaperAli(GetCurrentWallpaperPath(), WallpaperStyle.Fit);
+                    Sleep(100);
+                    press(Escape);
+                }
+            }
         }
 
         private void _KingdomRush(MouseHookEventArgs e)

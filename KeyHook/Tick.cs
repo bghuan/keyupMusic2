@@ -1,24 +1,25 @@
 ﻿using System.Collections.Concurrent;
 using System.Windows.Forms;
 using static keyupMusic2.Common;
+using Timer = System.Timers.Timer;
 
 namespace keyupMusic2
 {
     public class Tick
     {
-        private readonly System.Windows.Forms.Timer timer100msKeyPress = new() { Interval = 100 };
-        private readonly System.Windows.Forms.Timer timer8000ms = new() { Interval = 8000 };
-        private readonly System.Windows.Forms.Timer timer60000ms = new() { Interval = 60_000 };
+        private readonly Timer timer100msKeyPress = new() { Interval = 100 , AutoReset =true};
+        private readonly Timer timer8000ms = new() { Interval = 8000, AutoReset = true };
+        private readonly Timer timer60000ms = new() { Interval = 60_000 , AutoReset =true};
 
         public Tick()
         {
-            timer100msKeyPress.Tick += (s, e) => Every100msHandler();
+            timer100msKeyPress.Elapsed += (s, e) => Every100msHandler();
             timer100msKeyPress.Start();
 
-            timer8000ms.Tick += (s, e) => Every8000ms();
+            timer8000ms.Elapsed += (s, e) => Every8000ms();
             timer8000ms.Start();
 
-            timer60000ms.Tick += (s, e) => Every60000msHandler();
+            timer60000ms.Elapsed += (s, e) => Every60000msHandler();
             timer60000ms.Start();
         }
 
@@ -50,10 +51,10 @@ namespace keyupMusic2
                     if (is_music) press(Keys.MediaPlayPause);
                 });
             }
-            if (DateTime.Now.Minute % 10 == 0)
-            {
-                SetDesktopWallpaper(GetNextWallpaper(), WallpaperStyle.Fit);
-            }
+            //if (DateTime.Now.Minute % 10 == 0)
+            //{
+            //    SetDesktopWallpaperAli(GetNextWallpaper(), WallpaperStyle.Fit);
+            //}
         }
 
         private void Every100msHandler()
@@ -118,10 +119,10 @@ namespace keyupMusic2
             {
                 press_middle_bottom();
             }
-            else if (Position.X == 0)
-            {
-                SetDesktopWallpaper(GetNextWallpaper(), WallpaperStyle.Fit);
-            }
+            //else if (Position.X == 0)
+            //{
+            //    SetDesktopWallpaper(GetNextWallpaper(), WallpaperStyle.Fit);
+            //}
             bland_title();
         }
 

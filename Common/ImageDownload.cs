@@ -1,6 +1,8 @@
 ﻿using Microsoft.Win32;
 using Newtonsoft.Json;
+using System.Net;
 using System.Runtime.InteropServices;
+using System.Text;
 using static keyupMusic2.Native;
 using static keyupMusic2.winBinWallpaper;
 
@@ -13,7 +15,7 @@ namespace keyupMusic2
         {
             //foreach(var msg in mmm)
             //{
-            //    string id = msg.Replace(".png","").Replace(download_image_prix,"");
+            //    string id = msg.Replace(".webp","").Replace(download_image_prix,"");
             //    ProcessRun(lz_image_downloadexe, id,true);
             //    Sleep(2000);
             //}
@@ -74,7 +76,15 @@ namespace keyupMusic2
                 Console.WriteLine("错误: 文件不存在 - " + filePath);
                 return;
             }
-
+            {
+                var fileName = Path.GetFileName(filePath).Replace("webp", "jpg");
+                var bigfilePath = Path.Combine(Directory.GetCurrentDirectory(), "image", "downloaded_images", "1", fileName);
+                if (File.Exists(bigfilePath))
+                {
+                    File.Copy(filePath, _wallpapersPath_current, true);
+                    filePath = bigfilePath;
+                }
+            }
             lock (requestLock)
             {
                 // 取消当前正在执行的请求
@@ -125,9 +135,6 @@ namespace keyupMusic2
                 Timeout.Infinite
             );
         }
-
-        static string _wallpapersPath = Path.Combine(
-         Directory.GetCurrentDirectory(), "image", "downloaded_images", "1", "output.png");
         // 处理壁纸请求
         private static void ProcessRequest(WallpaperRequest request)
         {
@@ -146,8 +153,8 @@ namespace keyupMusic2
                 if (!request.Force)
                 {
                     var sourPath = request.FilePath;
-                    request.FilePath = _wallpapersPath;
-                    ConvertAndResize(sourPath, _wallpapersPath);
+                    request.FilePath = _wallpapersPath_output;
+                    ConvertAndResize(sourPath, _wallpapersPath_output);
                 }
 
                 // 设置壁纸样式和平铺选项
@@ -178,6 +185,9 @@ namespace keyupMusic2
                     throw new Exception("设置壁纸失败");
                 }
                 //ConvertAndResize(sourPath, _wallpapersPath);
+                var r = request.FilePath.Split("\\");
+                if (r.Length > 2 && r[r.Length - 2] != "0" && r[r.Length - 2] != "1")
+                    File.Copy(request.FilePath, _wallpapersPath_current, true);
 
                 Console.WriteLine($"成功: 请求 {request.RequestId} 壁纸已设置为 {request.FilePath}");
 
@@ -238,7 +248,7 @@ Directory.GetCurrentDirectory(), "image", "downloaded_images", "2");
             var CurrentWallpaperPath = GetCurrentWallpaperPath();
             var fileName = Path.GetFileName(GetCurrentWallpaperPath());
             GoodWallpapersPath = Path.Combine(GoodWallpapersPath, fileName);
-            if(File.Exists(GoodWallpapersPath)) return;
+            if (File.Exists(GoodWallpapersPath)) return;
             File.Copy(CurrentWallpaperPath, GoodWallpapersPath);
             play_sound_di();
         }

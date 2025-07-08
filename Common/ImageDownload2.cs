@@ -10,12 +10,21 @@ namespace keyupMusic2
 {
     public partial class Common
     {
-        private static string wallpapersPath = Path.Combine(
+        public static string wallpapersPath = Path.Combine(
         Directory.GetCurrentDirectory(), "image", "downloaded_images");
+        public static string wallpapersPath_big_current => Path.Combine(
+        Directory.GetCurrentDirectory(), "image", "downloaded_images", "1", Path.GetFileName(GetCurrentWallpaperPath()).Replace("webp","jpg"));
         private static string stateFilePath = Path.Combine(
             Directory.GetCurrentDirectory(), "log", "wallpaper_state.json");
-        private static string smallPath = Path.Combine(
-            Directory.GetCurrentDirectory(), "image", "downloaded_images", "3small");
+        private static string smallPath = Path.Combine(wallpapersPath, "3small");
+
+        public static string _wallpapersPath_output = Path.Combine(wallpapersPath, "0", "output.webp");
+
+        public static string _wallpapersPath_intput = Path.Combine(wallpapersPath, "0", "intput.webp");
+
+        public static string _wallpapersPath_current = Path.Combine(wallpapersPath, "0", "current.webp");
+        public static string _wallpapersPath_no_white = Path.Combine(wallpapersPath, "0", "no_white.webp");
+        public static string _wallpapersPath_temp = Path.Combine(wallpapersPath, "0", "temp.webp");
 
         // 缓存目录结构和文件信息
         private static Dictionary<string, List<string>> idToFilesMap = new Dictionary<string, List<string>>();
@@ -189,10 +198,11 @@ namespace keyupMusic2
             {
                 // 获取所有ID目录（按名称排序）
                 allIds = Directory.GetDirectories(wallpapersPath)
-                    .Where(d => !d.Contains("small"))
-                    .Select(d => Path.GetFileName(d))
-                    .OrderBy(d => d)
-                    .ToList();
+                        .Select(d => new { FullPath = d, FolderName = Path.GetFileName(d) })
+                        .Where(x => !x.FolderName.Contains("small") && x.FolderName != "0" && x.FolderName != "no")
+                        .Select(x => x.FolderName)
+                        .OrderBy(name => name)
+                        .ToList();
 
                 // 并行扫描每个ID目录下的图片文件
                 Parallel.ForEach(allIds, id =>
@@ -482,7 +492,7 @@ namespace keyupMusic2
             //    return;
             var _currentPath = GetWallpaperFromRegistry();
             if (!_currentPath.Contains(keyupMusic)) return;
-            if (!IsDesktopFocused() && !isctrl()) return;
+            if (IsDesktopFocused() || isctrl()) { } else return;
             string currentPath = GetCurrentWallpaperPath();
             if (string.IsNullOrEmpty(currentPath) || !File.Exists(currentPath))
             {
@@ -528,14 +538,14 @@ namespace keyupMusic2
                 Console.WriteLine($"删除壁纸时出错: {ex.Message}");
             }
         }// 查找相同的 PNG 文件
-        public static List<string> FindDuplicatePNGs(string targetFile, string searchDirectory)
+        public static List<string> FindDuplicatewebps(string targetFile, string searchDirectory)
         {
             var duplicates = new List<string>();
 
             // 检查目标文件是否存在
-            if (!File.Exists(targetFile) || Path.GetExtension(targetFile).ToLower() != ".png")
+            if (!File.Exists(targetFile) || Path.GetExtension(targetFile).ToLower() != ".webp")
             {
-                throw new ArgumentException("目标文件不存在或不是 PNG 格式");
+                throw new ArgumentException("目标文件不存在或不是 webp 格式");
             }
 
             // 获取目标文件的大小和哈希
@@ -547,8 +557,8 @@ namespace keyupMusic2
             {
                 string subDirName = Path.GetFileName(subDir);
                 //string destSubDir = Path.Combine(destDir, subDirName);
-                // 遍历目录下的所有 PNG 文件
-                foreach (string file in Directory.EnumerateFiles(subDir, "*.png", SearchOption.AllDirectories))
+                // 遍历目录下的所有 webp 文件
+                foreach (string file in Directory.EnumerateFiles(subDir, "*.webp", SearchOption.AllDirectories))
                 {
                     // 跳过自身
                     if (file.Equals(targetFile, StringComparison.OrdinalIgnoreCase))

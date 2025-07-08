@@ -151,6 +151,20 @@ namespace keyupMusic2
             }
             return false;
         }
+        public static void ConvertMp3ToWav(string mp3File, string wavFile)
+        {
+            using (var mp3Reader = new Mp3FileReader(mp3File))
+            {
+                // Convert MP3 to PCM (16-bit, SubChunk1Size = 16)
+                var pcmFormat = new WaveFormat(16000, 16, 1); // 44.1kHz, 16-bit, stereo
+                using (var pcmStream = new MediaFoundationResampler(mp3Reader, pcmFormat))
+                {
+                    pcmStream.ResamplerQuality = 1; // Optional: set resample quality (1–60)
+
+                    WaveFileWriter.CreateWaveFile(wavFile, pcmStream);
+                }
+            }
+        }
 
     }
 }

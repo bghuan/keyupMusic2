@@ -29,6 +29,10 @@ namespace keyupMusic2
             if (e.key == Keys.Escape)
                 if (is_playing)
                     return true;
+            if (e.key == Keys.Left || e.key == Keys.Down || e.key == Keys.Right)
+            {
+                if (Position.Y == 0) return true;
+            }
             if (e.key == Keys.MediaPreviousTrack || e.key == Keys.MediaNextTrack)
             {
                 if (biu.list_go_back.Contains(ProcessName)) return true;
