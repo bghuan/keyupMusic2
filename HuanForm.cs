@@ -104,7 +104,7 @@ namespace keyupMusic2
             if (e.Button == MouseButtons.Right)
             {
                 // 假设“微亮键盘(显示隐藏)”是你要修改的项
-                if (VirtualKeyboardForm.Instance != null)
+                if (VirtualKeyboardForm.Instance != null && MoonTime.Instance != null)
                     foreach (ToolStripItem item in contextMenuStrip1.Items)
                     {
                         if (item is ToolStripMenuItem menuItem && menuItem.Name.Equals("moontimmeshow"))
@@ -198,10 +198,11 @@ namespace keyupMusic2
             //创建并显示WebView2窗口
             VirtualKeyboardForm virtualKeyboardForm = new VirtualKeyboardForm();
             virtualKeyboardForm.Show();
-            if (Screen.AllScreens.Length > 1)
+            MoonTime moontimeForm = new MoonTime();
+            moontimeForm.Show();
+            if (Screen.AllScreens.Length == 1)
             {
-                MoonTime moontimeForm = new MoonTime();
-                moontimeForm.Show();
+                MoonTime.Instance.Visible = false;
             }
 
             InitializeFromCurrentWallpaper();

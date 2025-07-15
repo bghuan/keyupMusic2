@@ -16,7 +16,11 @@ namespace keyupMusic2
     public partial class Common
     {
         public const string keyupMusic = "keyupMusic";
+        public const string keyupMusicexe = "C:\\Users\\bu\\source\\repos\\keyupMusic2\\keyupMusic2.sln";
         public const string keyupMusic2 = "keyupMusic4";
+        public const string _哔哩哔哩 = "哔哩哔哩";
+        public const string PotPlayerMini64 = "PotPlayerMini64";
+        public const string QuickLook = "QuickLook";
         public const string msedgewebview2 = "msedgewebview2";
         public const string ShellExperienceHost = "ShellExperienceHost";
         public const string ElecHead = "ElecHead";
@@ -24,6 +28,7 @@ namespace keyupMusic2
         public const string ACPhoenix = "ACPhoenix";
         public const string Dragonest = "DragonestGameLauncher";
         public const string devenv = "devenv";
+        public const string devenvexe = "C:\\Program Files\\Microsoft Visual Studio\\2022\\Community\\Common7\\IDE\\devenv.exe";
         public const string WeChat = "WeChat";
         public const string douyin = "douyin";
         public const string msedge = "msedge";
@@ -101,6 +106,7 @@ namespace keyupMusic2
             {
                 if (refreshTitleList.Contains(ProcessName))
                     FreshProcessNameByMap(hwnd);
+                //log(hwnd + ProcessName + 1);
                 return Common.ProcessName;
             }
             if (!ProcessMap.ContainsKey(hwnd))
@@ -111,6 +117,7 @@ namespace keyupMusic2
 
             CleanMouseState();
 
+            //log(hwnd + ProcessName+2);
             return ProcessName;
         }
         public static HashSet<string> refreshTitleList = new HashSet<string> { msedge, chrome, Honeyview, };
@@ -176,12 +183,16 @@ namespace keyupMusic2
         public static string GetWindowName(IntPtr hwnd)
         {
             uint processId;
-            string Name;
+            string Name = "";
             Native.GetWindowThreadProcessId(hwnd, out processId);
-            Process process = Process.GetProcessById((int)processId);
+            try
             {
-                Name = process.ProcessName;
+                Process process = Process.GetProcessById((int)processId);
+                {
+                    Name = process.ProcessName;
+                }
             }
+            catch (Exception e) { }
             return Name;
         }
         public static bool is_douyin()
@@ -345,8 +356,9 @@ namespace keyupMusic2
             //        return false;
             //    return true;
             //}
-            foreach (Process proc in objProcesses) {
-                if (!front|| proc.MainWindowHandle != 0)
+            foreach (Process proc in objProcesses)
+            {
+                if (!front || proc.MainWindowHandle != 0)
                     return true;
             }
             return false;
@@ -433,7 +445,25 @@ namespace keyupMusic2
             }
             return new Point(0, 0);
         }
+        public static IntPtr FindEdgeWindow(string procName)
+        {
+            IntPtr current_hwnd = GetForegroundWindow();
+            Process[] objProcesses = Process.GetProcessesByName(procName);
+            if (objProcesses.Length > 0)
+            {
+                if (objProcesses[0].MainWindowHandle == IntPtr.Zero)
+                {
+                    for (int i = 1; i < objProcesses.Length; i++)
+                    {
+                        if (objProcesses[i].MainWindowHandle != IntPtr.Zero)
+                            return objProcesses[i].MainWindowHandle;
+                    }
+                }
+                return objProcesses[0].MainWindowHandle;
+            }
 
+            return IntPtr.Zero;
+        }
         public static bool Deven_runing()
         {
             return (ProcessTitle?.IndexOf("正在运行") >= 0 || ProcessTitle == "");

@@ -20,9 +20,7 @@ namespace keyupMusic2
             switch (e.key)
             {
                 case Keys.F4:
-                    quick_close(); break;
-                case Keys.F9:
-                    quick_sleep(); break;
+                    quick_close(); quick_sleep(); break;
                 case Keys.F10:
                     quick_what(); break;
                 case Keys.F11:
@@ -41,6 +39,8 @@ namespace keyupMusic2
                     clean(); DeleteCurrentWallpaper(); break;
                 case Keys.Escape:
                     clean(); break;
+                case Keys.LShiftKey:
+                    shift(); break;
 
                 case Keys.Up:
                     quick_next_image(); break;
@@ -61,6 +61,59 @@ namespace keyupMusic2
 
             Common.hooked = false;
         }
+
+        private void shift()
+        {
+            // 检查 Ctrl 键是否按下
+            if (!isctrl())
+                return;
+
+            // 等待 Ctrl 和 Shift 键释放（超时 1 秒）
+            if (!WaitForKeysReleased(1000, isctrl, is_shift))
+                return;
+
+            // 执行复制操作（Ctrl+A+C）
+            press(new[] { Keys.LControlKey, Keys.A, Keys.C }, 50);
+
+            // 获取剪贴板文本（在 UI 线程上执行）
+            string clipboardText = GetClipboardText();
+            if (string.IsNullOrEmpty(clipboardText))
+                return;
+
+            // 截断文本长度
+            string processedText = clipboardText.Length > 20
+                ? clipboardText.Substring(0, 20).ToUpper()
+                : clipboardText.ToUpper();
+
+            // 再次等待按键释放，然后按下 Shift 键
+            //if (WaitForKeysReleased(1000, isctrl, is_shift))
+            {
+                press(new[] { Keys.LShiftKey }, 50);
+                press(processedText);
+            }
+        }
+
+       
+
+        // 辅助方法：安全获取剪贴板文本
+        private string GetClipboardText()
+        {
+            string result = "";
+            try
+            {
+                huan.Invoke(new Action(() =>
+                {
+                    result = Clipboard.GetText() ?? "";
+                    if (result.Length > 100) result = "";
+                }));
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"获取剪贴板内容失败: {ex.Message}");
+            }
+            return result;
+        }
+
         //static Dictionary<int, Keys[]> numkey = new Dictionary<int, Keys[]>()
         //{
 
@@ -213,12 +266,13 @@ namespace keyupMusic2
 
         public static void run_vis()
         {
-            press("LWin;VISUAL;en;100;Apps;100;Enter;1000;1271.654;", 100);
-            //DaleyRun(
-            //    () => GetPointTitle() == "Microsoft Visual Studio(管理员)",
-            //    () => press("100;Tab;Down;Enter;", 100),
-            //    3000, 200);
-            TaskRun(() => { press("Tab;Down;Enter;", 50); }, 800);
+            //press("LWin;VISUAL;en;100;Apps;100;Enter;1000;1271.654;", 100);
+            ////DaleyRun(
+            ////    () => GetPointTitle() == "Microsoft Visual Studio(管理员)",
+            ////    () => press("100;Tab;Down;Enter;", 100),
+            ////    3000, 200);
+            //TaskRun(() => { press("Tab;Down;Enter;", 50); }, 800);
+            ProcessRun(devenvexe,keyupMusicexe);
         }
     }
 }

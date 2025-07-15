@@ -341,7 +341,7 @@ namespace keyupMusic2
         public static bool Special_Input2 = false;
         public static DateTime init_time = DateTime.Now;
         public static DateTime Special_Input_tiem = init_time;
-        public static void DaleyRun(Func<bool> flag_action, Action action2, int alltime, int tick)
+        public static void DelayRun(Func<bool> flag_action, Action action2, int alltime, int tick)
         {
             DaleyRun_stop = false;
             int i = 0;
@@ -832,7 +832,7 @@ namespace keyupMusic2
         public static void LossScale()
         {
             if (is_douyin()) { }
-            else if (IsDiffProcess()) mouse_click();
+            //else if (IsDiffProcess()) mouse_click();
             //press([Keys.LControlKey, Keys.F2]);return;
             if (!ExistProcess(LosslessScaling))
                 ProcessRun(LosslessScalingexe);
@@ -938,6 +938,26 @@ namespace keyupMusic2
                         callCount = 0; // 执行后重置计数器
                         action(arg1, arg2); // 执行带参数的方法
                     }
+                }
+            }
+        }
+        public static class RateLimiter2
+        {
+            private static DateTime lastExecuteTime = DateTime.MinValue;
+            private static readonly TimeSpan ExecutionInterval = TimeSpan.FromMilliseconds(200);
+
+            private static readonly object _lock = new object();
+
+            public static void Execute<T1>(Action<T1> action, T1 arg1)
+            {
+                var now = DateTime.Now;
+
+                bool canExecuteBase = now - lastExecuteTime >= ExecutionInterval;
+
+                if (canExecuteBase)
+                {
+                    lastExecuteTime = now;
+                    action(arg1);
                 }
             }
         }

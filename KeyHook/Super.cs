@@ -113,16 +113,16 @@ namespace keyupMusic2
                     }
                     break;
                 case Keys.H:
-                    string sourceImage = "input.png";
-                    string targetImage = "output.png";
-                    //ConvertAndResize(sourceImage, targetImage);
-                    //ShowFadeInWallpaper(targetImage);
-                    var aaa = GetWallpaperFromRegistry();
-                    targetImage = "output.png";
-
+                    //string sourceImage = "input.png";
+                    //string targetImage = "output.png";
+                    ////ConvertAndResize(sourceImage, targetImage);
+                    ////ShowFadeInWallpaper(targetImage);
+                    //var aaa = GetWallpaperFromRegistry();
+                    //targetImage = "output.png";
+                    BatchCompressImages("C:\\Users\\bu\\Pictures\\Screenshots\\dd\\20241022", "C:\\Users\\bu\\Desktop", 80, 1920, 1080);
                     break;
                 case Keys.J:
-                    SetDesktopWallpaperAli(GetCurrentWallpaperPath(), WallpaperStyle.Fit);
+                    SetDesktopWallpaperAli(GetCurrentWallpaperPath());
                     break;
                 case Keys.K:
                     huan.release_all_key(1000);
@@ -171,9 +171,9 @@ namespace keyupMusic2
                     if (VirMouseStateKey.Count > 0)
                         log("VirMouseStateKey: " + string.Join(", ", VirMouseStateKey));
                     break;
-                case Keys.F2:
-                    //LossScale();
-                    break;
+                //case Keys.F2:
+                //    //LossScale();
+                //    break;
                 case Keys.F4:
                     press(Keys.MediaPlayPause);
                     break;
@@ -203,12 +203,7 @@ namespace keyupMusic2
                     huan._mouseKbdHook.ChangeMouseHooks();
                     break;
                 case Keys.Delete:
-                    //Application.Exit();
-                    FileSystem.DeleteFile(
-                   wallpapersPath_big_current,
-                   UIOption.OnlyErrorDialogs,
-                   RecycleOption.SendToRecycleBin
-               );
+                    DeleteCurrentWallpaper();
                     break;
                 case Keys.F11:
                 case Keys.F12:
@@ -281,7 +276,7 @@ namespace keyupMusic2
                 return;
             }
             Invoke(() => { try { press(Clipboard.GetText()); } catch { } });
-            play_sound(Keys.D1);
+            //play_sound(Keys.D1);
         }
 
         private static void quick_dir_file()
@@ -343,7 +338,7 @@ namespace keyupMusic2
             };
             var run = () => { press("200;2220,1070", 10); };
             var action2 = () =>
-                    DaleyRun(judge, run, 3222, 122);
+                    DelayRun(judge, run, 3222, 122);
 
             mouse_move(2220, 1070);
             Common.cmd($"/c start ms-settings:sound", action2, 200);
@@ -418,7 +413,7 @@ namespace keyupMusic2
         {
             var judge = () => judge_color(1063, 529, Color.FromArgb(199, 71, 69));
             var run = () => { press("1076,521"); };
-            var action2 = () => DaleyRun(judge, run, 3222, 122);
+            var action2 = () => DelayRun(judge, run, 3222, 122);
 
             press("LWin", 0);
             action2();
@@ -426,7 +421,7 @@ namespace keyupMusic2
         }
         private static void dragonest_max(int tick)
         {
-            DaleyRun(
+            DelayRun(
                 () => (
                         //yo() == Common.Dragonest &&
                         judge_color(71, 199, Color.FromArgb(242, 95, 99)) &&

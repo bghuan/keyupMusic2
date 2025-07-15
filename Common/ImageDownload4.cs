@@ -12,7 +12,7 @@ namespace keyupMusic2
     {
         static int SetDesktopWallpaperAli_count = 0;
         static bool SetDesktopWallpaperAli_flag = false;
-        public static void SetDesktopWallpaperAli(string filePath, WallpaperStyle style = WallpaperStyle.Stretched)
+        public static void SetDesktopWallpaperAli(string filePath, bool di = true)
         {
             if (SetDesktopWallpaperAli_flag) return;
             SetDesktopWallpaperAli_flag = true;
@@ -25,40 +25,42 @@ namespace keyupMusic2
                 }
             }
 
-            play_sound_di();
+            if (di)
+                play_sound_di();
             {
                 var fileName = Path.GetFileName(filePath).Replace("webp", "jpg");
                 var bigfilePath = Path.Combine(Directory.GetCurrentDirectory(), "image", "downloaded_images", "1", fileName);
                 if (File.Exists(bigfilePath))
                 {
                     File.Copy(filePath, _wallpapersPath_current, true);
-                    SetDesktopWallpaper(bigfilePath, style, true);
+                    SetDesktopWallpaper(bigfilePath);
                     SetDesktopWallpaperAli_flag = false;
                     return;
                 }
             }
 
             SetDesktopWallpaperAli_count = 0;
-            AliConvertIamgeSize(filePath);
+            AliConvertIamgeSize(filePath, di);
             if (Common.taskID == "")
             {
-                //SetDesktopWallpaper(filePath, style);
+                //SetDesktopWallpaper(filePath);
                 SetDesktopWallpaperAli_flag = false;
                 return;
             }
 
             int i = 0;
-            System.Timers.Timer timer = new() { Interval = 5000 };
+            System.Timers.Timer timer = new() { Interval = 3000 };
 
             timer.Elapsed += (s, e) =>
             {
                 i++;
-                if (GetTaskResultDownload(filePath))
+                if (i < 4) { if (di) play_sound_di(); return; }
+                if (GetTaskResultDownload(filePath, di))
                 {
                     var fileName = Path.GetFileName(filePath).Replace("webp", "jpg");
                     var sdas = Path.Combine(Directory.GetCurrentDirectory(), "image", "downloaded_images", "1", fileName);
                     //ConvertAndResize(GetCurrentWallpaperPath(), _wallpapersPath_output);
-                    SetDesktopWallpaper(sdas, style, true);
+                    SetDesktopWallpaper(sdas);
                     SetDesktopWallpaperAli_flag = false;
                     timer.Stop();
                     timer.Dispose();
@@ -73,9 +75,8 @@ namespace keyupMusic2
             timer.AutoReset = true;
             timer.Start();
         }
-        public static bool GetTaskResultDownload(string filePath)
+        public static bool GetTaskResultDownload(string filePath, bool di = true)
         {
-            play_sound_di();
             SetDesktopWallpaperAli_count++;
             if (SetDesktopWallpaperAli_count > 30)
             {
@@ -83,9 +84,10 @@ namespace keyupMusic2
                 return true;
             }
             var res = GetTaskResult(Common.taskID);
-            if (res.Contains("SUCCEEDED") || res.Contains("RUNNING") || res.Contains("PENDING")) { }
+            var inlogtxt = (GetWindowTitle().Contains("log"));
+            if (!inlogtxt && (res.Contains("SUCCEEDED") || res.Contains("RUNNING") || res.Contains("PENDING"))) { }
             else
-                log(res);
+                log(filePath + res);
             try
             {
                 JObject jsonObject = JObject.Parse(res);
@@ -99,7 +101,9 @@ namespace keyupMusic2
                     //log("taskId == null || taskId == \"\"");
                     Common.taskID = "";
                     //TaskRun(() => { SetDesktopWallpaperAli(GetNextWallpaper(), WallpaperStyle.Fit); }, 1000);
-                    play_sound_di2();
+                    if (di)
+                        play_sound_di2();
+                    UploadImage("https://bghuan.cn/api/saveimage", _wallpapersPath_temp);
                     return true;
                 }
                 if (state == "FAILED")
@@ -107,7 +111,9 @@ namespace keyupMusic2
                     //log("state == \"FAILED\"");
                     Common.taskID = "";
                     //TaskRun(() => { SetDesktopWallpaperAli(GetNextWallpaper(), WallpaperStyle.Fit); }, 1000);
-                    play_sound_di2();
+                    if (di)
+                        play_sound_di2();
+                    UploadImage("https://bghuan.cn/api/saveimage", _wallpapersPath_temp);
                     return true;
                 }
 
@@ -117,14 +123,20 @@ namespace keyupMusic2
 
                 DownloadImage(output_image_url, sdas);
                 //ConvertAndResize(sdas, sdas.Replace("jpg", "webp"));
+                UploadImage("https://bghuan.cn/api/saveimage", _wallpapersPath_temp);
+                if (di)
+                    play_sound_bongocat(1);
                 return true;
             }
             catch (Exception ex)
             {
+                //UploadImage("https://bghuan.cn/api/saveimage", _wallpapersPath_temp);
             }
+            if (di)
+                play_sound_di();
             return false;
         }
-        public static void AliConvertIamgeSize(string filePath)
+        public static void AliConvertIamgeSize(string filePath, bool di)
         {
             SetDesktopWallpaperAli_count++;
             if (SetDesktopWallpaperAli_count > 30)
@@ -134,8 +146,8 @@ namespace keyupMusic2
             }
             // 要上传的图片文件路径
             string imageFilePath = GetCurrentWallpaperPath();
-            if (RemoveWebpWhiteBorder(GetCurrentWallpaperPath(), _wallpapersPath_no_white))
-                imageFilePath = _wallpapersPath_no_white;
+            if (RemoveWebpWhiteBorder(GetCurrentWallpaperPath(), _wallpapersPath_no_border))
+                imageFilePath = _wallpapersPath_no_border;
 
             // 获取屏幕尺寸（假设为主屏幕）
             int screenWidth = Screen.PrimaryScreen.Bounds.Width;   // 例如：2560
@@ -159,38 +171,26 @@ namespace keyupMusic2
             if (imageSize.width != 0 && (imageSize.width < 512 || imageSize.height < 512))
             {
                 Common.taskID = "";
-                TaskRun(() => { SetDesktopWallpaperAli(GetNextWallpaper(), WallpaperStyle.Fit); }, 1000);
-                play_sound_di2();
+                TaskRun(() => { SetDesktopWallpaperAli(GetNextWallpaper(), di); }, 1000);
+                if (di)
+                    play_sound_di2();
                 return;
             }
 
-            // API的URL地址
             string host = "https://bghuan.cn";
             string apiUrl = host + "/api/saveimage";
-
-            // 调用上传方法
             var response = UploadImage(apiUrl, imageFilePath);
-
-            // 输出结果
-            Console.WriteLine("上传结果:");
-            Console.WriteLine($"成功: {response.Success}");
-            Console.WriteLine($"消息: {response.Message}");
 
             if (response.Success)
             {
                 var imageUrl = host + response.FilePath.Replace("..", "");
-                Console.WriteLine($"保存路径: {response.FilePath}");
-
-                //string imageUrl = "http://xxx/image.jpg";
 
                 ImageOutPaintingClient();
                 string res = OutPaintImage(imageUrl, topOffset, bottomOffset, leftOffset, rightOffset);
-                if (res.Contains("SUCCEEDED") || res.Contains("RUNNING") || res.Contains("PENDING")) { }
+                var inlogtxt = (GetWindowTitle().Contains("log"));
+                if (!inlogtxt && (res.Contains("SUCCEEDED") || res.Contains("RUNNING") || res.Contains("PENDING"))) { }
                 else
-                    log(res);
-
-                Console.WriteLine("API响应:");
-                Console.WriteLine(response);
+                    log(imageFilePath + res);
 
                 JObject jsonObject = JObject.Parse(res);
                 JToken outputToken = jsonObject["output"];
@@ -198,7 +198,9 @@ namespace keyupMusic2
                 {
                     Common.taskID = "";
                     //TaskRun(() => { SetDesktopWallpaperAli(GetNextWallpaper(), WallpaperStyle.Fit); }, 1000);
-                    play_sound_di2();
+                    if (di)
+                        play_sound_di2();
+                    UploadImage("https://bghuan.cn/api/saveimage", _wallpapersPath_temp);
                     return;
                 }
                 string state = outputToken["task_status"]?.ToString();
@@ -206,7 +208,9 @@ namespace keyupMusic2
                 {
                     Common.taskID = "";
                     //TaskRun(() => { SetDesktopWallpaperAli(GetNextWallpaper(), WallpaperStyle.Fit); }, 1000);
-                    play_sound_di2();
+                    if (di)
+                        play_sound_di2();
+                    UploadImage("https://bghuan.cn/api/saveimage", _wallpapersPath_temp);
                     return;
                 }
 
@@ -214,10 +218,10 @@ namespace keyupMusic2
                 Common.taskID = taskId;
 
             }
-            TaskRun(() =>
-            {
-                var response2 = UploadImage(apiUrl, _wallpapersPath_temp);
-            }, 20_000);
+            //TaskRun(() =>
+            //{   
+            //    var response2 = UploadImage("https://bghuan.cn/api/saveimage", _wallpapersPath_temp);
+            //}, 20_000);
         }
 
         public static string taskID = "";

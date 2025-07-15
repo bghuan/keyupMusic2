@@ -60,7 +60,10 @@ namespace keyupMusic2
             //if (judge_color(2469, 646, Color.FromArgb(254, 44, 85)) 
             //    || judge_color(1996, 1400, Color.FromArgb(254, 21, 89))
             //    || judge_color(1996, 1400, Color.FromArgb(117, 46, 66)))
-            press("2345,1409;2345," + (1030 + (num * 50)), 101);
+            int x = 2345;
+            x -= 50;
+            x -= 50;
+            press($"{x},1409;{x}," + (1030 + (num * 50)), 101);
         }
     }
 }

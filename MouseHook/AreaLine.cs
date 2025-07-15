@@ -21,12 +21,12 @@ namespace keyupMusic2
                     SS().MouseWhell(-1440);
                 }
             }
-            else if (ProcessName == Common.Honeyview)
-            {
-                int num = e.data;
-                if (Enum.TryParse(typeof(Keys), "D" + num, out object asd))
-                    press([LControlKey, (Keys)asd]);
-            }
+            //else if (ProcessName == Common.Honeyview)
+            //{
+            //    int num = e.data;
+            //    if (Enum.TryParse(typeof(Keys), "D" + num, out object asd))
+            //        press([LControlKey, (Keys)asd]);
+            //}
             if (IsFullScreen()) return 0;
             mouse_click2(0);
             return e.data;
@@ -51,21 +51,25 @@ namespace keyupMusic2
             {
                 press(Keys.Space, 11);
             }
-            else if (ProcessName == Common.Honeyview)
-            {
-                int num = e.data;
-                if (Enum.TryParse(typeof(Keys), "D" + num, out object asd))
-                    press([LControlKey, (Keys)asd]);
-            }
+            //else if (ProcessName == Common.Honeyview)
+            //{
+            //    int num = e.data;
+            //    if (Enum.TryParse(typeof(Keys), "D" + num, out object asd))
+            //        press([LControlKey, (Keys)asd]);
+            //}
             if (IsDiffProcess())
+            {
                 mouse_click2(0);
-            return e.data;
+                return e.data;
+            }
+            return 0;
         }
 
         private int _line6(MouseHookEventArgs e)
         {
             if (IsDiffProcess())
                 mouse_click2(0);
+            if (ProcessName != chrome) return 0;
             if (!chrome_red())
                 press(Keys.F, 50);
             SS().MouseWhell(-1440);
@@ -76,6 +80,7 @@ namespace keyupMusic2
         {
             if (IsDiffProcess())
                 mouse_click2(0);
+            if (ProcessName != chrome) return 0;
             press(Keys.F, 50);
             SS().MouseWhell(1440);
             return e.data;

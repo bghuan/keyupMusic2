@@ -39,10 +39,24 @@ namespace keyupMusic2
                 HandleBandiView(e);
             else if (ProcessName == Common.explorer)
                 Handleexplorer(e);
+            else if (ProcessName == Common._哔哩哔哩)
+                Handle_哔哩哔哩(e);
 
             if (e.Msg != MouseMsg.move)
                 if (IsDesktopFocused())
                     change_image(e);
+        }
+
+        private void Handle_哔哩哔哩(MouseHookEventArgs e)
+        {
+            if (e.Msg == MouseMsg.move) return;
+            if (e.Msg == MouseMsg.click_r_up)
+            {
+                if (!is_down(LButton))
+                    press([LControlKey, C]);
+                else
+                    press([Space, LControlKey, V]);
+            }
         }
 
         private void Handleexplorer(MouseHookEventArgs e)
@@ -78,25 +92,26 @@ namespace keyupMusic2
             if (e.Msg == MouseMsg.wheel)
             {
                 string nextWallpaper = "";
-                if (e.data < 0 && e.X == 0) nextWallpaper = GetNextIdFolder();
+                if (e.data < 0 && (e.X == 0 || e.X == screen2Width)) nextWallpaper = GetNextIdFolder();
                 else if (e.data > 0 && e.X == 0) nextWallpaper = GetPreviousIdFolder();
                 else if (e.data < 0) nextWallpaper = GetNextWallpaper();
                 else if (e.data > 0) nextWallpaper = GetPreviousWallpaper();
                 SetDesktopWallpaper(nextWallpaper, WallpaperStyle.Fit, true);
             }
-            if (e.Msg == MouseMsg.click_r)
+            if (e.Msg == MouseMsg.click_r_up)
             {
                 if (e.Y == 0)
                 {
                     DeleteCurrentWallpaper();
-                    Sleep(100);
+                    Sleep(20);
                     press(Escape);
                 }
-                else if (e.X == 0)
+                else if (e.X == 0 || e.X == screen2Width)
                 {
-                    SetDesktopWallpaperAli(GetCurrentWallpaperPath(), WallpaperStyle.Fit);
-                    Sleep(100);
+                    Sleep(20);
                     press(Escape);
+                    SetDesktopWallpaperAli(GetCurrentWallpaperPath());
+                    //press(Escape);
                 }
             }
         }

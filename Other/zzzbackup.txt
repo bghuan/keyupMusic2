@@ -1,4 +1,122 @@
-﻿using System.Runtime.InteropServices;
+﻿// ==UserScript==
+// @name         dingdiange
+// @namespace    http://tampermonkey.net/
+// @version      2025-07-13
+// @description  try to take over the world!
+// @author       You
+// @match        http://www.dingdiange.org/*
+// @icon         https://www.google.com/s2/favicons?sz=64&domain=dingdiange.org
+// @grant        none
+// ==/UserScript==
+
+(function() {
+    'use strict';
+
+    scroll(0,330)
+    // content.style.fontSize='20px'
+    content.innerHTML=content.innerHTML.replaceAll('<br>\n<br>\n','<br>\n')
+    // content.style.lineHeight='2.0'
+    document.querySelectorAll('#content br').forEach(br => {br.parentNode.replaceChild(document.createElement('div'), br);});
+    document.querySelectorAll('#content div').forEach(br => {br.style.marginBottom='16px';});
+    content.style.marginLeft='28px'
+    center_tip[1].style.borderBottom='1px solid green'
+
+    apprecom1.style.display='none'
+    apprecom2.style.display='none'
+    box_con.children[4].style.display='none'
+    document.querySelectorAll('.reader_mark0').forEach(o=>o.style.display='none')
+    document.querySelectorAll('.reader_mark1').forEach(o=>o.style.display='none')
+    box_con.style.border='none'
+
+    var nextttt=document.querySelectorAll('.bottem a')[3];
+    var asd = function() {
+        if (Math.ceil(window.pageYOffset) + Math.ceil(window.innerHeight)+2 >= document.body.scrollHeight) {
+            // const dpr = window.devicePixelRatio;
+            // const rect = nextttt.getBoundingClientRect();
+            // const relX = (rect.left + rect.width / 2) * dpr;
+            // const relY = (rect.top + rect.height / 2) * dpr;
+            // var b="?nextlocation"+Math.round(relX)+","+Math.round(relY)
+            // fetch("http://127.0.0.1:13000"+b)
+            window.close()
+    }};
+    document.body.addEventListener("keydown", event => { if (event.key == ' '||event.key == 'PageDown') {asd()}})
+
+    var bwelement=[content,box_con,wrapper,document.body,document.querySelector('.con_top'),document.querySelector('.nav'),document.querySelector('.ywtop'),bdcsMain]
+    var dddddddddddd=()=>{
+        if(localStorage.color=='black') bwelement.forEach(o=>{o.style.backgroundColor='#111111';o.style.color='#a0a0a0'})
+        else bwelement.forEach(o=>{o.style.backgroundColor='#ffffff';o.style.color='#000'})
+        // fetch("http://127.0.0.1:13000?nextlocationtrue")
+    }
+    document.body.addEventListener("keyup", event => { if (event.key === '.'){dddddddddddd(localStorage.color=localStorage.color=='black'?'white':'black')}})
+    dddddddddddd()
+
+
+})();// ==UserScript==
+// @name         预加载
+// @namespace    http://tampermonkey.net/
+// @version      2025-07-14
+// @description  try to take over the world!
+// @author       You
+// @match        http://www.dingdiange.org/*
+// @icon         data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==
+// @grant        none
+// ==/UserScript==
+
+(function() {
+    'use strict';
+    var target=document.querySelectorAll('.bottem a')[3];
+    var target_clicked=false;
+
+    const a = document.createElement("a");
+    a.href = target.href; // 替换为你自己的链接
+    a.textContent = "🔗 预加载";
+    a.id = "myFloatingLink";
+    a.style.position = "fixed";
+    a.style.right = "20px";
+    a.style.bottom = "20px";
+    a.style.padding = "8px 12px";
+    a.style.background = "transparent";
+    a.style.color = "#fff";
+    a.style.borderRadius = "8px";
+    a.style.textDecoration = "none";
+    a.style.zIndex = "9999";
+    a.style.boxShadow = "0 2px 6px rgba(0,0,0,0.3)";
+    a.target = "_blank";
+    a.style.display = "none";
+    a.addEventListener('auxclick', e => {a.style.display = "none";});
+    document.body.appendChild(a);
+
+    // const observer = new IntersectionObserver(entries => {
+    //     entries.forEach(entry => {
+    //         if (entry.isIntersecting) {
+    //             const dpr = window.devicePixelRatio;
+    //             const rect = a.getBoundingClientRect();
+    //             const relX = (rect.left + rect.width / 2) * dpr;
+    //             const relY = (rect.top + rect.height / 2) * dpr;
+    //             var b="?nextlocation"+Math.round(relX)+","+Math.round(relY)
+    //             fetch("http://127.0.0.1:13000"+b)
+    //             setTimeout(()=>{a.style.display = "none";},200)
+    //             observer.disconnect(); // 只触发一次
+    //         }
+    //     });
+    // });
+    // observer.observe(a);
+
+    var asd=()=>{
+        if(target_clicked)return;
+        a.style.display = "";
+        const dpr = window.devicePixelRatio;
+                const rect = a.getBoundingClientRect();
+                const relX = (rect.left + rect.width / 2) * dpr;
+                const relY = (rect.top + rect.height / 2) * dpr;
+                var b="?nextlocation"+Math.round(relX)+","+Math.round(relY)
+                fetch("http://127.0.0.1:13000"+b)
+        target_clicked=true
+                // setTimeout(()=>{a.style.display = "none";},200)
+    }
+    document.body.addEventListener("keydown", event => { if (event.key == ' '||event.key == 'PageDown') {asd()}})
+
+})();using System.Runtime.InteropServices;
 using static keyupMusic2.Common;
 
 namespace keyupMusic2

@@ -23,7 +23,7 @@ namespace keyupMusic2
         public static string _wallpapersPath_intput = Path.Combine(wallpapersPath, "0", "intput.webp");
 
         public static string _wallpapersPath_current = Path.Combine(wallpapersPath, "0", "current.webp");
-        public static string _wallpapersPath_no_white = Path.Combine(wallpapersPath, "0", "no_white.webp");
+        public static string _wallpapersPath_no_border = Path.Combine(wallpapersPath, "0", "no_border.webp");
         public static string _wallpapersPath_temp = Path.Combine(wallpapersPath, "0", "temp.webp");
 
         // 缓存目录结构和文件信息
@@ -493,7 +493,7 @@ namespace keyupMusic2
             var _currentPath = GetWallpaperFromRegistry();
             if (!_currentPath.Contains(keyupMusic)) return;
             if (IsDesktopFocused() || isctrl()) { } else return;
-            string currentPath = GetCurrentWallpaperPath();
+            string currentPath = _currentPath;
             if (string.IsNullOrEmpty(currentPath) || !File.Exists(currentPath))
             {
                 Console.WriteLine("当前壁纸不存在或路径无效");
@@ -502,10 +502,13 @@ namespace keyupMusic2
 
             try
             {
-                // 获取当前文件信息
-                string currentId = allIds[currentIdIndex];
-                string currentFile = idToFilesMap[currentId][currentFileIndex];
-                idToFilesMap[currentId].Remove(currentFile);
+                if (_currentPath == GetCurrentWallpaperPath())
+                {
+                    // 获取当前文件信息
+                    string currentId = allIds[currentIdIndex];
+                    string currentFile = idToFilesMap[currentId][currentFileIndex];
+                    idToFilesMap[currentId].Remove(currentFile);
+                }
 
                 //SetDesktopToBlack();
                 //Sleep(100);
@@ -526,12 +529,12 @@ namespace keyupMusic2
 
 
                 // 检查当前ID文件夹是否为空
-                if (idToFilesMap[currentId].Count == 0)
-                {
-                    // 可选：删除空文件夹
-                    // Directory.Delete(Path.Combine(wallpapersPath, currentId));
-                    // allIds.Remove(currentId);
-                }
+                //if (idToFilesMap[currentId].Count == 0)
+                //{
+                //    // 可选：删除空文件夹
+                //    // Directory.Delete(Path.Combine(wallpapersPath, currentId));
+                //    // allIds.Remove(currentId);
+                //}
             }
             catch (Exception ex)
             {

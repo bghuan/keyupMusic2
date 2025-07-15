@@ -53,7 +53,7 @@ namespace keyupMusic2
                                 new JU(ch2 - far, 0, ch2, ga2));
 
         RECTT corner1 = new RECTT(nameof(corner1),
-                                new JU(0, 0, 0, 0), new JU(0, 0, far, far));
+                                new JU(0, 0, 0, 0));
         RECTT corner2 = new RECTT(nameof(corner2),
                                 new JU(cha, 0, cha, 0), new JU(cha - far, 0, cha, far));
         RECTT corner4 = new RECTT(nameof(corner4),
@@ -124,16 +124,19 @@ namespace keyupMusic2
                 int music = di_tune(e);
                 e.data = music;
 
-                Show(name, 2);
+                Show(name, 1);
 
                 if (aMouseHookEvent != null)
                 {
                     FreshProcessName();
+                    //log(ProcessName);
                     int result = aMouseHookEvent.Invoke(e);
-                    FreshProcessName();
+                    
 
                     if (result == 0) return;
                     play_sound_bongocat(result);
+                    FreshProcessName();
+                    //log(ProcessName);
                 }
             }
 
@@ -175,6 +178,13 @@ namespace keyupMusic2
             public RECTT(string name, JU a, JU b)
             {
                 this.name = name; this.a = a; this.b = b;
+
+                if (ScreenSecond == Rectangle.Empty && (name.Contains("5") || name.Contains("6") || name.Contains("7") || name.Contains("8"))) { return; }
+                All.Add(this);
+            }
+            public RECTT(string name, JU a)
+            {
+                this.name = name; this.a = a; this.b = a;
 
                 if (ScreenSecond == Rectangle.Empty && (name.Contains("5") || name.Contains("6") || name.Contains("7") || name.Contains("8"))) { return; }
                 All.Add(this);

@@ -138,10 +138,12 @@ namespace keyupMusic2
         }
         public static void vkMenuItem_Click(object sender, EventArgs e)
         {
+            if (MoonTime.Instance == null) return;
             MoonTime.Instance.Visible = !MoonTime.Instance.Visible;
         }
         public static void vkMenuItem_DoubleClick(object sender, EventArgs e)
         {
+            if (MoonTime.Instance == null) return;
             MoonTime.Instance.Dispose();
             new MoonTime().Show();
         }

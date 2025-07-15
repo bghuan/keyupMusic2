@@ -63,16 +63,8 @@ namespace keyupMusic2
         public void MouseHookProc(MouseHookEventArgs e)
         {
             if (e.Msg != MouseMsg.move) FreshProcessName();
-            if (judge_handled(e))
-            {
-                e.Handled = true;
-                VirKeyState(e.Msg);
-                //if (IsDiffProcess())
-                //    FocusPointProcess();
-            }
-            //if (ProcessName==explorer)
-            //    if (IsDiffProcess())
-            //    FocusPointProcess();
+            if (judge_handled(e)) { e.Handled = true; VirKeyState(e.Msg); }
+            if (e.Msg!= MouseMsg.move && mousekeymap.ContainsKey(e.Msg) && huan.deal_handilngkey(mousekeymap[e.Msg],!e.Msg.IsUpEvent())) return;
 
             Task.Run(() =>
             {

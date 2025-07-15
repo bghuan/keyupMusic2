@@ -67,18 +67,24 @@ namespace keyupMusic2
                         && !judge_color(525, 417, Color.FromArgb(22, 24, 35), 0)
                         && !judge_color(525, 417, Color.FromArgb(255, 255, 255), 0);
                     };
-                    var run = () =>
+                    var run = () => 
                     {
                         press("200;525.417;525,418;500;H;100;", 200);
                         if (!IsFullScreen())
                             press("100;525.417;525,418;500;H", 200);
-                        press("100;2277,1404;2272,1171;1703.1439", 200);
+                        if (!IsFullScreen())
+                            press("100;525.417;525,418;500;H", 200);
+                        if (!IsFullScreen())
+                            press("100;525.417;525,418;500;H", 200);
+                        int x = 2218;
+                        x -= 50;
+                        press($"100;{x},1404;{x},1171;1703.1439", 200);
 
                         if (!IsFullScreen()) return;
 
                         LossScale();
                     };
-                    var action2 = () => DaleyRun(judge, run, 3222, 100);
+                    var action2 = () => DelayRun(judge, run, 3222, 100);
                     action2();
 
                     break;

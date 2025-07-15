@@ -90,9 +90,36 @@ namespace keyupMusic2
                 case Common.BandiView:
                     HandleBandiView(e);
                     break;
+                case Common.QuickLook:
+                    HandleQuickLook(e);
+                    break;
+                case Common._哔哩哔哩:
+                    Handle_哔哩哔哩(e);
+                    break;
             }
 
             Common.hooked = false;
+        }
+
+        private void Handle_哔哩哔哩(KeyboardHookEventArgs e)
+        {
+            if (e.key == Keys.OemPeriod)
+            {
+                mouse_click();
+                mousewhell(-20);
+                press("100;529,1214;100", 101);
+                mousewhell(20);
+            }
+        }
+
+        private void HandleQuickLook(KeyboardHookEventArgs e)
+        {
+            var ll = new Keys[] { D1, D2, D3, D4, D5, D6, D7, D8, D9, D0 };
+            if (ll.Contains(e.key))
+            {
+                int num = int.Parse(e.key.ToString().Substring(1)) * 300;
+                press(230 + num + ",1204");
+            }
         }
 
         private void HandleBandiView(KeyboardHookEventArgs e)
@@ -140,12 +167,12 @@ namespace keyupMusic2
                     GoodDesktopWallpaper();
                     break;
                 case Keys.PageUp:
-                    if (ProcessName == cs2) break;
-                    SetDesktopWallpaperAli(GetCurrentWallpaperPath(), WallpaperStyle.Fit);
+                    //if (ProcessName == cs2) break;
+                    SetDesktopWallpaperAli(GetCurrentWallpaperPath());
                     break;
                 case Keys.PageDown:
                     if (ProcessName == cs2) break;
-                    SetDesktopWallpaperAli(GetNextWallpaper(), WallpaperStyle.Fit);
+                    SetDesktopWallpaperAli(GetNextWallpaper());
                     break;
             }
         }
@@ -169,12 +196,22 @@ namespace keyupMusic2
             switch (e.key)
             {
                 case Keys.Right:
-                    if (ProcessTitle?.Contains("起点中文网") == true)
-                        press(Keys.PageDown, 0);
-                    break;
                 case Keys.Left:
-                    if (ProcessTitle?.Contains("起点中文网") == true)
-                        press(Keys.PageUp, 0);
+                    if (isctrl())
+                    {
+                        if (WaitForKeysReleased(1000, isctrl))
+                        {
+                            if (e.key == Keys.Right)
+                                press(MediaNextTrack);
+                            else
+                                press(MediaPreviousTrack);
+                        }
+                    }
+                    else if (ProcessTitle?.Contains("起点中文网") == true)
+                        if (e.key == Keys.Right)
+                            press(Keys.PageDown, 0);
+                        else
+                            press(Keys.PageUp, 0);
                     break;
                 case Keys.VolumeDown:
                     if (e.X == screenWidth1 || e.Y == screenHeight1)
@@ -242,12 +279,12 @@ namespace keyupMusic2
             if (ProcessName != cs2) return;
             switch (e.key)
             {
-                case Keys.F1:
-                    break;
-                case Keys.F2:
-                    Sleep(100);
-                    press(Keys.D3);
-                    break;
+                //case Keys.F1:
+                //    break;
+                //case Keys.F2:
+                //    Sleep(100);
+                //    press(Keys.D3);
+                //    break;
                 case Keys.F5:
                     press("1301,48;100;1274,178;2260,1374");
                     break;
@@ -300,10 +337,10 @@ namespace keyupMusic2
                     press("H;200;955,332;1179,335;1395,336;1613,332;" +
                         "732,922;902,939;1183,939;1060,780;H;");
                     break;
-                case Keys.F2:
-                    press("H;200;955,332;1179,335;1395,336;1613,332;" +
-                        "1378,1102;1519,1113;1685,785;1183,939;H;");
-                    break;
+                    //case Keys.F2:
+                    //    press("H;200;955,332;1179,335;1395,336;1613,332;" +
+                    //        "1378,1102;1519,1113;1685,785;1183,939;H;");
+                    //    break;
             }
         }
 

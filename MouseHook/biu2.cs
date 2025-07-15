@@ -10,31 +10,36 @@ namespace keyupMusic2
     public partial class biu
     {
         IntPtr last_hwnd = IntPtr.Zero;
+        private void easy_redad(MouseHookEventArgs e)
+        {
+            if (isctrl())
+            {
+                Show(e.X + " " + e.Y);
+                return;
+            }
+
+            IntPtr hwnd = Native.WindowFromPoint(Position);
+            //if (hwnd == last_hwnd) return;
+            string name = GetWindowName(hwnd);
+            string title = GetWindowTitle(hwnd);
+            last_hwnd = hwnd;
+            string message = ProcessName + " " + name + " " + title + " " + processWrapper?.classname;
+            if (huan.label1.Text != message)
+            {
+                if (name != ProcessName && name != explorer)
+                    CleanMouseState();
+                huan.Invoke2(() =>
+                {
+                    huan.label1.Text = message;
+                }, 10);
+            }
+            return;
+        }
         private void easy_read(MouseHookEventArgs e)
         {
             if (e.Msg == MouseMsg.move)
             {
-                if (isctrl())
-                {
-                    Show(e.X + " " + e.Y);
-                    return;
-                }
-
-                IntPtr hwnd = Native.WindowFromPoint(Position);
-                //if (hwnd == last_hwnd) return;
-                string name = GetWindowName(hwnd);
-                string title = GetWindowTitle(hwnd);
-                last_hwnd = hwnd;
-                string message = ProcessName + " " + name + " " + title + " " + processWrapper?.classname;
-                if (huan.label1.Text != message)
-                {
-                    if (name != ProcessName && name != explorer)
-                        CleanMouseState();
-                    huan.Invoke2(() =>
-                    {
-                        huan.label1.Text = message;
-                    }, 10);
-                }
+                RateLimiter2.Execute(easy_redad, e);
                 return;
             }
             if (ProcessName == VSCode) return;
@@ -62,7 +67,7 @@ namespace keyupMusic2
                     {
                         Sleep(150);
                         mouse_move_to(12, 1308 - screenHeight);
-                        DaleyRun(
+                        DelayRun(
                             () => GetPointName() == ShellExperienceHost,
                             () => mouse_click(),
                             400, 10);

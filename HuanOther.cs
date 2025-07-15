@@ -154,11 +154,14 @@ namespace keyupMusic2
             Invoke(() => { SetVisibleCore(false); });
             //press("500;LWin;1650,1300;1650,1140", tick);
             //press("500;LWin;1650,1300;", tick);
+            log("system_sleep");
 
             if (!IsDesktopFocused())
                 press([LWin, D]);
             CloseDesktopWindow();
-            press(100, 500, Up, Return);
+            if (GetWindowTitle() == "关闭 Windows")
+                press(100, 500, Up, Return);
+            else play_sound_di2();
         }
 
     }

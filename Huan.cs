@@ -1,4 +1,5 @@
 ﻿using Microsoft.Win32;
+using NAudio.Gui;
 using System;
 using System.Diagnostics;
 using static keyupMusic2.Common;
@@ -76,7 +77,7 @@ namespace keyupMusic2
                 VirtualKeyboardForm.Instance?.TriggerKey(e.key, e.Type == KeyboardType.KeyUp);
             if (judge_handled(e)) { e.Handled = true; VirKeyState(e); }
             if (quick_replace_key(e)) return;
-            if (deal_handilngkey(e)) return;
+            if (deal_handilngkey(e.key, e.Type == KeyboardType.KeyDown)) return;
             print_easy_read(e);
 
             //Log.logcache(e.key.ToString());
@@ -111,15 +112,15 @@ namespace keyupMusic2
             }
         }
 
-        private bool deal_handilngkey(KeyboardHookEventArgs e)
+        public bool deal_handilngkey(Keys key, bool down)
         {
-            if (e.Type == KeyboardType.KeyDown)
+            if (down)
             {
-                if (handling_keys.ContainsKey(e.key)) return true;
-                handling_keys[e.key] = DateTime.Now;
+                if (handling_keys.ContainsKey(key)) return true;
+                handling_keys[key] = DateTime.Now;
             }
             else
-                handling_keys.TryRemove(e.key, out _);
+                handling_keys.TryRemove(key, out _);
             return false;
         }
 
@@ -229,7 +230,49 @@ namespace keyupMusic2
                 player.Stop();
                 CleanMouseState();
                 ready_to_sleep = false;
+                log("唤醒解锁");
             }
+        }
+        public static string start_next = "nextlocation";
+        public static bool next_flag = false;
+        public void next_catch(string msg)
+        {
+            msg = msg.Replace(start_next, "");
+            if (msg.Contains("true"))
+            {
+                next_flag = true;
+                return;
+            }
+            int x = int.Parse(msg.Split(",")[0]);
+            int y = int.Parse(msg.Split(",")[1]);
+
+            //IntPtr edgeHandle = FindEdgeWindow(msedge);
+            //if (!Native.GetWindowRect(edgeHandle, out Native.RECT rect))
+            //{
+            //    Console.WriteLine("获取窗口位置失败！");
+            //}
+
+            //int absX = rect.Left + x;
+            //int absY = rect.Top + y;
+            //log(absX + "." + absY);
+            if (!IsFullScreen())
+                y += 100;
+
+            if (!WaitForKeysReleased(1000, is_lbutton))
+                return;
+            next_flag = false;
+            var pos = Position;
+            mouse_move(x, y, 20);
+            mouse_middle_click(20);
+            //down_press(LControlKey);
+            //mouse_click2(10);
+            //up_press(LControlKey);
+            mouse_move(pos);
+
+            //TaskRun(() => { press([LControlKey, W]); }, 1000);
+            var judge = () => next_flag;
+            var run = () => { press([LControlKey, W]); };
+            DelayRun(judge, run, 5222, 122);
         }
         public void start_catch(string msg)
         {

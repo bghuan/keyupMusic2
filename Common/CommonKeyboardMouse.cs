@@ -189,6 +189,11 @@ namespace keyupMusic2
             mouse_event(MOUSEEVENTF_LEFTDOWN | MOUSEEVENTF_LEFTUP, 0, 0, 0, 0);
             Thread.Sleep(tick);
         }
+        public static void mouse_middle_click(int tick = 0)
+        {
+            mouse_event(MOUSEEVENTF_MIDDLEDOWN | MOUSEEVENTF_MIDDLEUP, 0, 0, 0, 0);
+            Thread.Sleep(tick);
+        }
         public static void down_mouse(int tick = 0)
         {
             mouse_event(MOUSEEVENTF_LEFTDOWN, 0, 0, 0, 0);
@@ -265,6 +270,10 @@ namespace keyupMusic2
         public static bool isctrl()
         {
             return is_ctrl();
+        }
+        public static bool is_lbutton()
+        {
+            return is_down(LButton);
         }
         public static bool is_ctrl_shift_alt()
         {
@@ -438,8 +447,10 @@ namespace keyupMusic2
                 else if (item == "-") up_mouse();
                 else if (click > 0 || move > 0)
                 {
-                    var x = int.Parse(item.Substring(0, click + move + 1));
-                    var y = int.Parse(item.Substring(click + move + 1 + 1));
+                    if (!int.TryParse(item.Substring(0, click + move + 1), out int x)) continue;
+                    if (!int.TryParse(item.Substring(click + move + 1 + 1), out int y)) continue;
+                    //var x = int.Parse(item.Substring(0, click + move + 1));
+                    //var y = int.Parse(item.Substring(click + move + 1 + 1));
                     mouse_move(x, y, 10);
                     if (click > 0) mouse_click(30);
                 }
@@ -568,6 +579,21 @@ namespace keyupMusic2
         {
             return UpEvents.Contains(msg);
         }
+        // 辅助方法：等待指定按键释放，带超时
+        public static bool WaitForKeysReleased(int timeoutMs, params Func<bool>[] keyChecks)
+        {
+            int maxAttempts = timeoutMs / 100;
+            for (int i = 0; i < maxAttempts; i++)
+            {
+                // 检查所有按键是否都已释放
+                if (keyChecks.All(check => !check()))
+                    return true;
 
+                Thread.Sleep(100);
+            }
+
+            // 超时处理
+            return false;
+        }
     }
 }

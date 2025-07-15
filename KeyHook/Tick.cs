@@ -7,9 +7,9 @@ namespace keyupMusic2
 {
     public class Tick
     {
-        private readonly Timer timer100msKeyPress = new() { Interval = 100 , AutoReset =true};
+        private readonly Timer timer100msKeyPress = new() { Interval = 100, AutoReset = true };
         private readonly Timer timer8000ms = new() { Interval = 8000, AutoReset = true };
-        private readonly Timer timer60000ms = new() { Interval = 60_000 , AutoReset =true};
+        private readonly Timer timer60000ms = new() { Interval = 60_000, AutoReset = true };
 
         public Tick()
         {
@@ -51,10 +51,11 @@ namespace keyupMusic2
                     if (is_music) press(Keys.MediaPlayPause);
                 });
             }
-            //if (DateTime.Now.Minute % 10 == 0)
-            //{
-            //    SetDesktopWallpaperAli(GetNextWallpaper(), WallpaperStyle.Fit);
-            //}
+            if (DateTime.Now.Minute % 10 == 0)
+            {
+                SetDesktopWallpaperFull();
+                //SetDesktopWallpaperAli(GetNextWallpaper(), false);
+            }
         }
 
         private void Every100msHandler()
@@ -96,23 +97,16 @@ namespace keyupMusic2
                         Sleep(100);
                     }
                 if (system_sleep_count >= end)
+                {
+                    log("tick system_hard_sleep");
                     system_hard_sleep();
+                }
                 system_sleep_count++;
             }
             else if (gcc_restart)
             {
-                for (int i = 0; i < 30; i++)
-                    if (ExistProcess(gcc))
-                    {
-                        CloseProcessFoce(gcc);
-                        Sleep(100);
-                    }
+                CloseProcessFoce(gcc);
                 ProcessRun(gccexe);
-                //Sleep(5000);
-                //HideProcess(gccexe);
-                //Sleep(1100);
-                //CloseProcess(gccexe);
-
                 gcc_restart = false;
             }
             else if (ExistProcess(cs2) && Position == PositionMiddle && IsFullScreen())

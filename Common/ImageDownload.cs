@@ -1,5 +1,6 @@
 ﻿using Microsoft.Win32;
 using Newtonsoft.Json;
+using System.IO;
 using System.Net;
 using System.Runtime.InteropServices;
 using System.Text;
@@ -61,8 +62,23 @@ namespace keyupMusic2
             public CancellationToken Token { get; set; }
             public int RequestId { get; set; }
         }
+        public static void SetDesktopWallpaperFull()
+        {
+            var currentPath = GetWallpaperFromRegistry();
+            if (!currentPath.Contains(Common.keyupMusic)) return;
+
+            var directory = wallpapersPath + "/1";
+            string[] imageExtensions = { ".jpg", ".jpeg", ".png", ".bmp", ".gif", ".webp" };
+            var s = Directory.GetFiles(directory)
+                   .Where(f => imageExtensions.Contains(Path.GetExtension(f).ToLower()))
+                   .OrderBy(f => f)
+                   .ToList();
+            int index = new Random().Next(s.Count);
+            var filePath = s[index];
+            SetDesktopWallpaper(filePath, WallpaperStyle.Stretched, true);
+        }
         // 优化后的壁纸设置方法（最后触发的请求会使之前的无效）
-        public static void SetDesktopWallpaper(string filePath, WallpaperStyle style = WallpaperStyle.Stretched, bool force = false)
+        public static void SetDesktopWallpaper(string filePath, WallpaperStyle style = WallpaperStyle.Fit, bool force = false)
         {
             if (!force)
             {
@@ -150,7 +166,7 @@ namespace keyupMusic2
 
                 Console.WriteLine($"开始处理请求 {request.RequestId}: {request.FilePath}");
 
-                if (!request.Force)
+                if (!request.Force && !request.FilePath.Split("\\").Contains("1"))
                 {
                     var sourPath = request.FilePath;
                     request.FilePath = _wallpapersPath_output;

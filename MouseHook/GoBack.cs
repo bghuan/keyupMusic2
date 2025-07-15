@@ -12,7 +12,7 @@ namespace keyupMusic2
 {
     public partial class biu
     {
-        public static List<string> list_go_back = new List<string> { explorer, VSCode, msedge, chrome, devenv, androidstudio, ApplicationFrameHost, Common.cs2, steam, Common.Glass, Glass2, Glass3, vlc, Common.PowerToysCropAndLock, KingdomRush1, lz_image_download, Honeyview, };
+        public static List<string> list_go_back = new List<string> { explorer, VSCode, msedge, chrome, devenv, androidstudio, ApplicationFrameHost, Common.cs2, steam, Common.Glass, Glass2, Glass3, vlc, Common.PowerToysCropAndLock, KingdomRush1, lz_image_download, Honeyview, PotPlayerMini64, _哔哩哔哩,  };
         public static HashSet<MouseMsg> go_back_keys = new HashSet<MouseMsg>() {
             MouseMsg.go, MouseMsg.go_up, MouseMsg.back, MouseMsg.back_up
         };
@@ -41,7 +41,8 @@ namespace keyupMusic2
                 {
                     if (replace[i].action != null)
                     {
-                        replace[i].action.Invoke();
+                        if (!e.Msg.IsUpEvent())
+                            replace[i].action.Invoke();
                         return;
                     }
                     if (!e.Msg.IsUpEvent()) down_press(replace[i].after, replace[i].raw);
@@ -76,7 +77,7 @@ namespace keyupMusic2
             else if (ProcessName == (lz_image_download))
                 _lz_image_download(go, back);
 
-            if (!IsDesktopFocused() && list_go_back.Contains(ProcessName)) 
+            if (!IsDesktopFocused() && list_go_back.Contains(ProcessName))
                 return;
 
             if (go)
@@ -126,10 +127,10 @@ namespace keyupMusic2
                 if ((judge_color(27, 95, Color.FromArgb(120, 123, 117))
                     && judge_color(2496, 121, Color.FromArgb(55, 61, 53))))
                     press([Keys.LControlKey, Keys.W]);
-                //else if (is_lizhi)
-                //{
-                //    press([Keys.LControlKey, Keys.W]);
-                //}
+            //else if (is_lizhi)
+            //{
+            //    press([Keys.LControlKey, Keys.W]);
+            //}
             //if (go) press(Keys.F);
 
         }
