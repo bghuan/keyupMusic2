@@ -7,7 +7,7 @@ namespace keyupMusic2
 {
     partial class biu
     {
-        private int _line2(MouseHookEventArgs e)
+        private int _line2(MouseKeyboardHook.MouseEventArgs e)
         {
             if (ProcessName == Common.chrome)
             {
@@ -32,7 +32,7 @@ namespace keyupMusic2
             return e.data;
         }
 
-        private int _line3(MouseHookEventArgs e)
+        private int _line3(MouseKeyboardHook.MouseEventArgs e)
         {
             if (is_douyin())
                 return 0;
@@ -65,7 +65,7 @@ namespace keyupMusic2
             return 0;
         }
 
-        private int _line6(MouseHookEventArgs e)
+        private int _line6(MouseKeyboardHook.MouseEventArgs e)
         {
             if (IsDiffProcess())
                 mouse_click2(0);
@@ -76,7 +76,7 @@ namespace keyupMusic2
             return e.data;
         }
 
-        private int _line7(MouseHookEventArgs e)
+        private int _line7(MouseKeyboardHook.MouseEventArgs e)
         {
             if (IsDiffProcess())
                 mouse_click2(0);

@@ -7,6 +7,7 @@ namespace keyupMusic2
     {
         public static int long_press_tick = 300;
         public static bool long_press_lbutton = false;
+        public static bool long_press_rbutton = false;
         public LongPressClass()
         {
         }
@@ -15,11 +16,15 @@ namespace keyupMusic2
             //return;
             huan.Invoke2(() => { huan.label1.Text = ProcessName + " longpress " + keys; });
 
-            if (keys == Keys.F9)
+            if (keys == Keys.F3)
+            {
+                press(keys);
+            }
+            else if (keys == Keys.F9)
             {
                 huan.Invoke2(() =>
                 {
-                    huan.timer_stop();
+                    //huan.timer_stop();
                     huan.system_sleep(true);
                 });
             }
@@ -33,11 +38,24 @@ namespace keyupMusic2
             {
                 long_press_lbutton = true;
             }
+            else if (keys == Keys.RButton)
+            {
+                long_press_rbutton = true;
+            }
             else if (keys == Keys.Escape)
             {
-                HideProcess(chrome);
-                SetDesktopToBlack();
+                HideSomething();
             }
+            for (int i = 0; i < KeyFunc.All.Count; i++)
+            {
+                if (KeyFunc.All[i].key == keys  && KeyFunc.All[i].action != null && (KeyFunc.All[i].processName == "" || KeyFunc.All[i].processName == ProcessName))
+                {
+                    if (KeyFunc.All[i].longPressAction == null) press(keys);
+                    else KeyFunc.All[i].longPressAction();
+                    break;
+                }
+            }
+            LongPressKey = keys;
         }
 
     }

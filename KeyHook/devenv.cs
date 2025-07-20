@@ -6,7 +6,7 @@ namespace keyupMusic2
     public class DevenvClass : Default
     {
         static int is_oem = 0;
-        public void hook_KeyDown_ddzzq(KeyboardHookEventArgs e)
+        public void hook_KeyDown_ddzzq(MouseKeyboardHook.KeyEventArgs e)
         {
             if (ProcessName != devenv) return;
             Common.hooked = true;

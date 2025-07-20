@@ -10,7 +10,7 @@ namespace keyupMusic2
     public partial class biu
     {
         IntPtr last_hwnd = IntPtr.Zero;
-        private void easy_redad(MouseHookEventArgs e)
+        private void easy_redad(MouseKeyboardHook.MouseEventArgs e)
         {
             if (isctrl())
             {
@@ -35,7 +35,7 @@ namespace keyupMusic2
             }
             return;
         }
-        private void easy_read(MouseHookEventArgs e)
+        private void easy_read(MouseKeyboardHook.MouseEventArgs e)
         {
             if (e.Msg == MouseMsg.move)
             {
@@ -57,7 +57,7 @@ namespace keyupMusic2
                 huan.label1.Text = msg;
             }, 10);
         }
-        public void BottomLine(MouseHookEventArgs e)
+        public void BottomLine(MouseKeyboardHook.MouseEventArgs e)
         {
             if (e.Msg == MouseMsg.click_r_up)
             {

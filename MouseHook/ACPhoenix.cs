@@ -6,7 +6,7 @@ namespace keyupMusic2
     partial class biu
     {
         bool listen_move = false;
-        public void ACPhoenix(MouseKeyboardHook.MouseHookEventArgs e)
+        public void ACPhoenix(MouseKeyboardHook.MouseEventArgs e)
         {
             if (ProcessName != keyupMusic2.Common.ACPhoenix) return;
             MoveStop(e);
@@ -63,7 +63,7 @@ namespace keyupMusic2
             }
         }
 
-        private bool right_top_exit(MouseKeyboardHook.MouseHookEventArgs e)
+        private bool right_top_exit(MouseKeyboardHook.MouseEventArgs e)
         {
             return e.Y == 0 && (e.X <= screenWidth - 1 && e.X > screenWidth - 120);
         }

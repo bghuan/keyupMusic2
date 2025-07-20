@@ -77,7 +77,8 @@ namespace keyupMusic2
             }
             else if (message == ("location"))
             {
-                File.WriteAllTextAsync(moontime_location, Location.X + "," + Location.Y);
+                Common.ConfigValue(Common.ConfigMoonTimeLocation, Location.X + "," + Location.Y);
+                //File.WriteAllTextAsync(moontime_location, Location.X + "," + Location.Y);
             }
             else if (message == "url")
             {
@@ -132,7 +133,8 @@ namespace keyupMusic2
         {
             Every100ms();
 
-            string location = File.ReadAllText(moontime_location);
+            //string location = File.ReadAllText(moontime_location);
+            string location = Common.ConfigValue(Common.ConfigMoonTimeLocation);
             Location = new Point(int.Parse(location.Split(',')[0]), int.Parse(location.Split(',')[1]));
             if (Location.X > Screen.PrimaryScreen.Bounds.Width && Screen.AllScreens.Length == 1) Location = new Point(500, 500);
         }

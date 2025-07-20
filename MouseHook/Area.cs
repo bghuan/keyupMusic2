@@ -9,6 +9,26 @@ namespace keyupMusic2
 {
     partial class biu
     {
+        public void Cornor(MouseKeyboardHook.MouseEventArgs e)
+        {
+            if (e.Msg != MouseMsg.move) { RECTT.release(); return; }
+            //if (e.X > screen2Width || e.Y < 0 || e.Y > screenHeightMax) return;
+
+            var rect = RECTT.get(e.Pos);
+            if (rect == null)
+            {
+                var rect2 = RECTT.ignoreAll(e.Pos);
+                rect?.doo2(e);
+                return;
+            }
+            if (is_down(LButton) || is_down(RButton)) { RECTT.release(); return; }
+
+            //log(rect.name + " " + e.X + " " + e.Y);
+
+            rect.doo(e);// Main
+
+            RECTT.release();
+        }
         public void init()
         {
             line2.aMouseHookEvent += _line2;
@@ -65,26 +85,6 @@ namespace keyupMusic2
                                 new JU(ch2, ga0, ch2, ga0),
                                 new JU(ch2 - far, ga0, ch2, far + ga0));
 
-        public void Cornor(MouseHookEventArgs e)
-        {
-            if (e.Msg != MouseMsg.move) { RECTT.release(); return; }
-            //if (e.X > screen2Width || e.Y < 0 || e.Y > screenHeightMax) return;
-
-            var rect = RECTT.get(e.Pos);
-            if (rect == null)
-            {
-                var rect2 = RECTT.ignoreAll(e.Pos);
-                rect?.doo2(e);
-                return;
-            }
-            if (is_down(LButton) || is_down(RButton)) { RECTT.release(); return; }
-
-            //log(rect.name + " " + e.X + " " + e.Y);
-
-            rect.doo(e);// Main
-
-            RECTT.release();
-        }
 
         public static bool chrome_red()
         {
@@ -114,33 +114,33 @@ namespace keyupMusic2
             public string name;
             public Task aTask;
 
-            public delegate int aEventHandler(MouseHookEventArgs e);
+            public delegate int aEventHandler(MouseKeyboardHook.MouseEventArgs e);
             public event aEventHandler aMouseHookEvent;
 
-            public delegate void bEventHandler(MouseHookEventArgs e);
+            public delegate void bEventHandler(MouseKeyboardHook.MouseEventArgs e);
             public event bEventHandler bMouseHookEvent;
-            public void doo(MouseHookEventArgs e)
+            public void doo(MouseKeyboardHook.MouseEventArgs e)
             {
                 int music = di_tune(e);
                 e.data = music;
 
-                Show(name, 1);
+                Show(name);
 
                 if (aMouseHookEvent != null)
                 {
                     FreshProcessName();
                     //log(ProcessName);
                     int result = aMouseHookEvent.Invoke(e);
-                    
 
                     if (result == 0) return;
+                    Show(name, 1);
                     play_sound_bongocat(result);
                     FreshProcessName();
                     //log(ProcessName);
                 }
             }
 
-            private int di_tune(MouseHookEventArgs e)
+            private int di_tune(MouseKeyboardHook.MouseEventArgs e)
             {
                 int music = 0;
                 if (a.Left == a.Right)
@@ -171,7 +171,7 @@ namespace keyupMusic2
                 return music;
             }
 
-            public void doo2(MouseHookEventArgs e)
+            public void doo2(MouseKeyboardHook.MouseEventArgs e)
             {
                 bMouseHookEvent?.Invoke(e);
             }

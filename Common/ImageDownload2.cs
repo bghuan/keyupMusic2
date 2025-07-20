@@ -13,9 +13,9 @@ namespace keyupMusic2
         public static string wallpapersPath = Path.Combine(
         Directory.GetCurrentDirectory(), "image", "downloaded_images");
         public static string wallpapersPath_big_current => Path.Combine(
-        Directory.GetCurrentDirectory(), "image", "downloaded_images", "1", Path.GetFileName(GetCurrentWallpaperPath()).Replace("webp","jpg"));
-        private static string stateFilePath = Path.Combine(
-            Directory.GetCurrentDirectory(), "log", "wallpaper_state.json");
+        Directory.GetCurrentDirectory(), "image", "downloaded_images", "1", Path.GetFileName(GetCurrentWallpaperPath()).Replace("webp", "jpg"));
+        //private static string stateFilePath = Path.Combine(
+        //    Directory.GetCurrentDirectory(), "log", "wallpaper_state.json");
         private static string smallPath = Path.Combine(wallpapersPath, "3small");
 
         public static string _wallpapersPath_output = Path.Combine(wallpapersPath, "0", "output.webp");
@@ -417,23 +417,35 @@ namespace keyupMusic2
 
         private static void LoadState()
         {
-            if (File.Exists(stateFilePath))
+            var CurrentId = ConfigValue(ConfigCurrentId);
+            var CurrentFile = ConfigValue(ConfigCurrentFile);
+            if (allIds.Contains(CurrentId))
             {
-                var state = JsonConvert.DeserializeObject<WallpaperState>(File.ReadAllText(stateFilePath));
-                if (state != null)
+                currentIdIndex = allIds.IndexOf(CurrentId);
+                var files = idToFilesMap[CurrentId];
+                if (files.Contains(CurrentFile))
                 {
-                    if (allIds.Contains(state.CurrentId))
-                    {
-                        currentIdIndex = allIds.IndexOf(state.CurrentId);
-                        var files = idToFilesMap[state.CurrentId];
-                        if (files.Contains(state.CurrentFile))
-                        {
-                            currentFileIndex = files.IndexOf(state.CurrentFile);
-                        }
-                        else { currentFileIndex = 0; }
-                    }
+                    currentFileIndex = files.IndexOf(CurrentFile);
                 }
+                else { currentFileIndex = 0; }
             }
+            //if (File.Exists(stateFilePath))
+            //{
+            //    var state = JsonConvert.DeserializeObject<WallpaperState>(File.ReadAllText(stateFilePath));
+            //    if (state != null)
+            //    {
+            //        if (allIds.Contains(state.CurrentId))
+            //        {
+            //            currentIdIndex = allIds.IndexOf(state.CurrentId);
+            //            var files = idToFilesMap[state.CurrentId];
+            //            if (files.Contains(state.CurrentFile))
+            //            {
+            //                currentFileIndex = files.IndexOf(state.CurrentFile);
+            //            }
+            //            else { currentFileIndex = 0; }
+            //        }
+            //    }
+            //}
         }
 
         private static void SaveState()
@@ -447,7 +459,9 @@ namespace keyupMusic2
                         ? idToFilesMap[allIds[currentIdIndex]][currentFileIndex] : null
                 };
 
-                File.WriteAllTextAsync(stateFilePath, JsonConvert.SerializeObject(state));
+                var CurrentId = ConfigValue(ConfigCurrentId, state.CurrentId);
+                var CurrentFile = ConfigValue(ConfigCurrentFile, state.CurrentFile);
+                //File.WriteAllTextAsync(stateFilePath, JsonConvert.SerializeObject(state, Formatting.Indented));
             }
             catch (Exception ex)
             {
@@ -461,20 +475,22 @@ namespace keyupMusic2
             if (currentIdIndex < 0 || currentIdIndex >= allIds.Count ||
                 currentFileIndex < 0 || currentFileIndex >= idToFilesMap[allIds[currentIdIndex]].Count)
             {
-                var state = JsonConvert.DeserializeObject<WallpaperState>(File.ReadAllText(stateFilePath));
-                if (state != null)
+                //var state = JsonConvert.DeserializeObject<WallpaperState>(File.ReadAllText(stateFilePath));
+                var CurrentId = ConfigValue(ConfigCurrentId);
+                var CurrentFile = ConfigValue(ConfigCurrentFile);
+                //if (state != null)
                 {
-                    if (allIds.Contains(state.CurrentId))
+                    if (allIds.Contains(CurrentId))
                     {
-                        currentIdIndex = allIds.IndexOf(state.CurrentId);
-                        var files = idToFilesMap[state.CurrentId];
-                        if (files.Contains(state.CurrentFile))
+                        currentIdIndex = allIds.IndexOf(CurrentId);
+                        var files = idToFilesMap[CurrentId];
+                        if (files.Contains(CurrentFile))
                         {
-                            currentFileIndex = files.IndexOf(state.CurrentFile);
+                            currentFileIndex = files.IndexOf(CurrentFile);
                         }
                     }
                 }
-                throw new Exception("当前状态无效，重置到第一个文件" + currentIdIndex + " " + currentFileIndex + " " + state.CurrentId + " " + state.CurrentFile);
+                throw new Exception("当前状态无效，重置到第一个文件" + currentIdIndex + " " + currentFileIndex + " " + CurrentId + " " +CurrentFile);
                 ResetToFirstFile();
             }
         }
@@ -502,39 +518,26 @@ namespace keyupMusic2
 
             try
             {
-                if (_currentPath == GetCurrentWallpaperPath())
-                {
-                    // 获取当前文件信息
-                    string currentId = allIds[currentIdIndex];
-                    string currentFile = idToFilesMap[currentId][currentFileIndex];
-                    idToFilesMap[currentId].Remove(currentFile);
-                }
+                //if (_currentPath == GetCurrentWallpaperPath())
+                //{
+                //    // 获取当前文件信息
+                //    string currentId = allIds[currentIdIndex];
+                //    string currentFile = idToFilesMap[currentId][currentFileIndex];
+                //    idToFilesMap[currentId].Remove(currentFile);
+                //}
 
                 //SetDesktopToBlack();
                 //Sleep(100);
                 play_sound_di2();
                 // 移动到下一个壁纸
-                SetDesktopWallpaper(GetCurrentWallpaperPath(), WallpaperStyle.Fit);
+                //SetDesktopWallpaper(GetCurrentWallpaperPath(), WallpaperStyle.Fit);
+                SetDesktopWallpaper(GetNextWallpaper(), WallpaperStyle.Fit, true);
 
-
-                // 物理删除文件
-                //File.Delete(currentPath);
-                //Console.WriteLine($"已删除壁纸: {currentPath}");
-                // 将文件移入回收站
                 FileSystem.DeleteFile(
                     currentPath,
                     UIOption.OnlyErrorDialogs,
                     RecycleOption.SendToRecycleBin
                 );
-
-
-                // 检查当前ID文件夹是否为空
-                //if (idToFilesMap[currentId].Count == 0)
-                //{
-                //    // 可选：删除空文件夹
-                //    // Directory.Delete(Path.Combine(wallpapersPath, currentId));
-                //    // allIds.Remove(currentId);
-                //}
             }
             catch (Exception ex)
             {

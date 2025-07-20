@@ -17,7 +17,7 @@ namespace keyupMusic2
         public static Point r_down_x = Point.Empty;
         bool menu_opened = false;
 
-        public bool judge_handled(MouseHookEventArgs e)
+        public bool judge_handled(MouseKeyboardHook.MouseEventArgs e)
         {
             if (e.Msg == MouseMsg.move) return false;
             if (e.Msg == MouseMsg.middle && !raw_middle) return true;
@@ -44,27 +44,25 @@ namespace keyupMusic2
                     if (!list.Contains(GetPointName())) return false;
                     return true;
                 }
+                if (ProcessName == chrome && ExistProcess(Common.PowerToysCropAndLock))
+                    return true;
             }
             if (e.Msg == MouseMsg.wheel)
             {
-                if (e.X == 0)
-                {
-                    var list2 = new[] { chrome };
-                    if (list2.Contains(Common.ProcessName))
-                        return true;
-                }
-                var list = new[] { Glass2, vlc, Honeyview };
+                if (IsFullVedio())
+                    return true;
+                var list = new[] { Glass2, vlc, /*Honeyview*/ };
                 if (list.Contains(Common.ProcessName))
                     return true;
             }
             return false;
         }
 
-        public void MouseHookProc(MouseHookEventArgs e)
+        public void MouseHookProc(MouseKeyboardHook.MouseEventArgs e)
         {
             if (e.Msg != MouseMsg.move) FreshProcessName();
             if (judge_handled(e)) { e.Handled = true; VirKeyState(e.Msg); }
-            if (e.Msg!= MouseMsg.move && mousekeymap.ContainsKey(e.Msg) && huan.deal_handilngkey(mousekeymap[e.Msg],!e.Msg.IsUpEvent())) return;
+            if (e.Msg != MouseMsg.move && mousekeymap.ContainsKey(e.Msg) && huan.deal_handilngkey(mousekeymap[e.Msg], !e.Msg.IsUpEvent())) return;
 
             Task.Run(() =>
             {
@@ -82,7 +80,7 @@ namespace keyupMusic2
                 All(e);
             });
         }
-        private void All(MouseHookEventArgs e)
+        private void All(MouseKeyboardHook.MouseEventArgs e)
         {
             if (e.Msg == MouseMsg.move) return;
 
@@ -100,6 +98,17 @@ namespace keyupMusic2
                 if (e.data > 0) keys = Keys.F8;
                 press(keys);
             }
+            if (e.Msg == MouseMsg.wheel && IsFullVedio())
+            {
+                Keys keys = Keys.Right;
+                if (e.data > 0) keys = Keys.Left;
+                press(keys);
+            }
+            if (e.Msg == MouseMsg.click_up && LongPressClass.long_press_lbutton)
+                LongPressClass.long_press_lbutton = false;
+            if (e.Msg == MouseMsg.click_r_up && LongPressClass.long_press_rbutton)
+                LongPressClass.long_press_rbutton = false;
+
             if (catch_state && catch_key == e.Msg) catch_ed = true;
         }
 

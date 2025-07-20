@@ -1,5 +1,5 @@
 ﻿using static keyupMusic2.Common;
-using KeyEvent = keyupMusic2.MouseKeyboardHook.KeyboardHookEventArgs;
+using KeyEvent = keyupMusic2.MouseKeyboardHook.KeyEventArgs;
 
 namespace keyupMusic2
 {

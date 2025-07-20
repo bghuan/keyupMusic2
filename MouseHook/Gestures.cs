@@ -10,7 +10,7 @@ namespace keyupMusic2
     public partial class biu
     {
         List<string> list = new() { chrome };
-        private void Gestures(MouseHookEventArgs e)
+        private void Gestures(MouseKeyboardHook.MouseEventArgs e)
         {
             if (e.Msg == MouseMsg.move) return;
             if (e.Msg == MouseMsg.click) { menu_opened = false; return; }

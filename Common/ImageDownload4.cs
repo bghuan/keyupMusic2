@@ -233,7 +233,7 @@ namespace keyupMusic2
         //public static string apiKey = "sk-6d*************58";
         public static void ImageOutPaintingClient()
         {
-            _apiKey = apiKey;
+            _apiKey = ConfigValue(ConfigApiKey);
             _httpClient = new HttpClient();
             _httpClient.DefaultRequestHeaders.Add("Authorization", $"Bearer {_apiKey}");
             _httpClient.DefaultRequestHeaders.Add("X-DashScope-Async", "enable");
@@ -247,6 +247,7 @@ namespace keyupMusic2
         public static string GetTaskResult(string taskId)
         {
             HttpClient _httpClient = new HttpClient();
+            var apiKey = ConfigValue(ConfigApiKey);
             _httpClient.DefaultRequestHeaders.Add("Authorization", $"Bearer {apiKey}");
             string resultUrl = $"https://dashscope.aliyuncs.com/api/v1/tasks/{taskId}";
             HttpResponseMessage response = _httpClient.GetAsync(resultUrl).Result;

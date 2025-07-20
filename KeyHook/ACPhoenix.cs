@@ -7,7 +7,7 @@ namespace keyupMusic2
     {
         public bool ACPhoenix_mouse_down = false;
 
-        public void hook_KeyDown_ddzzq(KeyboardHookEventArgs e)
+        public void hook_KeyDown_ddzzq(MouseKeyboardHook.KeyEventArgs e)
         {
             if (is_alt() && is_down(Keys.Tab)) return;
             if (ProcessName != ACPhoenix) return;
@@ -177,7 +177,7 @@ namespace keyupMusic2
         }
 
 
-        public void MouseHookProc(MouseKeyboardHook.MouseHookEventArgs e)
+        public void MouseHookProc(MouseKeyboardHook.MouseEventArgs e)
         {
             if (e.Msg == MouseMsg.click_up)
             {

@@ -11,7 +11,7 @@ namespace keyupMusic2
 
         Dictionary<MouseMsg, DateTime> MouseMsgTime = new Dictionary<MouseMsg, DateTime>();
         static bool is_PowerToysCropAndLock_down = false;
-        public void Other(MouseHookEventArgs e)
+        public void Other(MouseKeyboardHook.MouseEventArgs e)
         {
             //bool double_click = e.Msg == MouseMsg.WM_LBUTTONUP && is_double_click();
 
@@ -23,8 +23,8 @@ namespace keyupMusic2
                 Cs2(e);
             else if (ProcessName == Common.devenv)
                 Devenv(e);
-            else if (is_douyin())
-                Douyin(e);
+            //else if (is_douyin())
+            //    Douyin(e);
             else if (ProcessName == Common.msedge)
                 Msedge(e);
             else if (ProcessName == Common.RSG)
@@ -47,7 +47,7 @@ namespace keyupMusic2
                     change_image(e);
         }
 
-        private void Handle_哔哩哔哩(MouseHookEventArgs e)
+        private void Handle_哔哩哔哩(MouseKeyboardHook.MouseEventArgs e)
         {
             if (e.Msg == MouseMsg.move) return;
             if (e.Msg == MouseMsg.click_r_up)
@@ -59,18 +59,17 @@ namespace keyupMusic2
             }
         }
 
-        private void Handleexplorer(MouseHookEventArgs e)
+        private void Handleexplorer(MouseKeyboardHook.MouseEventArgs e)
         {
             if (e.Msg == MouseMsg.move) return;
             if (e.Msg == MouseMsg.click_up)
             {
                 if (LongPressClass.long_press_lbutton && e.Y == screenHeight1)
                     press(Delete);
-                LongPressClass.long_press_lbutton = false;
             }
         }
 
-        private void HandleBandiView(MouseHookEventArgs e)
+        private void HandleBandiView(MouseKeyboardHook.MouseEventArgs e)
         {
             if (e.Msg == MouseMsg.move) return;
             if (GetPointName() != Honeyview) return;
@@ -79,15 +78,15 @@ namespace keyupMusic2
             //    press([LControlKey, D0]);
             if (e.Msg == MouseMsg.click_r)
                 press(Delete);
-            if (e.Msg == MouseMsg.wheel)
-            {
-                if (e.data > 0 && Common.ProcessTitle.IndexOf("id") == 0) press(Delete);
-                else mousewhell(e.data);
-            }
+            //if (e.Msg == MouseMsg.wheel)
+            //{
+            //    if (e.data > 0 && Common.ProcessTitle.IndexOf("id") == 0) press(Delete);
+            //    else mousewhell(e.data);
+            //}
             //press(10, 400, Escape, Delete, 200, Return);
         }
 
-        private static void change_image(MouseHookEventArgs e)
+        private static void change_image(MouseKeyboardHook.MouseEventArgs e)
         {
             if (e.Msg == MouseMsg.wheel)
             {
@@ -116,7 +115,7 @@ namespace keyupMusic2
             }
         }
 
-        private void _KingdomRush(MouseHookEventArgs e)
+        private void _KingdomRush(MouseKeyboardHook.MouseEventArgs e)
         {
             if (e.Msg == MouseMsg.click_r_up)
             {
@@ -124,7 +123,7 @@ namespace keyupMusic2
             }
         }
 
-        private void _Rsg(MouseHookEventArgs e)
+        private void _Rsg(MouseKeyboardHook.MouseEventArgs e)
         {
             if (e.Msg == MouseMsg.middle)
             {
@@ -132,39 +131,16 @@ namespace keyupMusic2
             }
         }
 
-        private void Douyin(MouseHookEventArgs e)
-        {
-            if (is_douyin())
-            {
-                if (e.Msg == MouseMsg.back)
-                {
-                    SS().KeyPress(Keys.X);
-                }
-                else if (e.Msg == MouseMsg.go)
-                {
-                    SS().KeyPress(Keys.H);
-                }
-                else if (e.Msg == MouseMsg.click_up)
-                {
-                    Common.isVir = 0;
-                    if (e.Y == screenHeight1 && e.X < screenWidth2)
-                        SS().KeyPress(Keys.PageUp);
-                    else if (e.Y == screenHeight1 && e.X < screenWidth1)
-                        SS().KeyPress(Keys.PageDown);
-                    Common.isVir = 3;
-                }
-                return;
-            }
-        }
 
-        private void Msedge(MouseHookEventArgs e)
+
+        private void Msedge(MouseKeyboardHook.MouseEventArgs e)
         {
         }
 
-        private void Cs2(MouseHookEventArgs e)
+        private void Cs2(MouseKeyboardHook.MouseEventArgs e)
         {
         }
-        private void Devenv(MouseHookEventArgs e)
+        private void Devenv(MouseKeyboardHook.MouseEventArgs e)
         {
             if (e.Msg == MouseMsg.click_up)
                 if (is_down_vir(Keys.RButton))
@@ -189,7 +165,7 @@ namespace keyupMusic2
                 catch_off();
             }
         }
-        private void PowerToysCropAndLock(MouseHookEventArgs e)
+        private void PowerToysCropAndLock(MouseKeyboardHook.MouseEventArgs e)
         {
             //if (!is_no_title(PowerToysCropAndLock))
             //    break;
@@ -235,34 +211,23 @@ namespace keyupMusic2
                 //HandleMouseWheel(e);
             }
         }
-        private void Chrome(MouseHookEventArgs e)
+        private void Chrome(MouseKeyboardHook.MouseEventArgs e)
         {
-            //if (e.Msg == MouseMsg.WM_LBUTTONUP && is_double_click() && ExsitProcess(PowerToysCropAndLock, true))
-            //    quick_max_chrome(e.Pos);
-            //else if (e.Msg == MouseMsg.WM_LBUTTONUP && (e.X == screenWidth1 && e.Y < screenHeight2))
-            //    CenterWindowOnScreen(chrome);
-            //else if (e.Msg == MouseMsg.WM_LBUTTONUP && (e.X == screenWidth1 && e.Y >= screenHeight2))
-            //    CenterWindowOnScreen(chrome, true); 
-            //if (e.Msg == MouseMsg.click_up && (e.X == screenWidth1))
-            //    CenterWindowOnScreen(chrome, e.Y >= screenHeight2);
-            //else if (e.Msg == MouseMsg.click_r_up && ExistProcess(Common.PowerToysCropAndLock, true))
-            //{
-            //    if (e.X == 0) { press(Keys.OemPeriod); return; }
-            //    quick_max_chrome(e.Pos);
-            //}
-            //else if (e.Msg == MouseMsg.back_up)
-            //{
-            //    if (judge_color(26, 94, Color.FromArgb(120, 123, 117)))
-            //    {
-            //        press([Keys.LControlKey, Keys.W]);
-            //    }
-            //}
-            if (e.Msg == MouseMsg.wheel && e.X == 0)
+            if (e.Msg == MouseMsg.click_up && (e.X == screenWidth1))
+                CenterWindowOnScreen(chrome, e.Y >= screenHeight2);
+            else if (e.Msg == MouseMsg.click_r_up && !LongPressClass.long_press_rbutton && ExistProcess(Common.PowerToysCropAndLock, true))
             {
-                wheelleftright(e);
+                //if (e.X == 0) { press(Keys.OemPeriod); return; }
+                quick_max_chrome(e.Pos);
             }
-
-            if (e.Msg == MouseMsg.click_r_up && e.Y < 200 && (ProcessTitle.Contains("荔枝") && ProcessTitle.Contains("详情")))
+            else if (e.Msg == MouseMsg.back_up)
+            {
+                if (judge_color(26, 94, Color.FromArgb(120, 123, 117)))
+                {
+                    press([Keys.LControlKey, Keys.W]);
+                }
+            }
+            else if (e.Msg == MouseMsg.click_r_up && e.Y < 200 && (ProcessTitle.Contains("荔枝") && ProcessTitle.Contains("详情")))
             {
                 var pos = Position;
                 mouse_move_to(80, 80, 10);
@@ -270,23 +235,9 @@ namespace keyupMusic2
                 press(Enter);
                 mouse_move(pos, 10);
             }
-            //if (e.Msg == MouseMsg.wheel && (ProcessTitle.Contains("荔枝") && !ProcessTitle.Contains("分类")))
-            //{
-            //    //int aa = screenWidth / 20;
-            //    //int a = (e.X - screenWidth2) / aa;
-            //    //if (a < 1) a = 1;
-            //    if (e.X < 1300)
-            //    { }
-            //    else// if (e.X < 1800)
-            //        mousewhell(e.data * 3);
-            //    //else if (e.X < 2200)
-            //    //    mousewhell(e.data * 1300 / 120);
-            //    //else if (e.X < screenWidth)
-            //    //    mousewhell(e.data * 12);
-            //}
         }
 
-        public static void wheelleftright(MouseHookEventArgs e)
+        public static void wheelleftright(MouseKeyboardHook.MouseEventArgs e)
         {
             if (e.Msg != MouseMsg.wheel) return;
             Keys keys = Keys.Right;

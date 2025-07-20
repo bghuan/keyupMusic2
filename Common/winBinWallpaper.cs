@@ -45,7 +45,16 @@ namespace keyupMusic2
             int nResult;
             if (File.Exists(value))
             {
-
+                // 设置壁纸样式和平铺选项
+                using (RegistryKey key = Registry.CurrentUser.OpenSubKey(@"Control Panel\Desktop", true))
+                {
+                    if (key == null)
+                    {
+                        throw new Exception("无法访问注册表路径");
+                    }
+                    key.SetValue("WallpaperStyle", "6");  // 适应（保持比例）
+                    key.SetValue("TileWallpaper", "0"); // 不平铺
+                }
                 nResult = WinAPI.SystemParametersInfo(20, 1, value, 0x1 | 0x2); //更换壁纸
                 if (nResult == 0)
                 {

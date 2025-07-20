@@ -28,6 +28,7 @@ namespace keyupMusic2
             if (DateTime.Now.Minute == 0)
             {
                 if (ProcessName == wemeetapp) return;
+                if (ProcessName == cs2) return;
                 if (ExistProcess(wemeetapp, true)) return;
                 float vol = 0.3f;
 
@@ -84,6 +85,8 @@ namespace keyupMusic2
                     press(Keys.F1);
                 if (Position != PositionMiddle)
                     PositionMiddle = Position;
+                //if (VirtualKeyboardForm.Instance.Visible)
+                //    VirtualKeyboardForm.Instance.Hide();
                 //VirtualKeyboardForm.Instance?.SetInitClean();
             }
             else if (system_sleep_count > 0)
@@ -113,15 +116,11 @@ namespace keyupMusic2
             {
                 press_middle_bottom();
             }
-            //else if (Position.X == 0)
+            //else if (!VirtualKeyboardForm.Instance.Visible)
             //{
-            //    SetDesktopWallpaper(GetNextWallpaper(), WallpaperStyle.Fit);
+            //    VirtualKeyboardForm.Instance.Show();
             //}
             bland_title();
         }
-
-        // 存储按键及其首次按下时间
-        private static ConcurrentDictionary<Keys, DateTime> _keyPressTimes = new ConcurrentDictionary<Keys, DateTime>();
-        private static ConcurrentDictionary<Keys, int> _longPressedKeys = new ConcurrentDictionary<Keys, int>();
     }
 }

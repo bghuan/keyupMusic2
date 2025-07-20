@@ -24,7 +24,7 @@ namespace keyupMusic2
             list = tempList.ToArray();
         }
 
-        public void hook_KeyDown(KeyboardHookEventArgs e)
+        public void hook_KeyDown(MouseKeyboardHook.KeyEventArgs e)
         {
             string module_name = ProcessName;
             handling_keys = e.key;
@@ -49,18 +49,18 @@ namespace keyupMusic2
                 case Common.ItTakesTwo:
                     HandleItTakesTwo(e.key);
                     break;
-                case Common.SearchHost:
-                    if (e.key is Keys.MediaNextTrack or Keys.MediaPreviousTrack)
-                        press(Keys.LWin);
-                    break;
+                //case Common.SearchHost:
+                //    if (e.key is Keys.MediaNextTrack or Keys.MediaPreviousTrack)
+                //        press(Keys.LWin);
+                //    break;
                 case Common.cs2:
                 case Common.explorer:
                     HandleProgman(e);
                     HandleCS2(e);
                     break;
-                case Common.steam:
-                    HandleSteam(e.key);
-                    break;
+                //case Common.steam:
+                //    HandleSteam(e.key);
+                //    break;
                 case Common.Broforce_beta:
                     HandleBroforceBeta(e.key);
                     break;
@@ -101,7 +101,7 @@ namespace keyupMusic2
             Common.hooked = false;
         }
 
-        private void Handle_哔哩哔哩(KeyboardHookEventArgs e)
+        private void Handle_哔哩哔哩(MouseKeyboardHook.KeyEventArgs e)
         {
             if (e.key == Keys.OemPeriod)
             {
@@ -112,7 +112,7 @@ namespace keyupMusic2
             }
         }
 
-        private void HandleQuickLook(KeyboardHookEventArgs e)
+        private void HandleQuickLook(MouseKeyboardHook.KeyEventArgs e)
         {
             var ll = new Keys[] { D1, D2, D3, D4, D5, D6, D7, D8, D9, D0 };
             if (ll.Contains(e.key))
@@ -122,7 +122,7 @@ namespace keyupMusic2
             }
         }
 
-        private void HandleBandiView(KeyboardHookEventArgs e)
+        private void HandleBandiView(MouseKeyboardHook.KeyEventArgs e)
         {
             if (e.key == OemPeriod)
             {
@@ -139,7 +139,7 @@ namespace keyupMusic2
             }
         }
 
-        private void HandleProgman(KeyboardHookEventArgs e)
+        private void HandleProgman(MouseKeyboardHook.KeyEventArgs e)
         {
             var desk = IsDesktopFocused();
             if (!desk && ProcessName != cs2) return;
@@ -191,7 +191,7 @@ namespace keyupMusic2
             }
         }
 
-        private void HandleMsEdge(KeyboardHookEventArgs e)
+        private void HandleMsEdge(MouseKeyboardHook.KeyEventArgs e)
         {
             switch (e.key)
             {
@@ -236,7 +236,7 @@ namespace keyupMusic2
             }
         }
 
-        private void HandleKingdom(KeyboardHookEventArgs e)
+        private void HandleKingdom(MouseKeyboardHook.KeyEventArgs e)
         {
             switch (e.key)
             {
@@ -274,7 +274,7 @@ namespace keyupMusic2
             }
         }
 
-        private void HandleCS2(KeyboardHookEventArgs e)
+        private void HandleCS2(MouseKeyboardHook.KeyEventArgs e)
         {
             if (ProcessName != cs2) return;
             switch (e.key)
@@ -357,7 +357,7 @@ namespace keyupMusic2
             }
         }
 
-        private void HandleVlc(KeyboardHookEventArgs e)
+        private void HandleVlc(MouseKeyboardHook.KeyEventArgs e)
         {
             int tick = 100;
             switch (e.key)
@@ -402,7 +402,7 @@ namespace keyupMusic2
             }
         }
 
-        private void HandleVSCode(KeyboardHookEventArgs e)
+        private void HandleVSCode(MouseKeyboardHook.KeyEventArgs e)
         {
             switch (e.key)
             {

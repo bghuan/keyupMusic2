@@ -11,7 +11,7 @@ namespace keyupMusic2
     {
         static Point last_left = new Point(297, 680);
         static Point aaa = new Point(1277, 743);
-        public void Glass(MouseKeyboardHook.MouseHookEventArgs e)
+        public void Glass(MouseKeyboardHook.MouseEventArgs e)
         {
             if (e.Msg == MouseMsg.move) return;
             var list = new string[] { Common.Glass, Common.Glass2, Common.Glass3, };
@@ -47,7 +47,7 @@ namespace keyupMusic2
                 mousewhell(245, 717, 524, 735, e.data);
             }
         }
-        public bool IsMouseInCircle(MouseHookEventArgs e, int centerX = 1285, int centerY = 695, int radius = 700)
+        public bool IsMouseInCircle(MouseKeyboardHook.MouseEventArgs e, int centerX = 1285, int centerY = 695, int radius = 700)
         {
             int dx = e.X - centerX;
             int dy = e.Y - centerY;

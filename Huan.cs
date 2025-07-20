@@ -12,13 +12,20 @@ namespace keyupMusic2
         private static Huan _instance;
         public static Huan Instance => _instance;
 
-        public bool judge_handled(KeyboardHookEventArgs e)
+        public bool judge_handled(MouseKeyboardHook.KeyEventArgs e)
         {
             if (is_alt() && is_down(Keys.Tab)) return false;
             if (e.key == Keys.F3) return true;
             if (e.key == Keys.F9) return true;
             if (keyupMusic2_onlisten) { e.Handled = true; }
 
+            for (int i = 0; i < KeyFunc.All.Where(a => a.handled).Count(); i++)
+            {
+                if (KeyFunc.All[i].key == e.key && (KeyFunc.All[i].processName == "" || KeyFunc.All[i].processName == ProcessName))
+                {
+                    return true;
+                }
+            }
             if (replace.Any(t => e.key == t.defore && (string.IsNullOrEmpty(t.process) || ProcessName == t.process)))
                 return true;
             if (e.key == Keys.F10 || e.key == Keys.F11 || e.key == Keys.F12)
@@ -69,22 +76,23 @@ namespace keyupMusic2
             return flag;
         }
 
-        private void KeyBoardHookProc(KeyboardHookEventArgs e)
+        private void KeyBoardHookProc(MouseKeyboardHook.KeyEventArgs e)
         {
             //if (e.Type != KeyboardType.KeyDown) return;
             FreshProcessName();
             if (!is_steam_game())
-                VirtualKeyboardForm.Instance?.TriggerKey(e.key, e.Type == KeyboardType.KeyUp);
+                VirtualKeyboardForm.Instance?.TriggerKey(e.key, e.Type == KeyType.Up);
             if (judge_handled(e)) { e.Handled = true; VirKeyState(e); }
             if (quick_replace_key(e)) return;
-            if (deal_handilngkey(e.key, e.Type == KeyboardType.KeyDown)) return;
+            if (deal_handilngkey(e.key, e.Type == KeyType.Down)) return;
             print_easy_read(e);
 
             //Log.logcache(e.key.ToString());
             //start_record(e);
 
-            if (e.Type == KeyboardType.KeyUp)
+            if (e.Type == KeyType.Up)
             {
+                KeyFunc.hook_KeyDown_ddzzq(e);
                 keyupMusic2.KeyUp.yo(e);
                 return;
             }
@@ -105,6 +113,7 @@ namespace keyupMusic2
 
                     Other.hook_KeyDown(e);
                     All.hook_KeyDown_ddzzq(e);
+                    KeyFunc.hook_KeyDown_ddzzq(e);
                     Win.hook_KeyDown_ddzzq(e);
 
                     Music.hook_KeyDown_keyupMusic2(e);
@@ -124,7 +133,7 @@ namespace keyupMusic2
             return false;
         }
 
-        private void F39(KeyboardHookEventArgs e)
+        private void F39(MouseKeyboardHook.KeyEventArgs e)
         {
             play_sound_di();
             if (e.key == Keys.F9 && keyupMusic2_onlisten)
@@ -149,20 +158,26 @@ namespace keyupMusic2
 
         public void timer_stop()
         {
-            Location = endPoint;
+            blobForm.Hide();
+            blobForm.changeFlag(false);
+            //Location = endPoint;
             timerMove.Stop();
-            if (!temp_visiable) SetVisibleCore(false);
+            //if (!temp_visiable) SetVisibleCore(false);
         }
         private void form_move()
         {
+            blobForm.Show();
+            blobForm.changeFlag(true);
             Invoke2(() =>
             {
                 if (Opacity == 0) { return; }
                 var current_hwnd = ProcessName;
-                temp_visiable = Visible;
-                if (!Visible) { SetVisibleCore(true); }
+                //temp_visiable = Visible;
+                //if (!Visible) { SetVisibleCore(true); }
                 if (Focused) { FocusProcessSimple(current_hwnd); }
                 timerMove.Interval = 1000 / 144;
+                // 解除旧的事件绑定，防止叠加
+                timerMove.Tick -= timerMove_Tick;
                 timerMove.Tick += timerMove_Tick;
                 timerMove.Start();
                 Location = startPoint;
@@ -175,7 +190,7 @@ namespace keyupMusic2
 
             int currentX = (int)(startPoint.X + (endPoint.X - startPoint.X) * (elapsed.TotalMilliseconds / timerMove_Tick_tick));
             int currentY = startPoint.Y;
-            Location = new Point(currentX, currentY);
+            //Location = new Point(currentX, currentY);
 
             if (elapsed.TotalMilliseconds > timerMove_Tick_tick) { timer_stop(); }
         }
@@ -233,46 +248,25 @@ namespace keyupMusic2
                 log("唤醒解锁");
             }
         }
+        public static string start_reflection = "reflection";
+        public void reflection_catch(string msg)
+        {
+            msg = msg.Replace(start_reflection, "");
+            Common.ExecuteCommand(msg);
+        }
         public static string start_next = "nextlocation";
-        public static bool next_flag = false;
         public void next_catch(string msg)
         {
             msg = msg.Replace(start_next, "");
-            if (msg.Contains("true"))
-            {
-                next_flag = true;
-                return;
-            }
             int x = int.Parse(msg.Split(",")[0]);
             int y = int.Parse(msg.Split(",")[1]);
+            if (!IsFullScreen()) y += 100;
+            if (!WaitForKeysReleased(1000, is_lbutton)) return;
 
-            //IntPtr edgeHandle = FindEdgeWindow(msedge);
-            //if (!Native.GetWindowRect(edgeHandle, out Native.RECT rect))
-            //{
-            //    Console.WriteLine("获取窗口位置失败！");
-            //}
-
-            //int absX = rect.Left + x;
-            //int absY = rect.Top + y;
-            //log(absX + "." + absY);
-            if (!IsFullScreen())
-                y += 100;
-
-            if (!WaitForKeysReleased(1000, is_lbutton))
-                return;
-            next_flag = false;
             var pos = Position;
             mouse_move(x, y, 20);
             mouse_middle_click(20);
-            //down_press(LControlKey);
-            //mouse_click2(10);
-            //up_press(LControlKey);
             mouse_move(pos);
-
-            //TaskRun(() => { press([LControlKey, W]); }, 1000);
-            var judge = () => next_flag;
-            var run = () => { press([LControlKey, W]); };
-            DelayRun(judge, run, 5222, 122);
         }
         public void start_catch(string msg)
         {
@@ -281,7 +275,7 @@ namespace keyupMusic2
             {
                 string[] list_f1 = [StartMenuExperienceHost, SearchHost, clashverge,];
                 string[] list_nothing = [devenv, Common.keyupMusic2, explorer, cs2];
-                if (Position.X == 0 && Position.Y == screenHeight1)
+                if (Position.X == 0 && (Position.Y == screenHeight1 || Position.Y == 0))
                     AllClass.run_vis();
                 else if (Position.Y == 0)
                     Invoke(() => { SetVisibleCore(!Visible); });
@@ -299,6 +293,8 @@ namespace keyupMusic2
                 else if (IsDesktopFocused()) { }
                 else if (ProcessName == Honeyview)
                     press_raw(OemPeriod);
+                else if (is_steam_game())
+                    record_screen();
                 else
                     LossScale();
             }

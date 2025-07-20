@@ -5,7 +5,7 @@ namespace keyupMusic2
 {
     partial class biu
     {
-        public void Kingdom(MouseKeyboardHook.MouseHookEventArgs e)
+        public void Kingdom(MouseKeyboardHook.MouseEventArgs e)
         {
             if (ProcessName != keyupMusic2.Common.Kingdom) return;
             //MoveStop();

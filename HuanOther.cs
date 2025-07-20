@@ -48,23 +48,23 @@ namespace keyupMusic2
             });
         }
 
-        private void start_record(KeyboardHookEventArgs e)
+        private void start_record(MouseKeyboardHook.KeyEventArgs e)
         {
             //if (SuperClass.start_record)
             {
                 log(e.key.ToString());
             }
         }
-        private void handle_special_or_normal_key(KeyboardHookEventArgs e)
+        private void handle_special_or_normal_key(MouseKeyboardHook.KeyEventArgs e)
         {
             string _ProcessName = "";
             if (special_key.Contains(e.key)) _ProcessName = process_and_log(e.key.ToString());
             if (e.key == Keys.F22 && (_ProcessName == "WeChatAppEx" || _ProcessName == "WeChat")) { return; }
             handling_keys[e.key] = DateTime.Now;
         }
-        private void print_easy_read(KeyboardHookEventArgs e)
+        private void print_easy_read(MouseKeyboardHook.KeyEventArgs e)
         {
-            if (e.Type == KeyboardType.KeyUp)
+            if (e.Type == KeyType.Up)
             {
                 Invoke2(() => label1.Text = label1.Text.Replace(easy_read2(e.key), easy_read2(e.key).ToLower()));
                 return;
@@ -110,12 +110,12 @@ namespace keyupMusic2
             label2.Text = "";
 
             _mouseKbdHook = new MouseKeyboardHook();
-            _mouseKbdHook.KeyboardHookEvent += KeyBoardHookProc;
+            _mouseKbdHook.KeyEvent += KeyBoardHookProc;
 
             if (is_mouse_hook)
             {
                 var b = new biu();
-                _mouseKbdHook.MouseHookEvent += b.MouseHookProc;
+                _mouseKbdHook.MouseEvent += b.MouseHookProc;
                 //Invoke(() => { b.MoveStopClickListen(); }); 
                 //_mouseKbdHook.MouseHookEvent += new Douyin_game(this).MouseHookProc;
             }
@@ -159,9 +159,8 @@ namespace keyupMusic2
             if (!IsDesktopFocused())
                 press([LWin, D]);
             CloseDesktopWindow();
-            if (GetWindowTitle() == "关闭 Windows")
-                press(100, 500, Up, Return);
-            else play_sound_di2();
+            //if (GetWindowTitle() == "关闭 Windows")
+            press(100, 500, Up, Return);
         }
 
     }

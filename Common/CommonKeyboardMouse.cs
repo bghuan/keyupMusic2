@@ -33,10 +33,10 @@ namespace keyupMusic2
             x = deal_size_x_y(x, y)[0];
             y = deal_size_x_y(x, y)[1];
 
-            if (x > 0 && x < screenWidth)
-                mouse_event(MOUSEEVENTF_ABSOLUTE | MOUSEEVENTF_MOVE, x * 65536 / screenWidth, y * 65536 / screenHeight, 0, 0);
-            else
-                SetCursorPos(x, y);
+            //if (x > 0 && x < screenWidth)
+            //    mouse_event(MOUSEEVENTF_ABSOLUTE | MOUSEEVENTF_MOVE, x * 65536 / screenWidth, y * 65536 / screenHeight, 0, 0);
+            //else
+            SetCursorPos(x, y);
             Thread.Sleep(tick);
         }
         public static void mouse_move_to(int x, int y, int tick = 0)
@@ -214,9 +214,9 @@ namespace keyupMusic2
                 || (VirMouseStateKey.ContainsKey(key) && VirMouseStateKey[key] == ProcessName);
         }
         public static Dictionary<Keys, string> VirMouseStateKey = new Dictionary<Keys, string>();
-        public static void VirKeyState(KeyboardHookEventArgs e)
+        public static void VirKeyState(MouseKeyboardHook.KeyEventArgs e)
         {
-            if (e.Type == KeyboardType.KeyUp)
+            if (e.Type == KeyType.Up)
                 VirMouseStateKey.Remove(e.key);
             else
                 VirMouseStateKey[e.key] = ProcessName;

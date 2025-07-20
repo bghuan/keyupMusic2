@@ -45,17 +45,17 @@ namespace keyupMusic2
         //public static RECTT block3 = new RECTT(nameof(block3),
         //                        new JU(_3上, _右下),
         //                        new JU(_3上, _右下));
-        private int _block1(MouseHookEventArgs e)
+        private int _block1(MouseKeyboardHook.MouseEventArgs e)
         {
             if (is_lizhi) return 1;
             return 0;
         }
-        private int _block2(MouseHookEventArgs e)
+        private int _block2(MouseKeyboardHook.MouseEventArgs e)
         {
             if (is_lizhi) return 2;
             return 0;
         }
-        private int _block3(MouseHookEventArgs e)
+        private int _block3(MouseKeyboardHook.MouseEventArgs e)
         {
             if (is_lizhi) return 3;
             return 0;

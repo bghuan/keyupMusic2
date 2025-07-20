@@ -128,7 +128,7 @@ namespace keyupMusic2
                 }
             }
         }
-        public static void yo(KeyboardHookEventArgs e)
+        public static void yo(MouseKeyboardHook.KeyEventArgs e)
         {
             if (Position.Y == 0)
                 switch (e.key)
@@ -147,26 +147,7 @@ namespace keyupMusic2
                     break;
             }
 
-            switch (ProcessName)
-            {
-                case cs2:
-                    switch (e.key)
-                    {
-                        //case Keys.A:
-                        //    press_dump_task(Keys.D, 80);
-                        //    break;
-                        //case Keys.D:
-                        //    press_dump_task(Keys.A, 80);
-                        //    break;
-                        //case Keys.W:
-                        //    press_dump_task(Keys.S, 80);
-                        //    break;
-                        //case Keys.S:
-                        //    press_dump_task(Keys.W, 80);
-                        //    break;
-                    }
-                    break;
-            }
+            if (LongPressKey == e.key) LongPressKey = Keys.None;
         }
     }
 }

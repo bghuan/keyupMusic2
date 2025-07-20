@@ -1,4 +1,4 @@
-﻿using KeyEvent = keyupMusic2.MouseKeyboardHook.KeyboardHookEventArgs;
+﻿using KeyEvent = keyupMusic2.MouseKeyboardHook.KeyEventArgs;
 
 namespace keyupMusic2
 {

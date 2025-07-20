@@ -20,10 +20,10 @@ namespace keyupMusic2
         public static void hook_KeyDown(Keys keys)
         {
             Huan.keyupMusic2_onlisten = true;
-            var e = new KeyboardHookEventArgs(KeyboardType.KeyDown, keys, 0, new Native.keyboardHookStruct());
+            var e = new MouseKeyboardHook.KeyEventArgs(KeyType.Down, keys, 0, new Native.keyboardHookStruct());
             new SuperClass().hook_KeyDown_keyupMusic2(e);
         }
-        public void hook_KeyDown_keyupMusic2(KeyboardHookEventArgs e)
+        public void hook_KeyDown_keyupMusic2(MouseKeyboardHook.KeyEventArgs e)
         {
             if (!Huan.keyupMusic2_onlisten) return;
             Common.hooked = true;
@@ -31,6 +31,8 @@ namespace keyupMusic2
             switch (e.key)
             {
                 case Keys.Q:
+                    //Blob.Instance.changeFlag(false);
+                    break;
                 case Keys.W:
                     //SSSS.KeyPress(Keys.LWin, "openvpn", Keys.Enter);
                     //SSSS.KeyPress(Keys.LWin, "verge", Keys.Enter);
@@ -129,9 +131,15 @@ namespace keyupMusic2
                     break;
                 case Keys.L:
                     //RemoveWebpWhiteBorder(GetCurrentWallpaperPath(), "a.webp");
-                    var mp3Path = "C:\\Users\\bu\\Desktop\\a\\爸(19523708410)_20230728213046.mp3";
-                    var wavPath = "C:\\Users\\bu\\Desktop\\b\\爸(19523708410)_20230728213046.wav";
-                    ConvertMp3ToWav(mp3Path, wavPath);
+                    //var mp3Path = "C:\\Users\\bu\\Desktop\\a\\爸(19523708410)_20230728213046.mp3";
+                    //var wavPath = "C:\\Users\\bu\\Desktop\\b\\爸(19523708410)_20230728213046.wav";
+                    //ConvertMp3ToWav(mp3Path, wavPath);
+                    string windowTitle = "PowerToys.CropAndLock"; // 示例：记事本程序
+                    byte transparency = 160; // 半透明效果
+                    if (is_tran_powertoy)
+                        transparency = 255;
+                    is_tran_powertoy = !is_tran_powertoy;
+                    bool success = SetWindowTransparency(windowTitle, transparency);
                     break;
                 case Keys.Z:
                     GoodDesktopWallpaper(); break;
@@ -231,7 +239,8 @@ namespace keyupMusic2
                     break;
             }
 
-            if (key_sound && keys.Contains(e.key)) { play_sound(e.key); catched = true; }
+            //if (key_sound && keys.Contains(e.key)) { play_sound(e.key); catched = true; }
+            if (keys.Contains(e.key)) { play_sound(e.key); catched = true; }
 
             if (catched)
             {
@@ -344,7 +353,7 @@ namespace keyupMusic2
             Common.cmd($"/c start ms-settings:sound", action2, 200);
         }
 
-        public void get_point_color(KeyboardHookEventArgs e)
+        public void get_point_color(MouseKeyboardHook.KeyEventArgs e)
         {
             Point mousePosition = Cursor.Position;
             var last_x = Cursor.Position.X;

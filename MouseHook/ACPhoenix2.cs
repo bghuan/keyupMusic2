@@ -6,7 +6,7 @@ namespace keyupMusic2
 {
     partial class biu
     {
-        public void MoveStopClick(MouseHookEventArgs e)
+        public void MoveStopClick(MouseKeyboardHook.MouseEventArgs e)
         {
             if (!IsMouseStopClick) return;
             //if (!isMouseStopped) return;
@@ -89,7 +89,7 @@ namespace keyupMusic2
             timer.Elapsed += timer1_Tick;
             timer.Start();
         }
-        void MoveStop(MouseHookEventArgs e)
+        void MoveStop(MouseKeyboardHook.MouseEventArgs e)
         {
             if (e.Msg == MouseMsg.move)
             {

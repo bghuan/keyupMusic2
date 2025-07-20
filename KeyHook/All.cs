@@ -7,7 +7,7 @@ namespace keyupMusic2
 {
     public class AllClass : Default
     {
-        public void hook_KeyDown_ddzzq(KeyboardHookEventArgs e)
+        public void hook_KeyDown_ddzzq(MouseKeyboardHook.KeyEventArgs e)
         {
             string module_name = ProcessName;
             Common.hooked = true;
@@ -19,14 +19,16 @@ namespace keyupMusic2
 
             switch (e.key)
             {
+                case Keys.F2:
+                    quick_scale(); break;
                 case Keys.F4:
                     quick_close(); quick_sleep(); break;
-                case Keys.F10:
-                    quick_what(); break;
-                case Keys.F11:
-                    quick_visiualstudio(module_name); break;
-                case Keys.F12:
-                    quick_wechat_or_notify(module_name); break;
+                //case Keys.F10:
+                //    quick_what(); break;
+                //case Keys.F11:
+                //    quick_visiualstudio(); break;
+                //case Keys.F12:
+                //    quick_wechat_or_notify(); break;
 
                 case Keys.Home:
                     copy_screen(); break;
@@ -62,11 +64,21 @@ namespace keyupMusic2
             Common.hooked = false;
         }
 
-        private void shift()
+        public void quick_scale()
         {
-            // 检查 Ctrl 键是否按下
-            if (!isctrl())
-                return;
+            var asd = IsFullScreen();
+            if (IsFullScreen())
+            {
+                LossScale();
+            }
+        }
+
+        public void shift()
+        {
+            if (ProcessName == devenv) return;
+            if (is_steam_game()) return;
+            if (IsFullScreen()) return;
+            if (!isctrl()) return;
 
             // 等待 Ctrl 和 Shift 键释放（超时 1 秒）
             if (!WaitForKeysReleased(1000, isctrl, is_shift))
@@ -93,10 +105,10 @@ namespace keyupMusic2
             }
         }
 
-       
+
 
         // 辅助方法：安全获取剪贴板文本
-        private string GetClipboardText()
+        public string GetClipboardText()
         {
             string result = "";
             try
@@ -124,19 +136,19 @@ namespace keyupMusic2
         //    A2 = new Keys[] { Keys.Down },
         //};
 
-        private void quick_prix_image()
+        public void quick_prix_image()
         {
             if (!isctrl()) return;
             SetDesktopWallpaper(GetNextWallpaper(), WallpaperStyle.Fit, true);
         }
 
-        private void quick_next_image()
+        public void quick_next_image()
         {
             if (!isctrl()) return;
             SetDesktopWallpaper(GetPreviousWallpaper(), WallpaperStyle.Fit, true);
         }
 
-        private static void quick_what()
+        public static void quick_what()
         {
             //if (TryFocusProcess(Common.cs2)) return;
             //if (TryFocusProcess(Common.SplitFiction)) return;
@@ -144,26 +156,27 @@ namespace keyupMusic2
             //quick_max_chrome();
         }
 
-        private static void quick_gamg_alttab(KeyboardHookEventArgs e, string module_name)
+        public static void quick_gamg_alttab(MouseKeyboardHook.KeyEventArgs e, string module_name)
         {
             var allow = is_steam_game() || module_name == chrome || module_name == PowerToysCropAndLock;
             if (!allow) return;
             quick_max_chrome(e.Pos);
         }
 
-        private static void quick_sleep()
+        public static void quick_sleep()
         {
             if (lock_err)
                 system_hard_sleep();
         }
 
-        private static void quick_close()
+        public static void quick_close()
         {
             CloseProcess();
         }
 
-        private static void quick_wechat_or_notify(string module_name)
+        public static void quick_wechat_or_notify()
         {
+            string module_name = ProcessName;
             if (is_down(Keys.Delete) || is_ctrl()) return;
             if (ProcessName == Common.keyupMusic2)
             {
@@ -187,8 +200,9 @@ namespace keyupMusic2
             }
         }
 
-        private static void quick_visiualstudio(string module_name)
+        public static void quick_visiualstudio()
         {
+            string module_name = ProcessName;
             if (is_down(Keys.Delete) || is_ctrl()) return;
             if (Common.devenv == module_name)
             {
@@ -201,7 +215,7 @@ namespace keyupMusic2
             }
         }
 
-        private static void clean()
+        public static void clean()
         {
             DaleyRun_stop = true;
             player.Stop();
@@ -210,7 +224,7 @@ namespace keyupMusic2
             system_sleep_count = 0;
         }
 
-        private static void quick_go_back(KeyboardHookEventArgs e)
+        private static void quick_go_back(MouseKeyboardHook.KeyEventArgs e)
         {
             {
                 if (!biu.list_go_back.Contains(ProcessName)) return;
@@ -227,7 +241,7 @@ namespace keyupMusic2
             }
         }
 
-        private static void quick_number(KeyboardHookEventArgs e)
+        private static void quick_number(MouseKeyboardHook.KeyEventArgs e)
         {
             if (is_down(Keys.F1))
                 switch (e.key)
@@ -272,7 +286,7 @@ namespace keyupMusic2
             ////    () => press("100;Tab;Down;Enter;", 100),
             ////    3000, 200);
             //TaskRun(() => { press("Tab;Down;Enter;", 50); }, 800);
-            ProcessRun(devenvexe,keyupMusicexe);
+            ProcessRun(devenvexe, keyupMusicexe);
         }
     }
 }

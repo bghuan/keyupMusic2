@@ -139,13 +139,13 @@ namespace keyupMusic2
         public static bool IsDiffProcess()
         {
             IntPtr hwnd = Native.GetForegroundWindow();
-            IntPtr point_hwnd = Native.WindowFromPoint(Position);
+            IntPtr point_hwnd = GetPointProcessHwnd();
             if (hwnd == point_hwnd) return false;
             if (ProcessMap.ContainsKey(hwnd) && ProcessMap.ContainsKey(point_hwnd))
                 if (ProcessMap[hwnd].name == ProcessMap[point_hwnd].name)
                     return false;
-            IntPtr point_process_hwnd = GetPointProcessHwnd();
-            if (hwnd == point_process_hwnd) return false;
+            //IntPtr point_process_hwnd = GetPointProcessHwnd();
+            //if (hwnd == point_process_hwnd) return false;
             //if (ProcessMap.ContainsKey(hwnd) && ProcessMap[hwnd].name == LosslessScaling)
             //    return false;
             //if (ProcessMap.ContainsKey(hwnd) && ProcessMap.ContainsKey(point_process_hwnd))
@@ -167,18 +167,10 @@ namespace keyupMusic2
         }
         public static IntPtr GetPointProcessHwnd()
         {
-            IntPtr point_hwnd = Native.WindowFromPoint(Position);
-            //IntPtr hwnd = IntPtr.Zero;
-            //uint processId;
-            //Native.GetWindowThreadProcessId(point_hwnd, out processId);
-            //using (Process process = Process.GetProcessById((int)processId))
-            //{
-            //    hwnd = process.MainWindowHandle;
-            //    ProcessMap[point_hwnd] = ProcessMap[hwnd] = new ProcessWrapper(point_hwnd);
-            //}
-            ProcessMap[point_hwnd] = ProcessMap[point_hwnd] = new ProcessWrapper(point_hwnd);
-            //FreshProcessNameByMap(hwnd);
-            return point_hwnd;
+            IntPtr hwnd = Native.WindowFromPoint(Position);
+            if (!ProcessMap.ContainsKey(hwnd))
+                ProcessMap[hwnd] = new ProcessWrapper(hwnd);
+            return hwnd;
         }
         public static string GetWindowName(IntPtr hwnd)
         {
@@ -492,6 +484,7 @@ namespace keyupMusic2
             return aa;
         }
         public static bool is_lizhi => (ProcessTitle.Contains("荔枝") && !ProcessTitle.Contains("分类"));
+        public static bool is_tran_powertoy = false;
 
     }
 }

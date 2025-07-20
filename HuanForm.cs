@@ -8,6 +8,7 @@ namespace keyupMusic2
 {
     public partial class Huan : Form
     {
+        Blob blobForm = new Blob();
         ACPhoenixClass ACPhoenix;
         DevenvClass Devenv;
         DouyinClass Douyin;
@@ -53,13 +54,7 @@ namespace keyupMusic2
             new Socket();
             new Tick(); ;
             Opencv = new OpencvReceive();
-
-            //Application.ApplicationExit += (s, e) =>
-            //{
-            //    if (!Debugger.IsAttached) return;
-            //    string executablePath = Process.GetCurrentProcess().MainModule.FileName;
-            //    Process.Start(executablePath);
-            //};
+            new KeyFunc2().init();
         }
         protected override void Dispose(bool disposing)
         {
@@ -98,7 +93,7 @@ namespace keyupMusic2
                 SuperClass.hook_KeyDown((Keys)key);
             }
         }
-        private void notifyIcon1_MouseClick(object sender, MouseEventArgs e)
+        private void notifyIcon1_MouseClick(object sender, System.Windows.Forms.MouseEventArgs e)
         {
             if (e.Button == MouseButtons.Left) SetVisibleCore(!Visible);
             if (e.Button == MouseButtons.Right)
@@ -151,13 +146,8 @@ namespace keyupMusic2
                 //mouse_move(screenWidth2,screenHeight2);
             }
             //is_init_show = Debugger.IsAttached ? !is_init_show : is_init_show;
-            if (is_init_show)
-            {
-                //SetVisibleCore(false);
-                TaskRun(() => { Invoke(() => SetVisibleCore(false)); }, 100);
-            }
-            Location = new Point(Screen.PrimaryScreen.Bounds.Width - 310, 100);
-            //Location = new Point(2255, 37);
+            //Location = new Point(Screen.PrimaryScreen.Bounds.Width - 310, 100);
+            Location = new Point(2255, 37);
 
             startPoint = new Point(Location.X - 252, Location.Y);
             endPoint = Location;
@@ -200,10 +190,20 @@ namespace keyupMusic2
             virtualKeyboardForm.Show();
             MoonTime moontimeForm = new MoonTime();
             moontimeForm.Show();
-            if (Screen.AllScreens.Length == 1)
+            //Blob blobForm = new Blob();
+            //blobForm.Show();
+            //blobForm.Hide();
+            form_move();
+            if (is_init_show)
             {
-                MoonTime.Instance.Visible = false;
+                //SetVisibleCore(false);
+                TaskRun(() => { Invoke(() => SetVisibleCore(false)); }, 100);
             }
+            //SetVisibleCore(false);
+            //if (Screen.AllScreens.Length == 1)
+            //{
+            //    MoonTime.Instance.Visible = false;
+            //}
 
             InitializeFromCurrentWallpaper();
 

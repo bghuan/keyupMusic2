@@ -26,8 +26,7 @@ namespace keyupMusic2
             else if (msg.Contains("\"msg\":2"))
             {
                 key = Keys.F3;
-                HideProcess(chrome);
-                SetDesktopToBlack();
+                HideSomething();
             }
             else
             {
@@ -49,7 +48,7 @@ namespace keyupMusic2
             {
                 if (key == Keys.Up)
                     key = Keys.PageUp;
-                if (ProcessTitle.Contains("502"))
+                if (ProcessTitle.Contains("502") || ProcessTitle.Contains("503"))
                     if (key == Keys.PageDown)
                         key = Keys.F5;
                     else if (key == Keys.Up)
@@ -115,7 +114,10 @@ namespace keyupMusic2
             if (key == Keys.None) return;
 
             //play_sound_di(0.1f);
-            press_raw(key);
+            if (key == F3 || is_douyin())
+                press_raw(key);
+            else
+                press(key);
             //log(msg + "-" + ProcessName2 + "-" + key);
         }
     }

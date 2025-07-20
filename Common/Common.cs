@@ -93,6 +93,7 @@ namespace keyupMusic2
             y = deal_size_x_y(x, y, false)[1];
             var asd = get_mouse_postion_color(new Point(x, y));
             var flag = AreColorsSimilar(asd, color, similar);
+            //log($"judge_color flag:{flag} x:{x} y:{y} target:{asd} source:{color} similar:{similar}");
             //if (flag && action != null) action();
             return flag;
         }
@@ -416,6 +417,8 @@ namespace keyupMusic2
                    windowRect.Right >= screenWidth1 &&
                    windowRect.Bottom >= screenHeight1;
         }
+        public static List<string> FullVedioTitles = new List<string>() { "nhub", "bilibili", "多多自走棋" };
+        public static bool IsFullVedio() => (ProcessName == msedge || ProcessName == chrome) && FullVedioTitles.Where(e => ProcessTitle.Contains(e)).Count() == 1 && IsFullScreen();
         public static void change_file_last(bool pngg)
         {
             // 指定要处理的文件夹路径  
@@ -831,7 +834,7 @@ namespace keyupMusic2
         }
         public static void LossScale()
         {
-            if (is_douyin()) { }
+            //if (is_douyin()) { }
             //else if (IsDiffProcess()) mouse_click();
             //press([Keys.LControlKey, Keys.F2]);return;
             if (!ExistProcess(LosslessScaling))
@@ -1111,5 +1114,36 @@ namespace keyupMusic2
         {
             ProcessRun(cloudmusicexe);
         }
+        public static void record_screen()
+        {
+            press([LControlKey, LMenu, S]);
+        }
+
+        public static void HideSomething()
+        {
+            HideProcess(chrome);
+            HideProcess(PowerToysCropAndLock);
+            SetDesktopToBlack();
+        }
+        public static bool SetWindowTransparency(string proname, byte alpha)
+        {
+            // 1. 获取目标窗口句柄（根据窗口标题）
+            IntPtr hWnd = GetProcessID(proname);
+            if (hWnd == IntPtr.Zero)
+                return false;
+
+            // 2. 检查窗口是否已设置为分层窗口，若未设置则添加样式
+            int exStyle = GetWindowLong(hWnd, GWL_EXSTYLE);
+            if ((exStyle & WS_EX_LAYERED) == 0)
+            {
+                // 添加分层窗口样式
+                SetWindowLong(hWnd, GWL_EXSTYLE, exStyle | WS_EX_LAYERED);
+            }
+
+            // 3. 设置透明度（alpha值）
+            return SetLayeredWindowAttributes(hWnd, 0, alpha, LWA_ALPHA);
+        }
+        public static Keys LongPressKey;
+
     }
 }

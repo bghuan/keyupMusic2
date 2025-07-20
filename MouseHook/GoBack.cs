@@ -12,12 +12,12 @@ namespace keyupMusic2
 {
     public partial class biu
     {
-        public static List<string> list_go_back = new List<string> { explorer, VSCode, msedge, chrome, devenv, androidstudio, ApplicationFrameHost, Common.cs2, steam, Common.Glass, Glass2, Glass3, vlc, Common.PowerToysCropAndLock, KingdomRush1, lz_image_download, Honeyview, PotPlayerMini64, _哔哩哔哩,  };
+        public static List<string> list_go_back = new List<string> { explorer, VSCode, msedge, chrome, devenv, androidstudio, ApplicationFrameHost, Common.cs2, steam, Common.Glass, Glass2, Glass3, vlc, Common.PowerToysCropAndLock, KingdomRush1, lz_image_download, Honeyview, PotPlayerMini64, _哔哩哔哩, };
         public static HashSet<MouseMsg> go_back_keys = new HashSet<MouseMsg>() {
             MouseMsg.go, MouseMsg.go_up, MouseMsg.back, MouseMsg.back_up
         };
 
-
+        //first to bool as ProcessName == msedge
         public static List<ReplaceKey2> replace2 = new List<ReplaceKey2> {
            new ReplaceKey2(Honeyview,       MouseMsg.go,        Keys.Oem6),
            new ReplaceKey2(Honeyview,       MouseMsg.back,      Keys.Oem4),
@@ -28,7 +28,7 @@ namespace keyupMusic2
            //new ReplaceKey(string.Empty,    MouseMsg.go,        Keys.MediaNextTrack),
            //new ReplaceKey(string.Empty,    MouseMsg.go,        Keys.MediaPreviousTrack),
         };
-        private void GoBack2(MouseHookEventArgs e)
+        private void GoBack2(MouseKeyboardHook.MouseEventArgs e)
         {
             if (e.Msg == MouseMsg.move) return;
             if (!go_back_keys.Contains(e.Msg)) return;
@@ -51,24 +51,22 @@ namespace keyupMusic2
                 }
             }
         }
-        private void GoBack(MouseHookEventArgs e)
+        private void GoBack(MouseKeyboardHook.MouseEventArgs e)
         {
             if (e.Msg == MouseMsg.move) return;
             var go = e.Msg == MouseMsg.go_up;
             var back = e.Msg == MouseMsg.back_up;
             if (!(go || back)) return;
 
-            if (ProcessName == msedge)
+             if (is_douyin())
+                Douyin(go, back);
+            else if(ProcessName == msedge)
                 Msedge(go, back);
-            else if (ProcessName == chrome)
-                chromeasd(go, back);
             else if (ProcessName == Common.cs2)
                 cs2(go, back);
             else if (ProcessName == steam && (go))
                 press("808,651;close", 1);
-            else if (ProcessName == StartMenuExperienceHost)
-                _StartMenuExperienceHost(go, back);
-            else if (ProcessName == SearchHost)
+            else if (ProcessName == StartMenuExperienceHost || ProcessName == SearchHost)
                 _StartMenuExperienceHost(go, back);
             else if (ProcessName == vlc)
                 raw(go, back);
@@ -168,6 +166,30 @@ namespace keyupMusic2
                 else press("B;985,699;1483,429;1483,568;1483,696;1483,828;1483,969;B;D3;");
             }
             //if (go) press("Escape;", 100);
+        }
+        private void Douyin(bool go, bool back)
+        {
+            if (is_douyin())
+            {
+                if (back)
+                {
+                    SS().KeyPress(Keys.X);
+                }
+                else if (go)
+                {
+                    SS().KeyPress(Keys.H);
+                }
+                //else if (e.Msg == MouseMsg.click_up)
+                //{
+                //    Common.isVir = 0;
+                //    if (e.Y == screenHeight1 && e.X < screenWidth2)
+                //        SS().KeyPress(Keys.PageUp);
+                //    else if (e.Y == screenHeight1 && e.X < screenWidth1)
+                //        SS().KeyPress(Keys.PageDown);
+                //    Common.isVir = 3;
+                //}
+                return;
+            }
         }
     }
 }

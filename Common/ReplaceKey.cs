@@ -8,14 +8,14 @@ namespace keyupMusic2
 {
     public partial class Common
     {
-        public static bool quick_replace_key(KeyboardHookEventArgs e)
+        public static bool quick_replace_key(MouseKeyboardHook.KeyEventArgs e)
         {
             for (int i = 0; i < replace.Count; i++)
             {
                 // 支持全局（process为空或null）或指定进程
                 if (e.key == replace[i].defore && (string.IsNullOrEmpty(replace[i].process) || ProcessName == replace[i].process))
                 {
-                    if (e.Type == KeyboardType.KeyDown) down_press(replace[i].after, replace[i].raw);
+                    if (e.Type == KeyType.Down) down_press(replace[i].after, replace[i].raw);
                     else up_press(replace[i].after, replace[i].raw);
                     return true;
                 }
@@ -52,23 +52,7 @@ namespace keyupMusic2
             this.raw = raw;
             if (!proName.Contains(process))
                 proName.Add(process);
-            //null exp
-            //if (!proNameMap.ContainsKey(process) || !proNameMap.ContainsValue("Key1", before))
-            {
-                proNameMap.Add(process, before);
-                //if (before == MouseMsg.go)
-                //    new ReplaceKey(process, MouseMsg.go_up, after, action, raw);
-                //else if (before == MouseMsg.back)
-                //    new ReplaceKey(process, MouseMsg.back_up, after, action, raw);
-                //if (before == MouseMsg.go)
-                //    Task.Run(() => { Sleep(100); replace.Add(new ReplaceKey(process, MouseMsg.go_up, after, action, raw)); });
-                //else if (before == MouseMsg.back)
-                //    Task.Run(() => { Sleep(100); replace.Add(new ReplaceKey(process, MouseMsg.back_up, after, action, raw)); });
-                //replace.Add(new ReplaceKey(process, MouseMsg.back_up, after, action, raw));
-                //proNameMap.Add(process, MouseMsg.back_up);
-                //if (!before.IsUpEvent())
-                //add up catch
-            }
+            proNameMap.Add(process, before);
         }
         public string process;
         public MouseMsg before;
@@ -78,14 +62,6 @@ namespace keyupMusic2
         public static bool Catched(string process, MouseMsg before)
         {
             if (!proNameMap.ContainsKey(process)) return false;
-            //if (before.IsUpEvent())
-            //{
-            //    var item = before.ToString().Replace("_up", "");
-            //    if (Enum.TryParse(typeof(MouseMsg), item, out object asd))
-            //    {
-            //        return proNameMap.ContainsValue(process, (MouseMsg)asd);
-            //    }
-            //}
             return proNameMap.ContainsValue(process, before);
         }
         public static void init()

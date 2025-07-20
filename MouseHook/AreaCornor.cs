@@ -7,7 +7,7 @@ namespace keyupMusic2
 {
     partial class biu
     {
-        private int _corner1(MouseHookEventArgs e)
+        private int _corner1(MouseKeyboardHook.MouseEventArgs e)
         {
             var list = new[] { msedge, Common.chrome, Common.Honeyview, ApplicationFrameHost };
             //var list = new[] { msedge };
@@ -18,11 +18,13 @@ namespace keyupMusic2
                 press($"10;{Position.X + 216},{Position.Y + 42};{Position.X + 216},{Position.Y + 43}");
             else if (list.Contains(Common.ProcessName))
                 press([Keys.F11]);
+            else if (PotPlayerMini64.Equals(Common.ProcessName))
+                press([Keys.Enter]);
             else if (IsDiffProcess())
                 mouse_click2(0);
             return e.data;
         }
-        private int _corner2(MouseHookEventArgs e)
+        private int _corner2(MouseKeyboardHook.MouseEventArgs e)
         {
             var list = new[] { ApplicationFrameHost, explorer, vlc, v2rayN, Common.QQMusic, VSCode, AIoT, RadeonSoftware, steam };
 
@@ -60,13 +62,13 @@ namespace keyupMusic2
                 press([Keys.F11]);
             return e.data;
         }
-        private int _corner4(MouseHookEventArgs e)
+        private int _corner4(MouseKeyboardHook.MouseEventArgs e)
         {
             if (GetPointName() == explorer) press([LWin, D]);
             return e.data;
         }
 
-        private int _corner5(MouseHookEventArgs e)
+        private int _corner5(MouseKeyboardHook.MouseEventArgs e)
         {
             mouse_click();
             if (ProcessName == Common.chrome && (judge_color(Color.FromArgb(162, 37, 45))))
@@ -76,7 +78,7 @@ namespace keyupMusic2
             return e.data;
         }
 
-        private int _corner6(MouseHookEventArgs e)
+        private int _corner6(MouseKeyboardHook.MouseEventArgs e)
         {
             //mouse_click();
             //var list = new[] { Common.chrome };
