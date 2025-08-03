@@ -1,7 +1,7 @@
 ﻿using System.Collections.Concurrent;
 using System.Diagnostics;
 using static keyupMusic2.Common;
-using static keyupMusic2.MouseKeyboardHook;
+using static keyupMusic2.KeyboardMouseHook;
 
 namespace keyupMusic2
 {
@@ -48,21 +48,21 @@ namespace keyupMusic2
             });
         }
 
-        private void start_record(MouseKeyboardHook.KeyEventArgs e)
+        private void start_record(KeyboardMouseHook.KeyEventArgs e)
         {
             //if (SuperClass.start_record)
             {
                 log(e.key.ToString());
             }
         }
-        private void handle_special_or_normal_key(MouseKeyboardHook.KeyEventArgs e)
+        private void handle_special_or_normal_key(KeyboardMouseHook.KeyEventArgs e)
         {
             string _ProcessName = "";
             if (special_key.Contains(e.key)) _ProcessName = process_and_log(e.key.ToString());
             if (e.key == Keys.F22 && (_ProcessName == "WeChatAppEx" || _ProcessName == "WeChat")) { return; }
             handling_keys[e.key] = DateTime.Now;
         }
-        private void print_easy_read(MouseKeyboardHook.KeyEventArgs e)
+        private void print_easy_read(KeyboardMouseHook.KeyEventArgs e)
         {
             if (e.Type == KeyType.Up)
             {
@@ -109,7 +109,7 @@ namespace keyupMusic2
             label1.Text = DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss");
             label2.Text = "";
 
-            _mouseKbdHook = new MouseKeyboardHook();
+            _mouseKbdHook = new KeyboardMouseHook();
             _mouseKbdHook.KeyEvent += KeyBoardHookProc;
 
             if (is_mouse_hook)
@@ -131,7 +131,6 @@ namespace keyupMusic2
             if (_mouseKbdHook != null)
             {
                 _mouseKbdHook.Uninstall();
-                _mouseKbdHook.Dispose();
             }
         }
         private void try_restart_in_admin()

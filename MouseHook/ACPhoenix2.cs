@@ -1,12 +1,12 @@
 ﻿using System.Timers;
 using static keyupMusic2.Common;
-using static keyupMusic2.MouseKeyboardHook;
+using static keyupMusic2.KeyboardMouseHook;
 
 namespace keyupMusic2
 {
     partial class biu
     {
-        public void MoveStopClick(MouseKeyboardHook.MouseEventArgs e)
+        public void MoveStopClick(KeyboardMouseHook.MouseEventArgs e)
         {
             if (!IsMouseStopClick) return;
             //if (!isMouseStopped) return;
@@ -89,7 +89,7 @@ namespace keyupMusic2
             timer.Elapsed += timer1_Tick;
             timer.Start();
         }
-        void MoveStop(MouseKeyboardHook.MouseEventArgs e)
+        void MoveStop(KeyboardMouseHook.MouseEventArgs e)
         {
             if (e.Msg == MouseMsg.move)
             {

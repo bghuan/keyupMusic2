@@ -1,5 +1,5 @@
 ﻿using static keyupMusic2.Common;
-using static keyupMusic2.MouseKeyboardHook;
+using static keyupMusic2.KeyboardMouseHook;
 
 namespace keyupMusic2
 {
@@ -128,7 +128,7 @@ namespace keyupMusic2
                 }
             }
         }
-        public static void yo(MouseKeyboardHook.KeyEventArgs e)
+        public static void yo(KeyboardMouseHook.KeyEventArgs e)
         {
             if (Position.Y == 0)
                 switch (e.key)

@@ -1,7 +1,7 @@
 ﻿using System.Diagnostics;
 using System.Diagnostics.Metrics;
 using static keyupMusic2.Common;
-using static keyupMusic2.MouseKeyboardHook;
+using static keyupMusic2.KeyboardMouseHook;
 
 namespace keyupMusic2
 {
@@ -9,7 +9,7 @@ namespace keyupMusic2
     {
         public static readonly HashSet<Keys> keys = new() { Q, Left, Right, W, L, Keys.Enter, Keys.D2 };
         public static bool handling = false;
-        public static bool judge_handled(MouseKeyboardHook.KeyEventArgs e)
+        public static bool judge_handled(KeyboardMouseHook.KeyEventArgs e)
         {
             if (!is_down(Keys.LWin) && !is_down(Keys.RWin)) return false;
             if (keys.Contains(e.key)) return true;
@@ -28,7 +28,7 @@ namespace keyupMusic2
         //    }
         //}
         //static KeyEvent a = new KeyEvent(D2, () => press(100, LWin, "d2", "en", Enter));
-        public void hook_KeyDown_ddzzq(MouseKeyboardHook.KeyEventArgs e)
+        public void hook_KeyDown_ddzzq(KeyboardMouseHook.KeyEventArgs e)
         {
             if (!is_down(Keys.LWin) && !is_down(Keys.RWin)) return;
             // 发送无效 Win + Key 事件,使当前 Win 键无效
@@ -69,11 +69,7 @@ namespace keyupMusic2
                     };
                     var run = () => 
                     {
-                        press("200;525.417;525,418;500;H;100;", 200);
-                        if (!IsFullScreen())
-                            press("100;525.417;525,418;500;H", 200);
-                        if (!IsFullScreen())
-                            press("100;525.417;525,418;500;H", 200);
+                        press("200;525.417;525,418;500;H;100;", 300);
                         if (!IsFullScreen())
                             press("100;525.417;525,418;500;H", 200);
                         int x = 2218;

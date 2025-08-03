@@ -1,6 +1,6 @@
 ﻿using System.Diagnostics;
 using static keyupMusic2.Common;
-using static keyupMusic2.MouseKeyboardHook;
+using static keyupMusic2.KeyboardMouseHook;
 using static System.Windows.Forms.VisualStyles.VisualStyleElement.TrackBar;
 
 namespace keyupMusic2
@@ -45,17 +45,17 @@ namespace keyupMusic2
         //public static RECTT block3 = new RECTT(nameof(block3),
         //                        new JU(_3上, _右下),
         //                        new JU(_3上, _右下));
-        private int _block1(MouseKeyboardHook.MouseEventArgs e)
+        private int _block1(KeyboardMouseHook.MouseEventArgs e)
         {
             if (is_lizhi) return 1;
             return 0;
         }
-        private int _block2(MouseKeyboardHook.MouseEventArgs e)
+        private int _block2(KeyboardMouseHook.MouseEventArgs e)
         {
             if (is_lizhi) return 2;
             return 0;
         }
-        private int _block3(MouseKeyboardHook.MouseEventArgs e)
+        private int _block3(KeyboardMouseHook.MouseEventArgs e)
         {
             if (is_lizhi) return 3;
             return 0;

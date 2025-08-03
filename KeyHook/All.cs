@@ -1,13 +1,13 @@
 ﻿using System.Drawing;
 using static keyupMusic2.Common;
-using static keyupMusic2.MouseKeyboardHook;
+using static keyupMusic2.KeyboardMouseHook;
 using static System.Windows.Forms.VisualStyles.VisualStyleElement.TrackBar;
 
 namespace keyupMusic2
 {
     public class AllClass : Default
     {
-        public void hook_KeyDown_ddzzq(MouseKeyboardHook.KeyEventArgs e)
+        public void hook_KeyDown_ddzzq(KeyboardMouseHook.KeyEventArgs e)
         {
             string module_name = ProcessName;
             Common.hooked = true;
@@ -19,8 +19,10 @@ namespace keyupMusic2
 
             switch (e.key)
             {
-                case Keys.F2:
-                    quick_scale(); break;
+                //case Keys.F1:
+                //    SuperClass.get_point_color(); break;
+                //case Keys.F2:
+                //    quick_scale(); break;
                 case Keys.F4:
                     quick_close(); quick_sleep(); break;
                 //case Keys.F10:
@@ -64,9 +66,9 @@ namespace keyupMusic2
             Common.hooked = false;
         }
 
-        public void quick_scale()
+        public static void quick_scale()
         {
-            var asd = IsFullScreen();
+            //var asd = IsFullScreen();
             if (IsFullScreen())
             {
                 LossScale();
@@ -156,7 +158,7 @@ namespace keyupMusic2
             //quick_max_chrome();
         }
 
-        public static void quick_gamg_alttab(MouseKeyboardHook.KeyEventArgs e, string module_name)
+        public static void quick_gamg_alttab(KeyboardMouseHook.KeyEventArgs e, string module_name)
         {
             var allow = is_steam_game() || module_name == chrome || module_name == PowerToysCropAndLock;
             if (!allow) return;
@@ -171,18 +173,19 @@ namespace keyupMusic2
 
         public static void quick_close()
         {
-            CloseProcess();
+            if (!lock_err)
+                CloseProcess();
         }
 
         public static void quick_wechat_or_notify()
         {
             string module_name = ProcessName;
             if (is_down(Keys.Delete) || is_ctrl()) return;
-            if (ProcessName == Common.keyupMusic2)
-            {
-                press(F12);
-                return;
-            }
+            //if (ProcessName == Common.keyupMusic2)
+            //{
+            //    press(F12);
+            //    return;
+            //}
             if (Common.WeChat == module_name)
             {
                 CloseProcess(module_name);
@@ -224,7 +227,7 @@ namespace keyupMusic2
             system_sleep_count = 0;
         }
 
-        private static void quick_go_back(MouseKeyboardHook.KeyEventArgs e)
+        private static void quick_go_back(KeyboardMouseHook.KeyEventArgs e)
         {
             {
                 if (!biu.list_go_back.Contains(ProcessName)) return;
@@ -241,7 +244,7 @@ namespace keyupMusic2
             }
         }
 
-        private static void quick_number(MouseKeyboardHook.KeyEventArgs e)
+        private static void quick_number(KeyboardMouseHook.KeyEventArgs e)
         {
             if (is_down(Keys.F1))
                 switch (e.key)

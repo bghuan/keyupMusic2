@@ -5,7 +5,7 @@ using System.Diagnostics;
 using System.Drawing.Imaging;
 using System.Windows.Forms;
 using static keyupMusic2.Common;
-using static keyupMusic2.MouseKeyboardHook;
+using static keyupMusic2.KeyboardMouseHook;
 using static keyupMusic2.Native;
 using static System.Runtime.CompilerServices.RuntimeHelpers;
 
@@ -20,10 +20,10 @@ namespace keyupMusic2
         public static void hook_KeyDown(Keys keys)
         {
             Huan.keyupMusic2_onlisten = true;
-            var e = new MouseKeyboardHook.KeyEventArgs(KeyType.Down, keys, 0, new Native.keyboardHookStruct());
+            var e = new KeyboardMouseHook.KeyEventArgs(KeyType.Down, keys, 0, new Native.keyboardHookStruct());
             new SuperClass().hook_KeyDown_keyupMusic2(e);
         }
-        public void hook_KeyDown_keyupMusic2(MouseKeyboardHook.KeyEventArgs e)
+        public void hook_KeyDown_keyupMusic2(KeyboardMouseHook.KeyEventArgs e)
         {
             if (!Huan.keyupMusic2_onlisten) return;
             Common.hooked = true;
@@ -121,10 +121,12 @@ namespace keyupMusic2
                     ////ShowFadeInWallpaper(targetImage);
                     //var aaa = GetWallpaperFromRegistry();
                     //targetImage = "output.png";
-                    BatchCompressImages("C:\\Users\\bu\\Pictures\\Screenshots\\dd\\20241022", "C:\\Users\\bu\\Desktop", 80, 1920, 1080);
+                    //BatchCompressImages("C:\\Users\\bu\\Pictures\\Screenshots\\dd\\20241022", "C:\\Users\\bu\\Desktop", 80, 1920, 1080);
+                    //VirtualKeyboardForm.Instance.TriggerKey(Q, false);
                     break;
                 case Keys.J:
-                    SetDesktopWallpaperAli(GetCurrentWallpaperPath());
+                    //SetDesktopWallpaperAli(GetCurrentWallpaperPath());
+                    MoonTime.Instance.ChangeColor();
                     break;
                 case Keys.K:
                     huan.release_all_key(1000);
@@ -175,9 +177,9 @@ namespace keyupMusic2
                     });
                     break;
                 case Keys.F1:
-                    get_point_color(e);
-                    if (VirMouseStateKey.Count > 0)
-                        log("VirMouseStateKey: " + string.Join(", ", VirMouseStateKey));
+                    get_point_color();
+                    //if (VirMouseStateKey.Count > 0)
+                    //    log("VirMouseStateKey: " + string.Join(", ", VirMouseStateKey));
                     break;
                 //case Keys.F2:
                 //    //LossScale();
@@ -232,6 +234,10 @@ namespace keyupMusic2
                     break;
                 case Keys.PageDown:
                     press(Keys.MediaPlayPause);
+                    break;
+                case Keys.D0:
+                    play_sound_bongocat(Keys.D0);
+                    NotityTime = DateTime.Now.AddMinutes(10);
                     break;
 
                 default:
@@ -306,13 +312,13 @@ namespace keyupMusic2
                 Console.WriteLine($"Error opening image: {ex.Message}");
             }
         }
-        private static void notify()
+        public static void notify(string title = "拯救锁屏无登录", string msg = "这是一个系统通知内容。")
         {
             NotifyIcon notifyIcon = new NotifyIcon();
             notifyIcon.Icon = SystemIcons.Application;
             notifyIcon.Visible = true;
-            notifyIcon.BalloonTipTitle = "拯救锁屏无登录";
-            notifyIcon.BalloonTipText = "这是一个系统通知内容。";
+            notifyIcon.BalloonTipTitle = title;
+            notifyIcon.BalloonTipText = msg;
             notifyIcon.ShowBalloonTip(10000);
         }
 
@@ -353,7 +359,7 @@ namespace keyupMusic2
             Common.cmd($"/c start ms-settings:sound", action2, 200);
         }
 
-        public void get_point_color(MouseKeyboardHook.KeyEventArgs e)
+        public static void get_point_color()
         {
             Point mousePosition = Cursor.Position;
             var last_x = Cursor.Position.X;
@@ -373,9 +379,9 @@ namespace keyupMusic2
 
                 var color = bmpScreenshot.GetPixel(relativeX, relativeY);
                 string asd = $"({mousePosition.X},{mousePosition.Y}, Color.FromArgb({color.R},{color.G},{color.B}))";
-                log(processWrapper.ToString() + " " + asd);
+                log(processWrapper.ToString() + " " + GetPointName() + " " + asd);
                 //process_and_log(e?.key.ToString());
-                Invoke(() => Clipboard.SetText(asd));
+                huan.Invoke(() => Clipboard.SetText(asd));
                 return;
             }
             using (Bitmap bitmap = new Bitmap(1, 1))
@@ -385,10 +391,10 @@ namespace keyupMusic2
                     g.CopyFromScreen(last_x, last_y, 0, 0, new System.Drawing.Size(1, 1));
                     var color = bitmap.GetPixel(0, 0);
                     string asd = $"({mousePosition.X},{mousePosition.Y}, Color.FromArgb({color.R},{color.G},{color.B}))";
-                    log(processWrapper.ToString() + " " + asd);
                     //process_and_log(e?.key.ToString());
+                    log(processWrapper.ToString() + " " + GetPointName() + " " + asd);
                     asd = $"{mousePosition.X},{mousePosition.Y}";
-                    Invoke(() => Clipboard.SetText(asd));
+                    huan.Invoke(() => Clipboard.SetText(asd));
                 }
             }
         }

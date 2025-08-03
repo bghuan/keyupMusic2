@@ -2,7 +2,7 @@ using Microsoft.Win32;
 using System.Diagnostics;
 using System.Runtime.InteropServices;
 using static keyupMusic2.Common;
-using static keyupMusic2.MouseKeyboardHook;
+using static keyupMusic2.KeyboardMouseHook;
 
 namespace keyupMusic2
 {
@@ -24,7 +24,7 @@ namespace keyupMusic2
         public static bool keyupMusic2_onlisten = false;
         DateTime super_listen_time = new DateTime();
         static int super_listen_tick = 144 * 14;
-        public MouseKeyboardHook _mouseKbdHook;
+        public KeyboardMouseHook _mouseKbdHook;
         Double timerMove_Tick_tick = super_listen_tick;
         Keys[] special_key = { Keys.F22, Keys.RMenu, Keys.RWin };
         private Point startPoint = new Point(1510, 100);
@@ -193,6 +193,8 @@ namespace keyupMusic2
             //Blob blobForm = new Blob();
             //blobForm.Show();
             //blobForm.Hide();
+            timerMove.Interval = 3000;
+            timerMove.Tick += timerMove_Tick;
             form_move();
             if (is_init_show)
             {

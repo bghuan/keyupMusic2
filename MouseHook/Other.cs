@@ -2,7 +2,7 @@
 using System.Security.Policy;
 using System.Windows.Forms;
 using static keyupMusic2.Common;
-using static keyupMusic2.MouseKeyboardHook;
+using static keyupMusic2.KeyboardMouseHook;
 
 namespace keyupMusic2
 {
@@ -11,7 +11,7 @@ namespace keyupMusic2
 
         Dictionary<MouseMsg, DateTime> MouseMsgTime = new Dictionary<MouseMsg, DateTime>();
         static bool is_PowerToysCropAndLock_down = false;
-        public void Other(MouseKeyboardHook.MouseEventArgs e)
+        public void Other(KeyboardMouseHook.MouseEventArgs e)
         {
             //bool double_click = e.Msg == MouseMsg.WM_LBUTTONUP && is_double_click();
 
@@ -47,7 +47,7 @@ namespace keyupMusic2
                     change_image(e);
         }
 
-        private void Handle_哔哩哔哩(MouseKeyboardHook.MouseEventArgs e)
+        private void Handle_哔哩哔哩(KeyboardMouseHook.MouseEventArgs e)
         {
             if (e.Msg == MouseMsg.move) return;
             if (e.Msg == MouseMsg.click_r_up)
@@ -59,7 +59,7 @@ namespace keyupMusic2
             }
         }
 
-        private void Handleexplorer(MouseKeyboardHook.MouseEventArgs e)
+        private void Handleexplorer(KeyboardMouseHook.MouseEventArgs e)
         {
             if (e.Msg == MouseMsg.move) return;
             if (e.Msg == MouseMsg.click_up)
@@ -69,7 +69,7 @@ namespace keyupMusic2
             }
         }
 
-        private void HandleBandiView(MouseKeyboardHook.MouseEventArgs e)
+        private void HandleBandiView(KeyboardMouseHook.MouseEventArgs e)
         {
             if (e.Msg == MouseMsg.move) return;
             if (GetPointName() != Honeyview) return;
@@ -86,7 +86,7 @@ namespace keyupMusic2
             //press(10, 400, Escape, Delete, 200, Return);
         }
 
-        private static void change_image(MouseKeyboardHook.MouseEventArgs e)
+        private static void change_image(KeyboardMouseHook.MouseEventArgs e)
         {
             if (e.Msg == MouseMsg.wheel)
             {
@@ -115,7 +115,7 @@ namespace keyupMusic2
             }
         }
 
-        private void _KingdomRush(MouseKeyboardHook.MouseEventArgs e)
+        private void _KingdomRush(KeyboardMouseHook.MouseEventArgs e)
         {
             if (e.Msg == MouseMsg.click_r_up)
             {
@@ -123,7 +123,7 @@ namespace keyupMusic2
             }
         }
 
-        private void _Rsg(MouseKeyboardHook.MouseEventArgs e)
+        private void _Rsg(KeyboardMouseHook.MouseEventArgs e)
         {
             if (e.Msg == MouseMsg.middle)
             {
@@ -133,14 +133,14 @@ namespace keyupMusic2
 
 
 
-        private void Msedge(MouseKeyboardHook.MouseEventArgs e)
+        private void Msedge(KeyboardMouseHook.MouseEventArgs e)
         {
         }
 
-        private void Cs2(MouseKeyboardHook.MouseEventArgs e)
+        private void Cs2(KeyboardMouseHook.MouseEventArgs e)
         {
         }
-        private void Devenv(MouseKeyboardHook.MouseEventArgs e)
+        private void Devenv(KeyboardMouseHook.MouseEventArgs e)
         {
             if (e.Msg == MouseMsg.click_up)
                 if (is_down_vir(Keys.RButton))
@@ -165,7 +165,7 @@ namespace keyupMusic2
                 catch_off();
             }
         }
-        private void PowerToysCropAndLock(MouseKeyboardHook.MouseEventArgs e)
+        private void PowerToysCropAndLock(KeyboardMouseHook.MouseEventArgs e)
         {
             //if (!is_no_title(PowerToysCropAndLock))
             //    break;
@@ -211,13 +211,15 @@ namespace keyupMusic2
                 //HandleMouseWheel(e);
             }
         }
-        private void Chrome(MouseKeyboardHook.MouseEventArgs e)
+        private void Chrome(KeyboardMouseHook.MouseEventArgs e)
         {
             if (e.Msg == MouseMsg.click_up && (e.X == screenWidth1))
                 CenterWindowOnScreen(chrome, e.Y >= screenHeight2);
             else if (e.Msg == MouseMsg.click_r_up && !LongPressClass.long_press_rbutton && ExistProcess(Common.PowerToysCropAndLock, true))
             {
                 //if (e.X == 0) { press(Keys.OemPeriod); return; }
+                if (judge_color(1840, 51, Color.FromArgb(162, 37, 45)))
+                    press(Keys.F, 51);
                 quick_max_chrome(e.Pos);
             }
             else if (e.Msg == MouseMsg.back_up)
@@ -237,7 +239,7 @@ namespace keyupMusic2
             }
         }
 
-        public static void wheelleftright(MouseKeyboardHook.MouseEventArgs e)
+        public static void wheelleftright(KeyboardMouseHook.MouseEventArgs e)
         {
             if (e.Msg != MouseMsg.wheel) return;
             Keys keys = Keys.Right;

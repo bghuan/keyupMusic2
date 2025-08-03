@@ -1,6 +1,6 @@
 ﻿using System.Windows.Forms;
 using static keyupMusic2.Common;
-using static keyupMusic2.MouseKeyboardHook;
+using static keyupMusic2.KeyboardMouseHook;
 using static keyupMusic2.Native;
 using static keyupMusic2.Simulate;
 using static System.Windows.Forms.VisualStyles.VisualStyleElement;
@@ -10,7 +10,7 @@ namespace keyupMusic2
     public partial class biu
     {
         IntPtr last_hwnd = IntPtr.Zero;
-        private void easy_redad(MouseKeyboardHook.MouseEventArgs e)
+        private void easy_redad(KeyboardMouseHook.MouseEventArgs e)
         {
             if (isctrl())
             {
@@ -35,7 +35,7 @@ namespace keyupMusic2
             }
             return;
         }
-        private void easy_read(MouseKeyboardHook.MouseEventArgs e)
+        private void easy_read(KeyboardMouseHook.MouseEventArgs e)
         {
             if (e.Msg == MouseMsg.move)
             {
@@ -57,7 +57,7 @@ namespace keyupMusic2
                 huan.label1.Text = msg;
             }, 10);
         }
-        public void BottomLine(MouseKeyboardHook.MouseEventArgs e)
+        public void BottomLine(KeyboardMouseHook.MouseEventArgs e)
         {
             if (e.Msg == MouseMsg.click_r_up)
             {

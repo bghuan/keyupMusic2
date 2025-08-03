@@ -1,5 +1,5 @@
 ﻿using static keyupMusic2.Common;
-using static keyupMusic2.MouseKeyboardHook;
+using static keyupMusic2.KeyboardMouseHook;
 
 namespace keyupMusic2
 {
@@ -10,7 +10,7 @@ namespace keyupMusic2
         int num;
         int num1222 = 1;
         bool not_in_class = false;
-        public override bool judge_handled(MouseKeyboardHook.KeyEventArgs e)
+        public override bool judge_handled(KeyboardMouseHook.KeyEventArgs e)
         {
             not_in_class = ProcessName != douyin
                 && ProcessTitle?.IndexOf("抖音") < 0
@@ -18,7 +18,7 @@ namespace keyupMusic2
             if (not_in_class) return false;
             return false;
         }
-        public void hook_KeyDown_ddzzq(MouseKeyboardHook.KeyEventArgs e)
+        public void hook_KeyDown_ddzzq(KeyboardMouseHook.KeyEventArgs e)
         {
             string module_name = ProcessName;
             if (not_in_class) return;
@@ -40,7 +40,7 @@ namespace keyupMusic2
             Common.hooked = false;
             if (!handling) handling = true;
         }
-        private void click_double_speed(MouseKeyboardHook.KeyEventArgs e, int num1222)
+        private void click_double_speed(KeyboardMouseHook.KeyEventArgs e, int num1222)
         {
             var a = new[] { Keys.Left, Keys.Right };
             var b = new[] { Keys.PageDown, Keys.Right };

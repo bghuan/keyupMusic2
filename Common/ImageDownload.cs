@@ -42,9 +42,9 @@ namespace keyupMusic2
         }
 
         // 壁纸样式常量
-        private const int SPI_SETDESKWALLPAPER = 20;
-        private const int SPIF_UPDATEINIFILE = 0x01;
-        private const int SPIF_SENDCHANGE = 0x02;
+        public const int SPI_SETDESKWALLPAPER = 20;
+        public const int SPIF_UPDATEINIFILE = 0x01;
+        public const int SPIF_SENDCHANGE = 0x02;
 
         // 请求状态管理
         private static WallpaperRequest currentRequest = null;

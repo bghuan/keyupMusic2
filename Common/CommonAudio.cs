@@ -89,14 +89,15 @@ namespace keyupMusic2
         }
         static string wav_di = "wav\\d2.wav";
         static bool is_di = File.Exists(wav_di);
-        public static void play_sound_di(float little = 1)
+        public static void play_sound_di()
         {
             if (!is_di) return;
             try
             {
                 player_reader_di = new WaveFileReader(wav_di);
                 float volume = GetSystemVolume();
-                if (volume > 0.2) { volume = little / volume; }
+                if (volume > 0.2) { volume = 1 / volume; }
+                else volume = 1;
                 var volumeProvider2 = new VolumeWaveProvider16(player_reader_di) { Volume = volume };
                 player_di.Stop();
                 player_di.Init(volumeProvider2);

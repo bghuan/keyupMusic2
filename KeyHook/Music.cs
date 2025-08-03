@@ -1,5 +1,5 @@
 ﻿using static keyupMusic2.Common;
-using static keyupMusic2.MouseKeyboardHook;
+using static keyupMusic2.KeyboardMouseHook;
 
 namespace keyupMusic2
 {
@@ -18,7 +18,7 @@ namespace keyupMusic2
                     [Keys.Space, Keys.D0]
         }};
 
-        public static void hook_KeyDown_keyupMusic2(MouseKeyboardHook.KeyEventArgs e)
+        public static void hook_KeyDown_keyupMusic2(KeyboardMouseHook.KeyEventArgs e)
         {
             return;
             hook_KeyDown_keyupMusic2222(e);
@@ -47,7 +47,7 @@ namespace keyupMusic2
             Common.hooked = false;
         }
         static Keys[] keys2 = { Keys.D1, Keys.D2, Keys.D3, Keys.D4, Keys.D5, Keys.D6, Keys.D7, Keys.D8, Keys.D9, Keys.D0 };
-        public static void hook_KeyDown_keyupMusic2222(MouseKeyboardHook.KeyEventArgs e)
+        public static void hook_KeyDown_keyupMusic2222(KeyboardMouseHook.KeyEventArgs e)
         {
             if (!keys2.Contains(e.key)) return;
             if (Common.hooked) return;

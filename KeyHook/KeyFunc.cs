@@ -5,7 +5,7 @@ using System.Diagnostics;
 using System.Drawing.Imaging;
 using System.Windows.Forms;
 using static keyupMusic2.Common;
-using static keyupMusic2.MouseKeyboardHook;
+using static keyupMusic2.KeyboardMouseHook;
 using static keyupMusic2.Native;
 using static System.Runtime.CompilerServices.RuntimeHelpers;
 
@@ -15,8 +15,10 @@ namespace keyupMusic2
     {
         public void init()
         {
-            new KeyFunc(Keys.F11, AllClass.quick_visiualstudio).type = KeyType.Up;
-            new KeyFunc(Keys.F12, AllClass.quick_wechat_or_notify).type = KeyType.Up;
+            new KeyFunc(Keys.F1, SuperClass.get_point_color) { type = KeyType.Down };
+            new KeyFunc(Keys.F2, AllClass.quick_scale) { type = KeyType.Up };
+            new KeyFunc(Keys.F11, AllClass.quick_visiualstudio) { type = KeyType.Up };
+            new KeyFunc(Keys.F12, AllClass.quick_wechat_or_notify) { type = KeyType.Up };
             //new KeyFunc(Keys.D5, () => { press(MediaPlayPause); }, msedge);
             {
                 var processName = SearchHost;
@@ -64,7 +66,7 @@ namespace keyupMusic2
             this.action = action;
             All.Add(this);
         }
-        public bool target(MouseKeyboardHook.KeyEventArgs e)
+        public bool target(KeyboardMouseHook.KeyEventArgs e)
         {
             if (key == Keys.None) return false;
             if (action == null) return false;
@@ -78,7 +80,7 @@ namespace keyupMusic2
         }
         public static List<KeyFunc> All = new List<KeyFunc>();
 
-        internal static void hook_KeyDown_ddzzq(MouseKeyboardHook.KeyEventArgs e)
+        internal static void hook_KeyDown_ddzzq(KeyboardMouseHook.KeyEventArgs e)
         {
             for (int i = 0; i < All.Count; i++)
             {

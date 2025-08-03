@@ -3,7 +3,7 @@ using NAudio.Gui;
 using System;
 using System.Diagnostics;
 using static keyupMusic2.Common;
-using static keyupMusic2.MouseKeyboardHook;
+using static keyupMusic2.KeyboardMouseHook;
 
 namespace keyupMusic2
 {
@@ -12,9 +12,10 @@ namespace keyupMusic2
         private static Huan _instance;
         public static Huan Instance => _instance;
 
-        public bool judge_handled(MouseKeyboardHook.KeyEventArgs e)
+        public bool judge_handled(KeyboardMouseHook.KeyEventArgs e)
         {
             if (is_alt() && is_down(Keys.Tab)) return false;
+            if (e.key == Keys.F1 && !isctrl()) return true;
             if (e.key == Keys.F3) return true;
             if (e.key == Keys.F9) return true;
             if (keyupMusic2_onlisten) { e.Handled = true; }
@@ -68,23 +69,22 @@ namespace keyupMusic2
             }
             if (ProcessName == Common.msedge && !is_douyin())
             {
-                if (e.key == Keys.VolumeUp || e.key == Keys.VolumeDown)
-                    if (e.X == screenWidth1 || e.Y == screenHeight1)
-                        return true;
+                if ((e.key == Keys.VolumeUp || e.key == Keys.VolumeDown) && e.Y == screenHeight1)
+                    return true;
             }
             var flag = Chrome.judge_handled(e) || Douyin.judge_handled(e) || WinClass.judge_handled(e);
             return flag;
         }
 
-        private void KeyBoardHookProc(MouseKeyboardHook.KeyEventArgs e)
+        private void KeyBoardHookProc(KeyboardMouseHook.KeyEventArgs e)
         {
             //if (e.Type != KeyboardType.KeyDown) return;
             FreshProcessName();
-            if (!is_steam_game())
-                VirtualKeyboardForm.Instance?.TriggerKey(e.key, e.Type == KeyType.Up);
             if (judge_handled(e)) { e.Handled = true; VirKeyState(e); }
             if (quick_replace_key(e)) return;
             if (deal_handilngkey(e.key, e.Type == KeyType.Down)) return;
+            if (!is_steam_game())
+                VirtualKeyboardForm.Instance?.TriggerKey(e.key, e.Type == KeyType.Up);
             print_easy_read(e);
 
             //Log.logcache(e.key.ToString());
@@ -127,15 +127,16 @@ namespace keyupMusic2
             {
                 if (handling_keys.ContainsKey(key)) return true;
                 handling_keys[key] = DateTime.Now;
+                //log("2" + key + handling_keys[key]);
             }
             else
                 handling_keys.TryRemove(key, out _);
             return false;
         }
 
-        private void F39(MouseKeyboardHook.KeyEventArgs e)
+        private void F39(KeyboardMouseHook.KeyEventArgs e)
         {
-            play_sound_di();
+            //play_sound_di();
             if (e.key == Keys.F9 && keyupMusic2_onlisten)
             {
                 system_sleep();
@@ -151,8 +152,8 @@ namespace keyupMusic2
             }
             else
             {
-                form_move();
                 super_listen();
+                form_move();
             }
         }
 
@@ -166,8 +167,6 @@ namespace keyupMusic2
         }
         private void form_move()
         {
-            blobForm.Show();
-            blobForm.changeFlag(true);
             Invoke2(() =>
             {
                 if (Opacity == 0) { return; }
@@ -175,10 +174,12 @@ namespace keyupMusic2
                 //temp_visiable = Visible;
                 //if (!Visible) { SetVisibleCore(true); }
                 if (Focused) { FocusProcessSimple(current_hwnd); }
-                timerMove.Interval = 1000 / 144;
-                // 解除旧的事件绑定，防止叠加
-                timerMove.Tick -= timerMove_Tick;
-                timerMove.Tick += timerMove_Tick;
+                blobForm.Show();
+                blobForm.changeFlag(true);
+                //timerMove.Interval = 1000 / 144;
+                //// 解除旧的事件绑定，防止叠加
+                //timerMove.Tick -= timerMove_Tick;
+                //timerMove.Tick += timerMove_Tick;
                 timerMove.Start();
                 Location = startPoint;
                 startTime = DateTime.Now;
@@ -186,13 +187,14 @@ namespace keyupMusic2
         }
         private void timerMove_Tick(object sender, EventArgs e)
         {
-            TimeSpan elapsed = DateTime.Now - startTime;
+            //TimeSpan elapsed = DateTime.Now - startTime;
 
-            int currentX = (int)(startPoint.X + (endPoint.X - startPoint.X) * (elapsed.TotalMilliseconds / timerMove_Tick_tick));
-            int currentY = startPoint.Y;
-            //Location = new Point(currentX, currentY);
+            //int currentX = (int)(startPoint.X + (endPoint.X - startPoint.X) * (elapsed.TotalMilliseconds / timerMove_Tick_tick));
+            //int currentY = startPoint.Y;
+            ////Location = new Point(currentX, currentY);
 
-            if (elapsed.TotalMilliseconds > timerMove_Tick_tick) { timer_stop(); }
+            //if (elapsed.TotalMilliseconds > timerMove_Tick_tick) { timer_stop(); }
+            timer_stop();
         }
 
 
@@ -263,20 +265,24 @@ namespace keyupMusic2
             if (!IsFullScreen()) y += 100;
             if (!WaitForKeysReleased(1000, is_lbutton)) return;
 
-            var pos = Position;
+            Native.GetCursorPos(out var pos);
+            //SuperClass.get_point_color();
             mouse_move(x, y, 20);
             mouse_middle_click(20);
             mouse_move(pos);
+            //SuperClass.get_point_color();
+            //TaskRun(() => { SuperClass.get_point_color(); }, 3000);
         }
         public void start_catch(string msg)
         {
             play_sound_di2();
             if (msg.Contains(start_check_str))
             {
-                string[] list_f1 = [StartMenuExperienceHost, SearchHost, clashverge,];
+                //string[] list_f1 = [StartMenuExperienceHost, SearchHost, clashverge,];
+                string[] list_f1 = [clashverge,];
                 string[] list_nothing = [devenv, Common.keyupMusic2, explorer, cs2];
                 if (Position.X == 0 && (Position.Y == screenHeight1 || Position.Y == 0))
-                    AllClass.run_vis();
+                    AllClass.quick_visiualstudio();
                 else if (Position.Y == 0)
                     Invoke(() => { SetVisibleCore(!Visible); });
                 else if (Position.X == screenWidth1 && Position.Y == screenHeight1)
@@ -293,8 +299,8 @@ namespace keyupMusic2
                 else if (IsDesktopFocused()) { }
                 else if (ProcessName == Honeyview)
                     press_raw(OemPeriod);
-                else if (is_steam_game())
-                    record_screen();
+                //else if (is_steam_game())
+                //    record_screen();
                 else
                     LossScale();
             }

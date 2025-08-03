@@ -1,5 +1,6 @@
-﻿using static keyupMusic2.Common;
-using static keyupMusic2.MouseKeyboardHook;
+﻿using System.Windows.Forms;
+using static keyupMusic2.Common;
+using static keyupMusic2.KeyboardMouseHook;
 using static keyupMusic2.Native;
 
 namespace keyupMusic2
@@ -24,7 +25,7 @@ namespace keyupMusic2
             list = tempList.ToArray();
         }
 
-        public void hook_KeyDown(MouseKeyboardHook.KeyEventArgs e)
+        public void hook_KeyDown(KeyboardMouseHook.KeyEventArgs e)
         {
             string module_name = ProcessName;
             handling_keys = e.key;
@@ -70,6 +71,11 @@ namespace keyupMusic2
                         hideProcessTitle(PowerToysCropAndLock);
                         MoveProcessWindow2(PowerToysCropAndLock);
                     }
+                    if (e.key == Up || e.key == Down || e.key == Left || e.key == Right)
+                    {
+                        MoveProcessWindow2(PowerToysCropAndLock, e.key);
+                        Huan.handling_keys.TryRemove(e.key, out _);
+                    }
                     break;
                 case Common.oriwotw:
                     HandleOriwotw(e.key);
@@ -81,8 +87,8 @@ namespace keyupMusic2
                     if (e.key == Keys.F5)
                         Simm.KeyPress(Common.keyupMusic2);
                     break;
-                case Common.vlc:
-                    HandleVlc(e);
+                    //case Common.vlc:
+                    //    HandleVlc(e);
                     break;
                 case Common.VSCode:
                     HandleVSCode(e);
@@ -101,7 +107,7 @@ namespace keyupMusic2
             Common.hooked = false;
         }
 
-        private void Handle_哔哩哔哩(MouseKeyboardHook.KeyEventArgs e)
+        private void Handle_哔哩哔哩(KeyboardMouseHook.KeyEventArgs e)
         {
             if (e.key == Keys.OemPeriod)
             {
@@ -112,7 +118,7 @@ namespace keyupMusic2
             }
         }
 
-        private void HandleQuickLook(MouseKeyboardHook.KeyEventArgs e)
+        private void HandleQuickLook(KeyboardMouseHook.KeyEventArgs e)
         {
             var ll = new Keys[] { D1, D2, D3, D4, D5, D6, D7, D8, D9, D0 };
             if (ll.Contains(e.key))
@@ -122,7 +128,7 @@ namespace keyupMusic2
             }
         }
 
-        private void HandleBandiView(MouseKeyboardHook.KeyEventArgs e)
+        private void HandleBandiView(KeyboardMouseHook.KeyEventArgs e)
         {
             if (e.key == OemPeriod)
             {
@@ -137,9 +143,13 @@ namespace keyupMusic2
                 var id = title.Substring(0, 5);
                 OpenDir(id);
             }
+            if (e.key == RControlKey)
+            {
+                press(Delete);
+            }
         }
 
-        private void HandleProgman(MouseKeyboardHook.KeyEventArgs e)
+        private void HandleProgman(KeyboardMouseHook.KeyEventArgs e)
         {
             var desk = IsDesktopFocused();
             if (!desk && ProcessName != cs2) return;
@@ -147,6 +157,24 @@ namespace keyupMusic2
             switch (e.key)
             {
                 case Keys.Down:
+                    var currentPath = GetWallpaperFromRegistry();
+                    if (currentPath.Contains("image\\202"))
+                    {
+                        string currentFileName = Path.GetFileName(currentPath);
+                        string folderPath = currentPath.Replace(currentFileName, "");
+                        // 目标文件夹路径
+                        var fileNames = Directory.GetFiles(folderPath)
+                                                .Select(Path.GetFileName)
+                                                .OrderBy(name => name)
+                                                .ToList();
+                        int currentIndex = fileNames.IndexOf(currentFileName);
+                        var s = "";
+                        if (currentIndex != -1 && currentIndex < fileNames.Count - 1)
+                            s = fileNames[currentIndex + 1];
+                        else if (currentIndex == fileNames.Count - 1)
+                            s = fileNames[0];
+                        SystemParametersInfo(SPI_SETDESKWALLPAPER, 0, folderPath + s, SPIF_UPDATEINIFILE | SPIF_SENDCHANGE);
+                    }
                     string nextWallpaper = GetNextWallpaper();
                     SetDesktopWallpaper(nextWallpaper, WallpaperStyle.Fit, true);
                     break;
@@ -191,7 +219,7 @@ namespace keyupMusic2
             }
         }
 
-        private void HandleMsEdge(MouseKeyboardHook.KeyEventArgs e)
+        private void HandleMsEdge(KeyboardMouseHook.KeyEventArgs e)
         {
             switch (e.key)
             {
@@ -214,11 +242,11 @@ namespace keyupMusic2
                             press(Keys.PageUp, 0);
                     break;
                 case Keys.VolumeDown:
-                    if (e.X == screenWidth1 || e.Y == screenHeight1)
+                    if (e.Y == screenHeight1)
                         press_rate(Keys.PageDown, 0);
                     break;
                 case Keys.VolumeUp:
-                    if (e.X == screenWidth1 || e.Y == screenHeight1)
+                    if (e.Y == screenHeight1)
                         press_rate(Keys.PageUp, 0);
                     break;
             }
@@ -236,7 +264,7 @@ namespace keyupMusic2
             }
         }
 
-        private void HandleKingdom(MouseKeyboardHook.KeyEventArgs e)
+        private void HandleKingdom(KeyboardMouseHook.KeyEventArgs e)
         {
             switch (e.key)
             {
@@ -274,7 +302,7 @@ namespace keyupMusic2
             }
         }
 
-        private void HandleCS2(MouseKeyboardHook.KeyEventArgs e)
+        private void HandleCS2(KeyboardMouseHook.KeyEventArgs e)
         {
             if (ProcessName != cs2) return;
             switch (e.key)
@@ -357,7 +385,7 @@ namespace keyupMusic2
             }
         }
 
-        private void HandleVlc(MouseKeyboardHook.KeyEventArgs e)
+        private void HandleVlc(KeyboardMouseHook.KeyEventArgs e)
         {
             int tick = 100;
             switch (e.key)
@@ -402,7 +430,7 @@ namespace keyupMusic2
             }
         }
 
-        private void HandleVSCode(MouseKeyboardHook.KeyEventArgs e)
+        private void HandleVSCode(KeyboardMouseHook.KeyEventArgs e)
         {
             switch (e.key)
             {

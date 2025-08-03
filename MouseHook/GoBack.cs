@@ -3,7 +3,7 @@ using System.Linq;
 using System.Runtime.InteropServices;
 using System.Windows.Forms;
 using static keyupMusic2.Common;
-using static keyupMusic2.MouseKeyboardHook;
+using static keyupMusic2.KeyboardMouseHook;
 using static keyupMusic2.Native;
 using static keyupMusic2.Simulate;
 using static System.Windows.Forms.VisualStyles.VisualStyleElement;
@@ -28,7 +28,7 @@ namespace keyupMusic2
            //new ReplaceKey(string.Empty,    MouseMsg.go,        Keys.MediaNextTrack),
            //new ReplaceKey(string.Empty,    MouseMsg.go,        Keys.MediaPreviousTrack),
         };
-        private void GoBack2(MouseKeyboardHook.MouseEventArgs e)
+        private void GoBack2(KeyboardMouseHook.MouseEventArgs e)
         {
             if (e.Msg == MouseMsg.move) return;
             if (!go_back_keys.Contains(e.Msg)) return;
@@ -51,16 +51,18 @@ namespace keyupMusic2
                 }
             }
         }
-        private void GoBack(MouseKeyboardHook.MouseEventArgs e)
+        private void GoBack(KeyboardMouseHook.MouseEventArgs e)
         {
             if (e.Msg == MouseMsg.move) return;
             var go = e.Msg == MouseMsg.go_up;
             var back = e.Msg == MouseMsg.back_up;
             if (!(go || back)) return;
 
-             if (is_douyin())
+            if (is_douyin())
                 Douyin(go, back);
-            else if(ProcessName == msedge)
+            //else if (IsFullVedio() && go)
+            //    press(F);
+            else if (ProcessName == msedge)
                 Msedge(go, back);
             else if (ProcessName == Common.cs2)
                 cs2(go, back);
@@ -135,10 +137,10 @@ namespace keyupMusic2
         private void Msedge(bool go, bool back)
         {
             if (back)
-                if (judge_color(33, 80, Color.FromArgb(204, 204, 204), 0))
+                if (judge_color(33, 80, Color.FromArgb(183, 183, 183), 3))
                     //if (judge_color(92, 73, Color.FromArgb(0, 0, 0), null, 0))
                     press([Keys.LControlKey, Keys.W]);
-                else if (ProcessTitle.Contains("首发起点中文网"))
+                else if (ProcessTitle.Contains("起点中文网") && !ProcessTitle.Contains("类"))
                     press([Keys.LControlKey, Keys.W]);
             if (go) press(Keys.Right);
             //if (back)

@@ -28,10 +28,12 @@ namespace keyupMusic2
             TopMost = true;
             Text = "Blob";
             ShowInTaskbar = false;
-            this.Width = Screen.PrimaryScreen.Bounds.Width;
-            this.Height = Screen.PrimaryScreen.Bounds.Height - 70;
+            //this.Width = Screen.PrimaryScreen.Bounds.Width;
+            //this.Height = Screen.PrimaryScreen.Bounds.Height - 70;
+            this.Width = 400;
+            this.Height = 400;
             this.StartPosition = FormStartPosition.Manual; // 很重要！
-            this.Location = new Point(Width / 5, 0);            // 在 Load 或 Shown 事件中设置
+            this.Location = new Point(Screen.PrimaryScreen.Bounds.Width - Width - 20, 20);            // 在 Load 或 Shown 事件中设置
             webView21.DefaultBackgroundColor = Color.Transparent;
 
             InitializeAsync();
@@ -96,7 +98,7 @@ namespace keyupMusic2
             if (webView21.CoreWebView2 == null) return;
             //webView21.CoreWebView2.ExecuteScriptAsync("console.log('测试JS通信');");
             //webView21.CoreWebView2.ExecuteScriptAsync("console.log(changeFlag);");
-            string js = $"changeFlag({(flag ? 1:0)});";
+            string js = $"changeFlag({(flag ? 1 : 0)});";
             webView21.Invoke(new Action(() => webView21.CoreWebView2.ExecuteScriptAsync(js)));
         }
     }

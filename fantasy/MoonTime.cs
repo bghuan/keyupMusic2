@@ -168,7 +168,13 @@ namespace keyupMusic2
                 webView21.Invoke(new Action(() => webView21.CoreWebView2.ExecuteScriptAsync(js)));
             else
                 webView21.CoreWebView2.ExecuteScriptAsync(js);
+        }
 
+        // 在 C# 中调用 JS 的方法
+        public void ChangeColor()
+        {
+            string js = $"get_fill2_flag = !get_fill2_flag;drawCanvas2_refresh();";
+            webView21.Invoke(() => webView21.CoreWebView2.ExecuteScriptAsync(js));
         }
     }
 }

@@ -1,6 +1,6 @@
 ﻿using System.Windows.Forms;
 using static keyupMusic2.Common;
-using static keyupMusic2.MouseKeyboardHook;
+using static keyupMusic2.KeyboardMouseHook;
 using static keyupMusic2.Native;
 using static keyupMusic2.Simulate;
 using static System.Windows.Forms.VisualStyles.VisualStyleElement;
@@ -17,7 +17,7 @@ namespace keyupMusic2
         public static Point r_down_x = Point.Empty;
         bool menu_opened = false;
 
-        public bool judge_handled(MouseKeyboardHook.MouseEventArgs e)
+        public bool judge_handled(KeyboardMouseHook.MouseEventArgs e)
         {
             if (e.Msg == MouseMsg.move) return false;
             if (e.Msg == MouseMsg.middle && !raw_middle) return true;
@@ -44,21 +44,23 @@ namespace keyupMusic2
                     if (!list.Contains(GetPointName())) return false;
                     return true;
                 }
-                if (ProcessName == chrome && ExistProcess(Common.PowerToysCropAndLock))
+                if (ProcessName == chrome && ExistProcess(Common.PowerToysCropAndLock, true))
                     return true;
             }
             if (e.Msg == MouseMsg.wheel)
             {
+                if (is_douyin() && e.X == 0)
+                    return true;
                 if (IsFullVedio())
                     return true;
                 var list = new[] { Glass2, vlc, /*Honeyview*/ };
-                if (list.Contains(Common.ProcessName))
+                if (list.Contains(Common.ProcessName) && !GetPointTitle().Contains("设置"))
                     return true;
             }
             return false;
         }
 
-        public void MouseHookProc(MouseKeyboardHook.MouseEventArgs e)
+        public void MouseHookProc(KeyboardMouseHook.MouseEventArgs e)
         {
             if (e.Msg != MouseMsg.move) FreshProcessName();
             if (judge_handled(e)) { e.Handled = true; VirKeyState(e.Msg); }
@@ -80,7 +82,7 @@ namespace keyupMusic2
                 All(e);
             });
         }
-        private void All(MouseKeyboardHook.MouseEventArgs e)
+        private void All(KeyboardMouseHook.MouseEventArgs e)
         {
             if (e.Msg == MouseMsg.move) return;
 
@@ -98,7 +100,13 @@ namespace keyupMusic2
                 if (e.data > 0) keys = Keys.F8;
                 press(keys);
             }
-            if (e.Msg == MouseMsg.wheel && IsFullVedio())
+            if (e.Msg == MouseMsg.wheel && is_douyin() && e.X == 0)
+            {
+                Keys keys = Keys.Right;
+                if (e.data > 0) keys = Keys.Left;
+                press(keys);
+            }
+            if (e.Msg == MouseMsg.wheel && IsFullVedio() && !GetPointTitle().Contains("设置"))
             {
                 Keys keys = Keys.Right;
                 if (e.data > 0) keys = Keys.Left;

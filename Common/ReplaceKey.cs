@@ -2,13 +2,13 @@
 using System.Diagnostics;
 using static keyupMusic2.biu;
 using static keyupMusic2.Common;
-using static keyupMusic2.MouseKeyboardHook;
+using static keyupMusic2.KeyboardMouseHook;
 
 namespace keyupMusic2
 {
     public partial class Common
     {
-        public static bool quick_replace_key(MouseKeyboardHook.KeyEventArgs e)
+        public static bool quick_replace_key(KeyboardMouseHook.KeyEventArgs e)
         {
             for (int i = 0; i < replace.Count; i++)
             {

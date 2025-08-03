@@ -12,24 +12,14 @@ namespace keyupMusic2
         public const int WH_MOUSE_LL = 14;
         public const int WH_KEYBOARD_LL = 13;
 
-        public static IntPtr SetMouseHook(LowLevelMouseHookProc proc)
+        public static IntPtr SetMouseHook(LowLevelMouseHookProc proc, string ModuleName)
         {
-            using (var curProcess = Process.GetCurrentProcess())
-            using (var curModule = curProcess.MainModule)
-            {
-                return SetWindowsHookEx(WH_MOUSE_LL, proc,
-                    GetModuleHandle(curModule.ModuleName), 0);
-            }
+            return SetWindowsHookEx(WH_MOUSE_LL, proc, GetModuleHandle(ModuleName), 0);
         }
 
-        public static IntPtr SetKeyboardHook(LowLevelkeyboardHookProc proc)
+        public static IntPtr SetKeyboardHook(LowLevelkeyboardHookProc proc, string ModuleName)
         {
-            using (var curProcess = Process.GetCurrentProcess())
-            using (var curModule = curProcess.MainModule)
-            {
-                return SetWindowsHookEx(WH_KEYBOARD_LL, proc,
-                    GetModuleHandle(curModule.ModuleName), 0);
-            }
+            return SetWindowsHookEx(WH_KEYBOARD_LL, proc, GetModuleHandle(ModuleName), 0);
         }
 
         public struct keyboardHookStruct

@@ -25,6 +25,11 @@ namespace keyupMusic2
 
         private void Every60000msHandler()
         {
+            if (NotityTime != DateTime.MinValue && DateTime.Now >= NotityTime.AddMinutes(-11) && DateTime.Now <= NotityTime.AddMinutes(-10))
+            {
+                SuperClass.notify("定时提醒", $"距离目标时间还有 10~11 分钟（目标时间：{NotityTime:yyyy-MM-dd HH:mm:ss}）");
+                NotityTime = DateTime.MinValue;
+            }
             if (DateTime.Now.Minute == 0)
             {
                 if (ProcessName == wemeetapp) return;
@@ -71,6 +76,7 @@ namespace keyupMusic2
                 {
                     huan.LongPress.deal(key.Key); // 执行长按方法
                     handling_keys[key.Key] = DateTime.Now.AddDays(1);
+                    //log("1" + handling_keys[key.Key]+ key.Value);
                 }
             }
         }
@@ -87,12 +93,11 @@ namespace keyupMusic2
                     PositionMiddle = Position;
                 //if (VirtualKeyboardForm.Instance.Visible)
                 //    VirtualKeyboardForm.Instance.Hide();
-                //VirtualKeyboardForm.Instance?.SetInitClean();
             }
             else if (system_sleep_count > 0)
             {
-                int slow = 5;
-                int end = 5 + slow;
+                int slow = 1;
+                int end = 3 + slow;
                 if (system_sleep_count >= slow)
                     for (int i = end - system_sleep_count; i > 0; i--)
                     {
@@ -120,6 +125,7 @@ namespace keyupMusic2
             //{
             //    VirtualKeyboardForm.Instance.Show();
             //}
+            VirtualKeyboardForm.Instance?.TriggerKey(Tab, true);
             bland_title();
         }
     }

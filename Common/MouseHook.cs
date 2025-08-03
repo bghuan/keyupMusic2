@@ -1,8 +1,9 @@
-﻿using System.Runtime.InteropServices;
+﻿using System.Diagnostics;
+using System.Runtime.InteropServices;
 
 namespace keyupMusic2
 {
-    public class MouseKeyboardHook : IDisposable
+    public class KeyboardMouseHook
     {
         protected virtual IntPtr KeyboardHookProc(int code, int wParam, ref Native.keyboardHookStruct lParam)
         {
@@ -105,13 +106,10 @@ namespace keyupMusic2
                 this.Y = Cursor.Position.Y;
             }
         }
-
-        public delegate void MouseHookEventHandler(MouseEventArgs e);
-        public delegate void KeyboardHookEventHandler(KeyEventArgs e);
-
-        public event MouseHookEventHandler MouseEvent;
-        public event KeyboardHookEventHandler KeyEvent;
-        public MouseKeyboardHook()
+        public event Action<MouseEventArgs> MouseEvent;
+        public event Action<KeyEventArgs> KeyEvent;
+        public string ModuleName => Process.GetCurrentProcess().MainModule.ModuleName;
+        public KeyboardMouseHook()
         {
             _kbdHookProc = KeyboardHookProc;
             _mouseHookProc = MouseHookProc;
@@ -119,9 +117,9 @@ namespace keyupMusic2
         public void Install()
         {
             if (_key_hookId == IntPtr.Zero && KeyEvent != null)
-                _key_hookId = Native.SetKeyboardHook(_kbdHookProc);
+                _key_hookId = Native.SetKeyboardHook(_kbdHookProc, ModuleName);
             if (_mouse_hookId == IntPtr.Zero && MouseEvent != null)
-                _mouse_hookId = Native.SetMouseHook(_mouseHookProc);
+                _mouse_hookId = Native.SetMouseHook(_mouseHookProc, ModuleName);
         }
 
         public void Uninstall()
@@ -137,26 +135,13 @@ namespace keyupMusic2
         {
             if (_mouse_hookId == IntPtr.Zero && MouseEvent != null)
             {
-                _mouse_hookId = Native.SetMouseHook(_mouseHookProc);
+                _mouse_hookId = Native.SetMouseHook(_mouseHookProc, ModuleName);
             }
             else if (_mouse_hookId != IntPtr.Zero)
             {
                 Native.UnhookWindowsHookEx(_mouse_hookId);
                 _mouse_hookId = IntPtr.Zero;
             }
-        }
-        protected virtual void Dispose(bool disposing)
-        {
-            Uninstall();
-        }
-
-        public void Dispose()
-        {
-            Dispose(true);
-        }
-        ~MouseKeyboardHook()
-        {
-            Dispose(false);
         }
     }
 

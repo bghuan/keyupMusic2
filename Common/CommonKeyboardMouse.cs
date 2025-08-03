@@ -9,7 +9,7 @@ using System.Runtime.InteropServices;
 using System.Security.Principal;
 using System.Text;
 using System.Windows.Forms;
-using static keyupMusic2.MouseKeyboardHook;
+using static keyupMusic2.KeyboardMouseHook;
 using static keyupMusic2.Native;
 using Point = System.Drawing.Point;
 
@@ -19,6 +19,7 @@ namespace keyupMusic2
     {
         public static int[] deal_size_x_y(int x, int y, bool puls_one = true)
         {
+            if (screenWidth == 2560 && screenHeight == 1440) return new int[] { x, y };
             if (puls_one)
             {
                 x = x + 1;
@@ -90,7 +91,8 @@ namespace keyupMusic2
         public static void mouse_move(Point point, int tick = 0)
         {
             Thread.Sleep(tick);
-            mouse_event(MOUSEEVENTF_ABSOLUTE | MOUSEEVENTF_MOVE, point.X * 65536 / screenWidth, point.Y * 65536 / screenHeight, 0, 0);
+            SetCursorPos(point.X, point.Y);
+            //mouse_event(MOUSEEVENTF_ABSOLUTE | MOUSEEVENTF_MOVE, point.X * 65536 / screenWidth, point.Y * 65536 / screenHeight, 0, 0);
         }
         public static void mouse_click(int tick = 10)
         {
@@ -214,7 +216,7 @@ namespace keyupMusic2
                 || (VirMouseStateKey.ContainsKey(key) && VirMouseStateKey[key] == ProcessName);
         }
         public static Dictionary<Keys, string> VirMouseStateKey = new Dictionary<Keys, string>();
-        public static void VirKeyState(MouseKeyboardHook.KeyEventArgs e)
+        public static void VirKeyState(KeyboardMouseHook.KeyEventArgs e)
         {
             if (e.Type == KeyType.Up)
                 VirMouseStateKey.Remove(e.key);
@@ -318,10 +320,15 @@ namespace keyupMusic2
             }
             Thread.Sleep(tick);
         }
-        public static void altab(int tick = 0)
+        public static void altab(int tick = 10)
         {
-            press([Keys.LMenu, Keys.Tab]);
-            Thread.Sleep(tick);
+            press([Keys.LMenu, Keys.Tab], tick);
+            //Thread.Sleep(tick);
+        }
+        public static void altabtab(int tick = 10)
+        {
+            press([Keys.LMenu, Keys.Tab, Keys.Tab], tick);
+            //Thread.Sleep(tick);
         }
         public static void press_raw(Keys num, int tick = 0)
         {

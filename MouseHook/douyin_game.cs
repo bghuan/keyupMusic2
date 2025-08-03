@@ -28,7 +28,7 @@ namespace keyupMusic2
             }
         }
 
-        public void MouseHookProc(MouseKeyboardHook.MouseEventArgs e)
+        public void MouseHookProc(KeyboardMouseHook.MouseEventArgs e)
         {
             Task.Run(() => { MouseHookProcDouyin(e); });
         }
@@ -43,7 +43,7 @@ namespace keyupMusic2
         string area_start = "";
         string area_end = "";
 
-        public void MouseHookProcDouyin(MouseKeyboardHook.MouseEventArgs e)
+        public void MouseHookProcDouyin(KeyboardMouseHook.MouseEventArgs e)
         {
             //if (ProcessName != douyin && ProcessName != ApplicationFrameHost && ProcessName != explorer) return;
             if (ProcessName != Common.douyin && (ProcessName != ApplicationFrameHost|| ProcessTitle?.IndexOf("照片") < 0) && ProcessTitle?.IndexOf("抖音") < 0) return;
@@ -119,7 +119,7 @@ namespace keyupMusic2
             catch { }
         }
 
-        private void init_area(MouseKeyboardHook.MouseEventArgs e, int x, int y)
+        private void init_area(KeyboardMouseHook.MouseEventArgs e, int x, int y)
         {
             point_end = e.Pos;
 

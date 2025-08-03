@@ -1,5 +1,5 @@
 ﻿using static keyupMusic2.Common;
-using static keyupMusic2.MouseKeyboardHook;
+using static keyupMusic2.KeyboardMouseHook;
 
 namespace keyupMusic2
 {
@@ -7,7 +7,7 @@ namespace keyupMusic2
     {
         public bool ACPhoenix_mouse_down = false;
 
-        public void hook_KeyDown_ddzzq(MouseKeyboardHook.KeyEventArgs e)
+        public void hook_KeyDown_ddzzq(KeyboardMouseHook.KeyEventArgs e)
         {
             if (is_alt() && is_down(Keys.Tab)) return;
             if (ProcessName != ACPhoenix) return;
@@ -177,7 +177,7 @@ namespace keyupMusic2
         }
 
 
-        public void MouseHookProc(MouseKeyboardHook.MouseEventArgs e)
+        public void MouseHookProc(KeyboardMouseHook.MouseEventArgs e)
         {
             if (e.Msg == MouseMsg.click_up)
             {

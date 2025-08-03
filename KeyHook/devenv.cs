@@ -1,12 +1,12 @@
 ﻿using static keyupMusic2.Common;
-using static keyupMusic2.MouseKeyboardHook;
+using static keyupMusic2.KeyboardMouseHook;
 
 namespace keyupMusic2
 {
     public class DevenvClass : Default
     {
         static int is_oem = 0;
-        public void hook_KeyDown_ddzzq(MouseKeyboardHook.KeyEventArgs e)
+        public void hook_KeyDown_ddzzq(KeyboardMouseHook.KeyEventArgs e)
         {
             if (ProcessName != devenv) return;
             Common.hooked = true;

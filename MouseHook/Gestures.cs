@@ -1,6 +1,6 @@
 ﻿using System.Windows.Forms;
 using static keyupMusic2.Common;
-using static keyupMusic2.MouseKeyboardHook;
+using static keyupMusic2.KeyboardMouseHook;
 using static keyupMusic2.Native;
 using static keyupMusic2.Simulate;
 using static System.Windows.Forms.VisualStyles.VisualStyleElement;
@@ -10,7 +10,7 @@ namespace keyupMusic2
     public partial class biu
     {
         List<string> list = new() { chrome };
-        private void Gestures(MouseKeyboardHook.MouseEventArgs e)
+        private void Gestures(KeyboardMouseHook.MouseEventArgs e)
         {
             if (e.Msg == MouseMsg.move) return;
             if (e.Msg == MouseMsg.click) { menu_opened = false; return; }

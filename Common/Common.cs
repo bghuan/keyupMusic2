@@ -417,8 +417,8 @@ namespace keyupMusic2
                    windowRect.Right >= screenWidth1 &&
                    windowRect.Bottom >= screenHeight1;
         }
-        public static List<string> FullVedioTitles = new List<string>() { "nhub", "bilibili", "多多自走棋" };
-        public static bool IsFullVedio() => (ProcessName == msedge || ProcessName == chrome) && FullVedioTitles.Where(e => ProcessTitle.Contains(e)).Count() == 1 && IsFullScreen();
+        public static List<string> FullVedioTitles = new List<string>() { "nhub", "bilibili", "多多自走棋 梦境", "vip:88", "热门视频", };
+        public static bool IsFullVedio() => (ProcessName == msedge || ProcessName == chrome) && FullVedioTitles.Where(e => ProcessTitle.Contains(e)).Count() > 0 && IsFullScreen();
         public static void change_file_last(bool pngg)
         {
             // 指定要处理的文件夹路径  
@@ -563,8 +563,8 @@ namespace keyupMusic2
             {
                 press(Keys.F11);
                 CenterWindowOnScreen(chrome, true);
-                altab();
                 FocusProcess(PowerToysCropAndLock, false);
+                altabtab();
                 if (ExistProcess(cs2)) { Sleep(10); mouse_click(); }
             }
             else
@@ -797,7 +797,7 @@ namespace keyupMusic2
 
             MoveWindow(targetWindowHandle, point.X, point.Y, windowWidth, windowHeight, true);
         }
-        public static void MoveProcessWindow2(string targetWindowTitle)
+        public static void MoveProcessWindow2(string targetWindowTitle, Keys key = Keys.None)
         {
             IntPtr targetWindowHandle = GetProcessID(targetWindowTitle);
             RECT windowRect;
@@ -805,9 +805,19 @@ namespace keyupMusic2
 
             int windowWidth = windowRect.Right - windowRect.Left;
             int windowHeight = windowRect.Bottom - windowRect.Top;
-            int dsad = screenHeight - windowHeight;
+            int x = 0;
+            int y = screenHeight - windowHeight;
+            if (key != None)
+            {
+                x = windowRect.Left;
+                y = windowRect.Top;
+                if (key == Left) x = windowRect.Left - 1;
+                if (key == Right) x = windowRect.Left + 1;
+                if (key == Up) y = windowRect.Top - 1;
+                if (key == Down) y = windowRect.Top + 1;
+            }
 
-            MoveWindow(targetWindowHandle, 0, dsad, windowWidth, windowHeight, true);
+            MoveWindow(targetWindowHandle, x, y, windowWidth, windowHeight, true);
         }
         // 系统指标常量
         private const int SM_CYCAPTION = 4;
@@ -853,6 +863,19 @@ namespace keyupMusic2
 
         public static void quick_left_right(int arraw)
         {
+            if (Screen.AllScreens.Length < 2) return;
+            var pp = new Point(100, 100);
+            if (ScreenSecond.X < ScreenPrimary.X)
+            {
+                if (arraw == 1) pp = new Point(ScreenSecond.X + 100, 100);
+                if (arraw == 2) pp = new Point(ScreenPrimary.X + 100, 100);
+            }
+            else if (ScreenSecond.X > ScreenPrimary.X)
+            {
+                if (arraw == 1) pp = new Point(ScreenPrimary.X + 100, 100);
+                if (arraw == 2) pp = new Point(ScreenSecond.X + 100, 100);
+            }
+
             IntPtr hwnd = GetForegroundWindow();
             int tick = 200;
             Sleep(tick);
@@ -867,8 +890,6 @@ namespace keyupMusic2
             ShowWindow((hwnd), SW.SW_SHOWNORMAL);
             Sleep(tick);
 
-            var pp = new Point(100, 100);
-            if (arraw == 2) pp = new Point(screen2X + 100, 100);
             MoveProcessWindow(hwnd, pp);
             Sleep(tick);
 
@@ -1121,7 +1142,7 @@ namespace keyupMusic2
 
         public static void HideSomething()
         {
-            HideProcess(chrome);
+            HideProcess2(chrome);
             HideProcess(PowerToysCropAndLock);
             SetDesktopToBlack();
         }
@@ -1144,6 +1165,7 @@ namespace keyupMusic2
             return SetLayeredWindowAttributes(hWnd, 0, alpha, LWA_ALPHA);
         }
         public static Keys LongPressKey;
+        public static DateTime NotityTime = DateTime.MinValue;
 
     }
 }

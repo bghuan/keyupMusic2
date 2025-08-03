@@ -159,7 +159,7 @@ namespace keyupMusic2
         {
             string id = KeyCodeToId(e.KeyCode, e.Modifiers);
             string js = $"highlightKeyAndNeighbors('{id}')";
-            webView.ExecuteScriptAsync(js);
+            webView.Invoke(new Action(() => webView.CoreWebView2.ExecuteScriptAsync(js)));
         }
 
         private void VirtualKeyboardForm_KeyUp(object sender, KeyEventArgs e)

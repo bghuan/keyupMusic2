@@ -1,13 +1,13 @@
 ﻿using System.Diagnostics;
 using static keyupMusic2.Common;
-using static keyupMusic2.MouseKeyboardHook;
+using static keyupMusic2.KeyboardMouseHook;
 using static System.Windows.Forms.VisualStyles.VisualStyleElement.TrackBar;
 
 namespace keyupMusic2
 {
     partial class biu
     {
-        private int _corner1(MouseKeyboardHook.MouseEventArgs e)
+        private int _corner1(KeyboardMouseHook.MouseEventArgs e)
         {
             var list = new[] { msedge, Common.chrome, Common.Honeyview, ApplicationFrameHost };
             //var list = new[] { msedge };
@@ -24,37 +24,21 @@ namespace keyupMusic2
                 mouse_click2(0);
             return e.data;
         }
-        private int _corner2(MouseKeyboardHook.MouseEventArgs e)
+        private int _corner2(KeyboardMouseHook.MouseEventArgs e)
         {
-            var list = new[] { ApplicationFrameHost, explorer, vlc, v2rayN, Common.QQMusic, VSCode, AIoT, RadeonSoftware, steam };
-
-            var list2 = new[] { Thunder, cloudmusic, Taskmgr, wemeetapp, ApplicationFrameHost, explorer, vlc, v2rayN, Common.QQMusic, VSCode, AIoT, RadeonSoftware, steam };
-
             if (is_douyin())
                 CloseProcess();
-            //else if (list.Contains(Common.ProcessName))
-            //    mouse_click();
-            //else if (ProcessName == Common.devenv && Deven_runing())
-            //{
-            //    Sleep(200);
-            //    mouse_click(80, 70);
-            //    mouse_move(PositionMiddle);
-            //}
-            //else if (IsDesktopFocused())
-            //{
-            //    FocusPointProcess();
-            //}
-            //else if (ProcessName == Common.devenv)
-            //    HideProcess();
             else if (ProcessName == Common.keyupMusic2)
                 HideProcess();
             else if (Common.ACPhoenix.Equals(Common.ProcessName))
                 press([Keys.Space]);
-            //else if (list2.Contains(Common.ProcessName))
-            //    press_close();
             else if (ProcessName == Common.explorer && GetPointTitle() == FolderView)
             { }
             else if (ProcessName == Common.chrome && ProcessPosition(chrome).X >= screenWidth)
+            { }
+            else if (ProcessName == Common.PowerToysCropAndLock)
+            { }
+            else if (ProcessName == Common.gcc)
             { }
             else if (!IsFullScreen())
                 CloseProcess();
@@ -62,13 +46,13 @@ namespace keyupMusic2
                 press([Keys.F11]);
             return e.data;
         }
-        private int _corner4(MouseKeyboardHook.MouseEventArgs e)
+        private int _corner4(KeyboardMouseHook.MouseEventArgs e)
         {
             if (GetPointName() == explorer) press([LWin, D]);
             return e.data;
         }
 
-        private int _corner5(MouseKeyboardHook.MouseEventArgs e)
+        private int _corner5(KeyboardMouseHook.MouseEventArgs e)
         {
             mouse_click();
             if (ProcessName == Common.chrome && (judge_color(Color.FromArgb(162, 37, 45))))
@@ -78,7 +62,7 @@ namespace keyupMusic2
             return e.data;
         }
 
-        private int _corner6(MouseKeyboardHook.MouseEventArgs e)
+        private int _corner6(KeyboardMouseHook.MouseEventArgs e)
         {
             //mouse_click();
             //var list = new[] { Common.chrome };

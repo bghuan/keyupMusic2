@@ -1,13 +1,13 @@
 ﻿using System.Diagnostics;
 using System.Runtime.InteropServices;
 using static keyupMusic2.Common;
-using static keyupMusic2.MouseKeyboardHook;
+using static keyupMusic2.KeyboardMouseHook;
 
 namespace keyupMusic2
 {
     partial class biu
     {
-        private int _line2(MouseKeyboardHook.MouseEventArgs e)
+        private int _line2(KeyboardMouseHook.MouseEventArgs e)
         {
             if (ProcessName == Common.chrome)
             {
@@ -16,29 +16,23 @@ namespace keyupMusic2
                 var pos = ProcessPosition(chrome).X;
                 if (pos < screenWidth2 && IsFullScreen())
                 {
-                    if (!judge_color(1840, 51, Color.FromArgb(162, 37, 45)))
+                    if (!judge_color(1840, 51, Color.FromArgb(162, 37, 45)) && e.X < screenWidth2)
                         press(Keys.F, 51);
                     SS().MouseWhell(-1440);
                 }
             }
-            //else if (ProcessName == Common.Honeyview)
-            //{
-            //    int num = e.data;
-            //    if (Enum.TryParse(typeof(Keys), "D" + num, out object asd))
-            //        press([LControlKey, (Keys)asd]);
-            //}
             if (IsFullScreen()) return 0;
             mouse_click2(0);
             return e.data;
         }
 
-        private int _line3(MouseKeyboardHook.MouseEventArgs e)
+        private int _line3(KeyboardMouseHook.MouseEventArgs e)
         {
             if (is_douyin())
                 return 0;
             else if (ProcessName == Common.chrome)
             {
-                if (!ProcessTitle.Contains("chat")) return 0;
+                //if (!ProcessTitle.Contains("chat")) return 0;
                 if (chrome_red()) press(Keys.F);
                 var pos = ProcessPosition(chrome).X;
                 if (pos < screenWidth2 && IsFullScreen())
@@ -51,12 +45,7 @@ namespace keyupMusic2
             {
                 press(Keys.Space, 11);
             }
-            //else if (ProcessName == Common.Honeyview)
-            //{
-            //    int num = e.data;
-            //    if (Enum.TryParse(typeof(Keys), "D" + num, out object asd))
-            //        press([LControlKey, (Keys)asd]);
-            //}
+            else if (GetPointName() == Common.PowerToysCropAndLock) return 0;
             if (IsDiffProcess())
             {
                 mouse_click2(0);
@@ -65,7 +54,7 @@ namespace keyupMusic2
             return 0;
         }
 
-        private int _line6(MouseKeyboardHook.MouseEventArgs e)
+        private int _line6(KeyboardMouseHook.MouseEventArgs e)
         {
             if (IsDiffProcess())
                 mouse_click2(0);
@@ -76,7 +65,7 @@ namespace keyupMusic2
             return e.data;
         }
 
-        private int _line7(MouseKeyboardHook.MouseEventArgs e)
+        private int _line7(KeyboardMouseHook.MouseEventArgs e)
         {
             if (IsDiffProcess())
                 mouse_click2(0);

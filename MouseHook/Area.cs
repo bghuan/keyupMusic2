@@ -3,13 +3,13 @@ using System.Diagnostics;
 using System.Runtime.InteropServices;
 using System.Security.Cryptography;
 using static keyupMusic2.Common;
-using static keyupMusic2.MouseKeyboardHook;
+using static keyupMusic2.KeyboardMouseHook;
 
 namespace keyupMusic2
 {
     partial class biu
     {
-        public void Cornor(MouseKeyboardHook.MouseEventArgs e)
+        public void Cornor(KeyboardMouseHook.MouseEventArgs e)
         {
             if (e.Msg != MouseMsg.move) { RECTT.release(); return; }
             //if (e.X > screen2Width || e.Y < 0 || e.Y > screenHeightMax) return;
@@ -114,12 +114,12 @@ namespace keyupMusic2
             public string name;
             public Task aTask;
 
-            public delegate int aEventHandler(MouseKeyboardHook.MouseEventArgs e);
+            public delegate int aEventHandler(KeyboardMouseHook.MouseEventArgs e);
             public event aEventHandler aMouseHookEvent;
 
-            public delegate void bEventHandler(MouseKeyboardHook.MouseEventArgs e);
+            public delegate void bEventHandler(KeyboardMouseHook.MouseEventArgs e);
             public event bEventHandler bMouseHookEvent;
-            public void doo(MouseKeyboardHook.MouseEventArgs e)
+            public void doo(KeyboardMouseHook.MouseEventArgs e)
             {
                 int music = di_tune(e);
                 e.data = music;
@@ -140,7 +140,7 @@ namespace keyupMusic2
                 }
             }
 
-            private int di_tune(MouseKeyboardHook.MouseEventArgs e)
+            private int di_tune(KeyboardMouseHook.MouseEventArgs e)
             {
                 int music = 0;
                 if (a.Left == a.Right)
@@ -171,7 +171,7 @@ namespace keyupMusic2
                 return music;
             }
 
-            public void doo2(MouseKeyboardHook.MouseEventArgs e)
+            public void doo2(KeyboardMouseHook.MouseEventArgs e)
             {
                 bMouseHookEvent?.Invoke(e);
             }

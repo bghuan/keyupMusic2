@@ -114,10 +114,10 @@ namespace keyupMusic2
             if (key == Keys.None) return;
 
             //play_sound_di(0.1f);
-            if (key == F3 || is_douyin())
+            if (key == F3 || is_douyin() || Huan.keyupMusic2_onlisten)
                 press_raw(key);
             else
-                press(key);
+                press_rate(key);
             //log(msg + "-" + ProcessName2 + "-" + key);
         }
     }

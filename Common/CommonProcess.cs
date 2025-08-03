@@ -29,7 +29,7 @@ namespace keyupMusic2
         public const string Dragonest = "DragonestGameLauncher";
         public const string devenv = "devenv";
         public const string devenvexe = "C:\\Program Files\\Microsoft Visual Studio\\2022\\Community\\Common7\\IDE\\devenv.exe";
-        public const string WeChat = "WeChat";
+        public const string WeChat = "Weixin"; //"WeChat";
         public const string douyin = "douyin";
         public const string msedge = "msedge";
         public const string chrome = "chrome";
@@ -256,7 +256,7 @@ namespace keyupMusic2
             }
             return false;
         }
-        public static bool FocusProcessSimple(IntPtr hwnd)
+        public static bool FocusProcess(IntPtr hwnd)
         {
             if (hwnd == IntPtr.Zero) return false;
             SetForegroundWindow(hwnd);
@@ -372,12 +372,57 @@ namespace keyupMusic2
             }
         }
 
+        public static void HideProcess2(string procName)
+        {
+            Process[] objProcesses = Process.GetProcessesByName(procName);
+            if (objProcesses.Length > 0)
+            {
+                IntPtr hWnd = objProcesses[0].MainWindowHandle;
+
+                RECT windowRect;
+                GetWindowRect(hWnd, out windowRect);
+
+                Task.Run(() =>
+                {
+                    if ((windowRect.Left == 1048 && windowRect.Right == 1512) || IsFullScreen(hWnd))
+                    {
+                        //FocusProcess(hWnd);
+                        press(F11);
+                        //for (global::System.Int32 i = 0; i < 20; i++)
+                        {
+                            HideProcess3(chrome);
+                            //Sleep(100);
+                        }
+                        return;
+                    }
+                    log(windowRect.Left + " " + windowRect.Top + " " + windowRect.Right + " " + windowRect.Bottom);
+                    //Sleep(2000);
+                    //play_sound_di();
+
+                    var small = windowRect.Left == 2550 && windowRect.Top == 290;
+                    if (small) return;
+                    ShowWindow(hWnd, SW.SW_MINIMIZE);
+                });
+            }
+        }
+
+        public static void HideProcess3(string procName)
+        {
+            Process[] objProcesses = Process.GetProcessesByName(procName);
+            if (objProcesses.Length > 0)
+            {
+                IntPtr hWnd = objProcesses[0].MainWindowHandle;
+                //log(hWnd + "");
+                ShowWindow(hWnd, SW.SW_MINIMIZE);
+            }
+        }
+
         public static void HomeProcess(string procName)
         {
             IntPtr hwnd = GetForegroundWindow();
             FocusProcessSimple(procName);
             press(Keys.BrowserHome, 100);
-            FocusProcessSimple(hwnd);
+            FocusProcess(hwnd);
         }
         public static void CloseProcess(string procName)
         {

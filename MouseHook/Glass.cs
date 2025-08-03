@@ -1,7 +1,7 @@
 ﻿using keyupMusic2;
 using System.Timers;
 using static keyupMusic2.Common;
-using static keyupMusic2.MouseKeyboardHook;
+using static keyupMusic2.KeyboardMouseHook;
 using static System.Windows.Forms.LinkLabel;
 using static System.Windows.Forms.VisualStyles.VisualStyleElement.TrackBar;
 
@@ -11,7 +11,7 @@ namespace keyupMusic2
     {
         static Point last_left = new Point(297, 680);
         static Point aaa = new Point(1277, 743);
-        public void Glass(MouseKeyboardHook.MouseEventArgs e)
+        public void Glass(KeyboardMouseHook.MouseEventArgs e)
         {
             if (e.Msg == MouseMsg.move) return;
             var list = new string[] { Common.Glass, Common.Glass2, Common.Glass3, };
@@ -47,7 +47,7 @@ namespace keyupMusic2
                 mousewhell(245, 717, 524, 735, e.data);
             }
         }
-        public bool IsMouseInCircle(MouseKeyboardHook.MouseEventArgs e, int centerX = 1285, int centerY = 695, int radius = 700)
+        public bool IsMouseInCircle(KeyboardMouseHook.MouseEventArgs e, int centerX = 1285, int centerY = 695, int radius = 700)
         {
             int dx = e.X - centerX;
             int dy = e.Y - centerY;
