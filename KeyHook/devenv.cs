@@ -9,7 +9,6 @@ namespace keyupMusic2
         public void hook_KeyDown_ddzzq(KeyboardMouseHook.KeyEventArgs e)
         {
             if (ProcessName != devenv) return;
-            Common.hooked = true;
 
             switch (e.key)
             {
@@ -40,7 +39,6 @@ namespace keyupMusic2
                 //    //    mouse_move(Position.X - 500, Position.Y);
                 //    break;
             }
-            Common.hooked = false;
         }
     }
 }

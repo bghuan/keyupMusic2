@@ -19,8 +19,11 @@ namespace keyupMusic2
 
         public bool judge_handled(KeyboardMouseHook.MouseEventArgs e)
         {
+            if (e.Msg == MouseMsg.move && Common.no_move && !is_down(LButton)) return true;
             if (e.Msg == MouseMsg.move) return false;
-            if (e.Msg == MouseMsg.middle && !raw_middle) return true;
+            if (e.Msg == MouseMsg.click) return false;
+            if (e.Msg == MouseMsg.click_up) return false;
+            if (e.Msg == MouseMsg.middle) return true;
             if (e.Msg == MouseMsg.middle_up) return true;
             if (e.Msg == MouseMsg.wheel && e.Y == 0) return true;
 
@@ -44,12 +47,12 @@ namespace keyupMusic2
                     if (!list.Contains(GetPointName())) return false;
                     return true;
                 }
-                if (ProcessName == chrome && ExistProcess(Common.PowerToysCropAndLock, true))
-                    return true;
+                //if (ProcessName == chrome && ExistProcess(Common.PowerToysCropAndLock, true))
+                //    return true;
             }
             if (e.Msg == MouseMsg.wheel)
             {
-                if (is_douyin() && e.X == 0)
+                if (is_douyin() && (e.X == 0 || is_down(LButton)))
                     return true;
                 if (IsFullVedio())
                     return true;
@@ -62,12 +65,15 @@ namespace keyupMusic2
 
         public void MouseHookProc(KeyboardMouseHook.MouseEventArgs e)
         {
-            if (e.Msg != MouseMsg.move) FreshProcessName();
+            //need point hwnd and process name
             if (judge_handled(e)) { e.Handled = true; VirKeyState(e.Msg); }
-            if (e.Msg != MouseMsg.move && mousekeymap.ContainsKey(e.Msg) && huan.deal_handilngkey(mousekeymap[e.Msg], !e.Msg.IsUpEvent())) return;
 
             Task.Run(() =>
             {
+                //if (!string.IsNullOrEmpty(Common.DeviceName)) Common.DeviceName = "";
+                if (e.Msg != MouseMsg.move && e.Msg != MouseMsg.wheel) FreshProcessName();
+                if (e.Msg != MouseMsg.move && e.Msg != MouseMsg.wheel && huan.deal_handilngkey(mousekeymap[e.Msg], !e.Msg.IsUpEvent())) return;
+
                 easy_read(e);
 
                 Cornor(e);
@@ -86,39 +92,41 @@ namespace keyupMusic2
         {
             if (e.Msg == MouseMsg.move) return;
 
-            if (e.Msg == MouseMsg.middle && !raw_middle)
+            if (e.Msg == MouseMsg.middle)
             {
+                if (!IsAnyMusicPlayerRunning()) StartNeteaseCloudMusic();
                 press(Keys.MediaPlayPause);
-                if (!IsAnyMusicPlayerRunning())
-                {
-                    StartNeteaseCloudMusic();
-                }
             }
-            if (e.Msg == MouseMsg.wheel && e.Y == 0)
+            else if (e.Msg == MouseMsg.wheel && e.Y == 0)
             {
                 Keys keys = Keys.F7;
                 if (e.data > 0) keys = Keys.F8;
                 press(keys);
             }
-            if (e.Msg == MouseMsg.wheel && is_douyin() && e.X == 0)
+            else if (e.Msg == MouseMsg.wheel && is_douyin() && (e.X == 0 || is_down(LButton)))
             {
                 Keys keys = Keys.Right;
                 if (e.data > 0) keys = Keys.Left;
                 press(keys);
             }
-            if (e.Msg == MouseMsg.wheel && IsFullVedio() && !GetPointTitle().Contains("设置"))
+            else if (e.Msg == MouseMsg.wheel && IsFullVedio() && !GetPointTitle().Contains("设置"))
             {
                 Keys keys = Keys.Right;
                 if (e.data > 0) keys = Keys.Left;
                 press(keys);
             }
-            if (e.Msg == MouseMsg.click_up && LongPressClass.long_press_lbutton)
+            else if (Common.no_move && (e.Msg == MouseMsg.click_r))
+                Common.no_move = false;
+            else if (e.Msg == MouseMsg.click_up && LongPressClass.long_press_lbutton)
                 LongPressClass.long_press_lbutton = false;
-            if (e.Msg == MouseMsg.click_r_up && LongPressClass.long_press_rbutton)
+            else if (e.Msg == MouseMsg.click_r_up && LongPressClass.long_press_rbutton)
                 LongPressClass.long_press_rbutton = false;
+            else if (e.Msg == MouseMsg.click_r)
+                click_r_point = e.Pos;
 
             if (catch_state && catch_key == e.Msg) catch_ed = true;
         }
+        Point click_r_point = new Point();
 
     }
 }

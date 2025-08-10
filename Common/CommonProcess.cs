@@ -90,34 +90,25 @@ namespace keyupMusic2
         public const string Honeyview = "Honeyview";
         public const string lz_image_download = "lz_image_download";
 
+        public const string acer = "acer";
+        public const string coocaa = "coocaa";
+        public const string acerdevice = "VID_320F";
+        public const string coocaadevice = "_Dev_VID";
 
         public static string ProcessName = "";
         public static string ProcessTitle = "";
         public static string ProcessPath = "";
         public static ProcessWrapper processWrapper;
         public static bool iswinopen { get { return new[] { StartMenuExperienceHost, SearchHost }.Contains(ProcessName); } }
-        public static HashSet<string> middle_str = new() { RSG };
-        public static bool raw_middle => middle_str.Contains(ProcessName);
-        public static string FreshProcessName()
+        public static string FreshProcessName(bool force = false)
         {
             IntPtr hwnd = Native.GetForegroundWindow(); // 获取当前活动窗口的句柄
+            if (force) hwnd = Native.WindowFromPoint(Position);
             if (hwnd == IntPtr.Zero) return "";
-            if (ProcessMap.ContainsKey(hwnd) && ProcessMap[hwnd].name == Common.ProcessName)
-            {
-                if (refreshTitleList.Contains(ProcessName))
-                    FreshProcessNameByMap(hwnd);
-                //log(hwnd + ProcessName + 1);
-                return Common.ProcessName;
-            }
             if (!ProcessMap.ContainsKey(hwnd))
-            {
                 ProcessMap[hwnd] = new ProcessWrapper(hwnd);
-            }
+            //else
             FreshProcessNameByMap(hwnd);
-
-            CleanMouseState();
-
-            //log(hwnd + ProcessName+2);
             return ProcessName;
         }
         public static HashSet<string> refreshTitleList = new HashSet<string> { msedge, chrome, Honeyview, };
@@ -273,9 +264,9 @@ namespace keyupMusic2
                 hWnd = objProcesses[0].MainWindowHandle;
                 if (current_hwnd == hWnd)
                     return true;
-                ShowWindow((hWnd), SW.SW_RESTORE);
-                if (procName != Dragonest && procName != chrome && procName != devenv)
-                    ShowWindowAsync(new HandleRef(null, hWnd), (int)SW.SW_RESTORE);
+                //ShowWindow((hWnd), SW.SW_RESTORE);
+                //if (procName != Dragonest && procName != chrome && procName != devenv)
+                //    ShowWindowAsync(new HandleRef(null, hWnd), (int)SW.SW_RESTORE);
                 //ShowWindow((hWnd), SW.SW_SHOWMAXIMIZED);
                 //ShowWindow((hWnd), SW.SW_SHOW);
                 //ShowWindow((hWnd), SW.SW_SHOWNA);
@@ -384,6 +375,9 @@ namespace keyupMusic2
 
                 Task.Run(() =>
                 {
+                    var small = windowRect.Left == 2550 && windowRect.Top == 290;
+                    if (small) return;
+
                     if ((windowRect.Left == 1048 && windowRect.Right == 1512) || IsFullScreen(hWnd))
                     {
                         //FocusProcess(hWnd);
@@ -395,12 +389,10 @@ namespace keyupMusic2
                         }
                         return;
                     }
-                    log(windowRect.Left + " " + windowRect.Top + " " + windowRect.Right + " " + windowRect.Bottom);
+                    //log(windowRect.Left + " " + windowRect.Top + " " + windowRect.Right + " " + windowRect.Bottom);
                     //Sleep(2000);
                     //play_sound_di();
 
-                    var small = windowRect.Left == 2550 && windowRect.Top == 290;
-                    if (small) return;
                     ShowWindow(hWnd, SW.SW_MINIMIZE);
                 });
             }
@@ -512,7 +504,7 @@ namespace keyupMusic2
             //SetWindowTitle(Common.devenv, "");
             //SetWindowTitle(Common.chrome, "");
             SetWindowTitle2(Common.chrome);
-            //SetWindowTitle(Common.PowerToysCropAndLock, "");
+            SetWindowTitle(Common.PowerToysCropAndLock, "");
             //SetWindowTitle(Common.wemeetapp, "");
         }
         public static bool IsDesktopFocused()

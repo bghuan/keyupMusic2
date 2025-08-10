@@ -50,18 +50,11 @@ namespace keyupMusic2
                 case Common.ItTakesTwo:
                     HandleItTakesTwo(e.key);
                     break;
-                //case Common.SearchHost:
-                //    if (e.key is Keys.MediaNextTrack or Keys.MediaPreviousTrack)
-                //        press(Keys.LWin);
-                //    break;
                 case Common.cs2:
                 case Common.explorer:
                     HandleProgman(e);
                     HandleCS2(e);
                     break;
-                //case Common.steam:
-                //    HandleSteam(e.key);
-                //    break;
                 case Common.Broforce_beta:
                     HandleBroforceBeta(e.key);
                     break;
@@ -70,6 +63,7 @@ namespace keyupMusic2
                     {
                         hideProcessTitle(PowerToysCropAndLock);
                         MoveProcessWindow2(PowerToysCropAndLock);
+                        CenterWindowOnScreen(chrome, true);
                     }
                     if (e.key == Up || e.key == Down || e.key == Left || e.key == Right)
                     {
@@ -87,9 +81,6 @@ namespace keyupMusic2
                     if (e.key == Keys.F5)
                         Simm.KeyPress(Common.keyupMusic2);
                     break;
-                    //case Common.vlc:
-                    //    HandleVlc(e);
-                    break;
                 case Common.VSCode:
                     HandleVSCode(e);
                     break;
@@ -104,7 +95,6 @@ namespace keyupMusic2
                     break;
             }
 
-            Common.hooked = false;
         }
 
         private void Handle_哔哩哔哩(KeyboardMouseHook.KeyEventArgs e)
@@ -174,8 +164,9 @@ namespace keyupMusic2
                         else if (currentIndex == fileNames.Count - 1)
                             s = fileNames[0];
                         SystemParametersInfo(SPI_SETDESKWALLPAPER, 0, folderPath + s, SPIF_UPDATEINIFILE | SPIF_SENDCHANGE);
+                        return;
                     }
-                    string nextWallpaper = GetNextWallpaper();
+                    string nextWallpaper = GetNextWallpaper(); 
                     SetDesktopWallpaper(nextWallpaper, WallpaperStyle.Fit, true);
                     break;
                 case Keys.Up:
@@ -243,11 +234,13 @@ namespace keyupMusic2
                     break;
                 case Keys.VolumeDown:
                     if (e.Y == screenHeight1)
-                        press_rate(Keys.PageDown, 0);
+                        //press_rate(Keys.PageDown, 0);
+                        press(Keys.PageDown, 0);
                     break;
                 case Keys.VolumeUp:
                     if (e.Y == screenHeight1)
-                        press_rate(Keys.PageUp, 0);
+                        //press_rate(Keys.PageUp, 0);
+                        press(Keys.PageUp, 0);
                     break;
             }
         }

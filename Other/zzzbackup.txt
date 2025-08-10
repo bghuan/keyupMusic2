@@ -1,4 +1,61 @@
-﻿<!DOCTYPE html>
+﻿
+        private static void dragonest_run()
+        {
+            //press("2280,1314;LWin;3222;LWin;", 500); 
+            press("2280,1314;LWin", 0);
+            Task.Run(() =>
+            {
+                DaleyRun_stop = false;
+                Thread.Sleep(3500);
+                if (DaleyRun_stop) return;
+                altab();
+                press("500;2525,40;100", 0);
+                mouse_move_center();
+            });
+            return;
+        }
+
+        private static void dragonest_init()
+        {
+            var judge = () => judge_color(1063, 529, Color.FromArgb(199, 71, 69));
+            var run = () => { press("1076,521"); };
+            var action2 = () => DelayRun(judge, run, 3222, 122);
+
+            press("LWin", 0);
+            action2();
+            //press("10;LWin;zh;DUODUO;Space;Apps;100;Enter", 101);
+        }
+        private static void dragonest_max(int tick)
+        {
+            DelayRun(
+                () => (
+                        //yo() == Common.Dragonest &&
+                        judge_color(71, 199, Color.FromArgb(242, 95, 99)) &&
+                        !judge_color(2223, 1325, Color.FromArgb(22, 155, 222))),
+                () => { press("2323, 30"); },
+                tick, 10);
+        }
+
+
+        private static void dragonest()
+        {
+            if (!Common.ExistProcess(Common.Dragonest))
+            {
+                dragonest_init();
+                dragonest_max(10000);
+            }
+            else
+            {
+                dragonest_notity_click();
+                if (!judge_color(71, 199, Color.FromArgb(242, 95, 99)))
+                {
+                    dragonest_notity_click();
+                }
+                if (!judge_color(2223, 1325, Color.FromArgb(22, 155, 222)))
+                    dragonest_max(100);
+            }
+            dragonest_run();
+        }<!DOCTYPE html>
 <html lang="en">
 
 <head>

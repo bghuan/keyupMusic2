@@ -16,7 +16,6 @@ namespace keyupMusic2
     {
         public static Huan huan => Huan.Instance;
 
-        public static bool hooked = false;
         public static bool stop_listen = false;
         public static bool ACPhoenix_mouse_hook = false;
         public static bool gcc_restart = false;
@@ -149,7 +148,6 @@ namespace keyupMusic2
                     Screen currentScreen = Screen.FromPoint(point);
                     int relativeX = (point.X - currentScreen.Bounds.X) * 1920 / currentScreen.Bounds.Width;
                     int relativeY = (point.Y - currentScreen.Bounds.Y) * 1080 / currentScreen.Bounds.Height;
-                    Console.WriteLine($"相对坐标：({relativeX}, {relativeY})");
 
                     Bitmap bmpScreenshot = new Bitmap(1920, 1080, PixelFormat.Format32bppArgb);
                     Graphics gfxScreenshot = Graphics.FromImage(bmpScreenshot);
@@ -563,7 +561,7 @@ namespace keyupMusic2
             {
                 press(Keys.F11);
                 CenterWindowOnScreen(chrome, true);
-                FocusProcess(PowerToysCropAndLock, false);
+                FocusProcess(PowerToysCropAndLock);
                 altabtab();
                 if (ExistProcess(cs2)) { Sleep(10); mouse_click(); }
             }
@@ -578,13 +576,7 @@ namespace keyupMusic2
                 CenterWindowOnScreen(chrome, true);
                 press(Keys.F11);
                 if (ExistProcess(cs2)) { press_middle_bottom(); }
-
-                //if (ProcessName2 != chrome)
-                //{
-                //    quick_max_chrome(point);
-                //}
             }
-            //FreshProcessName();
         }
         public static uint isVir = 3;
         public const uint isVirConst = 3;
@@ -629,11 +621,20 @@ namespace keyupMusic2
                 RECT rect;
                 GetWindowRect(targetWindowHandle, out rect);
 
-                int newWidth = rect.Right - rect.Left - 22;
-                int newHeight = rect.Bottom - rect.Top - 55;
-                PowerToysCropAndLock_Height = newHeight;
-                PowerToysCropAndLock_Wight = newWidth;
+                //int newWidth = rect.Right - rect.Left - 22;
+                //int newWidth = rect.Right - rect.Left - 26;
+                //int newHeight = rect.Bottom - rect.Top - 55;
+                //PowerToysCropAndLock_Height = newHeight;
+                //PowerToysCropAndLock_Wight = newWidth;
 
+                // 动态计算调整值（根据DPI和窗口类型自适应）
+                var dpiScale = GetWindowScalingFactor(targetWindowHandle);
+                int borderAdjust = (int)Math.Ceiling(2 * dpiScale); // 基础边框调整
+                int captionAdjust = (int)Math.Ceiling(30 * dpiScale); // 标题栏高度调整
+
+                // 计算新尺寸（核心优化：更精确的尺寸补偿）
+                int newWidth = rect.Right - rect.Left - borderAdjust - 18;
+                int newHeight = rect.Bottom - rect.Top - (captionAdjust + borderAdjust / 2) - 8;
 
                 // 更新窗口布局，使修改生效，并调整窗口大小
                 SetWindowPos(targetWindowHandle, IntPtr.Zero, rect.Left, rect.Top, newWidth, newHeight, SWP_FRAMECHANGED | SWP_NOMOVE);
@@ -716,10 +717,21 @@ namespace keyupMusic2
             int newY = (screenHeight - windowHeight) / 2 + 1;
             if (right) newX = screenWidth1 - 9;
 
+            if (windowRect.Left == 2515 && windowRect.Top == 304)
+            {
+                ShowWindow((targetWindowHandle), SW.SW_SHOWMAXIMIZED);
+                return;
+            }
+
             if (targetWindowTitle == chrome)
             {
                 windowWidth = 1301;
                 windowHeight = 861;
+            }
+            if (targetWindowTitle == chrome && screenHeight < 1200)
+            {
+                windowWidth = 1299;
+                windowHeight = 815;
             }
             if (targetWindowTitle == wemeetapp)
             {
@@ -1036,6 +1048,12 @@ namespace keyupMusic2
             uint dpi = GetDpiForWindow(form.Handle);
             return dpi / 96.0;
         }
+        // 获取当前窗口的缩放比例
+        public static double GetWindowScalingFactor(IntPtr form)
+        {
+            uint dpi = GetDpiForWindow(form);
+            return dpi / 96.0;
+        }
         public static int LabelTick = 0;
         public static bool LabelTicking = false;
         public static void Show(string msg, int tick = 0)
@@ -1166,6 +1184,9 @@ namespace keyupMusic2
         }
         public static Keys LongPressKey;
         public static DateTime NotityTime = DateTime.MinValue;
+        public static bool no_move;
+        public static string DeviceName;
+
 
     }
 }

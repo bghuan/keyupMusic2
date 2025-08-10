@@ -8,7 +8,7 @@ namespace keyupMusic2
     public static class Native
     {
         public delegate IntPtr LowLevelMouseHookProc(int nCode, IntPtr wParam, IntPtr lParam);
-        public delegate IntPtr LowLevelkeyboardHookProc(int code, int wParam, ref keyboardHookStruct lParam);
+        public delegate IntPtr LowLevelkeyboardHookProc(int code, int wParam, IntPtr lParam);
         public const int WH_MOUSE_LL = 14;
         public const int WH_KEYBOARD_LL = 13;
 
@@ -224,5 +224,8 @@ namespace keyupMusic2
         public const int GWL_EXSTYLE = -20;               // 扩展窗口样式索引
         public const int WS_EX_LAYERED = 0x80000;         // 分层窗口样式
         public const int LWA_ALPHA = 0x2;                 // 透明度调节标志
+        [DllImport("kernel32.dll")]
+        public static extern bool AllocConsole();
+
     }
 }

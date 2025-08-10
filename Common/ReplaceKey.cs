@@ -28,7 +28,7 @@ namespace keyupMusic2
            new ReplaceKey(steam,       Keys.D8,    Keys.D7),
            new ReplaceKey(Windblown,   Keys.W,     Keys.S),
            new ReplaceKey(Windblown,   Keys.S,     Keys.W),
-           new ReplaceKey(string.Empty, Keys.RMenu, Keys.RWin,true)
+           new ReplaceKey("",          Keys.RMenu, Keys.MediaPlayPause, true)
         };
     }
     public class ReplaceKey

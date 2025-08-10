@@ -22,6 +22,8 @@ namespace keyupMusic2
                 press([Keys.Enter]);
             else if (IsDiffProcess())
                 mouse_click2(0);
+            else if (ProcessName == Common.explorer)
+                press([Keys.F5]);
             return e.data;
         }
         private int _corner2(KeyboardMouseHook.MouseEventArgs e)
@@ -36,6 +38,10 @@ namespace keyupMusic2
             { }
             else if (ProcessName == Common.chrome && ProcessPosition(chrome).X >= screenWidth)
             { }
+            else if (ProcessName == Common.chrome && ExistProcess(Common.PowerToysCropAndLock, true))
+            { }
+            else if (ProcessName == Common.chrome && ProcessTitle.Contains("照片"))
+                press(Keys.Escape);
             else if (ProcessName == Common.PowerToysCropAndLock)
             { }
             else if (ProcessName == Common.gcc)

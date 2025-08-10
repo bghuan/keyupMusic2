@@ -90,9 +90,8 @@ namespace keyupMusic2
         }
         public static void mouse_move(Point point, int tick = 0)
         {
-            Thread.Sleep(tick);
             SetCursorPos(point.X, point.Y);
-            //mouse_event(MOUSEEVENTF_ABSOLUTE | MOUSEEVENTF_MOVE, point.X * 65536 / screenWidth, point.Y * 65536 / screenHeight, 0, 0);
+            Thread.Sleep(tick);
         }
         public static void mouse_click(int tick = 10)
         {
@@ -137,6 +136,7 @@ namespace keyupMusic2
             var aa = Native.mouse_event(dwFlags, dx, dy, cButtons, (int)isVir);
             //if ((dwFlags & MOUSEEVENTF_LEFTDOWN) == 1) { Sleep(10); FreshProcessName(); }
             //if ((dwFlags & MOUSEEVENTF_MOVE) == 0) { FreshProcessName(); Task.Run(() => { Sleep(100); FreshProcessName(); }); }
+            if (dwFlags != MOUSEEVENTF_MOVE && dwFlags != MOUSEEVENTF_WHEEL) { FreshProcessName(); }
             return aa;
         }
         public static int mouse_event2(int dwFlags, int dx, int dy, int cButtons, int dwExtraInfo)
@@ -333,6 +333,12 @@ namespace keyupMusic2
         public static void press_raw(Keys num, int tick = 0)
         {
             isVir = 0;
+            press(num, tick);
+            isVir = isVirConst;
+        }
+        public static void press_raw2(Keys num, int tick = 0)
+        {
+            isVir = isVirConst + 1;
             press(num, tick);
             isVir = isVirConst;
         }
@@ -551,8 +557,9 @@ namespace keyupMusic2
     0x91, // ScrollLock
     // 可以根据需要添加更多扩展键
 };
+        static HashSet<byte> FreshProcessNameKeys = new HashSet<byte> { 0xA5, 0xA4, 0x5C, 0x5B, 0x09, 0x73 };
 
-        private static void keybd_event(byte bVk, byte bScan, uint dwFlags, uint dwExtraInfo)
+        private static async void keybd_event(byte bVk, byte bScan, uint dwFlags, uint dwExtraInfo)
         {
             if (ExtendedKeys.Contains(bVk))
                 dwFlags |= (uint)KeyboardFlag.ExtendedKey;
@@ -563,6 +570,10 @@ namespace keyupMusic2
                 MapVirtualKey[bVk] = (byte)(MapVirtualKey(bVk, 0) & 0xFFU);
 
             Native.keybd_event(bVk, MapVirtualKey[bVk], dwFlags, isVir);
+
+            if (!FreshProcessNameKeys.Contains(bVk)) return;
+            await Task.Delay(10);
+            FreshProcessName();
         }
         [Flags]
         public enum KeyboardFlag : uint

@@ -137,6 +137,8 @@ namespace keyupMusic2
                     {
                         if (msg.Contains(Huan.start_check_str) || msg.Contains(Huan.start_check_str2))
                             huan.start_catch(msg);
+                        else if (Huan.refAction.Where(a => msg.StartsWith(a.Key)).Count() == 1)
+                            Huan.refAction.Where(a => msg.StartsWith(a.Key)).ToList().First().Value();
                         else if (msg.StartsWith(Huan.start_reflection))
                             huan.reflection_catch(msg);
                         else if (msg.StartsWith(Huan.start_next))

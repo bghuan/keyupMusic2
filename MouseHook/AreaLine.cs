@@ -58,7 +58,7 @@ namespace keyupMusic2
         {
             if (IsDiffProcess())
                 mouse_click2(0);
-            if (ProcessName != chrome) return 0;
+            if (ProcessName != chrome && GetPointName() != chrome) return 0;
             if (!chrome_red())
                 press(Keys.F, 50);
             SS().MouseWhell(-1440);
@@ -69,7 +69,7 @@ namespace keyupMusic2
         {
             if (IsDiffProcess())
                 mouse_click2(0);
-            if (ProcessName != chrome) return 0;
+            if (ProcessName != chrome && GetPointName() != chrome) return 0;
             press(Keys.F, 50);
             SS().MouseWhell(1440);
             return e.data;

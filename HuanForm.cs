@@ -1,4 +1,5 @@
 using Microsoft.Win32;
+using Newtonsoft.Json.Linq;
 using System.Diagnostics;
 using System.Runtime.InteropServices;
 using static keyupMusic2.Common;
@@ -19,8 +20,9 @@ namespace keyupMusic2
         WinClass Win;
         public OpencvReceive Opencv;
         public LongPressClass LongPress;
-        bool is_init_show = !(Position.Y == 0);
+        //bool is_init_show = !(Position.Y == 0);
         bool is_mouse_hook = !(Position.Y == 1439);
+        //bool is_mouse_hook = !is_shift();
         public static bool keyupMusic2_onlisten = false;
         DateTime super_listen_time = new DateTime();
         static int super_listen_tick = 144 * 14;
@@ -39,6 +41,7 @@ namespace keyupMusic2
 
             try_restart_in_admin();
             release_all_key();
+            Rawinput.RegisterInputDevices(this.Handle);
             startListen();
 
             ACPhoenix = new ACPhoenixClass();
@@ -48,7 +51,6 @@ namespace keyupMusic2
             All = new AllClass();
             Super = new SuperClass();
             Chrome = new ChromeClass();
-            LongPress = new LongPressClass();
             Win = new WinClass();
 
             new Socket();
@@ -124,8 +126,16 @@ namespace keyupMusic2
         {
             base.SetVisibleCore(value);
             key_sound = value;
+            ConfigValue(ConfigFormShow, value ? "1" : "0");
             //if (!value)
             //    Task.Run(() => { Sleep(200); player.Stop(); });
+        }
+        public void SetVisibleCore2(bool value)
+        {
+            Invoke(() =>
+            {
+                SetVisibleCore(value);
+            });
         }
         private void label1_Click(object sender, EventArgs e)
         {
@@ -143,14 +153,13 @@ namespace keyupMusic2
                 foreach (Process process in processes)
                     if (process.Id != currentProcessId && IsAdministrator())
                         process.Kill();
-                //mouse_move(screenWidth2,screenHeight2);
             }
             //is_init_show = Debugger.IsAttached ? !is_init_show : is_init_show;
             //Location = new Point(Screen.PrimaryScreen.Bounds.Width - 310, 100);
             Location = new Point(2255, 37);
 
-            startPoint = new Point(Location.X - 252, Location.Y);
-            endPoint = Location;
+            //startPoint = new Point(Location.X - 252, Location.Y);
+            //endPoint = Location;
             SystemEvents.PowerModeChanged += SystemEvents_PowerModeChanged;
             SystemEvents.SessionSwitch += SystemEvents_SessionSwitch;
 
@@ -162,7 +171,7 @@ namespace keyupMusic2
         {
             if (e.Mode == PowerModes.Resume)
             {
-                justResumed = true; // 系统刚从睡眠唤醒_di
+                justResumed = true;
             }
         }
 
@@ -171,48 +180,59 @@ namespace keyupMusic2
             get
             {
                 CreateParams cp = base.CreateParams;
-                // 添加 WS_EX_TOOLWINDOW 样式
-                cp.ExStyle |= 0x80;  // WS_EX_TOOLWINDOW
+                cp.ExStyle |= 0x80;
                 return cp;
             }
         }
         void after_load()
         {
+            FreshProcessName();
             bland_title();
             if (!ExistProcess(TwinkleTray)) { ProcessRun(TwinkleTrayexe); }
+            //if (!Debugger.IsAttached) HideProcess(devenv);
+            InitializeFromCurrentWallpaper();
 
-            Common.FocusProcess(Common.Glass2);
-            Common.FocusProcess(Common.Glass3);
-
-            //if (!Debugger.IsAttached) return;
-            //创建并显示WebView2窗口
             VirtualKeyboardForm virtualKeyboardForm = new VirtualKeyboardForm();
             virtualKeyboardForm.Show();
             MoonTime moontimeForm = new MoonTime();
             moontimeForm.Show();
-            //Blob blobForm = new Blob();
-            //blobForm.Show();
-            //blobForm.Hide();
+
             timerMove.Interval = 3000;
             timerMove.Tick += timerMove_Tick;
             form_move();
-            if (is_init_show)
-            {
+
+            if (ConfigValue(ConfigFormShow) == "0")
                 //SetVisibleCore(false);
                 TaskRun(() => { Invoke(() => SetVisibleCore(false)); }, 100);
-            }
-            //SetVisibleCore(false);
-            //if (Screen.AllScreens.Length == 1)
-            //{
-            //    MoonTime.Instance.Visible = false;
-            //}
 
-            InitializeFromCurrentWallpaper();
-
-            if (!Debugger.IsAttached)
+            //var sss= ConfigValue(ConfigFormShow);
+            if (isctrl())
+                Native.AllocConsole();
+        }
+        protected override void WndProc(ref Message m)
+        {
+            if (m.Msg == Rawinput.WM_INPUT)
             {
-                HideProcess(devenv);
+                var e = Rawinput.ProcessRawInput2(m.LParam);
+                if (e == null) return;
+                Common.DeviceName = e.device;
+                ////Invoke(() => { label1.Text = DeviceNameFlag + "device"+i++; });
+                if (ProcessName == Common.keyupMusic2)
+                    KeyBoardHookProc(e);
             }
+            //if (m.Msg == 0x0104)
+            //{
+            //    var e = Rawinput.ProcessRawInput2(m.LParam);
+            //}
+            //if (m.Msg == 49643)
+            //{
+            //    var e = Rawinput.ProcessRawInput2(m.LParam);
+            //}
+            //else
+            //{
+            //    var e = Rawinput.ProcessRawInput2(m.LParam);
+            //}
+            base.WndProc(ref m);
         }
     }
 }

@@ -25,7 +25,6 @@ namespace keyupMusic2
             if (is_down(Keys.LWin)) return;
             if (e.Handled && e.key == Keys.PageDown) return;
             //if (!handling) return;
-            Common.hooked = true;
             handling_keys = e.key;
             switch (e.key)
             {
@@ -36,9 +35,6 @@ namespace keyupMusic2
                     click_double_speed(e, num1222);
                     break;
             }
-
-            Common.hooked = false;
-            if (!handling) handling = true;
         }
         private void click_double_speed(KeyboardMouseHook.KeyEventArgs e, int num1222)
         {

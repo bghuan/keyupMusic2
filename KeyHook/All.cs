@@ -10,7 +10,6 @@ namespace keyupMusic2
         public void hook_KeyDown_ddzzq(KeyboardMouseHook.KeyEventArgs e)
         {
             string module_name = ProcessName;
-            Common.hooked = true;
             handling_keys = e.key;
             bool right_top = Position.Y == 0 && Position.X == 2559;
             //if (!handling) return;
@@ -43,8 +42,8 @@ namespace keyupMusic2
                     clean(); DeleteCurrentWallpaper(); break;
                 case Keys.Escape:
                     clean(); break;
-                case Keys.LShiftKey:
-                    shift(); break;
+                //case Keys.LShiftKey:
+                //    shift(); break;
 
                 case Keys.Up:
                     quick_next_image(); break;
@@ -63,13 +62,12 @@ namespace keyupMusic2
             //            quick_number2(e.key); break;
             //    }
 
-            Common.hooked = false;
         }
 
         public static void quick_scale()
         {
             //var asd = IsFullScreen();
-            if (IsFullScreen())
+            if (!ProcessTitle.Contains("tudio") && IsFullScreen())
             {
                 LossScale();
             }
@@ -225,6 +223,7 @@ namespace keyupMusic2
             CleanMouseState();
             ready_to_sleep = false;
             system_sleep_count = 0;
+            Common.no_move = false;
         }
 
         private static void quick_go_back(KeyboardMouseHook.KeyEventArgs e)

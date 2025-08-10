@@ -16,7 +16,8 @@ namespace keyupMusic2
         public void init()
         {
             new KeyFunc(Keys.F1, SuperClass.get_point_color) { type = KeyType.Down };
-            new KeyFunc(Keys.F2, AllClass.quick_scale) { type = KeyType.Up };
+            new KeyFunc(Keys.F2, AllClass.quick_scale) { type = KeyType.Up ,handled = false};
+            new KeyFunc(Keys.F10, HideProcess) { type = KeyType.Up };
             new KeyFunc(Keys.F11, AllClass.quick_visiualstudio) { type = KeyType.Up };
             new KeyFunc(Keys.F12, AllClass.quick_wechat_or_notify) { type = KeyType.Up };
             //new KeyFunc(Keys.D5, () => { press(MediaPlayPause); }, msedge);

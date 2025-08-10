@@ -61,7 +61,7 @@ namespace keyupMusic2
 
         public static RECTT line2 = new RECTT(nameof(line2),
                                 new JU(0, gao, _fa - 200, gao),
-                                new JU(0, gao - far + 100, cha, gao));
+                                new JU(0, gao - far + 200, cha, gao));
         public static RECTT line3 = new RECTT(nameof(line3),
                                 new JU(0, far, 0, gao),
                                 new JU(0, 0, far, gao));

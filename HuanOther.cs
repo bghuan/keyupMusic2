@@ -66,7 +66,7 @@ namespace keyupMusic2
         {
             if (e.Type == KeyType.Up)
             {
-                Invoke2(() => label1.Text = label1.Text.Replace(easy_read2(e.key), easy_read2(e.key).ToLower()));
+                Invoke2(() => label1.Text = /*Common.DeviceName + */label1.Text.Replace(easy_read2(e.key), easy_read2(e.key).ToLower()));
                 return;
             }
 
@@ -77,7 +77,7 @@ namespace keyupMusic2
                     {
                         string asd = string.Join(" ", _stop_keys?.Select(key => easy_read(key.Key.ToString())));
                         if (label1.Text.ToLower() == asd.ToLower()) asd += " " + DateTimeNow2();
-                        label1.Text = asd;
+                        label1.Text = Common.DeviceName + asd;
                     }
                 );
             }
@@ -109,7 +109,7 @@ namespace keyupMusic2
             label1.Text = DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss");
             label2.Text = "";
 
-            _mouseKbdHook = new KeyboardMouseHook();
+            _mouseKbdHook = new KeyboardMouseHook(this.Handle);
             _mouseKbdHook.KeyEvent += KeyBoardHookProc;
 
             if (is_mouse_hook)
@@ -144,6 +144,18 @@ namespace keyupMusic2
                 Environment.Exit(0);
             }
         }
+        private void timerMove_Tick(object sender, EventArgs e)
+        {
+            //TimeSpan elapsed = DateTime.Now - startTime;
+
+            //int currentX = (int)(startPoint.X + (endPoint.X - startPoint.X) * (elapsed.TotalMilliseconds / timerMove_Tick_tick));
+            //int currentY = startPoint.Y;
+            ////Location = new Point(currentX, currentY);
+
+            //if (elapsed.TotalMilliseconds > timerMove_Tick_tick) { timer_stop(); }
+            timer_stop();
+        }
+
 
         public void system_sleep_timer(int tick = 200)
         {

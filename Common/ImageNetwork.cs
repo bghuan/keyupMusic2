@@ -10,11 +10,59 @@ namespace keyupMusic2
 {
     public partial class Common
     {
+        public static string download_image_prix = "#/picture/";
+        public static void download_image(List<string> mmm)
+        {
+            //foreach(var msg in mmm)
+            //{
+            //    string id = msg.Replace(".webp","").Replace(download_image_prix,"");
+            //    ProcessRun(lz_image_downloadexe, id,true);
+            //    Sleep(2000);
+            //}
+            ProcessRun(lz_image_downloadexe, string.Join(" ", mmm), true);
+        }
+        public static void download_image(string msg)
+        {
+            play_sound_di();
+            if (msg.StartsWith(download_image_prix))
+            {
+                string id = msg.Substring(download_image_prix.Length);
+                _download_image(id);
+            }
+            play_sound_di();
+            //press([Keys.LControlKey, Keys.W]);
+            //mousego();
+        }
+        public static void _download_image(string id)
+        {
+            //if (ProcessName != chrome) return;
+            //if (!ProcessTitle.Contains("详情")) return;
+            ProcessRun(lz_image_downloadexe, id);
+        }
         static int SetDesktopWallpaperAli_count = 0;
         static bool SetDesktopWallpaperAli_flag = false;
         public static void SetDesktopWallpaperAli(string filePath, bool di = true)
         {
-            if (SetDesktopWallpaperAli_flag) return;
+            if (SetDesktopWallpaperAli_flag)
+            {
+                Task.Run(() =>
+                {
+                    if (di)
+                        play_sound_di();
+                    for (int i = 0; i < 120; i++)
+                    {
+                        Sleep(1000);
+                        if (!SetDesktopWallpaperAli_flag)
+                        {
+                            SetDesktopWallpaperAli(filePath, di);
+                            break;
+                        }
+                    }
+
+                });
+
+                return;
+            }
             SetDesktopWallpaperAli_flag = true;
             {
                 var currentPath = GetWallpaperFromRegistry();
@@ -58,14 +106,14 @@ namespace keyupMusic2
                 if (GetTaskResultDownload(filePath, di))
                 {
                     var fileName = Path.GetFileName(filePath).Replace("webp", "jpg");
-                    var sdas = Path.Combine(Directory.GetCurrentDirectory(), "image", "downloaded_images", "1", fileName);
+                    var newpic = Path.Combine(Directory.GetCurrentDirectory(), "image", "downloaded_images", "1", fileName);
                     //ConvertAndResize(GetCurrentWallpaperPath(), _wallpapersPath_output);
-                    SetDesktopWallpaper(sdas);
+                    SetDesktopWallpaper(newpic);
                     SetDesktopWallpaperAli_flag = false;
                     timer.Stop();
                     timer.Dispose();
                 }
-                if (i > 5)
+                if (i > 8)
                 {
                     timer.Stop();
                     timer.Dispose();
@@ -75,6 +123,7 @@ namespace keyupMusic2
             timer.AutoReset = true;
             timer.Start();
         }
+        public static DateTime ali_image_success_time = DateTime.MinValue;
         public static bool GetTaskResultDownload(string filePath, bool di = true)
         {
             SetDesktopWallpaperAli_count++;
@@ -122,6 +171,7 @@ namespace keyupMusic2
                 var sdas = Path.Combine(Directory.GetCurrentDirectory(), "image", "downloaded_images", "1", fileName);
 
                 DownloadImage(output_image_url, sdas);
+                ali_image_success_time = DateTime.Now;
                 //ConvertAndResize(sdas, sdas.Replace("jpg", "webp"));
                 UploadImage("https://bghuan.cn/api/saveimage", _wallpapersPath_temp);
                 if (di)

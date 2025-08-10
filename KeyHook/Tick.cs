@@ -13,7 +13,7 @@ namespace keyupMusic2
 
         public Tick()
         {
-            timer100msKeyPress.Elapsed += (s, e) => Every100msHandler();
+            timer100msKeyPress.Elapsed += (s, e) => LongPressClass.Every100msHandler();
             timer100msKeyPress.Start();
 
             timer8000ms.Elapsed += (s, e) => Every8000ms();
@@ -57,29 +57,13 @@ namespace keyupMusic2
                     if (is_music) press(Keys.MediaPlayPause);
                 });
             }
-            if (DateTime.Now.Minute % 10 == 0)
-            {
-                SetDesktopWallpaperFull();
-                //SetDesktopWallpaperAli(GetNextWallpaper(), false);
-            }
+            //if (DateTime.Now.Minute % 10 == 0)
+            //{
+            //    SetDesktopWallpaperFull();
+            //    //SetDesktopWallpaperAli(GetNextWallpaper(), false);
+            //}
         }
 
-        private void Every100msHandler()
-        {
-            if (Huan.handling_keys.Count == 0) return;
-
-            var handling_keys = Huan.handling_keys;
-            //if (is_steam_game()) return;
-            foreach (var key in handling_keys)
-            {
-                if (DateTime.Now - key.Value > TimeSpan.FromMilliseconds(LongPressClass.long_press_tick))
-                {
-                    huan.LongPress.deal(key.Key); // 执行长按方法
-                    handling_keys[key.Key] = DateTime.Now.AddDays(1);
-                    //log("1" + handling_keys[key.Key]+ key.Value);
-                }
-            }
-        }
 
         private void Every8000ms()
         {
@@ -127,6 +111,7 @@ namespace keyupMusic2
             //}
             VirtualKeyboardForm.Instance?.TriggerKey(Tab, true);
             bland_title();
+            Console.WriteLine($"Tick");
         }
     }
 }

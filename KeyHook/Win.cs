@@ -7,12 +7,24 @@ namespace keyupMusic2
 {
     public class WinClass
     {
-        public static readonly HashSet<Keys> keys = new() { Q, Left, Right, W, L, Keys.Enter, Keys.D2 };
+        public static readonly HashSet<Keys> keys = new() {
+            Q
+            , Left
+            , Right
+            , W
+            , L
+            , Keys.Enter
+            , Keys.D2
+            , Keys.F
+            , Keys.G
+        };
         public static bool handling = false;
         public static bool judge_handled(KeyboardMouseHook.KeyEventArgs e)
         {
-            if (!is_down(Keys.LWin) && !is_down(Keys.RWin)) return false;
-            if (keys.Contains(e.key)) return true;
+            if (!is_down(Keys.LWin) && !is_down(Keys.RWin))
+                return false;
+            if (keys.Contains(e.key))
+                return true;
             return false;
         }
 
@@ -67,7 +79,7 @@ namespace keyupMusic2
                         && !judge_color(525, 417, Color.FromArgb(22, 24, 35), 0)
                         && !judge_color(525, 417, Color.FromArgb(255, 255, 255), 0);
                     };
-                    var run = () => 
+                    var run = () =>
                     {
                         press("200;525.417;525,418;500;H;100;", 300);
                         if (!IsFullScreen())

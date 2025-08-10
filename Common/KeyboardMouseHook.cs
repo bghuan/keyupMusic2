@@ -5,15 +5,20 @@ namespace keyupMusic2
 {
     public class KeyboardMouseHook
     {
-        protected virtual IntPtr KeyboardHookProc(int code, int wParam, ref Native.keyboardHookStruct lParam)
+        protected virtual IntPtr KeyboardHookProc(int code, int wParam, IntPtr lParam)
         {
-            var args = new KeyEventArgs(0, (Keys)lParam.vkCode, wParam, lParam);
+            //Native.PostMessage(form_hwnd, Rawinput.WM_INPUT, wParam, 0);
+            //return new IntPtr(1);
+            var kbdStruct = Marshal.PtrToStructure<Native.keyboardHookStruct>(lParam);
+            var args = new KeyEventArgs(0, (Keys)kbdStruct.vkCode, wParam, kbdStruct);
             if (!args.isVir)
                 KeyEvent(args);
             if (args.Handled)
-                return new IntPtr(-1);
-
-            return Native.CallNextHookEx(_key_hookId, code, wParam, ref lParam);
+            //{
+            //    Native.PostMessage(form_hwnd, Rawinput.WM_INPUT + 123, wParam, (IntPtr)kbdStruct.vkCode); 
+                return new IntPtr(1);
+            //}
+            return Native.CallNextHookEx(_key_hookId, code, wParam, lParam);
         }
 
         protected virtual IntPtr MouseHookProc(int nCode, IntPtr wParam, IntPtr lParam)
@@ -24,7 +29,7 @@ namespace keyupMusic2
             if (!args.isVir)
                 MouseEvent(args);
             if (args.Handled)
-                return new IntPtr(-1);
+                return new IntPtr(1);
 
             return Native.CallNextHookEx(_mouse_hookId, nCode, wParam, lParam);
         }
@@ -53,6 +58,7 @@ namespace keyupMusic2
 
         private IntPtr _key_hookId = IntPtr.Zero;
         public IntPtr _mouse_hookId = IntPtr.Zero;
+        public IntPtr form_hwnd = IntPtr.Zero;
 
         private Native.LowLevelMouseHookProc _mouseHookProc;
         private Native.LowLevelkeyboardHookProc _kbdHookProc;
@@ -92,6 +98,7 @@ namespace keyupMusic2
             public int X;
             public int Y;
             public bool isVir;
+            public string device;
             public Point Pos => new Point() { X = X, Y = Y };
 
             public KeyEventArgs(KeyType type, Keys key, int wParam, Native.keyboardHookStruct lParam)
@@ -105,14 +112,30 @@ namespace keyupMusic2
                 this.X = Cursor.Position.X;
                 this.Y = Cursor.Position.Y;
             }
+
+            public KeyEventArgs(KeyType type, Keys key, int dwExtraInfo, string device  )
+            {
+                Type = type;
+                this.key = key;
+                this.isVir = dwExtraInfo == Common.isVirConst;
+
+                this.X = Cursor.Position.X;
+                this.Y = Cursor.Position.Y;
+                this.device = device;
+            }
         }
-        public event Action<MouseEventArgs> MouseEvent;
-        public event Action<KeyEventArgs> KeyEvent;
+        public event MouseHookEventHandler MouseEvent;
+        public event KeyboardHookEventHandler KeyEvent;
+        public delegate void MouseHookEventHandler(MouseEventArgs e);
+        public delegate void KeyboardHookEventHandler(KeyEventArgs e);
+        //public event Action<MouseEventArgs> MouseEvent;
+        //public event Action<KeyEventArgs> KeyEvent;
         public string ModuleName => Process.GetCurrentProcess().MainModule.ModuleName;
-        public KeyboardMouseHook()
+        public KeyboardMouseHook(nint form_hwnd )
         {
             _kbdHookProc = KeyboardHookProc;
             _mouseHookProc = MouseHookProc;
+            this.form_hwnd = form_hwnd;
         }
         public void Install()
         {
@@ -120,6 +143,11 @@ namespace keyupMusic2
                 _key_hookId = Native.SetKeyboardHook(_kbdHookProc, ModuleName);
             if (_mouse_hookId == IntPtr.Zero && MouseEvent != null)
                 _mouse_hookId = Native.SetMouseHook(_mouseHookProc, ModuleName);
+            //InstallCbtHook();
+            //UninstallCbtHook();
+            //InstallSHELLHook();
+            //UninstallSHELLHook();
+            //InstallHook();
         }
 
         public void Uninstall()

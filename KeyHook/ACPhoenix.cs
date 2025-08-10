@@ -11,7 +11,6 @@ namespace keyupMusic2
         {
             if (is_alt() && is_down(Keys.Tab)) return;
             if (ProcessName != ACPhoenix) return;
-            Common.hooked = true;
             string nothing = "1834.1103";
             string nothing2 = screenWidth2 + "." + screenHeight2;
             string nothing3 = "1280.634";
@@ -34,7 +33,7 @@ namespace keyupMusic2
                     if (is_alt() && try_press(2497, 1328, Color.FromArgb(148, 185, 195), () => { })) { break; }//匹配取消
                     if (judge_color(127, 177, Color.FromArgb(255, 227, 132))) { press(Keys.Escape); break; }//关闭图鉴
                     if (!is_ctrl() && !is_alt() && judge_color(1307, 85, Color.FromArgb(36, 39, 54), 10) && judge_color(2450, 80, Color.FromArgb(194, 198, 226))) { press(Keys.Tab); break; }//关闭tab
-                    raw_press();
+                    press_raw(e.key);
                     break;
                 case Keys.Tab:
                     if (is_alt()) { break; }
@@ -110,7 +109,7 @@ namespace keyupMusic2
                     if (Position.Y == 0) { press(Keys.MediaNextTrack); break; }
                     if ((is_ctrl() || is_alt()) && judge_color(2524, 210, Color.FromArgb(39, 61, 118), 10)) { mouse_move(2139, 336); break; }
                     if (is_ctrl() || is_alt()) { mouse_move(2139, 336); }
-                    raw_press();
+                    press_raw(e.key);
                     break;
                 case Keys.R:
                     if (judge_color(2007, 340, Color.FromArgb(255, 139, 0)))
@@ -172,8 +171,6 @@ namespace keyupMusic2
                         press("2460,50;2460,200", 101, true);
                     break;
             }
-            Common.hooked = false;
-            if (!handling) handling = true;
         }
 
 

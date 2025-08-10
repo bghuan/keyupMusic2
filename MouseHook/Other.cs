@@ -95,7 +95,7 @@ namespace keyupMusic2
                 else if (e.data > 0 && e.X == 0) nextWallpaper = GetPreviousIdFolder();
                 else if (e.data < 0) nextWallpaper = GetNextWallpaper();
                 else if (e.data > 0) nextWallpaper = GetPreviousWallpaper();
-                SetDesktopWallpaper(nextWallpaper, WallpaperStyle.Fit, true);
+                SetDesktopWallpaper(nextWallpaper, WallpaperStyle.Fit);
             }
             if (e.Msg == MouseMsg.click_r_up)
             {
@@ -213,22 +213,18 @@ namespace keyupMusic2
         }
         private void Chrome(KeyboardMouseHook.MouseEventArgs e)
         {
+            //if (GetPointName() != chrome) return;
             if (e.Msg == MouseMsg.click_up && (e.X == screenWidth1))
                 CenterWindowOnScreen(chrome, e.Y >= screenHeight2);
-            else if (e.Msg == MouseMsg.click_r_up && !LongPressClass.long_press_rbutton && ExistProcess(Common.PowerToysCropAndLock, true))
-            {
-                //if (e.X == 0) { press(Keys.OemPeriod); return; }
-                if (judge_color(1840, 51, Color.FromArgb(162, 37, 45)))
-                    press(Keys.F, 51);
-                quick_max_chrome(e.Pos);
-            }
-            else if (e.Msg == MouseMsg.back_up)
-            {
-                if (judge_color(26, 94, Color.FromArgb(120, 123, 117)))
-                {
-                    press([Keys.LControlKey, Keys.W]);
-                }
-            }
+            //else if (e.Msg == MouseMsg.click_r_up && !LongPressClass.long_press_rbutton && ExistProcess(Common.PowerToysCropAndLock, true) && e.Pos == click_r_point)
+            //{
+            //    //if (e.X == 0) { press(Keys.OemPeriod); return; }
+            //    if (judge_color(1840, 51, Color.FromArgb(162, 37, 45)))
+            //        press(Keys.F, 51);
+            //    quick_max_chrome(e.Pos);
+            //}
+            else if (e.Msg == MouseMsg.back_up && (judge_color(26, 94, Color.FromArgb(120, 123, 117))))
+                press([Keys.LControlKey, Keys.W]);
             else if (e.Msg == MouseMsg.click_r_up && e.Y < 200 && (ProcessTitle.Contains("荔枝") && ProcessTitle.Contains("详情")))
             {
                 var pos = Position;

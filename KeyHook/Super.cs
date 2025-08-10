@@ -15,7 +15,6 @@ namespace keyupMusic2
     {
         Keys[] keys = { Keys.D0, Keys.D1, Keys.D2, Keys.D3, Keys.D4, Keys.D5, Keys.D6, Keys.D7, Keys.D8, Keys.D9, Keys.PageUp, Keys.Home, Keys.End };
         public static bool start_record = false;
-        string commnd_record = "";
 
         public static void hook_KeyDown(Keys keys)
         {
@@ -23,10 +22,9 @@ namespace keyupMusic2
             var e = new KeyboardMouseHook.KeyEventArgs(KeyType.Down, keys, 0, new Native.keyboardHookStruct());
             new SuperClass().hook_KeyDown_keyupMusic2(e);
         }
-        public void hook_KeyDown_keyupMusic2(KeyboardMouseHook.KeyEventArgs e)
+        public bool hook_KeyDown_keyupMusic2(KeyboardMouseHook.KeyEventArgs e)
         {
-            if (!Huan.keyupMusic2_onlisten) return;
-            Common.hooked = true;
+            if (!Huan.keyupMusic2_onlisten) return false;
             bool catched = true;
             switch (e.key)
             {
@@ -109,7 +107,7 @@ namespace keyupMusic2
                     foreach (var key in keys)
                     {
                         if (key == Keys.Apps) continue;
-                        if (is_down(Keys.CapsLock)) return;
+                        if (is_down(Keys.CapsLock)) return true;
                         huan.Invoke(() => { huan.label1.Text = ProcessName + " " + key.ToString(); });
                         SS(10).KeyUp(key);
                     }
@@ -144,7 +142,13 @@ namespace keyupMusic2
                     bool success = SetWindowTransparency(windowTitle, transparency);
                     break;
                 case Keys.Z:
-                    GoodDesktopWallpaper(); break;
+                    //GoodDesktopWallpaper(); 
+                    //huan.Invoke(() => { Native.AllocConsole(); });
+                    TaskRun(() =>
+                    {
+                        press(S);
+                    }, 3300);
+                    break;
                 case Keys.X:
                     AllClass.run_vis();
                     break;
@@ -184,6 +188,10 @@ namespace keyupMusic2
                 //case Keys.F2:
                 //    //LossScale();
                 //    break;
+                case Keys.F3:
+                    huan.temp_visiable = !huan.temp_visiable;
+                    huan.SetVisibleCore2(huan.temp_visiable);
+                    break;
                 case Keys.F4:
                     press(Keys.MediaPlayPause);
                     break;
@@ -197,28 +205,16 @@ namespace keyupMusic2
                     Sleep(180);
                     mouse_click(1062, 899);
                     break;
+                case Keys.F9:
+                    huan.system_sleep();
+                    break;
                 case Keys.F10:
-                    //Process.Start("rundll32.exe", "powrprof.dll,SetSuspendState 0,1,1");
-                    //huan.system_sleep();
+                    Common.no_move = !Common.no_move;
                     break;
-                //case Keys.Up:
-                //    Invoke(() => huan.Opacity = huan.Opacity >= 1 ? 1 : huan.Opacity + 0.5);
+                //case Keys.F11:
+                //case Keys.F12:
+                //    press(e.key);
                 //    break;
-                //case Keys.Down:
-                //    Invoke(() => huan.Opacity = huan.Opacity <= 0 ? 0 : huan.Opacity - 0.5);
-                //    break;
-                case Keys.Escape:
-                    //if (is_ctrl() && is_shift()) { Process.Start(new ProcessStartInfo("taskmgr.exe")); break; }
-                    //press_middle_bottom();
-                    huan._mouseKbdHook.ChangeMouseHooks();
-                    break;
-                case Keys.Delete:
-                    DeleteCurrentWallpaper();
-                    break;
-                case Keys.F11:
-                case Keys.F12:
-                    press(e.key);
-                    break;
 
                 case Keys.Left:
                     press(Keys.MediaPreviousTrack);
@@ -240,6 +236,17 @@ namespace keyupMusic2
                     NotityTime = DateTime.Now.AddMinutes(10);
                     break;
 
+                case Keys.Escape:
+                    huan._mouseKbdHook.ChangeMouseHooks();
+                    break;
+                case Keys.Delete:
+                    DeleteCurrentWallpaper();
+                    break;
+                case Keys.LWin:
+                case Keys.RWin:
+                    press(e.key);
+                    break;
+
                 default:
                     catched = false;
                     break;
@@ -254,7 +261,7 @@ namespace keyupMusic2
                 //Invoke((() => { label1.Text = label_backup; }));
                 //KeyboardHook.stop_next = true;
             }
-            Common.hooked = false;
+            return true;
         }
 
         public static void chrome_m()
@@ -322,26 +329,6 @@ namespace keyupMusic2
             notifyIcon.ShowBalloonTip(10000);
         }
 
-        private static void dragonest()
-        {
-            if (!Common.ExistProcess(Common.Dragonest))
-            {
-                dragonest_init();
-                dragonest_max(10000);
-            }
-            else
-            {
-                dragonest_notity_click();
-                if (!judge_color(71, 199, Color.FromArgb(242, 95, 99)))
-                {
-                    dragonest_notity_click();
-                }
-                if (!judge_color(2223, 1325, Color.FromArgb(22, 155, 222)))
-                    dragonest_max(100);
-            }
-            dragonest_run();
-        }
-
         private static void sound_setting()
         {
             var judge = () =>
@@ -406,43 +393,6 @@ namespace keyupMusic2
             //Listen.aaaEvent += huan.handle_word;
             if (Listen.is_listen) Task.Run(() => Listen.listen_word(new string[] { }, (string deal, int a) => { }));
             Listen.speak_word = "";
-        }
-
-        private static void dragonest_run()
-        {
-            //press("2280,1314;LWin;3222;LWin;", 500); 
-            press("2280,1314;LWin", 0);
-            Task.Run(() =>
-            {
-                DaleyRun_stop = false;
-                Thread.Sleep(3500);
-                if (DaleyRun_stop) return;
-                altab();
-                press("500;2525,40;100", 0);
-                mouse_move_center();
-            });
-            return;
-        }
-
-        private static void dragonest_init()
-        {
-            var judge = () => judge_color(1063, 529, Color.FromArgb(199, 71, 69));
-            var run = () => { press("1076,521"); };
-            var action2 = () => DelayRun(judge, run, 3222, 122);
-
-            press("LWin", 0);
-            action2();
-            //press("10;LWin;zh;DUODUO;Space;Apps;100;Enter", 101);
-        }
-        private static void dragonest_max(int tick)
-        {
-            DelayRun(
-                () => (
-                        //yo() == Common.Dragonest &&
-                        judge_color(71, 199, Color.FromArgb(242, 95, 99)) &&
-                        !judge_color(2223, 1325, Color.FromArgb(22, 155, 222))),
-                () => { press("2323, 30"); },
-                tick, 10);
         }
 
         public void Invoke(Action action)
