@@ -1,5 +1,4 @@
 ﻿using Microsoft.Web.WebView2.Core;
-using System.Runtime.InteropServices;
 
 namespace keyupMusic2
 {
@@ -40,6 +39,13 @@ namespace keyupMusic2
 
             // 先加载本地页面
             webView21.CoreWebView2.Navigate(url2);
+            webView21.KeyDown += (s, e) =>
+            {
+                if (e.KeyCode == Keys.F3 || e.KeyCode == Keys.F9)
+                {
+                    e.Handled = true; // 阻止继续传递
+                }
+            };
 
             // 尝试加载远程页面，成功后切换
             TryNavigateRemote();
@@ -135,7 +141,11 @@ namespace keyupMusic2
 
             //string location = File.ReadAllText(moontime_location);
             string location = Common.ConfigValue(Common.ConfigMoonTimeLocation);
-            Location = new Point(int.Parse(location.Split(',')[0]), int.Parse(location.Split(',')[1]));
+            if(location.Split(',').Length < 2 || !int.TryParse(location.Split(',')[0], out int x))
+                x = 500;
+            if (location.Split(',').Length < 2 || !int.TryParse(location.Split(',')[1], out int y))
+                y = 500; 
+            Location = new Point(x,y);
             if (Location.X > Screen.PrimaryScreen.Bounds.Width && Screen.AllScreens.Length == 1) Location = new Point(500, 500);
         }
         public static void vkMenuItem_Click(object sender, EventArgs e)
@@ -176,5 +186,6 @@ namespace keyupMusic2
             string js = $"get_fill2_flag = !get_fill2_flag;drawCanvas2_refresh();";
             webView21.Invoke(() => webView21.CoreWebView2.ExecuteScriptAsync(js));
         }
+
     }
 }

@@ -8,6 +8,14 @@ namespace keyupMusic2
 {
     public partial class Common
     {
+
+        public static List<ReplaceKey> replace = new List<ReplaceKey> {
+           //new ReplaceKey(steam,       Keys.D7,     Keys.D8),
+           //new ReplaceKey(steam,       Keys.D8,     Keys.D7),
+           //new ReplaceKey(Windblown,   Keys.W,      Keys.S),
+           //new ReplaceKey(Windblown,   Keys.S,      Keys.W),
+           //new ReplaceKey("",          Keys.RMenu,  Keys.None){ action=()=>{if(isctrl())FocusProcess(cloudmusic);else press(MediaPlayPause); } }
+        };
         public static bool quick_replace_key(KeyboardMouseHook.KeyEventArgs e)
         {
             for (int i = 0; i < replace.Count; i++)
@@ -15,21 +23,14 @@ namespace keyupMusic2
                 // 支持全局（process为空或null）或指定进程
                 if (e.key == replace[i].defore && (string.IsNullOrEmpty(replace[i].process) || ProcessName == replace[i].process))
                 {
-                    if (e.Type == KeyType.Down) down_press(replace[i].after, replace[i].raw);
+                    if (e.Type == KeyType.Down && replace[i].action != null) replace[i].action();
+                    else if (e.Type == KeyType.Down) down_press(replace[i].after, replace[i].raw);
                     else up_press(replace[i].after, replace[i].raw);
                     return true;
                 }
             }
             return false;
         }
-
-        public static List<ReplaceKey> replace = new List<ReplaceKey> {
-           new ReplaceKey(steam,       Keys.D7,    Keys.D8),
-           new ReplaceKey(steam,       Keys.D8,    Keys.D7),
-           new ReplaceKey(Windblown,   Keys.W,     Keys.S),
-           new ReplaceKey(Windblown,   Keys.S,     Keys.W),
-           new ReplaceKey("",          Keys.RMenu, Keys.MediaPlayPause, true)
-        };
     }
     public class ReplaceKey
     {
@@ -37,6 +38,7 @@ namespace keyupMusic2
         public string process;
         public Keys defore;
         public Keys after;
+        public Action action;
         public bool raw;
     }
     public class ReplaceKey2

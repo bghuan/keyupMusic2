@@ -13,12 +13,6 @@ namespace keyupMusic2
         public static string download_image_prix = "#/picture/";
         public static void download_image(List<string> mmm)
         {
-            //foreach(var msg in mmm)
-            //{
-            //    string id = msg.Replace(".webp","").Replace(download_image_prix,"");
-            //    ProcessRun(lz_image_downloadexe, id,true);
-            //    Sleep(2000);
-            //}
             ProcessRun(lz_image_downloadexe, string.Join(" ", mmm), true);
         }
         public static void download_image(string msg)
@@ -30,13 +24,9 @@ namespace keyupMusic2
                 _download_image(id);
             }
             play_sound_di();
-            //press([Keys.LControlKey, Keys.W]);
-            //mousego();
         }
         public static void _download_image(string id)
         {
-            //if (ProcessName != chrome) return;
-            //if (!ProcessTitle.Contains("详情")) return;
             ProcessRun(lz_image_downloadexe, id);
         }
         static int SetDesktopWallpaperAli_count = 0;
@@ -47,6 +37,7 @@ namespace keyupMusic2
             {
                 Task.Run(() =>
                 {
+                    var curpath = filePath;
                     if (di)
                         play_sound_di();
                     for (int i = 0; i < 120; i++)
@@ -54,7 +45,7 @@ namespace keyupMusic2
                         Sleep(1000);
                         if (!SetDesktopWallpaperAli_flag)
                         {
-                            SetDesktopWallpaperAli(filePath, di);
+                            SetDesktopWallpaperAli(curpath, di);
                             break;
                         }
                     }
@@ -329,17 +320,17 @@ namespace keyupMusic2
                     }
                 }
 
-                Console.WriteLine($"图片已成功保存到: {localPath}");
+                Console2.WriteLine($"图片已成功保存到: {localPath}");
             }
             catch (AggregateException ex)
             {
                 // 处理HttpClient异步操作的异常
-                Console.WriteLine($"下载图片时出错: {ex.InnerException?.Message ?? ex.Message}");
+                Console2.WriteLine($"下载图片时出错: {ex.InnerException?.Message ?? ex.Message}");
                 throw;
             }
             catch (Exception ex)
             {
-                Console.WriteLine($"发生未知错误: {ex.Message}");
+                Console2.WriteLine($"发生未知错误: {ex.Message}");
                 throw;
             }
         }
@@ -381,13 +372,13 @@ namespace keyupMusic2
             }
             catch (Exception ex)
             {
-                Console.WriteLine($"调用API时出错: {ex.Message}");
+                Console2.WriteLine($"调用API时出错: {ex.Message}");
                 if (ex is AggregateException aggregateEx && aggregateEx.InnerException != null)
                 {
-                    Console.WriteLine($"内部异常: {aggregateEx.InnerException.Message}");
+                    Console2.WriteLine($"内部异常: {aggregateEx.InnerException.Message}");
                     if (aggregateEx.InnerException is HttpRequestException httpEx)
                     {
-                        Console.WriteLine($"HTTP状态码: {httpEx.StatusCode}");
+                        Console2.WriteLine($"HTTP状态码: {httpEx.StatusCode}");
                     }
                 }
                 throw;

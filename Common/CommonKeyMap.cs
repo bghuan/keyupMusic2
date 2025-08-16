@@ -5,6 +5,10 @@
         //press(100, LWin, "chrome", "en", Enter, _(Keys.LControlKey, Keys.A));
         public static Keys[] KC(params Keys[] keys) => keys;
 
+        public static Keys Ctrl = Keys.LControlKey;
+        public static Keys Shift = Keys.LShiftKey;
+        public static Keys Alt = Keys.LMenu;
+
         public static Keys None = Keys.None;
         public static Keys LButton = Keys.LButton;
         public static Keys RButton = Keys.RButton;

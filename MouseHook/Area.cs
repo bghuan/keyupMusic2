@@ -11,6 +11,8 @@ namespace keyupMusic2
     {
         public void Cornor(KeyboardMouseHook.MouseEventArgs e)
         {
+            if (ProcessName == Common.cs2) { return; }
+            if (DeviceName2 == Common.airmouse) { return; }
             if (e.Msg != MouseMsg.move) { RECTT.release(); return; }
             //if (e.X > screen2Width || e.Y < 0 || e.Y > screenHeightMax) return;
 
@@ -58,13 +60,17 @@ namespace keyupMusic2
         static int ga0 = screen2Y;
         int chrome_x_min = -50;
 
-
+        //下
         public static RECTT line2 = new RECTT(nameof(line2),
-                                new JU(0, gao, _fa - 200, gao),
-                                new JU(0, gao - far + 200, cha, gao));
+                                new JU(0, gao, cha, gao),
+                                new JU(0, gao - far + 200, cha, gao),
+                                new JU(_fa - 200, gao, cha, gao),
+                                () => { return GetPointName() == explorer; });
+        //左
         public static RECTT line3 = new RECTT(nameof(line3),
                                 new JU(0, far, 0, gao),
                                 new JU(0, 0, far, gao));
+
         public static RECTT line6 = new RECTT(nameof(line6),
                                 new JU(screen2X, ga2, ch2, ga2),
                                 new JU(screen2X, ga2 - far + 100, ch2, ga2));
@@ -105,13 +111,20 @@ namespace keyupMusic2
             {
                 this.Left = a.X; this.Top = a.Y; this.Right = b.X; this.Bottom = b.Y;
             }
+            public bool inside(Point testPoint)
+            {
+                var hit = (testPoint.X >= Left && testPoint.X <= Right &&
+                            testPoint.Y >= Top && testPoint.Y <= Bottom);
+                return hit;
+            }
         }
         public class RECTT
         {
             public bool can = true;
-            public readonly JU a, b;
+            public readonly JU a, b, c;
             public static List<RECTT> All = new List<RECTT>();
             public string name;
+            public Func<bool> cAction;
             public Task aTask;
 
             public delegate int aEventHandler(KeyboardMouseHook.MouseEventArgs e);
@@ -128,14 +141,14 @@ namespace keyupMusic2
 
                 if (aMouseHookEvent != null)
                 {
-                    FreshProcessName();
+                    FreshProcessName2();
                     //log(ProcessName);
                     int result = aMouseHookEvent.Invoke(e);
 
                     if (result == 0) return;
                     Show(name, 1);
                     play_sound_bongocat(result);
-                    FreshProcessName();
+                    FreshProcessName2();
                     //log(ProcessName);
                 }
             }
@@ -182,6 +195,13 @@ namespace keyupMusic2
                 if (ScreenSecond == Rectangle.Empty && (name.Contains("5") || name.Contains("6") || name.Contains("7") || name.Contains("8"))) { return; }
                 All.Add(this);
             }
+            public RECTT(string name, JU a, JU b, JU c, Func<bool> cAction)
+            {
+                this.name = name; this.a = a; this.b = b; this.c = c; this.cAction = cAction;
+
+                if (ScreenSecond == Rectangle.Empty && (name.Contains("5") || name.Contains("6") || name.Contains("7") || name.Contains("8"))) { return; }
+                All.Add(this);
+            }
             public RECTT(string name, JU a)
             {
                 this.name = name; this.a = a; this.b = a;
@@ -194,8 +214,14 @@ namespace keyupMusic2
             public bool target(Point testPoint)
             {
                 if (!can) return false;
-                var hit = (testPoint.X >= a.Left && testPoint.X <= a.Right &&
-                           testPoint.Y >= a.Top && testPoint.Y <= a.Bottom);
+                var hit = a.inside(testPoint);
+                if (hit && cAction != null)
+                {
+                    var hit2 = c.inside(testPoint) && cAction();
+                    if (hit2)
+                        return false;
+                }
+
                 if (hit) can = false;
                 return hit;
             }

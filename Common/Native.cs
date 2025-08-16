@@ -226,6 +226,11 @@ namespace keyupMusic2
         public const int LWA_ALPHA = 0x2;                 // 透明度调节标志
         [DllImport("kernel32.dll")]
         public static extern bool AllocConsole();
+        [DllImport("kernel32.dll")]
+        public static extern IntPtr LocalAlloc(int uFlags, int uBytes);
+
+        [DllImport("kernel32.dll")]
+        public static extern IntPtr LocalFree(IntPtr hMem);
 
     }
 }

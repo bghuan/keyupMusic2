@@ -57,17 +57,32 @@ namespace keyupMusic2
                     if (is_music) press(Keys.MediaPlayPause);
                 });
             }
-            //if (DateTime.Now.Minute % 10 == 0)
-            //{
-            //    SetDesktopWallpaperFull();
-            //    //SetDesktopWallpaperAli(GetNextWallpaper(), false);
-            //}
+            if (DateTime.Now.Minute % 10 == 0)
+            {
+                IEnumerable<Keys> pressedKeys = GetPressedKeys();
+                if (!pressedKeys.Any()) {
+                    press([LShiftKey, F1]);
+                }
+                //SetDesktopWallpaperFull();
+                //SetDesktopWallpaperAli(GetNextWallpaper(), false);
+            }
         }
 
-
+        bool exp = false;
         private void Every8000ms()
         {
-            FreshProcessName();
+            //FreshProcessName();
+            //IEnumerable<Keys> pressedKeys = GetPressedKeys().Where(x => x != Menu && x != ShiftKey && x != ControlKey);
+            //if (!exp && pressedKeys.Count() != Huan.handling_keys.Count)
+            //{
+            //    exp = true;
+            //    throw new Exception("exp " + string.Join(",", pressedKeys) + " " + string.Join(",", Huan.handling_keys));
+            //}
+            //else
+            //{
+            //    exp = false;
+            //}
+
             if (ProcessName == cs2)
             {
                 if (ExistProcess(wemeetapp, true)) return;
@@ -111,7 +126,7 @@ namespace keyupMusic2
             //}
             VirtualKeyboardForm.Instance?.TriggerKey(Tab, true);
             bland_title();
-            Console.WriteLine($"Tick");
+            Console2.WriteLine($"Tick");
         }
     }
 }

@@ -1,4 +1,5 @@
 ﻿using System.Drawing.Imaging;
+using System.Text;
 using static keyupMusic2.Common;
 
 namespace keyupMusic2
@@ -12,6 +13,7 @@ namespace keyupMusic2
         public static bool long_press_rbutton = false;
         public static void Every100msHandler()
         {
+            //PrintDictSortedByValueDesc();
             if (Huan.handling_keys.Count == 0) return;
 
             var handling_keys = Huan.handling_keys;
@@ -41,7 +43,9 @@ namespace keyupMusic2
             huan.Invoke2(() => { huan.label1.Text = ProcessName + " longpress " + keys; });
 
             if (keys == Keys.F3)
-                huan.Invoke(() => {if (!huan.Visible) huan.Show(); else huan.Hide(); });
+                huan.Invoke(() => { if (!huan.Visible) huan.Show(); else huan.Hide(); });
+            else if (keys == Keys.F4 && !lock_err)
+                CloseProcess();
             else if (keys == Keys.F9)
                 huan.system_sleep(true);
 
@@ -63,15 +67,7 @@ namespace keyupMusic2
             if (IsDesktopFocused())
                 play_sound_di();
 
-            for (int i = 0; i < KeyFunc.All.Count; i++)
-            {
-                if (KeyFunc.All[i].key == keys && KeyFunc.All[i].action != null && (KeyFunc.All[i].processName == "" || KeyFunc.All[i].processName == ProcessName))
-                {
-                    if (KeyFunc.All[i].longPressAction == null) press(keys);
-                    else KeyFunc.All[i].longPressAction();
-                    break;
-                }
-            }
+            KeyFunc.LongPressFlag(keys);
 
             LongPressKey = keys;
         }
@@ -85,11 +81,40 @@ namespace keyupMusic2
                 play_sound_di2();
                 Common.no_move = true;
             }
+
+            if (keys == Keys.Escape)
+            {
+                play_sound_di2();
+                huan._mouseKbdHook.ChangeMouseHooks();
+            }
+
+            if (keys == Keys.Delete)
+            {
+                play_sound_di2();
+                var keysA = new List<Keys>();
+                for (int i = 0; i < 256; i++)
+                    keysA.Add((Keys)i);
+                huan.Invoke(() => { huan.label1.Text = "all key up " + keysA.Count + keysA.ToString(); });
+                Sleep(200);
+                foreach (var key in keysA)
+                {
+                    if (key == Keys.Apps) continue;
+                    //if (is_down(Keys.CapsLock)) return true;
+                    huan.Invoke(() => { huan.label1.Text = ProcessName + " " + key.ToString(); });
+                    SS(10).KeyUp(key);
+                }
+            }
         }
         public static void deal3(Keys keys)
         {
             //play_sound_di2();
             huan.Invoke2(() => { huan.label1.Text = ProcessName + " longlonglongpress " + keys; });
+
+            if (keys == Keys.Escape)
+            {
+                play_sound_di2();
+                Environment.Exit(0);
+            }
 
             if (keys == LWin) return;
             VirtualKeyboardForm.Instance?.TriggerKey(keys, true);

@@ -1,120 +1,211 @@
-﻿using System;
-using System.Collections.Concurrent;
+﻿using Common;
+using System;
+using System.Collections.Generic;
 using System.Diagnostics;
+using System.Drawing;
+using System.Linq;
 using System.Runtime.InteropServices;
 using System.Threading;
 
-class HighPerformanceKeyboardHook
+namespace ProcessMetrics
 {
-    // 低级别键盘钩子ID
-    private const int WH_KEYBOARD_LL = 13;
-    private const int WM_KEYDOWN = 0x0100;
-    private const int WM_KEYUP = 0x0101;
-
-    // 用于存储待处理的键盘事件
-    private static readonly ConcurrentQueue<ConsoleKey> _keyQueue = new ConcurrentQueue<ConsoleKey>();
-    private static LowLevelKeyboardProc _proc = HookCallback;
-    private static IntPtr _hookID = IntPtr.Zero;
-    private static Thread _processingThread;
-    private static bool _isRunning;
-
-    public static void Start()
+    public class KeyboardMouseHook
     {
-        _hookID = SetHook(_proc);
-        _isRunning = true;
-
-        // 启动独立的事件处理线程
-        _processingThread = new Thread(ProcessKeyEvents)
+        protected virtual IntPtr KeyboardHookProc(int code, int wParam, ref KEYBOARDHOOKStruct lParam)
         {
-            IsBackground = true,
-            Priority = ThreadPriority.BelowNormal // 低于正常优先级，不影响系统响应
-        };
-        _processingThread.Start();
-    }
-
-    public static void Stop()
-    {
-        _isRunning = false;
-        UnhookWindowsHookEx(_hookID);
-        _processingThread?.Join();
-    }
-
-    // 钩子回调函数 - 仅负责收集事件，不做任何处理
-    private static IntPtr HookCallback(int nCode, IntPtr wParam, IntPtr lParam)
-    {
-        if (nCode >= 0)
+            var args = new KeyEventArgs((wParam == 0x0101 || wParam == 0x0105) ? KeyboardType.KeyUp : KeyboardType.KeyDown, (Keys)lParam.vkCode, wParam, lParam);
+            KeyEvent(args);
+            if (args.Handled) return new IntPtr(-1);
+            return CallNextHookEx(_key_hookId, code, wParam, ref lParam);
+        }
+        protected virtual IntPtr MouseHookProc(int nCode, int wParam, ref MOUSEHOOKSTRUCT lParam)
         {
-            // 只在按键按下时处理（避免重复处理）
-            if (wParam == (IntPtr)WM_KEYDOWN)
+            var args = new MouseEventArgs((MouseType)wParam, wParam, ref lParam);
+            MouseEvent(args);
+            if (args.Handled) return new IntPtr(-1);
+            return CallNextHookEx(_mouse_hookId, nCode, wParam, ref lParam);
+        }
+        public class KeyEventArgs : EventArgs
+        {
+            public KeyboardType Type;
+            public Keys key;
+            public int wParam;
+            public KEYBOARDHOOKStruct lParam;
+            public bool Handled;
+
+            public KeyEventArgs(KeyboardType type, Keys key, int wParam, KEYBOARDHOOKStruct lParam)
             {
-                int vkCode = Marshal.ReadInt32(lParam);
-                // 只做最基本的转换，然后放入队列
-                _keyQueue.Enqueue((ConsoleKey)vkCode);
+                this.Type = type;
+                this.wParam = wParam;
+                this.lParam = lParam;
+                this.key = key;
             }
         }
-        // 立即传递给下一个钩子，不阻塞
-        return CallNextHookEx(_hookID, nCode, wParam, lParam);
-    }
-
-    // 独立线程处理键盘事件
-    private static void ProcessKeyEvents()
-    {
-        while (_isRunning)
+        public class MouseEventArgs : EventArgs
         {
-            // 从队列中获取事件并处理
-            if (_keyQueue.TryDequeue(out ConsoleKey key))
+            public MouseType Type;
+            public int X;
+            public int Y;
+            public int wParam;
+            public MOUSEHOOKSTRUCT lParam;
+            public bool Handled;
+            public int dwExtraInfo;
+            public int data;
+            public Point Pos => new Point(X, Y);
+
+            public MouseEventArgs(MouseType type, int wParam, ref MOUSEHOOKSTRUCT lParam)
             {
-                // 这里可以处理复杂逻辑，但避免长时间阻塞
-                Console.WriteLine($"Key pressed: {key}");
-            }
-            else
-            {
-                // 队列空时短暂休眠，减少CPU占用
-                Thread.Sleep(1);
+                this.Type = type;
+                this.X = lParam.pt.X;
+                this.Y = lParam.pt.Y;
+                this.wParam = wParam;
+                this.lParam = lParam;
+
+                if (type != MouseType.back && type != MouseType.back_up && type != MouseType.wheel) return;
+                short buttonData = (short)((lParam.mouseData >> 16 & 0xFFFF));
+                if (buttonData == 2 && (type == MouseType.back || type == MouseType.back_up))
+                    this.Type = type == MouseType.back ? MouseType.go : MouseType.go_up;
+                this.dwExtraInfo = lParam.dwExtraInfo;
+                this.data = buttonData; //滚轮滚动数据
             }
         }
-    }
-
-    private static IntPtr SetHook(LowLevelKeyboardProc proc)
-    {
-        using (Process curProcess = Process.GetCurrentProcess())
-        using (ProcessModule curModule = curProcess.MainModule)
+        public KeyboardMouseHook()
         {
-            return SetWindowsHookEx(WH_KEYBOARD_LL, proc,
-                GetModuleHandle(curModule.ModuleName), 0);
+            _keyboardHookProc = KeyboardHookProc;
+            _mouseHookProc = MouseHookProc;
+        }
+        private IntPtr _key_hookId = IntPtr.Zero;
+        public IntPtr _mouse_hookId = IntPtr.Zero;
+
+        public event MouseHookEventHandler MouseEvent;
+        public event KeyboardHookEventHandler KeyEvent;
+        public delegate void MouseHookEventHandler(MouseEventArgs e);
+        public delegate void KeyboardHookEventHandler(KeyEventArgs e);
+
+        private LowLevelkeyboardHookProc _keyboardHookProc;
+        private LowLevelMouseHookProc _mouseHookProc;
+        public delegate IntPtr LowLevelkeyboardHookProc(int code, int wParam, ref KEYBOARDHOOKStruct lParam);
+        public delegate IntPtr LowLevelMouseHookProc(int nCode, int wParam, ref MOUSEHOOKSTRUCT lParam);
+        public void Install()
+        {
+            if (_key_hookId == IntPtr.Zero && KeyEvent != null)
+                _key_hookId = SetKeyboardHook(_keyboardHookProc);
+            if (_mouse_hookId == IntPtr.Zero && MouseEvent != null)
+                _mouse_hookId = SetMouseHook(_mouseHookProc);
+        }
+        public void Uninstall()
+        {
+            if (_key_hookId != IntPtr.Zero) UnhookWindowsHookEx(_key_hookId);
+            if (_mouse_hookId != IntPtr.Zero) UnhookWindowsHookEx(_mouse_hookId);
+            _key_hookId = IntPtr.Zero;
+            _mouse_hookId = IntPtr.Zero;
+        }
+        public static IntPtr SetMouseHook(LowLevelMouseHookProc proc)
+        {
+            using (var curProcess = Process.GetCurrentProcess())
+            using (var curModule = curProcess.MainModule)
+            {
+                return SetWindowsHookEx(WH_MOUSE_LL, proc,
+                    GetModuleHandle(curModule.ModuleName), 0);
+            }
+        }
+        public static IntPtr SetKeyboardHook(LowLevelkeyboardHookProc proc)
+        {
+            using (var curProcess = Process.GetCurrentProcess())
+            using (var curModule = curProcess.MainModule)
+            {
+                return SetWindowsHookEx(WH_KEYBOARD_LL, proc,
+                    GetModuleHandle(curModule.ModuleName), 0);
+            }
+        }
+
+        public const int WH_MOUSE_LL = 14;
+        public const int WH_KEYBOARD_LL = 13;
+        [DllImport("user32.dll")]
+        public static extern IntPtr SetWindowsHookEx(int idHook, LowLevelMouseHookProc lpfn, IntPtr hMod, uint dwThreadId);
+        [DllImport("user32.dll")]
+        public static extern IntPtr SetWindowsHookEx(int idHook, LowLevelkeyboardHookProc callback, IntPtr hInstance, uint threadId);
+        [DllImport("user32.dll")]
+        public static extern bool GetCursorPos(out Point lpPoint);
+        [DllImport("user32.dll")]
+        [return: MarshalAs(UnmanagedType.Bool)]
+        public static extern bool UnhookWindowsHookEx(IntPtr hhk);
+        [DllImport("kernel32.dll")]
+        public static extern IntPtr GetModuleHandle(string lpModuleName);
+        [DllImport("user32.dll")]
+        public static extern int CallNextHookEx(IntPtr idHook, int nCode, int wParam, ref KEYBOARDHOOKStruct lParam);
+        [DllImport("user32.dll")]
+        public static extern int CallNextHookEx(IntPtr idHook, int nCode, int wParam, ref MOUSEHOOKSTRUCT lParam);
+        public struct KEYBOARDHOOKStruct
+        {
+            public int vkCode;
+            public int scanCode;
+            public int flags;
+            public int time;
+            public int dwExtraInfo;
+        }
+        public struct MOUSEHOOKSTRUCT
+        {
+            public Point pt;
+            public int mouseData;
+            public int flags;
+            public int time;
+            public int dwExtraInfo;
+        }
+        public enum MouseType
+        {
+            move = 0x0200,
+            click = 0x0201,
+            click_up = 0x0202,
+            click_r = 0x0204,
+            click_r_up = 0x0205,
+            middle = 0x0207,
+            middle_up = 0X0208,
+            wheel = 0x020A,
+            back = 0x020B,
+            back_up = 0x020C,
+            go = 0x920B, //自定义
+            go_up = 0x920C, //自定义
+            none = 0x920D, //自定义
+        }
+        public enum KeyboardType
+        {
+            KeyDown, KeyUp
         }
     }
-
-    #region Windows API 导入
-    [DllImport("user32.dll", CharSet = CharSet.Auto, SetLastError = true)]
-    private static extern IntPtr SetWindowsHookEx(int idHook, LowLevelKeyboardProc lpfn, IntPtr hMod, uint dwThreadId);
-
-    [DllImport("user32.dll", CharSet = CharSet.Auto, SetLastError = true)]
-    [return: MarshalAs(UnmanagedType.Bool)]
-    private static extern bool UnhookWindowsHookEx(IntPtr hhk);
-
-    [DllImport("user32.dll", CharSet = CharSet.Auto, SetLastError = true)]
-    private static extern IntPtr CallNextHookEx(IntPtr hhk, int nCode,
-        IntPtr wParam, IntPtr lParam);
-
-    [DllImport("kernel32.dll", CharSet = CharSet.Auto, SetLastError = true)]
-    private static extern IntPtr GetModuleHandle(string lpModuleName);
-
-    private delegate IntPtr LowLevelKeyboardProc(int nCode, IntPtr wParam, IntPtr lParam);
-    #endregion
-}
-
-class Program
-{
-    static void Main(string[] args)
+    class Program
     {
-        Console.WriteLine("高性能键盘钩子演示 - 按ESC键退出");
-        HighPerformanceKeyboardHook.Start();
+        static KeyboardMouseHook _KeyboardMouseHook = new KeyboardMouseHook();
+      
+        private static void KeyBoardHookProc(KeyboardMouseHook.KeyEventArgs e)
+        {
+            var str = e.key.ToString() + e.Type;
+            File.WriteAllText("a.txt", str);
+            //Invoke(() => { label1.Text = str; });
+        }
+        private static void MouseHookProc(KeyboardMouseHook.MouseEventArgs e)
+        {
+            var str = e.Pos.ToString() + e.Type.ToString() + (e.data == 0 ? "" : e.data.ToString());
+            //Invoke(() => { label1.Text = str; });
+        }
+        static void Main(string[] args)
+        {
 
-        // 等待用户按下ESC键退出
-        while (Console.ReadKey(true).Key != ConsoleKey.Escape) { }
-
-        HighPerformanceKeyboardHook.Stop();
-        Console.WriteLine("\n程序已退出");
+            //File.WriteAllText("a.txt", "aaa");
+            //_KeyboardMouseHook.KeyEvent += KeyBoardHookProc;
+            ////_KeyboardMouseHook.MouseEvent += MouseHookProc;
+            //_KeyboardMouseHook.Install();
+            //HideProcess();
+            Console.ReadLine();
+        }
+        public static void HideProcess()
+        {
+            IntPtr hwnd = GetForegroundWindow(); // 获取当前活动窗口的句柄
+            ShowWindow(hwnd, 0);
+        }
+        [DllImport("user32.dll")]
+        public static extern bool ShowWindow(IntPtr hwnd, int nCmdShow);
+        [DllImport("user32.dll")]
+        public static extern IntPtr GetForegroundWindow();
     }
 }

@@ -128,8 +128,9 @@ namespace keyupMusic2
                 }
             }
         }
-        public static void yo(KeyboardMouseHook.KeyEventArgs e)
+        public static bool yo(KeyboardMouseHook.KeyEventArgs e)
         {
+            if (e.Type == KeyType.Down) return false;
             if (Position.Y == 0)
                 switch (e.key)
                 {
@@ -148,6 +149,7 @@ namespace keyupMusic2
             }
 
             if (LongPressKey == e.key) LongPressKey = Keys.None;
+            return true;
         }
     }
 }

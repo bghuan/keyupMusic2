@@ -6,7 +6,7 @@ namespace keyupMusic2
     public class DevenvClass : Default
     {
         static int is_oem = 0;
-        public void hook_KeyDown_ddzzq(KeyboardMouseHook.KeyEventArgs e)
+        public void HookEvent(KeyboardMouseHook.KeyEventArgs e)
         {
             if (ProcessName != devenv) return;
 
@@ -19,7 +19,9 @@ namespace keyupMusic2
                 case Keys.F5:
                     //if (Deven_runing())
                     //    press([Keys.RControlKey, Keys.RShiftKey, Keys.F5]);
-                    if (Deven_runing()) press("116,69");
+                    //if (Deven_runing()) press("116,69");
+                    if (Deven_runing()) press("583,74");
+                    else press("116,69");
                     //else press("898,71");
                     break;
 

@@ -12,45 +12,10 @@ namespace keyupMusic2
 {
     public partial class biu
     {
-        public static List<string> list_go_back = new List<string> { explorer, VSCode, msedge, chrome, devenv, androidstudio, ApplicationFrameHost, Common.cs2, steam, Common.Glass, Glass2, Glass3, vlc, Common.PowerToysCropAndLock, KingdomRush1, lz_image_download, Honeyview, PotPlayerMini64, _哔哩哔哩, };
-        public static HashSet<MouseMsg> go_back_keys = new HashSet<MouseMsg>() {
-            MouseMsg.go, MouseMsg.go_up, MouseMsg.back, MouseMsg.back_up
-        };
+        public static List<string> list_go_back = new List<string> { explorer, VSCode, msedge, chrome, devenv, androidstudio, ApplicationFrameHost, Common.cs2, Common.steam, Common.Glass, Glass2, Glass3, vlc, Common.PowerToysCropAndLock, KingdomRush1, lz_image_download, Honeyview, PotPlayerMini64, _哔哩哔哩, };
 
-        //first to bool as ProcessName == msedge
-        public static List<ReplaceKey2> replace2 = new List<ReplaceKey2> {
-           new ReplaceKey2(Honeyview,       MouseMsg.go,        Keys.Oem6),
-           new ReplaceKey2(Honeyview,       MouseMsg.back,      Keys.Oem4),
-           new ReplaceKey2(chrome,          MouseMsg.go,        Keys.F),
-           new ReplaceKey2(Common.cs2,      MouseMsg.go,        Keys.Escape),
-           //new ReplaceKey2(msedge,          MouseMsg.go,        Keys.Home,       ()=>{ }),
-           //new ReplaceKey(msedge,          MouseMsg.go_up,   Keys.Home,       ()=>{ }),
-           //new ReplaceKey(string.Empty,    MouseMsg.go,        Keys.MediaNextTrack),
-           //new ReplaceKey(string.Empty,    MouseMsg.go,        Keys.MediaPreviousTrack),
-        };
-        private void GoBack2(KeyboardMouseHook.MouseEventArgs e)
-        {
-            if (e.Msg == MouseMsg.move) return;
-            if (!go_back_keys.Contains(e.Msg)) return;
-            if (!ReplaceKey2.proName.Contains(ProcessName)) return;
-
-            var replace = replace2;
-            for (int i = 0; i < replace.Count; i++)
-            {
-                if (e.Msg == replace[i].before && ProcessName == replace[i].process)
-                {
-                    if (replace[i].action != null)
-                    {
-                        if (!e.Msg.IsUpEvent())
-                            replace[i].action.Invoke();
-                        return;
-                    }
-                    if (!e.Msg.IsUpEvent()) down_press(replace[i].after, replace[i].raw);
-                    else up_press(replace[i].after, replace[i].raw);
-                    return;
-                }
-            }
-        }
+        public static string studio = "tudio";
+        public static List<string> goback = new List<string> { explorer, ApplicationFrameHost, Common.steam, PotPlayerMini64, _哔哩哔哩, };
         private void GoBack(KeyboardMouseHook.MouseEventArgs e)
         {
             if (e.Msg == MouseMsg.move) return;
@@ -60,30 +25,36 @@ namespace keyupMusic2
 
             if (is_douyin())
                 Douyin(go, back);
-            //else if (IsFullVedio() && go)
-            //    press(F);
             else if (ProcessName == msedge)
                 Msedge(go, back);
             else if (ProcessName == Common.cs2)
                 cs2(go, back);
-            else if (ProcessName == steam && (go))
-                press("808,651;close", 1);
+            else if (ProcessName == Common.steam)
+                steam(go);
             else if (ProcessName == StartMenuExperienceHost || ProcessName == SearchHost)
                 _StartMenuExperienceHost(go, back);
-            else if (ProcessName == vlc)
-                raw(go, back);
             else if (ProcessName.Contains(KingdomRush))
                 _KingdomRush(go, back);
             else if (ProcessName == (lz_image_download))
                 _lz_image_download(go, back);
-
-            if (!IsDesktopFocused() && list_go_back.Contains(ProcessName))
+            else if (ReplaceKey2.Catched(ProcessName, e.Msg))
+            { }
+            else if (IsDesktopFocused())
+                press(go ? Keys.MediaNextTrack : Keys.MediaPreviousTrack);
+            //if (!IsDesktopFocused() && list_go_back.Contains(ProcessName))
+            else if (goback.Contains(ProcessName) || ProcessName.Contains(studio) || ProcessTitle.Contains(studio))
+            {
+                mousegoback(go);
                 return;
+            }
+            else
+                press(go ? Keys.MediaNextTrack : Keys.MediaPreviousTrack);
+        }
 
-            if (go)
-                press(Keys.MediaNextTrack);
-            else if (back)
-                press(Keys.MediaPreviousTrack);
+        private static void steam(bool go)
+        {
+            if (go) press("808,651;close", 1);
+            else mouseback();
         }
 
         private void _Honeyview(bool go, bool back)
@@ -115,6 +86,7 @@ namespace keyupMusic2
 
         private void _StartMenuExperienceHost(bool go, bool back)
         {
+            press(go ? Keys.MediaNextTrack : Keys.MediaPreviousTrack);
             press(Keys.LWin);
         }
         private void chromeasd(bool go, bool back)
@@ -142,6 +114,8 @@ namespace keyupMusic2
                     press([Keys.LControlKey, Keys.W]);
                 else if (ProcessTitle.Contains("起点中文网") && !ProcessTitle.Contains("类"))
                     press([Keys.LControlKey, Keys.W]);
+                else
+                    mouseback();
             if (go) press(Keys.Right);
             //if (back)
             //{

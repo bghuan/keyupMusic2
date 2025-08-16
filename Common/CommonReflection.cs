@@ -82,7 +82,7 @@ namespace keyupMusic2
             }
             catch (Exception ex)
             {
-                Console.WriteLine($"执行失败：{ex.Message}");
+                Console2.WriteLine($"执行失败：{ex.Message}");
             }
         }
 

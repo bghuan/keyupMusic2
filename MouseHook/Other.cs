@@ -77,7 +77,12 @@ namespace keyupMusic2
             //if (e.Msg == MouseMsg.click_up && !isctrl())
             //    press([LControlKey, D0]);
             if (e.Msg == MouseMsg.click_r)
+            {
                 press(Delete);
+                var judge = () => { return GetPointTitle() == ""; };
+                var run = () => { press(Escape); };
+                DelayRun(judge, run, 1000, 100);
+            }
             //if (e.Msg == MouseMsg.wheel)
             //{
             //    if (e.data > 0 && Common.ProcessTitle.IndexOf("id") == 0) press(Delete);
@@ -144,11 +149,18 @@ namespace keyupMusic2
         {
             if (e.Msg == MouseMsg.click_up)
                 if (is_down_vir(Keys.RButton))
+                {
                     press(Keys.F12);
-            if (e.Msg == MouseMsg.click_r)
-            {
-                catch_on(MouseMsg.click);
-            }
+                    {
+                        var judge = () => { return GetPointTitle() == ""; };
+                        var run = () => { press(Escape); };
+                        DelayRun(judge, run, 1000, 1);
+                    }
+                }
+            //if (e.Msg == MouseMsg.click_r)
+            //{
+            //    catch_on(MouseMsg.click);
+            //}
             if (e.Msg == MouseMsg.click_r_up)
             {
                 if (!is_down(Keys.LButton))
@@ -159,10 +171,10 @@ namespace keyupMusic2
                         else press("116,69");
                         //else press("898,71");
                     }
-                    else if (!catch_ed)
-                        mouse_click_right();
+                    //else if (!catch_ed)
+                    //    mouse_click_right();
                 }
-                catch_off();
+                //catch_off();
             }
         }
         private void PowerToysCropAndLock(KeyboardMouseHook.MouseEventArgs e)

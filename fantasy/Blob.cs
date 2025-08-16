@@ -45,6 +45,13 @@ namespace keyupMusic2
             webView21.CoreWebView2.WebMessageReceived += CoreWebView2_WebMessageReceived;
             //webView21.DefaultBackgroundColor = Color.Transparent;
             //webView21.CoreWebView2.OpenDevToolsWindow();
+            webView21.KeyDown += (s, e) =>
+            {
+                if (e.KeyCode == Keys.F3 || e.KeyCode == Keys.F9)
+                {
+                    e.Handled = true; // 阻止继续传递
+                }
+            };
 
             // 先加载本地页面
             webView21.CoreWebView2.Navigate(url2);

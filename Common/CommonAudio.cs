@@ -63,7 +63,7 @@ namespace keyupMusic2
             catch (Exception ex)
             {
                 // 可以根据需要记录日志或提示用户
-                Console.WriteLine($"播放bongocat音效时发生异常: {ex.Message}");
+                Console2.WriteLine($"播放bongocat音效时发生异常: {ex.Message}");
             }
         }
         public static void play_sound_bongocat(int key)
@@ -84,7 +84,7 @@ namespace keyupMusic2
             catch (Exception ex)
             {
                 // 可以根据需要记录日志或提示用户
-                Console.WriteLine($"播放bongocat音效时发生异常: {ex.Message}");
+                Console2.WriteLine($"播放bongocat音效时发生异常: {ex.Message}");
             }
         }
         static string wav_di = "wav\\d2.wav";
@@ -106,7 +106,7 @@ namespace keyupMusic2
             catch (Exception ex)
             {
                 // 可以根据需要记录日志或提示用户
-                Console.WriteLine($"播放bongocat音效时发生异常: {ex.Message}");
+                Console2.WriteLine($"播放bongocat音效时发生异常: {ex.Message}");
             }
         }
         public static void play_sound_di2(int tick = 0)

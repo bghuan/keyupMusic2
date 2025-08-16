@@ -1,4 +1,5 @@
-﻿using System.Collections.Concurrent;
+﻿using Microsoft.Win32;
+using System.Collections.Concurrent;
 using System.Diagnostics;
 using static keyupMusic2.Common;
 using static keyupMusic2.KeyboardMouseHook;
@@ -72,10 +73,10 @@ namespace keyupMusic2
 
             try
             {
-                var _stop_keys = new Dictionary<Keys, DateTime>(handling_keys);
+                var _handling_keys = new Dictionary<Keys, DateTime>(handling_keys);
                 Invoke(() =>
                     {
-                        string asd = string.Join(" ", _stop_keys?.Select(key => easy_read(key.Key.ToString())));
+                        string asd = string.Join(" ", _handling_keys?.Select(key => easy_read(key.Key.ToString())));
                         if (label1.Text.ToLower() == asd.ToLower()) asd += " " + DateTimeNow2();
                         label1.Text = Common.DeviceName + asd;
                     }
@@ -172,6 +173,124 @@ namespace keyupMusic2
             CloseDesktopWindow();
             //if (GetWindowTitle() == "关闭 Windows")
             press(100, 500, Up, Return);
+        }
+        //job no release f3 no hide no stop superlisten
+        public void timer_stop()
+        {
+            blobForm.Hide();
+            blobForm.changeFlag(false);
+            //Location = endPoint;
+            timerMove.Stop();
+            //if (!temp_visiable) SetVisibleCore(false);
+        }
+        private void form_move()
+        {
+            Invoke(() =>
+            {
+                if (Opacity == 0) { return; }
+                var current_hwnd = ProcessName;
+                //temp_visiable = Visible;
+                //if (!Visible) { SetVisibleCore(true); }
+                if (Focused && current_hwnd == "") { altab(); }
+                else if (Focused) { FocusProcessSimple(current_hwnd); }
+                blobForm.Show();
+                blobForm.changeFlag(true);
+                //timerMove.Interval = 1000 / 144;
+                //// 解除旧的事件绑定，防止叠加
+                //timerMove.Tick -= timerMove_Tick;
+                //timerMove.Tick += timerMove_Tick;
+                timerMove.Start();
+                //Location = startPoint;
+                startTime = DateTime.Now;
+            });
+        }
+
+        private void super_listen()
+        {
+            keyupMusic2_onlisten = true;
+            super_listen_time = DateTime.Now.AddMilliseconds(super_listen_tick);
+            Invoke(() =>
+            {
+                base.BackColor = Color.Blue;
+                TaskRun(() =>
+                {
+                    if (DateTime.Now > super_listen_time)
+                        super_listen_clear(Color.White);
+                }, super_listen_tick);
+            });
+        }
+        public static bool start_check()
+        {
+            if (Debugger.IsAttached) return false;
+            int currentProcessId = Process.GetCurrentProcess().Id;
+            Process[] processes = Process.GetProcessesByName(Common.keyupMusic2);
+            foreach (Process process in processes)
+            {
+                if (process.Id != currentProcessId)
+                {
+                    Socket.socket_run = false;
+                    Socket.socket_write(start_check_str);
+                    Environment.Exit(0);
+                    return true;
+                }
+            }
+            return false;
+        }
+        public static string start_check_str = "starting";
+        public static string start_check_str2 = "sleep";
+        public static string huan_invoke = "huan_invoke";
+        public bool temp_visiable = false;
+
+        // 此时为唤醒后登录 
+        private void SystemEvents_SessionSwitch(object sender, SessionSwitchEventArgs e)
+        {
+            if (e.Reason == SessionSwitchReason.SessionUnlock)
+            {
+                MoonTime.Instance?.SetInitAngle();
+                VirtualKeyboardForm.Instance?.SetInitClean();
+                system_sleep_count = 0;
+                DaleyRun_stop = true;
+                player.Stop();
+                CleanMouseState();
+                ready_to_sleep = false;
+                log("唤醒解锁");
+            }
+        }
+
+        public static Dictionary<string, Action> refAction = new Dictionary<string, Action>() {
+            { "chrome_click_r_up",(() => {
+                MessageBox.Show("右键点击 Chrome");
+                if (!LongPressClass.long_press_rbutton && ExistProcess(Common.PowerToysCropAndLock, true))
+                {
+                    if (judge_color(1840, 51, Color.FromArgb(162, 37, 45)))
+                        press(Keys.F, 51);
+                    quick_max_chrome();
+                }})},
+        };
+
+
+        public static string start_reflection = "reflection";
+        public void reflection_catch(string msg)
+        {
+            msg = msg.Replace(start_reflection, "");
+            Common.ExecuteCommand(msg);
+        }
+        public static string start_next = "nextlocation";
+        public void next_catch(string msg)
+        {
+            msg = msg.Replace(start_next, "");
+            int x = int.Parse(msg.Split(",")[0]);
+            int y = int.Parse(msg.Split(",")[1]);
+            if (!IsFullScreen()) y += 100;
+            if (!WaitForKeysReleased(1000, is_lbutton)) return;
+
+            Native.GetCursorPos(out var pos);
+            //SuperClass.get_point_color();
+            mouse_move(x, y, 20);
+            mouse_middle_click(20);
+            mouse_move(pos);
+            //SuperClass.get_point_color();
+            //TaskRun(() => { SuperClass.get_point_color(); }, 3000);
         }
 
     }

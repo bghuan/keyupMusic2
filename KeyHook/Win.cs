@@ -40,7 +40,7 @@ namespace keyupMusic2
         //    }
         //}
         //static KeyEvent a = new KeyEvent(D2, () => press(100, LWin, "d2", "en", Enter));
-        public void hook_KeyDown_ddzzq(KeyboardMouseHook.KeyEventArgs e)
+        public void HookEvent(KeyboardMouseHook.KeyEventArgs e)
         {
             if (!is_down(Keys.LWin) && !is_down(Keys.RWin)) return;
             // 发送无效 Win + Key 事件,使当前 Win 键无效
@@ -98,7 +98,7 @@ namespace keyupMusic2
                     break;
                 default: catched = false; break;
             }
-            FreshProcessName();
+            FreshProcessName2();
         }
         private static void run_chrome()
         {

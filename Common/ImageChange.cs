@@ -45,12 +45,12 @@ namespace keyupMusic2
                         var encoder = GetEncoderFromExtension(outputPath, quality);
                         image.Save(outputPath, encoder);
 
-                        Console.WriteLine($"已压缩: {fileName}");
+                        Console2.WriteLine($"已压缩: {fileName}");
                     }
                 }
                 catch (Exception ex)
                 {
-                    Console.WriteLine($"处理 {fileName} 时出错: {ex.Message}");
+                    Console2.WriteLine($"处理 {fileName} 时出错: {ex.Message}");
                 }
             });
         }
@@ -110,7 +110,7 @@ namespace keyupMusic2
             }
             catch (Exception ex)
             {
-                Console.WriteLine($"转换和调整大小失败: {ex.Message}");
+                Console2.WriteLine($"转换和调整大小失败: {ex.Message}");
                 throw;
             }
         }
@@ -125,7 +125,7 @@ namespace keyupMusic2
             }
             catch (Exception ex)
             {
-                Console.WriteLine($"无法读取图片尺寸: {ex.Message}");
+                Console2.WriteLine($"无法读取图片尺寸: {ex.Message}");
                 return (0, 0);
             }
         }
@@ -259,7 +259,7 @@ namespace keyupMusic2
             }
             catch (Exception ex)
             {
-                Console.WriteLine($"处理图片时出错: {ex.Message}");
+                Console2.WriteLine($"处理图片时出错: {ex.Message}");
             }
             return true;
         }

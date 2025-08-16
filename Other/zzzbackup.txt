@@ -1,4 +1,599 @@
-﻿
+﻿using System;
+using System.Diagnostics;
+using static keyupMusic2.biu;
+using static keyupMusic2.Common;
+using static keyupMusic2.KeyboardMouseHook;
+
+namespace keyupMusic2
+{
+    public partial class Common
+    {
+
+        public static List<ReplaceKey> replace = new List<ReplaceKey> {
+           //new ReplaceKey(steam,       Keys.D7,     Keys.D8),
+           //new ReplaceKey(steam,       Keys.D8,     Keys.D7),
+           //new ReplaceKey(Windblown,   Keys.W,      Keys.S),
+           //new ReplaceKey(Windblown,   Keys.S,      Keys.W),
+           //new ReplaceKey("",          Keys.RMenu,  Keys.None){ action=()=>{if(isctrl())FocusProcess(cloudmusic);else press(MediaPlayPause); } }
+        };
+        public static bool quick_replace_key(KeyboardMouseHook.KeyEventArgs e)
+        {
+            for (int i = 0; i < replace.Count; i++)
+            {
+                // 支持全局（process为空或null）或指定进程
+                if (e.key == replace[i].defore && (string.IsNullOrEmpty(replace[i].process) || ProcessName == replace[i].process))
+                {
+                    if (e.Type == KeyType.Down && replace[i].action != null) replace[i].action();
+                    else if (e.Type == KeyType.Down) down_press(replace[i].after, replace[i].raw);
+                    else up_press(replace[i].after, replace[i].raw);
+                    return true;
+                }
+            }
+            return false;
+        }
+    }
+    public class ReplaceKey
+    {
+        public ReplaceKey(string key, Keys before, Keys after, bool raw = false) { this.process = key; this.defore = before; this.after = after; this.raw = raw; }
+        public string process;
+        public Keys defore;
+        public Keys after;
+        public Action action;
+        public bool raw;
+    }
+    public class ReplaceKey2
+    {
+        public static HashSet<string> proName = new HashSet<string>();
+        public static MultiDictionary<string, MouseMsg> proNameMap = new MultiDictionary<string, MouseMsg>();
+        public ReplaceKey2(string process, MouseMsg before, Keys after, Action action = null, bool raw = false)
+        {
+            this.process = process;
+            this.before = before;
+            this.after = after;
+            this.action = action;
+            this.raw = raw;
+            if (!proName.Contains(process))
+                proName.Add(process);
+            proNameMap.Add(process, before);
+        }
+        public string process;
+        public MouseMsg before;
+        public Keys after;
+        public bool raw;
+        public Action action;
+        public static bool Catched(string process, MouseMsg before)
+        {
+            if (!proNameMap.ContainsKey(process)) return false;
+            return proNameMap.ContainsValue(process, before);
+        }
+        public static void init()
+        {
+            var replace = replace2;
+            var _replace = replace.ToList();
+            foreach (var item in _replace)
+            {
+                if (item.before == MouseMsg.go)
+                    replace.Add(new ReplaceKey2(item.process, MouseMsg.go_up, item.after, item.action, item.raw));
+                else if (item.before == MouseMsg.back)
+                    replace.Add(new ReplaceKey2(item.process, MouseMsg.back_up, item.after, item.action, item.raw));
+            }
+        }
+    }
+    public class MultiDictionary<TKey, TValue> : Dictionary<TKey, List<TValue>>
+    {
+        // 添加单个值
+        public void Add(TKey key, TValue value)
+        {
+            if (!TryGetValue(key, out var list))
+            {
+                list = new List<TValue>();
+                Add(key, list);
+            }
+            list.Add(value);
+        }
+
+        // 检查某个键是否包含特定值
+        public bool ContainsValue(TKey key, TValue value)
+        {
+            if (TryGetValue(key, out var list))
+            {
+                return list.Contains(value);
+            }
+            return false;
+        }
+
+        // 获取某个键对应的所有值
+        public new IEnumerable<TValue> this[TKey key]
+        {
+            get
+            {
+                if (TryGetValue(key, out var list))
+                {
+                    return list;
+                }
+                return Enumerable.Empty<TValue>();
+            }
+        }
+    }
+
+}
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Runtime.InteropServices;
+using System.Windows.Forms;
+
+namespace keyupMusic2
+{
+    public class Rawinput
+    {
+        // Map friendly device keys -> identifying substrings
+        public static readonly Dictionary<string, string> devices = new()
+        {
+            { Common.acer,       Common.acerdevice },
+            { Common.coocaa,     Common.coocaadevice },
+            { Common.logi,       Common.logidevice },
+            { Common.airkeyboard,Common.airkeyboarddevice },
+            { Common.airmouse,   Common.airmousedevice },
+        };
+
+        // Cache: raw device handle -> friendly device key
+        public static readonly Dictionary<IntPtr, string> devicesMap = new();
+
+        private static string NormalizeDeviceKey(string deviceName)
+        {
+            if (string.IsNullOrWhiteSpace(deviceName)) return string.Empty;
+
+            // Defensive: any null values in devices
+            foreach (var kv in devices)
+            {
+                if (!string.IsNullOrEmpty(kv.Value) &&
+                    deviceName.IndexOf(kv.Value, StringComparison.OrdinalIgnoreCase) >= 0)
+                {
+                    return kv.Key;
+                }
+            }
+
+            return string.Empty;
+        }
+
+        public static KeyboardMouseHook.KeyEventArgs ProcessRawInput2(IntPtr hRawInput)
+        {
+            uint dwSize = 0;
+            if (GetRawInputData(hRawInput, RID_INPUT, IntPtr.Zero, ref dwSize, (uint)Marshal.SizeOf(typeof(RAWINPUTHEADER))) == 0 && dwSize == 0)
+            {
+                return null; // nothing to read
+            }
+
+            IntPtr buffer = Marshal.AllocHGlobal((int)dwSize);
+            try
+            {
+                uint read = GetRawInputData(hRawInput, RID_INPUT, buffer, ref dwSize, (uint)Marshal.SizeOf(typeof(RAWINPUTHEADER)));
+                if (read == 0 || read > dwSize)
+                    return null; // corrupt/partial
+
+                // Parse header
+                RAWINPUTHEADER header = Marshal.PtrToStructure<RAWINPUTHEADER>(buffer);
+
+                if (header.dwType == RIM_TYPEMOUSE)
+                {
+                    // Identify device
+                    string deviceName = GetOrCacheDeviceName(header.hDevice);
+
+                    var e = new KeyboardMouseHook.KeyEventArgs(0, 0, 0, deviceName)
+                    {
+                        dwExtraInfo2 = $"Proc, Mouse, {deviceName}"
+                    };
+                    return e;
+                }
+                if (header.dwType == RIM_TYPEKEYBOARD)
+                {
+                    IntPtr keyboardPtr = IntPtr.Add(buffer, Marshal.SizeOf(typeof(RAWINPUTHEADER)));
+                    RAWKEYBOARD keyboard = Marshal.PtrToStructure<RAWKEYBOARD>(keyboardPtr);
+
+                    ushort vkey = keyboard.VKey;
+                    string deviceName = GetOrCacheDeviceName(header.hDevice);
+
+                    bool isKeyDown = keyboard.Message == WM_KEYDOWN || keyboard.Message == WM_SYSKEYDOWN;
+
+                    // filter synthetic events
+                    if (keyboard.ExtraInformation == Common.isVirConst) return null;
+                    if (keyboard.ExtraInformation == Common.isVirConst + 1) return null;
+
+                    // Safe key name
+                    string keyName = Enum.IsDefined(typeof(Keys), (int)vkey) ? ((Keys)vkey).ToString() : $"VK_{vkey}";
+
+                    var e = new KeyboardMouseHook.KeyEventArgs(isKeyDown ? KeyType.Down : KeyType.Up, (Keys)vkey, (int)keyboard.ExtraInformation, deviceName)
+                    {
+                        dwExtraInfo2 = $"Proc, {keyName}, {deviceName}, {header.hDevice}, {(isKeyDown ? "Down" : "Up")}"
+                    };
+                    return e;
+                }
+                else
+                {
+                    IntPtr keyboardPtr = IntPtr.Add(buffer, Marshal.SizeOf(typeof(RAWINPUTHEADER)));
+                    IntPtr hidPtr = IntPtr.Add(buffer, Marshal.SizeOf(typeof(RAWINPUTHEADER)));
+                    RAWINPUTHID hid = Marshal.PtrToStructure<RAWINPUTHID>(hidPtr);
+                    RAWKEYBOARD keyboard = Marshal.PtrToStructure<RAWKEYBOARD>(hidPtr);
+
+                    int hidDataOffset = Marshal.SizeOf(typeof(RAWINPUTHEADER)) + Marshal.SizeOf(typeof(RAWINPUTHID));
+                    int hidDataSize = (int)hid.dwSizeHid * (int)hid.dwCount;
+                    byte[] hidData = new byte[hidDataSize];
+                    Marshal.Copy(IntPtr.Add(buffer, hidDataOffset), hidData, 0, hidDataSize);
+
+                    foreach (var b in hidData)
+                    {
+                        if (b == 0xE9) 
+                            Console.WriteLine("Volume Up");
+                        else if (b == 0xEA) 
+                            Console.WriteLine("Volume Down");
+                        else if (b == 0xCD) 
+                            Console.WriteLine("Play/Pause");
+                        else if (b == 0xB3) 
+                            Console.WriteLine("Mute");
+                        else if (b == 234) 
+                            Console.WriteLine("Mute");
+                        else if (b == 226) 
+                            Console.WriteLine("Mute");
+                        // 可扩展更多 usage
+                    }
+                }
+
+                // HID or unknown -> ignore for now
+                return null;
+            }
+            finally
+            {
+                Marshal.FreeHGlobal(buffer);
+            }
+        }
+
+        private static string GetOrCacheDeviceName(IntPtr deviceHandle)
+        {
+            if (deviceHandle == IntPtr.Zero) return string.Empty;
+
+            //if (devicesMap.TryGetValue(deviceHandle, out var cached) && cached != null)
+            //    return cached;
+
+            string raw = GetDeviceName(deviceHandle) ?? string.Empty;
+            string normalized = NormalizeDeviceKey(raw);
+            //devicesMap[deviceHandle] = normalized;
+            return normalized;
+        }
+
+        public static void RegisterInputDevices(IntPtr hwnd)
+        {
+            // Register for keyboard in INPUTSINK mode (receive when not focused)
+            var rid = new RAWINPUTDEVICE[]
+  {
+    new RAWINPUTDEVICE { usUsagePage = 0x01, usUsage = 0x06, dwFlags = RIDEV_INPUTSINK, hwndTarget = hwnd },
+    new RAWINPUTDEVICE { usUsagePage = 0x01, usUsage = 0x02, dwFlags = RIDEV_INPUTSINK, hwndTarget = hwnd },
+    new RAWINPUTDEVICE { usUsagePage = 0x0C, usUsage = 0x01, dwFlags = RIDEV_INPUTSINK, hwndTarget = hwnd }  
+  };
+
+
+            if (!RegisterRawInputDevices(rid, (uint)rid.Length, (uint)Marshal.SizeOf(typeof(RAWINPUTDEVICE))))
+            {
+                // Ensure Windows Forms is referenced for MessageBox
+                MessageBox.Show("Failed to register for raw input.");
+            }
+        }
+
+        public static string GetDeviceName(IntPtr deviceHandle)
+        {
+            uint size = 0;
+            // First call to get required buffer size (in characters for Unicode)
+            GetRawInputDeviceInfo(deviceHandle, RIDI_DEVICENAME, IntPtr.Zero, ref size);
+            if (size == 0) return null;
+
+            IntPtr dataPtr = Marshal.AllocHGlobal((int)size * sizeof(char));
+            try
+            {
+                uint result = GetRawInputDeviceInfo(deviceHandle, RIDI_DEVICENAME, dataPtr, ref size);
+                if (result > 0)
+                {
+                    // Unicode string
+                    string? s = Marshal.PtrToStringUni(dataPtr, (int)result);
+                    return s;
+                }
+            }
+            finally
+            {
+                Marshal.FreeHGlobal(dataPtr);
+            }
+
+            return null;
+        }
+
+        // ==== Structs & P/Invoke ====
+        private const uint RIM_TYPEMOUSE = 0;
+        private const uint RIM_TYPEKEYBOARD = 1;
+        private const uint RIM_TYPEHID = 2;
+
+        private const ushort HID_USAGE_PAGE_GENERIC = 0x01;
+        private const ushort HID_USAGE_GENERIC_MOUSE = 0x02;
+        private const ushort HID_USAGE_GENERIC_KEYBOARD = 0x06;
+
+        private const uint RIDEV_INPUTSINK = 0x00000100;
+
+        public const int WM_INPUT = 0x00FF;
+        public const int WM_INPUT_YO = WM_INPUT + 123;
+        public const int WM_KEYDOWN = 0x0100;
+        public const int WM_SYSKEYDOWN = 0x0104;
+        public const int RID_INPUT = 0x10000003;
+        public const uint RIDI_DEVICENAME = 0x20000007;
+
+        [StructLayout(LayoutKind.Sequential)]
+        public struct RAWINPUTDEVICE
+        {
+            public ushort usUsagePage;
+            public ushort usUsage;
+            public uint dwFlags;
+            public IntPtr hwndTarget;
+        }
+
+        [StructLayout(LayoutKind.Sequential)]
+        public struct RAWINPUTHEADER
+        {
+            public uint dwType;
+            public uint dwSize;
+            public IntPtr hDevice;
+            public IntPtr wParam; // WPARAM
+        }
+
+        [StructLayout(LayoutKind.Sequential)]
+        public struct RAWKEYBOARD
+        {
+            public ushort MakeCode;
+            public ushort Flags;
+            public ushort Reserved;
+            public ushort VKey;
+            public uint Message;
+            public uint ExtraInformation;
+        }
+
+        [StructLayout(LayoutKind.Sequential)]
+        public struct RAWINPUTHID
+        {
+            public uint dwSizeHid;
+            public uint dwCount;
+        }
+
+        [DllImport("User32.dll", SetLastError = true, CharSet = CharSet.Unicode)]
+        public static extern bool RegisterRawInputDevices(RAWINPUTDEVICE[] pRawInputDevices, uint uiNumDevices, uint cbSize);
+
+        [DllImport("User32.dll", CharSet = CharSet.Unicode)]
+        public static extern uint GetRawInputData(IntPtr hRawInput, uint uiCommand, IntPtr pData, ref uint pcbSize, uint cbSizeHeader);
+
+        [DllImport("User32.dll", SetLastError = true, CharSet = CharSet.Unicode)]
+        public static extern uint GetRawInputDeviceInfo(IntPtr hDevice, uint uiCommand, IntPtr pData, ref uint pcbSize);
+    }
+}
+using System;
+using System.Collections.Generic;
+using System.Diagnostics;
+using System.Linq;
+using System.Threading;
+
+namespace ProcessMetrics
+{
+    public class ProcessPerformanceMonitor
+    {
+        // 需要监控的性能计数器名称
+        private readonly List<string> _counterNames = new List<string>
+        {
+            "% Processor Time", "% User Time", "% Privileged Time",
+            "Virtual Bytes Peak", "Virtual Bytes", "Page Faults/sec",
+            "Working Set Peak", "Working Set", "Page File Bytes Peak",
+            "Page File Bytes", "Private Bytes", "Thread Count",
+            "Priority Base", "Elapsed Time", "ID Process",
+            "Creating Process ID", "Pool Paged Bytes", "Pool Nonpaged Bytes",
+            "Handle Count", "IO Read Operations/sec", "IO Write Operations/sec",
+            "IO Data Operations/sec", "IO Other Operations/sec", "IO Read Bytes/sec",
+            "IO Write Bytes/sec", "IO Data Bytes/sec", "IO Other Bytes/sec",
+            "Working Set - Private"
+        };
+
+        // 需要转换为MB的指标（字节单位的内存指标）
+        private readonly HashSet<string> _byteMetrics = new HashSet<string>
+        {
+            "Virtual Bytes Peak", "Virtual Bytes", "Working Set Peak",
+            "Working Set", "Page File Bytes Peak", "Page File Bytes",
+            "Private Bytes", "Pool Paged Bytes", "Pool Nonpaged Bytes",
+            "Working Set - Private"
+        };
+
+        // 需要转换为MB/s的IO指标（字节/秒单位）
+        private readonly HashSet<string> _bytePerSecMetrics = new HashSet<string>
+        {
+            "IO Read Bytes/sec", "IO Write Bytes/sec",
+            "IO Data Bytes/sec", "IO Other Bytes/sec"
+        };
+
+        private const double BytesToMB = 1024 * 1024; // 1MB = 1048576字节
+        private readonly string _processName;
+        private Process _targetProcess;
+        private Dictionary<string, PerformanceCounter> _counters;
+
+        public ProcessPerformanceMonitor(string processName)
+        {
+            _processName = processName;
+            InitializeCounters();
+        }
+
+        /// <summary>
+        /// 初始化性能计数器
+        /// </summary>
+        private void InitializeCounters()
+        {
+            var processes = Process.GetProcessesByName(_processName);
+            if (!processes.Any())
+            {
+                _counters = new Dictionary<string, PerformanceCounter>();
+                return;
+            }
+
+            _targetProcess = processes[0];
+            _counters = new Dictionary<string, PerformanceCounter>();
+
+            foreach (var counterName in _counterNames)
+            {
+                try
+                {
+                    var counter = new PerformanceCounter(
+                        "Process",
+                        counterName,
+                        _targetProcess.ProcessName,
+                        readOnly: true);
+
+                    _counters[counterName] = counter;
+                }
+                catch (Exception ex)
+                {
+                    Console.WriteLine($"初始化计数器失败 [{counterName}]：{ex.Message}");
+                    _counters[counterName] = null;
+                }
+            }
+        }
+
+        /// <summary>
+        /// 刷新进程（处理进程重启的情况）
+        /// </summary>
+        public bool RefreshProcess()
+        {
+            var processes = Process.GetProcessesByName(_processName);
+            if (!processes.Any())
+            {
+                _targetProcess = null;
+                return false;
+            }
+
+            if (_targetProcess?.Id != processes[0].Id)
+            {
+                InitializeCounters();
+            }
+            return true;
+        }
+
+        /// <summary>
+        /// 获取所有指标的当前值（内存单位转换为MB）
+        /// </summary>
+        public Dictionary<string, object> GetAllMetrics()
+        {
+            var metrics = new Dictionary<string, object>();
+
+            if (!RefreshProcess() || _targetProcess == null)
+            {
+                _counterNames.ForEach(name => metrics[name] = "进程未运行");
+                return metrics;
+            }
+
+            foreach (var counterName in _counterNames)
+            {
+                try
+                {
+                    var counter = _counters[counterName];
+                    if (counter == null)
+                    {
+                        metrics[counterName] = "不支持";
+                        continue;
+                    }
+
+                    // 速率型计数器需要两次采样
+                    if (counterName.EndsWith("/sec") || counter.NextValue() == 0)
+                    {
+                        counter.NextValue();
+                        Thread.Sleep(100);
+                    }
+
+                    float value = counter.NextValue();
+                    object result;
+
+                    // 处理字节单位的内存指标（转换为MB）
+                    if (_byteMetrics.Contains(counterName))
+                    {
+                        double mbValue = Math.Round(value / BytesToMB, 2);
+                        result = $"{mbValue} MB";
+                    }
+                    // 处理字节/秒的IO指标（转换为MB/s）
+                    else if (_bytePerSecMetrics.Contains(counterName))
+                    {
+                        double mbPerSecValue = Math.Round(value / BytesToMB, 2);
+                        result = $"{mbPerSecValue} MB/s";
+                    }
+                    // 整数型指标（ID、线程数等）
+                    else if (counterName.Contains("ID") || counterName == "Thread Count" ||
+                             counterName == "Handle Count" || counterName == "Priority Base")
+                    {
+                        result = (int)value;
+                    }
+                    // 时间型指标
+                    else if (counterName == "Elapsed Time")
+                    {
+                        result = TimeSpan.FromSeconds(value);
+                    }
+                    // 百分比和其他指标
+                    else
+                    {
+                        result = Math.Round(value, 2);
+                        // 百分比指标添加%符号
+                        if (counterName.StartsWith("%"))
+                        {
+                            result += " %";
+                        }
+                    }
+
+                    metrics[counterName] = result;
+                }
+                catch (Exception ex)
+                {
+                    metrics[counterName] = $"错误：{ex.Message}";
+                }
+            }
+
+            return metrics;
+        }
+
+        /// <summary>
+        /// 释放资源
+        /// </summary>
+        public void Dispose()
+        {
+            if (_counters != null)
+            {
+                foreach (var counter in _counters.Values)
+                {
+                    counter?.Dispose();
+                }
+            }
+            _targetProcess?.Dispose();
+        }
+    }
+
+    class Program
+    {
+        static void Main(string[] args)
+        {
+            var monitor = new ProcessPerformanceMonitor("LosslessScaling");
+
+            Console.WriteLine("监控进程性能指标...（按ESC退出）");
+            while (!Console.KeyAvailable || Console.ReadKey(true).Key != ConsoleKey.Escape)
+            {
+                var metrics = monitor.GetAllMetrics();
+
+                Console.WriteLine($"\n[{DateTime.Now:HH:mm:ss}] 进程指标：");
+                foreach (var (name, value) in metrics)
+                {
+                    Console.WriteLine($"{name,-30} {value}");
+                }
+                Thread.Sleep(200);
+            }
+
+            monitor.Dispose();
+        }
+    }
+}
+
         private static void dragonest_run()
         {
             //press("2280,1314;LWin;3222;LWin;", 500); 
@@ -2057,13 +2652,13 @@ namespace keyupMusic2
                     super.hook_KeyDown_keyupMusic2(e);
                     if (keyupMusic2_onlisten) return;
 
-                    Devenv.hook_KeyDown_ddzzq(e);
-                    aCPhoenix.hook_KeyDown_ddzzq(e);
-                    Douyin.hook_KeyDown_ddzzq(e);
+                    Devenv.HookEvent(e);
+                    aCPhoenix.HookEvent(e);
+                    Douyin.HookEvent(e);
                     chrome.handlehandle(e);
 
                     Otherr.hook_KeyDown(e);
-                    Alll.hook_KeyDown_ddzzq(e);
+                    Alll.HookEvent(e);
 
                     Music.hook_KeyDown_keyupMusic2(e);
                     if (!no_sleep && e.key != Keys.VolumeDown && e.key != Keys.VolumeUp && e.key != Keys.MediaStop)
@@ -3692,7 +4287,7 @@ namespace keyupMusic2
 {
     public class All : Default
     {
-        public void hook_KeyDown_ddzzq(KeyboardHookEventArgs e)
+        public void HookEvent(KeyboardHookEventArgs e)
         {
             string module_name = ProcessName;
             Common.hooked = true;
@@ -6995,7 +7590,7 @@ namespace keyupMusic2
             }
             return false;
         }
-        public void hook_KeyDown_ddzzq(KeyboardHookEventArgs e)
+        public void HookEvent(KeyboardHookEventArgs e)
         {
             string module_name = ProcessName;
             if (not_in_class) return;
@@ -8642,7 +9237,7 @@ namespace keyupMusic2
             //}
             return false;
         }
-        public void hook_KeyDown_ddzzq(KeyboardHookEventArgs e)
+        public void HookEvent(KeyboardHookEventArgs e)
         {
             string module_name = ProcessName;
             if (not_in_class) return;
@@ -8915,7 +9510,7 @@ namespace keyupMusic2
             //}
             return false;
         }
-        public void hook_KeyDown_ddzzq(KeyboardHookEventArgs e)
+        public void HookEvent(KeyboardHookEventArgs e)
         {
             string module_name = ProcessName;
             if (not_in_class) return;
@@ -9457,7 +10052,7 @@ namespace keyupMusic2
             }
             return false;
         }
-        public void hook_KeyDown_ddzzq(KeyboardHookEventArgs e)
+        public void HookEvent(KeyboardHookEventArgs e)
         {
             string module_name = ProcessName;
             if (module_name != ClassName()) return;
@@ -10693,7 +11288,7 @@ namespace keyupMusic2
             }
             return false;
         }
-        public void hook_KeyDown_ddzzq(KeyboardHookEventArgs e)
+        public void HookEvent(KeyboardHookEventArgs e)
         {
             string module_name = ProcessName;
             if (module_name != ClassName() ) return;
@@ -11583,12 +12178,12 @@ namespace keyupMusic2
                     yo();
                     super.hook_KeyDown_keyupMusic2(e);
 
-                    Devenv.hook_KeyDown_ddzzq(e);
-                    aCPhoenix.hook_KeyDown_ddzzq(e);
-                    Douyin.hook_KeyDown_ddzzq(e);
+                    Devenv.HookEvent(e);
+                    aCPhoenix.HookEvent(e);
+                    Douyin.HookEvent(e);
 
-                    Aaa.hook_KeyDown_ddzzq(e);
-                    Bbb.hook_KeyDown_ddzzq(e);
+                    Aaa.HookEvent(e);
+                    Bbb.HookEvent(e);
 
                     Invoke2(() => super_listen_clear());
                 });
@@ -11921,7 +12516,7 @@ namespace keyupMusic2
                     break;
                 case Keys.D:
                     //KeyboardInput.SimulateMouseWheel(120);
-                    new AAA().hook_KeyDown_ddzzq(new KeyboardHookEventArgs(WGestures.Core.Impl.Windows.KeyboardEventType.KeyDown, Keys.F11, 0, new WGestures.Common.OsSpecific.Windows.Native.keyboardHookStruct()));
+                    new AAA().HookEvent(new KeyboardHookEventArgs(WGestures.Core.Impl.Windows.KeyboardEventType.KeyDown, Keys.F11, 0, new WGestures.Common.OsSpecific.Windows.Native.keyboardHookStruct()));
                     break;
                 case Keys.F:
                     break;
@@ -13054,7 +13649,7 @@ namespace keyupMusic2
     {
         public bool ACPhoenix_mouse_down = false;
 
-        public void hook_KeyDown_ddzzq(KeyboardHookEventArgs e)
+        public void HookEvent(KeyboardHookEventArgs e)
         {
             if (is_alt() && is_down(Keys.Tab)) return;
             if (ProcessName != ClassName()) return;
@@ -13318,7 +13913,7 @@ namespace keyupMusic2
         string[] list_wechat_visualstudio = { Common.WeChat, Common.ACPhoenix, explorer, Common.keyupMusic2, Common.douyin, Common.devenv, Common.QQMusic, Common.SearchHost, Common.ApplicationFrameHost };
         string[] list_volume = { Common.douyin, Common.msedge };
 
-        public void hook_KeyDown_ddzzq(KeyboardHookEventArgs e)
+        public void HookEvent(KeyboardHookEventArgs e)
         {
             string module_name = ProcessName;
             if (!list.Contains(module_name)) return;
@@ -13396,7 +13991,7 @@ namespace keyupMusic2
 {
     public class BBB : Default
     {
-        public void hook_KeyDown_ddzzq(KeyboardHookEventArgs e)
+        public void HookEvent(KeyboardHookEventArgs e)
         {
             string module_name = ProcessName;
             Common.hooked = true;
@@ -13493,7 +14088,7 @@ namespace keyupMusic2
     public class devenv : Default
     {
         static int is_oem = 0;
-        public void hook_KeyDown_ddzzq(KeyboardHookEventArgs e)
+        public void HookEvent(KeyboardHookEventArgs e)
         {
             if (ProcessName != ClassName()) return;
             Common.hooked = true;
@@ -13533,7 +14128,7 @@ namespace keyupMusic2
 {
     public class douyin : Default
     {
-        public void hook_KeyDown_ddzzq(KeyboardHookEventArgs e)
+        public void HookEvent(KeyboardHookEventArgs e)
         {
             string module_name = ProcessName;
             if (module_name != ClassName() && module_name != Common.msedge) return;
@@ -14883,12 +15478,12 @@ namespace keyupMusic2
                 {
                     super.hook_KeyDown_keyupMusic2(e);
 
-                    Devenv.hook_KeyDown_ddzzq(e);
-                    aCPhoenix.hook_KeyDown_ddzzq(e);
-                    Douyin.hook_KeyDown_ddzzq(e);
+                    Devenv.HookEvent(e);
+                    aCPhoenix.HookEvent(e);
+                    Douyin.HookEvent(e);
 
-                    Aaa.hook_KeyDown_ddzzq(e);
-                    Bbb.hook_KeyDown_ddzzq(e);
+                    Aaa.HookEvent(e);
+                    Bbb.HookEvent(e);
 
                     Invoke2(() => super_listen_clear());
                 });
@@ -15448,7 +16043,7 @@ namespace keyupMusic2
     {
         public bool ACPhoenix_mouse_down = false;
 
-        public void hook_KeyDown_ddzzq(KeyboardHookEventArgs e)
+        public void HookEvent(KeyboardHookEventArgs e)
         {
             if (is_alt() && is_down(Keys.Tab)) return;
             if (ProcessName != ClassName()) return;
@@ -17053,7 +17648,7 @@ namespace keyupMusic2
 {
     public class douyin : Default
     {
-        public void hook_KeyDown_ddzzq(KeyboardHookEventArgs e)
+        public void HookEvent(KeyboardHookEventArgs e)
         {
             string module_name = ProcessName;
             if (module_name != ClassName() && module_name != Common.msedge) return;
@@ -17108,7 +17703,7 @@ namespace keyupMusic2
     public class devenv : Default
     {
         static int is_oem = 0;
-        public void hook_KeyDown_ddzzq(KeyboardHookEventArgs e)
+        public void HookEvent(KeyboardHookEventArgs e)
         {
             if (ProcessName != ClassName()) return;
             Common.hooked = true;
@@ -17750,7 +18345,7 @@ namespace keyupMusic2
         string[] list_visualstudio = { Common.devenv, Common.ACPhoenix, explorer, Common.keyupMusic2, Common.douyin, Common.WeChat, Common.
         QQMusic, };
         string[] list_volume = { Common.douyin, Common.msedge};
-        public void hook_KeyDown_ddzzq(KeyboardHookEventArgs e)
+        public void HookEvent(KeyboardHookEventArgs e)
         {
             string module_name = ProcessName;
             if (!list.Contains(module_name)) return;
@@ -17809,7 +18404,7 @@ namespace keyupMusic2
     {
         public bool ACPhoenix_mouse_down = false;
 
-        public void hook_KeyDown_ddzzq(KeyboardHookEventArgs e)
+        public void HookEvent(KeyboardHookEventArgs e)
         {
             if (is_alt() && is_down(Keys.Tab)) return;
             if (ProcessName != ClassName()) return;
@@ -19914,10 +20509,10 @@ namespace keyupMusic2
                 Task.Run(() =>
                 {
                     super.hook_KeyDown_keyupMusic2(e);
-                    Aaa.hook_KeyDown_ddzzq(e);
-                    Devenv.hook_KeyDown_ddzzq(e);
-                    aCPhoenix.hook_KeyDown_ddzzq(e);
-                    Douyin.hook_KeyDown_ddzzq(e);
+                    Aaa.HookEvent(e);
+                    Devenv.HookEvent(e);
+                    aCPhoenix.HookEvent(e);
+                    Douyin.HookEvent(e);
 
                     Invoke2(() => super_listen_clear());
                 });
@@ -20166,7 +20761,7 @@ namespace keyupMusic2
         string[] list_wechat = { Common.WeChat, Common.ACPhoenix, explorer, Common.keyupMusic2, Common.douyin, Common.devenv };
         string[] list_visualstudio = { Common.devenv, Common.ACPhoenix, explorer, Common.keyupMusic2, Common.douyin, Common.WeChat, };
         string[] list_volume = { Common.douyin, Common.msedge};
-        public void hook_KeyDown_ddzzq(KeyboardHookEventArgs e)
+        public void HookEvent(KeyboardHookEventArgs e)
         {
             string module_name = ProcessName;
             if (!list.Contains(module_name)) return;
@@ -20439,10 +21034,10 @@ namespace keyupMusic2
                 Task.Run(() =>
                 {
                     super.hook_KeyDown_keyupMusic2(e);
-                    Aaa.hook_KeyDown_ddzzq(e);
-                    Devenv.hook_KeyDown_ddzzq(e);
-                    aCPhoenix.hook_KeyDown_ddzzq(e);
-                    Douyin.hook_KeyDown_ddzzq(e);
+                    Aaa.HookEvent(e);
+                    Devenv.HookEvent(e);
+                    aCPhoenix.HookEvent(e);
+                    Douyin.HookEvent(e);
 
                     Invoke2(() => super_listen_clear());
                 });
@@ -20914,7 +21509,7 @@ namespace keyupMusic2
     {
         public bool ACPhoenix_mouse_down = false;
 
-        public void hook_KeyDown_ddzzq(KeyboardHookEventArgs e)
+        public void HookEvent(KeyboardHookEventArgs e)
         {
             if (is_alt() && is_down(Keys.Tab)) return;
             if (ProcessName != ClassName()) return;
@@ -21055,7 +21650,7 @@ namespace keyupMusic2
         string[] list_visualstudio = { Common.devenv, Common.ACPhoenix, explorer, Common.keyupMusic2, Common.douyin, Common.WeChat, Common.
         QQMusic, };
         string[] list_volume = { Common.douyin, Common.msedge};
-        public void hook_KeyDown_ddzzq(KeyboardHookEventArgs e)
+        public void HookEvent(KeyboardHookEventArgs e)
         {
             string module_name = ProcessName;
             if (!list.Contains(module_name)) return;
@@ -21677,10 +22272,10 @@ namespace keyupMusic2
                 Task.Run(() =>
                 {
                     super.hook_KeyDown_keyupMusic2(e);
-                    Aaa.hook_KeyDown_ddzzq(e);
-                    Devenv.hook_KeyDown_ddzzq(e);
-                    aCPhoenix.hook_KeyDown_ddzzq(e);
-                    Douyin.hook_KeyDown_ddzzq(e);
+                    Aaa.HookEvent(e);
+                    Devenv.HookEvent(e);
+                    aCPhoenix.HookEvent(e);
+                    Douyin.HookEvent(e);
 
                     Invoke2(() => super_listen_clear());
                 });
@@ -22402,7 +22997,7 @@ namespace keyupMusic2
         public Keys handling_keys;
         public bool ACPhoenix_mouse_down = false;
 
-        public void hook_KeyDown_ddzzq(KeyboardHookEventArgs e)
+        public void HookEvent(KeyboardHookEventArgs e)
         {
             if (ProcessName != ClassName()) return;
             Common.hooked = true;
@@ -22883,10 +23478,10 @@ namespace keyupMusic2
                 Task.Run(() =>
                 {
                     hook_KeyDown_keyupMusic2(e);
-                    Aaa.hook_KeyDown_ddzzq(e);
-                    Devenv.hook_KeyDown_ddzzq(e);
-                    aCPhoenix.hook_KeyDown_ddzzq(e);
-                    Douyin.hook_KeyDown_ddzzq(e);
+                    Aaa.HookEvent(e);
+                    Devenv.HookEvent(e);
+                    aCPhoenix.HookEvent(e);
+                    Douyin.HookEvent(e);
 
                     Invoke2(() => super_listen_clear());
                 });
@@ -23378,10 +23973,10 @@ namespace keyupMusic2
             if (e.KeyCode != Keys.LControlKey && e.KeyCode != Keys.RControlKey && e.KeyCode != Keys.LShiftKey && e.KeyCode != Keys.RShiftKey)
             {
                 hook_KeyDown_keyupMusic2(sender, e);
-                Aaa.hook_KeyDown_ddzzq(sender, e);
-                Devenv.hook_KeyDown_ddzzq(sender, e);
-                aCPhoenix.hook_KeyDown_ddzzq(sender, e);
-                Douyin.hook_KeyDown_ddzzq(sender, e);
+                Aaa.HookEvent(sender, e);
+                Devenv.HookEvent(sender, e);
+                aCPhoenix.HookEvent(sender, e);
+                Douyin.HookEvent(sender, e);
             }
 
             //if (Common.ACPhoenix_mouse_hook && ProcessName == Common.ACPhoenix && (_mouseKbdHook == null || !_mouseKbdHook.is_install))
@@ -26935,7 +27530,7 @@ namespace keyupMusic2
     public class ACPhoenix: Default
     {
         static int is_oem = 0; 
-        public void hook_KeyDown_ddzzq(object? sender, KeyEventArgs e)
+        public void HookEvent(object? sender, KeyEventArgs e)
         {
             if (ProcessName != ClassName()) return;
             Common.hooked = true;
@@ -27088,9 +27683,9 @@ namespace keyupMusic2
             if (e.KeyCode != Keys.LControlKey && e.KeyCode != Keys.RControlKey && e.KeyCode != Keys.LShiftKey && e.KeyCode != Keys.RShiftKey)
             {
                 hook_KeyDown_keyupMusic2(sender, e);
-                Devenv.hook_KeyDown_ddzzq(sender, e);
-                aCPhoenix.hook_KeyDown_ddzzq(sender, e);
-                Douyin.hook_KeyDown_ddzzq(sender, e);
+                Devenv.HookEvent(sender, e);
+                aCPhoenix.HookEvent(sender, e);
+                Douyin.HookEvent(sender, e);
             }
 
             if (Common.ACPhoenix_mouse_hook && ProcessName == Common.ACPhoenix && (_mouseKbdHook == null || !_mouseKbdHook.is_install))

@@ -14,109 +14,83 @@ namespace keyupMusic2
 
         public bool judge_handled(KeyboardMouseHook.KeyEventArgs e)
         {
-            //if (Common.DeviceName == coocaa && coocaaKeys.Contains(e.key)) return true;
             if (is_alt() && is_down(Keys.Tab)) return false;
+            if (e.key == Keys.LWin) return false;
+
+            if (e.key == Keys.BrowserHome) return true;
+            //if (e.key == Keys.MediaPlayPause) return true;
+            if (e.key == Keys.Apps) return true;
+
             if (e.key == Keys.F1 && !isctrl()) return true;
             if (e.key == Keys.F3) return true;
             if (e.key == Keys.F9) return true;
-            if (e.key == Keys.LWin) return false;
             if (keyupMusic2_onlisten) { e.Handled = true; }
 
-            var keyfunc = KeyFunc.All.Where(a => a.handled).ToArray();
-            for (int i = 0; i < keyfunc.Count(); i++)
-            {
-                if (keyfunc[i].key == e.key && (keyfunc[i].processName == "" || keyfunc[i].processName == ProcessName))
-                {
-                    return true;
-                }
-            }
-            if (replace.Any(t => e.key == t.defore && (string.IsNullOrEmpty(t.process) || ProcessName == t.process)))
-                return true;
-            if (e.key == Keys.F10 || e.key == Keys.F11 || e.key == Keys.F12)
-                if (!is_down(Keys.Delete))
-                    return true;
-            if (e.key == Keys.OemPeriod && is_down(Keys.RControlKey))
-                return true;
-            if (e.key == Keys.Escape && is_playing)
-                return true;
-            if (e.key == Keys.BrowserHome)
-                return true;
-            if (e.key == Keys.Left || e.key == Keys.Down || e.key == Keys.Right)
-            {
-                if (Position.Y == 0) return true;
-            }
+            if (e.key == Keys.OemPeriod && is_down(Keys.RControlKey)) return true;
+            if (e.key == Keys.Escape && is_playing) return true;
+            if (e.key == Keys.Escape && is_douyin()) return true;
+            if ((e.key == Keys.Left || e.key == Down || e.key == Keys.Right) && (Position.Y == 0)) return true;
             if (e.key == Keys.MediaPreviousTrack || e.key == Keys.MediaNextTrack)
-            {
                 if (biu.list_go_back.Contains(ProcessName)) return true;
-            }
             if ((e.key == Keys.Right || e.key == Keys.Left) && is_ctrl())
-            {
-                if (ProcessName == vlc) return true;
-                if (ProcessName == msedge) return true;
-            }
-            if (is_down(Keys.F1))
-            {
-                var number_button = new[] { Keys.Oemcomma, Keys.OemPeriod, Keys.Oem2, Keys.K, Keys.L, Keys.OemSemicolon, Keys.I, Keys.O, Keys.P, Keys.Space };
-                if (number_button.Contains(e.key))
-                    return true;
-            }
-            if (ProcessName == Common.devenv)
-            {
-                if (e.key == Keys.F && is_shift() && is_alt())
-                    return true;
-            }
-            if (ProcessName == Common.VSCode)
-            {
-                if (e.key == Keys.Q && isctrl())
-                    return true;
-            }
-            if (ProcessName == Common.msedge && !is_douyin())
-            {
-                if ((e.key == Keys.VolumeUp || e.key == Keys.VolumeDown) && e.Y == screenHeight1)
-                    return true;
-            }
-            var flag = Chrome.judge_handled(e) || Douyin.judge_handled(e) || WinClass.judge_handled(e) || CoocaaClass.judge_handled(e);
+                if (ProcessName == vlc || ProcessName == msedge) return true;
+            if (is_down(Keys.F1)) if (number_button.Contains(e.key)) return true;
+
+            if (ProcessName == Common.VSCode) if (e.key == Keys.Q && isctrl()) return true;
+
+            if (KeyFunc.judge(e)) return true;
+            var flag = Chrome.judge_handled(e) || Douyin.judge_handled(e) || WinClass.judge_handled(e) || CoocaaClass.judge_handled(e) || AirKeyboardClass.judge_handled(e);
             return flag;
         }
 
         private void KeyBoardHookProc(KeyboardMouseHook.KeyEventArgs e)
         {
-            FreshProcessName();
+            if (e.key != F1) FreshProcessName2();
             if (judge_handled(e)) { e.Handled = true; VirKeyState(e); }
+            var ha = deal_handilngkey(e.key, e.Type == KeyType.Down);
 
-            if (quick_replace_key(e)) return;
-            if (deal_handilngkey(e.key, e.Type == KeyType.Down)) { /*e.Handled = true; VirKeyState(e);*/ return; }
-            if (!is_steam_game())
+            if (!ha && (!is_steam_game() || (e.key == Tab && e.Type == KeyType.Up)))
                 VirtualKeyboardForm.Instance?.TriggerKey(e.key, e.Type == KeyType.Up);
 
             Task.Run(() =>
             {
                 print_easy_read(e);
 
-                if (e.Type == KeyType.Up)
-                {
-                    if (CoocaaClass.Hooked(e)) return;
-                    KeyFunc.hook_KeyDown_ddzzq(e);
-                    keyupMusic2.KeyUp.yo(e);
-                    return;
-                }
-                Console.WriteLine($"Hook, {e.key}, {Common.DeviceName}, ");
+                //if (quick_replace_key(e)) return;
+                if (KeyFunc.HookEvent(e)) return;
+                if (ha) { return; }
 
-                if (Super.hook_KeyDown_keyupMusic2(e)) return;
-                if (e.key == Keys.F3 || e.key == Keys.F9) { super_listen(); form_move(); return; }
+                keyupMusic2.KeyUp.yo(e);
+
+                if (e.Type == KeyType.Up) return;
+                //{
+                //if (CoocaaClass.Hooked(e)) return;
+                //keyupMusic2.KeyUp.yo(e);
+                //    return;
+                //}
+                Console2.WriteLine($"Hook, {e.key}, {Common.DeviceName}, {e.Type.ToString()} ");
+
                 if (CoocaaClass.Hooked(e)) return;
+                if (AirKeyboardClass.Hooked(e)) return;
+                if (Super.HookEvent(e)) return;
+                // job f3 f9 to var special key and customs
+                if (e.key == Keys.F3 || e.key == Keys.F9) { super_listen(); form_move(); return; }
 
-                Devenv.hook_KeyDown_ddzzq(e);
-                Douyin.hook_KeyDown_ddzzq(e);
+                Devenv.HookEvent(e);
+                Douyin.HookEvent(e);
                 Chrome.handlehandle(e);
 
-                Other.hook_KeyDown(e);
-                All.hook_KeyDown_ddzzq(e);
-                Win.hook_KeyDown_ddzzq(e);
+                Other.HookEvent(e);
+                All.HookEvent(e);
+                Win.HookEvent(e);
 
-                KeyFunc.hook_KeyDown_ddzzq(e);
+                //KeyFunc.HookEvent(e);
 
-                Music.hook_KeyDown_keyupMusic2(e);
+                Music.HookEvent(e);
+
+                if (GetPointName() == msedge && ProcessName != msedge)
+                    if (e.key == Keys.PageDown || e.key == Space) mousewhell(-4);
+                    else if (e.key == Keys.PageUp || e.key == Keys.Up) mousewhell(4);
             });
         }
 
@@ -133,128 +107,12 @@ namespace keyupMusic2
             return false;
         }
 
-        public void timer_stop()
-        {
-            blobForm.Hide();
-            blobForm.changeFlag(false);
-            //Location = endPoint;
-            timerMove.Stop();
-            //if (!temp_visiable) SetVisibleCore(false);
-        }
-        private void form_move()
-        {
-            Invoke2(() =>
-            {
-                if (Opacity == 0) { return; }
-                var current_hwnd = ProcessName;
-                //temp_visiable = Visible;
-                //if (!Visible) { SetVisibleCore(true); }
-                if (Focused) { FocusProcessSimple(current_hwnd); }
-                blobForm.Show();
-                blobForm.changeFlag(true);
-                //timerMove.Interval = 1000 / 144;
-                //// 解除旧的事件绑定，防止叠加
-                //timerMove.Tick -= timerMove_Tick;
-                //timerMove.Tick += timerMove_Tick;
-                timerMove.Start();
-                Location = startPoint;
-                startTime = DateTime.Now;
-            });
-        }
-
-        private void super_listen()
-        {
-            keyupMusic2_onlisten = true;
-            super_listen_time = DateTime.Now.AddMilliseconds(super_listen_tick);
-            Invoke2(() =>
-            {
-                base.BackColor = Color.Blue;
-                TaskRun(() =>
-                {
-                    if (DateTime.Now > super_listen_time)
-                        super_listen_clear(Color.White);
-                }, super_listen_tick);
-            });
-        }
-        public static bool start_check()
-        {
-            if (Debugger.IsAttached) return false;
-            int currentProcessId = Process.GetCurrentProcess().Id;
-            Process[] processes = Process.GetProcessesByName(Common.keyupMusic2);
-            foreach (Process process in processes)
-            {
-                if (process.Id != currentProcessId)
-                {
-                    Socket.socket_run = false;
-                    Socket.socket_write(start_check_str);
-                    Environment.Exit(0);
-                    return true;
-                }
-            }
-            return false;
-        }
-        public static string start_check_str = "starting";
-        public static string start_check_str2 = "sleep";
-        public static string huan_invoke = "huan_invoke";
-        public bool temp_visiable = false;
-
-        // 此时为唤醒后登录 
-        private void SystemEvents_SessionSwitch(object sender, SessionSwitchEventArgs e)
-        {
-            if (e.Reason == SessionSwitchReason.SessionUnlock)
-            {
-                justResumed = false;
-                MoonTime.Instance?.SetInitAngle();
-                VirtualKeyboardForm.Instance?.SetInitClean();
-                system_sleep_count = 0;
-                DaleyRun_stop = true;
-                player.Stop();
-                CleanMouseState();
-                ready_to_sleep = false;
-                log("唤醒解锁");
-            }
-        }
-
-        public static Dictionary<string, Action> refAction = new Dictionary<string, Action>() {
-            { "chrome_click_r_up",(() => {
-                MessageBox.Show("右键点击 Chrome");
-                if (!LongPressClass.long_press_rbutton && ExistProcess(Common.PowerToysCropAndLock, true))
-                {
-                    if (judge_color(1840, 51, Color.FromArgb(162, 37, 45)))
-                        press(Keys.F, 51);
-                    quick_max_chrome();
-                }})},
-        };
-
-
-        public static string start_reflection = "reflection";
-        public void reflection_catch(string msg)
-        {
-            msg = msg.Replace(start_reflection, "");
-            Common.ExecuteCommand(msg);
-        }
-        public static string start_next = "nextlocation";
-        public void next_catch(string msg)
-        {
-            msg = msg.Replace(start_next, "");
-            int x = int.Parse(msg.Split(",")[0]);
-            int y = int.Parse(msg.Split(",")[1]);
-            if (!IsFullScreen()) y += 100;
-            if (!WaitForKeysReleased(1000, is_lbutton)) return;
-
-            Native.GetCursorPos(out var pos);
-            //SuperClass.get_point_color();
-            mouse_move(x, y, 20);
-            mouse_middle_click(20);
-            mouse_move(pos);
-            //SuperClass.get_point_color();
-            //TaskRun(() => { SuperClass.get_point_color(); }, 3000);
-        }
         public void start_catch(string msg)
         {
             play_sound_di2();
             if (msg.Contains(start_check_str))
             {
+                //log("start_catch " + ProcessName);
                 //string[] list_f1 = [StartMenuExperienceHost, SearchHost, clashverge,];
                 string[] list_f1 = [clashverge,];
                 string[] list_nothing = [devenv, Common.keyupMusic2, explorer, cs2];
@@ -264,7 +122,7 @@ namespace keyupMusic2
                     Invoke(() => { SetVisibleCore(!Visible); });
                 else if (Position.X == screenWidth1 && Position.Y == screenHeight1)
                     system_sleep(true);
-                else if (Position.X == 0 || ProcessName == devenv)
+                else if (Position.X == 0)
                 {
                     string executablePath = Process.GetCurrentProcess().MainModule.FileName;
                     Process.Start(executablePath);

@@ -1,77 +1,108 @@
-﻿using SixLabors.ImageSharp.Memory;
+﻿using Microsoft.VisualBasic.Devices;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Runtime.InteropServices;
-using System.Text;
-using System.Threading.Tasks;
+using System.Windows.Forms;
+using static keyupMusic2.Common;
 
 namespace keyupMusic2
 {
     public class Rawinput
     {
-        public static string acer = Common.acerdevice;
-        public static string coocaa = Common.coocaadevice;
-
-        public static string SetDeviceName(string deviceName)
+        // err 开始handled后,切换设备按下被特殊键盘监听的键,device name 不改变,handled了proc接受不到了
+        // Map friendly device keys -> identifying substrings
+        public static readonly Dictionary<string, string> devices = new()
         {
-            if (string.IsNullOrEmpty(deviceName)) return "";
-            if (deviceName.Contains(acer)) return Common.acer;
-            else if (deviceName.Contains(coocaa)) return Common.coocaa;
-            return "";
+            { Common.acer,       Common.acerdevice },
+            { Common.coocaa,     Common.coocaadevice },
+            { Common.logi,       Common.logidevice },
+            { Common.airkeyboard,Common.airkeyboarddevice },
+            { Common.airmouse,   Common.airmousedevice },
+        };
+
+        // Cache: raw device handle -> friendly device key
+        public static readonly Dictionary<IntPtr, string> devicesMap = new();
+
+        private static string NormalizeDeviceKey(string deviceName)
+        {
+            if (string.IsNullOrWhiteSpace(deviceName)) return string.Empty;
+
+            // Defensive: any null values in devices
+            foreach (var kv in devices.OrderByDescending(i => i.Value.Length))
+            {
+                if (!string.IsNullOrEmpty(kv.Value) &&
+                    deviceName.IndexOf(kv.Value, StringComparison.OrdinalIgnoreCase) >= 0)
+                {
+                    return kv.Key;
+                }
+            }
+
+            return string.Empty;
         }
 
         public static KeyboardMouseHook.KeyEventArgs ProcessRawInput2(IntPtr hRawInput)
         {
             uint dwSize = 0;
-            GetRawInputData(hRawInput, RID_INPUT, IntPtr.Zero, ref dwSize, (uint)Marshal.SizeOf(typeof(RAWINPUTHEADER)));
+            Console.Write("[RawInput]");
+            // 第一次调用获取数据大小
+            if (GetRawInputData(hRawInput, RID_INPUT, IntPtr.Zero, ref dwSize,
+                (uint)Marshal.SizeOf(typeof(RAWINPUTHEADER))) != 0)
+            {
+                WriteLine(" null");
+                return null;
+            }
 
+            if (dwSize == 0)
+            {
+                WriteLine(" 数据大小为0");
+                return null;
+            }
+
+            // 分配缓冲区并读取原始输入数据
             IntPtr buffer = Marshal.AllocHGlobal((int)dwSize);
             try
             {
-                if (GetRawInputData(hRawInput, RID_INPUT, buffer, ref dwSize, (uint)Marshal.SizeOf(typeof(RAWINPUTHEADER))) != dwSize)
-                    return null;
-
-                // 先解析 RAWINPUTHEADER
-                RAWINPUTHEADER header = Marshal.PtrToStructure<RAWINPUTHEADER>(buffer);
-
-                if (header.dwType == 1) // Keyboard
+                if (GetRawInputData(hRawInput, RID_INPUT, buffer, ref dwSize,
+                    (uint)Marshal.SizeOf(typeof(RAWINPUTHEADER))) != dwSize)
                 {
-                    IntPtr keyboardPtr = IntPtr.Add(buffer, Marshal.SizeOf(typeof(RAWINPUTHEADER)));
-                    RAWKEYBOARD keyboard = Marshal.PtrToStructure<RAWKEYBOARD>(keyboardPtr);
-
-                    ushort vkey = keyboard.VKey;
-                    IntPtr deviceHandle = header.hDevice;
-                    uint msg = keyboard.Message;
-
-                    string deviceName = GetDeviceName(deviceHandle);
-                    string keyName = ((Keys)vkey).ToString();
-
-                    bool isKeyDown = msg == 0x0100 || msg == 0x0104; // WM_KEYDOWN/WM_SYSKEYDOWN
-                    bool isKeyUp = msg == 0x0101 || msg == 0x0105;   // WM_KEYUP/WM_SYSKEYUP
-
-                    deviceName = SetDeviceName(deviceName);
-
-                    if (keyboard.ExtraInformation == Common.isVirConst) return null;
-                    if (keyboard.ExtraInformation == Common.isVirConst + 1) return null;
-
-                    var aa = new KeyboardMouseHook.KeyEventArgs(
-                        isKeyDown ? KeyType.Down : KeyType.Up,
-                        (Keys)vkey,
-                        (int)keyboard.ExtraInformation
-                        , deviceName);
-                    //if (isKeyDown)
-                        Console.WriteLine($"Proc, {keyName}, {deviceName}, {deviceHandle}, {(isKeyDown ? "Down" : isKeyUp ? "Up" : "Other")}");
-                    //Console.WriteLine($"Key: {keyName} ({vkey}), Device Handle: {deviceHandle}, Device: {deviceName}, {(isKeyDown ? "Down" : isKeyUp ? "Up" : "Other")}");
-
-                    if (isKeyDown || isKeyUp)
-                        return aa;
+                    WriteLine(" 读取失败");
+                    return null;
                 }
-                else if (header.dwType == 2) // HID 消费控制
+                RAWINPUT raw = Marshal.PtrToStructure<RAWINPUT>(buffer);
+
+                string deviceName = GetOrCacheDeviceName(raw.header.hDevice);
+                var e = new KeyboardMouseHook.KeyEventArgs(0, 0, 0, deviceName);
+
+                if (raw.header.dwType == RIM_TYPEMOUSE)
+                {
+                    e.dwExtraInfo2 = $"Proc, Mouse, {deviceName}";
+                }
+                else if (raw.header.dwType == RIM_TYPEKEYBOARD)
+                {
+                    ushort vKey = raw.keyboard.VKey;
+                    bool isE0 = (raw.keyboard.Flags & RI_KEY_E0) != 0;
+                    bool isBreak = (raw.keyboard.Flags & RI_KEY_BREAK) != 0;
+                    string keyName = Enum.IsDefined(typeof(Keys), (int)vKey) ? ((Keys)vKey).ToString() : $"VK_{vKey}";
+
+                    if (raw.keyboard.ExtraInformation == Common.isVirConst)
+                    {
+                        WriteLine(" " + Common.isVirConst);
+                        return null;
+                    }
+                    if (raw.keyboard.ExtraInformation == Common.isVirConst + 1)
+                    {
+                        WriteLine(" " + Common.isVirConst + 1);
+                        return null;
+                    }
+
+                    e = new KeyboardMouseHook.KeyEventArgs(isBreak ? KeyType.Up : KeyType.Down, (Keys)vKey, (int)raw.keyboard.ExtraInformation, deviceName);
+                    e.dwExtraInfo2 = $"Proc, {keyName}, {deviceName}, {raw.header.hDevice}, {(!isBreak ? "Down" : "Up")}";
+                }
+                else if (raw.header.dwType == RIM_TYPEHID)
                 {
                     IntPtr hidPtr = IntPtr.Add(buffer, Marshal.SizeOf(typeof(RAWINPUTHEADER)));
                     RAWINPUTHID hid = Marshal.PtrToStructure<RAWINPUTHID>(hidPtr);
-                    RAWKEYBOARD keyboard = Marshal.PtrToStructure<RAWKEYBOARD>(hidPtr);
 
                     int hidDataOffset = Marshal.SizeOf(typeof(RAWINPUTHEADER)) + Marshal.SizeOf(typeof(RAWINPUTHID));
                     int hidDataSize = (int)hid.dwSizeHid * (int)hid.dwCount;
@@ -80,51 +111,65 @@ namespace keyupMusic2
 
                     foreach (var b in hidData)
                     {
-                        if (b == 0xE9) Console.WriteLine("Volume Up");
-                        else if (b == 0xEA) Console.WriteLine("Volume Down");
-                        else if (b == 0xCD) Console.WriteLine("Play/Pause");
-                        else if (b == 0xB3) Console.WriteLine("Mute");
+                        if (b == 0xE9)
+                            WriteLine("Volume Up");
+                        else if (b == 0xEA)
+                            WriteLine("Volume Down");
+                        else if (b == 0xCD)
+                        {
+                            WriteLine("Play/Pause");
+                            e.key = Keys.MediaPlayPause;
+                        }
+                        else if (b == 0xB3)
+                            WriteLine("Mute");
+                        else if (b == 234)
+                            WriteLine("Mute");
+                        else if (b == 226)
+                            WriteLine("Mute");
                         // 可扩展更多 usage
                     }
                 }
-                else
-                {
-                    IntPtr keyboardPtr = IntPtr.Add(buffer, Marshal.SizeOf(typeof(RAWINPUTHEADER)));
-                    RAWKEYBOARD keyboard = Marshal.PtrToStructure<RAWKEYBOARD>(keyboardPtr);
-                    RAWINPUTHID hid = Marshal.PtrToStructure<RAWINPUTHID>(keyboardPtr);
-                }
+                WriteLine(" done");
+                return e;
+            }
+            catch (Exception e)
+            {
+                WriteLine(" e:" + e.Message);
+                return null;
             }
             finally
             {
                 Marshal.FreeHGlobal(buffer);
             }
-            return null;
+        }
+
+        public static string GetOrCacheDeviceName(IntPtr deviceHandle)
+        {
+            if (deviceHandle == IntPtr.Zero) return string.Empty;
+
+            //if (devicesMap.TryGetValue(deviceHandle, out var cached) && cached != null)
+            //    return cached;
+
+            string raw = GetDeviceName(deviceHandle) ?? string.Empty;
+            string normalized = NormalizeDeviceKey(raw);
+            //devicesMap[deviceHandle] = normalized;
+            return normalized;
         }
 
         public static void RegisterInputDevices(IntPtr hwnd)
         {
-            RAWINPUTDEVICE[] rid = new RAWINPUTDEVICE[1];
-
-            rid[0].usUsagePage = 0x01; // Generic desktop controls
-            rid[0].usUsage = 0x06;     // Keyboard
-            rid[0].dwFlags = 0x100;
-            rid[0].hwndTarget = hwnd;
-
-            //// 消费控制（多媒体键、遥控器等）
-            //rid[1].usUsagePage = 0x0C;
-            //rid[1].usUsage = 0x01;
-            //rid[1].dwFlags = 0x100; // RIDEV_INPUTSINK
-            //rid[1].hwndTarget = hwnd;
-
-            //// 消费控制（多媒体键、遥控器等）
-            //rid[2].usUsagePage = 0x01;
-            //rid[2].usUsage = 0x02;
-            //rid[2].dwFlags = 0x100; // RIDEV_INPUTSINK
-            //rid[2].hwndTarget = hwnd;
+            // Register for keyboard in INPUTSINK mode (receive when not focused)
+            var rid = new RAWINPUTDEVICE[]
+  {
+    new RAWINPUTDEVICE { usUsagePage = 0x01, usUsage = 0x06, dwFlags = RIDEV_INPUTSINK, hwndTarget = hwnd },
+    new RAWINPUTDEVICE { usUsagePage = 0x01, usUsage = 0x02, dwFlags = RIDEV_INPUTSINK, hwndTarget = hwnd },
+    new RAWINPUTDEVICE { usUsagePage = 0x0C, usUsage = 0x01, dwFlags = RIDEV_INPUTSINK, hwndTarget = hwnd }
+  };
 
 
             if (!RegisterRawInputDevices(rid, (uint)rid.Length, (uint)Marshal.SizeOf(typeof(RAWINPUTDEVICE))))
             {
+                // Ensure Windows Forms is referenced for MessageBox
                 MessageBox.Show("Failed to register for raw input.");
             }
         }
@@ -132,15 +177,19 @@ namespace keyupMusic2
         public static string GetDeviceName(IntPtr deviceHandle)
         {
             uint size = 0;
+            // First call to get required buffer size (in characters for Unicode)
             GetRawInputDeviceInfo(deviceHandle, RIDI_DEVICENAME, IntPtr.Zero, ref size);
-            if (size <= 0) return null;
+            if (size == 0) return null;
 
-            IntPtr dataPtr = Marshal.AllocHGlobal((int)size);
+            IntPtr dataPtr = Marshal.AllocHGlobal((int)size * sizeof(char));
             try
             {
-                if (GetRawInputDeviceInfo(deviceHandle, RIDI_DEVICENAME, dataPtr, ref size) > 0)
+                uint result = GetRawInputDeviceInfo(deviceHandle, RIDI_DEVICENAME, dataPtr, ref size);
+                if (result > 0)
                 {
-                    return Marshal.PtrToStringAnsi(dataPtr);
+                    // Unicode string
+                    string? s = Marshal.PtrToStringUni(dataPtr, (int)result);
+                    return s;
                 }
             }
             finally
@@ -150,7 +199,25 @@ namespace keyupMusic2
 
             return null;
         }
-        // Structs and Imports
+
+        // ==== Structs & P/Invoke ====
+        private const uint RIM_TYPEMOUSE = 0;
+        private const uint RIM_TYPEKEYBOARD = 1;
+        private const uint RIM_TYPEHID = 2;
+
+        private const ushort HID_USAGE_PAGE_GENERIC = 0x01;
+        private const ushort HID_USAGE_GENERIC_MOUSE = 0x02;
+        private const ushort HID_USAGE_GENERIC_KEYBOARD = 0x06;
+
+        private const uint RIDEV_INPUTSINK = 0x00000100;
+
+        public const int WM_INPUT = 0x00FF;
+        public const int WM_INPUT_YO = WM_INPUT + 123;
+        public const int WM_KEYDOWN = 0x0100;
+        public const int WM_SYSKEYDOWN = 0x0104;
+        public const int RID_INPUT = 0x10000003;
+        public const uint RIDI_DEVICENAME = 0x20000007;
+
         [StructLayout(LayoutKind.Sequential)]
         public struct RAWINPUTDEVICE
         {
@@ -166,7 +233,7 @@ namespace keyupMusic2
             public uint dwType;
             public uint dwSize;
             public IntPtr hDevice;
-            public IntPtr wParam;
+            public IntPtr wParam; // WPARAM
         }
 
         [StructLayout(LayoutKind.Sequential)]
@@ -179,26 +246,35 @@ namespace keyupMusic2
             public uint Message;
             public uint ExtraInformation;
         }
+
         [StructLayout(LayoutKind.Sequential)]
-        struct RAWINPUTHID
+        public struct RAWINPUTHID
         {
             public uint dwSizeHid;
             public uint dwCount;
         }
+        [StructLayout(LayoutKind.Sequential)]
+        struct RAWINPUT
+        {
+            public RAWINPUTHEADER header;
+            public RAWKEYBOARD keyboard;
+        }
 
-
-        [DllImport("User32.dll", SetLastError = true)]
+        [DllImport("User32.dll", SetLastError = true, CharSet = CharSet.Unicode)]
         public static extern bool RegisterRawInputDevices(RAWINPUTDEVICE[] pRawInputDevices, uint uiNumDevices, uint cbSize);
 
-        [DllImport("User32.dll")]
+        [DllImport("User32.dll", CharSet = CharSet.Unicode)]
         public static extern uint GetRawInputData(IntPtr hRawInput, uint uiCommand, IntPtr pData, ref uint pcbSize, uint cbSizeHeader);
 
-        [DllImport("User32.dll", SetLastError = true)]
+        [DllImport("User32.dll", SetLastError = true, CharSet = CharSet.Unicode)]
         public static extern uint GetRawInputDeviceInfo(IntPtr hDevice, uint uiCommand, IntPtr pData, ref uint pcbSize);
 
-        public const int WM_INPUT = 0x00FF;
-        public const int WM_INPUT_YO = WM_INPUT + 123;
-        public const int RID_INPUT = 0x10000003;
-        public const uint RIDI_DEVICENAME = 0x20000007;
+        const ushort RI_KEY_E0 = 0x02;
+        const ushort RI_KEY_BREAK = 0x01;
+
+
+
+
+
     }
 }

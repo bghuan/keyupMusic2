@@ -6,6 +6,7 @@ using System.Net;
 using System.Reflection;
 using System.Runtime.InteropServices;
 using System.Security.Principal;
+using System.Text;
 using System.Text.Json;
 using static keyupMusic2.Native;
 using Point = System.Drawing.Point;
@@ -31,7 +32,7 @@ namespace keyupMusic2
             biu.catch_off();
             //biuCL.RECTT.release();
             CleanVirMouseState();
-            biu.r_down_x = Point.Empty;
+            //biu.r_down_x = Point.Empty;
         }
 
         static string proc_info = "";
@@ -296,6 +297,9 @@ namespace keyupMusic2
             Process process = null;
             try
             {
+                if (!(str.Contains(".") || str.Contains("exe")))
+                    str = ProcessMap.Where(o => o.Value.name == str).First().Value.path;
+
                 ProcessStartInfo startInfo = new ProcessStartInfo(str)
                 {
                     UseShellExecute = true,
@@ -317,7 +321,7 @@ namespace keyupMusic2
             }
             catch (Exception ex)
             {
-                Console.WriteLine($"启动进程时出错: {ex.Message}");
+                Console2.WriteLine($"启动进程时出错: {ex.Message}");
                 return false;
             }
             finally
@@ -415,8 +419,8 @@ namespace keyupMusic2
                    windowRect.Right >= screenWidth1 &&
                    windowRect.Bottom >= screenHeight1;
         }
-        public static List<string> FullVedioTitles = new List<string>() { "nhub", "bilibili", "多多自走棋 梦境", "vip:88", "热门视频", };
-        public static bool IsFullVedio() => (ProcessName == msedge || ProcessName == chrome) && FullVedioTitles.Where(e => ProcessTitle.Contains(e)).Count() > 0 && IsFullScreen();
+        public static List<string> FullVedioTitles = new List<string>() { "nhub", "bilibili", "多多自走棋 梦境", "vip:88", "热门视频", "mster", };
+        public static bool IsFullVedio() => (ProcessName == msedge || ProcessName == chrome) && FullVedioTitles.Where(e => ProcessTitle.Contains(e)).Count() > 0 && IsFullScreen() && !judge_color(890, 38, Color.FromArgb(27, 33, 26), 1) && !judge_color(1336, 13, Color.FromArgb(0, 0, 0), 1);
         public static void change_file_last(bool pngg)
         {
             // 指定要处理的文件夹路径  
@@ -432,7 +436,7 @@ namespace keyupMusic2
             // 确保文件夹路径存在  
             if (!Directory.Exists(folderPath))
             {
-                Console.WriteLine("指定的文件夹不存在。");
+                Console2.WriteLine("指定的文件夹不存在。");
                 return;
             }
 
@@ -454,16 +458,16 @@ namespace keyupMusic2
                     try
                     {
                         File.Move(filePath, newFilePath);
-                        Console.WriteLine($"文件 {filePath} 已更改为 {newFilePath}");
+                        Console2.WriteLine($"文件 {filePath} 已更改为 {newFilePath}");
                     }
                     catch (Exception ex)
                     {
-                        Console.WriteLine($"无法重命名文件 {filePath}。错误：{ex.Message}");
+                        Console2.WriteLine($"无法重命名文件 {filePath}。错误：{ex.Message}");
                     }
                 }
             }
 
-            Console.WriteLine("所有匹配的文件后缀已更改。");
+            Console2.WriteLine("所有匹配的文件后缀已更改。");
         }
 
         public static void HttpGet(string url)
@@ -477,7 +481,7 @@ namespace keyupMusic2
                 {
                     string refJson = reader.ReadToEnd();
 
-                    Console.WriteLine(refJson);
+                    Console2.WriteLine(refJson);
                     Console.Read();
                 }
             }
@@ -638,12 +642,12 @@ namespace keyupMusic2
 
                 // 更新窗口布局，使修改生效，并调整窗口大小
                 SetWindowPos(targetWindowHandle, IntPtr.Zero, rect.Left, rect.Top, newWidth, newHeight, SWP_FRAMECHANGED | SWP_NOMOVE);
-                Console.WriteLine("标题栏和边框已隐藏");
+                Console2.WriteLine("标题栏和边框已隐藏");
                 return true;
             }
             else
             {
-                Console.WriteLine("未找到目标窗口");
+                Console2.WriteLine("未找到目标窗口");
             }
             return false;
         }
@@ -692,7 +696,7 @@ namespace keyupMusic2
             IntPtr targetWindowHandle = GetProcessID(targetWindowTitle);
             if (targetWindowHandle == IntPtr.Zero)
             {
-                Console.WriteLine($"未找到标题为 '{targetWindowTitle}' 的窗口。");
+                Console2.WriteLine($"未找到标题为 '{targetWindowTitle}' 的窗口。");
                 return;
             }
 
@@ -700,7 +704,7 @@ namespace keyupMusic2
             RECT windowRect;
             if (!GetWindowRect(targetWindowHandle, out windowRect))
             {
-                Console.WriteLine("无法获取窗口的矩形信息。");
+                Console2.WriteLine("无法获取窗口的矩形信息。");
                 return;
             }
 
@@ -747,7 +751,7 @@ namespace keyupMusic2
             // 移动窗口到屏幕中间
             if (!MoveWindow(targetWindowHandle, newX, newY, windowWidth, windowHeight, true))
             {
-                Console.WriteLine("无法移动窗口到指定位置。");
+                Console2.WriteLine("无法移动窗口到指定位置。");
             }
         }
         public static void CenterWindowOnScreen2(string targetWindowTitle, bool right = false)
@@ -756,7 +760,7 @@ namespace keyupMusic2
             IntPtr targetWindowHandle = GetProcessID(targetWindowTitle);
             if (targetWindowHandle == IntPtr.Zero)
             {
-                Console.WriteLine($"未找到标题为 '{targetWindowTitle}' 的窗口。");
+                Console2.WriteLine($"未找到标题为 '{targetWindowTitle}' 的窗口。");
                 return;
             }
             //// 获取当前窗口样式
@@ -772,7 +776,7 @@ namespace keyupMusic2
             RECT windowRect;
             if (!GetWindowRect(targetWindowHandle, out windowRect))
             {
-                Console.WriteLine("无法获取窗口的矩形信息。");
+                Console2.WriteLine("无法获取窗口的矩形信息。");
                 return;
             }
 
@@ -859,11 +863,21 @@ namespace keyupMusic2
             //if (is_douyin()) { }
             //else if (IsDiffProcess()) mouse_click();
             //press([Keys.LControlKey, Keys.F2]);return;
+
             if (!ExistProcess(LosslessScaling))
+            {
                 ProcessRun(LosslessScalingexe);
+                play_sound_bongocat(D9);
+            }
+            if (ProcessName == keyupMusic2 && GetPointName() != keyupMusic2)
+                mouse_click2();
+
+            //var Usage = GetUsage(LosslessScaling);
+            //var Running = Usage > 20;
+
             press([Keys.LControlKey, Keys.F2]);
 
-            if (Position.X > 0)
+            if (Position.X > 0 && Position.X < screenWidth && (is_douyin() || ProcessName == chrome) && (ProcessName == GetPointName()) && (!ProcessTitle.Contains("nhub")) && (GetUsage(LosslessScaling) < 20))
                 press_middle_bottom();
         }
         public static void system_hard_sleep()
@@ -1186,6 +1200,72 @@ namespace keyupMusic2
         public static DateTime NotityTime = DateTime.MinValue;
         public static bool no_move;
         public static string DeviceName;
+        public static string DeviceName2;
+        public static string timestamp => DateTime.Now.ToString("HH:mm:ss.fff ");
+        public static void WriteLine(string? value)
+        {
+            Console2.WriteLine(timestamp + value);
+        }
+        public static void Write(string? value)
+        {
+            Console2.Write(timestamp + value);
+        }
+        public static void Con(string? value)
+        {
+            Console2.WriteLine(timestamp + value);
+        }
+        public static class Console2
+        {
+            public static void WriteLine(string? value)
+            {
+                System.Console.WriteLine(timestamp + value);
+            }
+            public static void Write(string? value)
+            {
+                System.Console.Write(timestamp + value);
+            }
+
+        }
+        public static void PrintDictSortedByValueDesc()
+        {
+            // 处理字典为空的情况
+            if (Huan.mmmm == null || Huan.mmmm.Count == 0)
+            {
+                File.WriteAllText("log/log2.txt", "【提示】字典 mmmm 为空或未初始化");
+                return;
+            }
+
+            // 1. 构建日志内容（按值从大到小排序）
+            var logBuilder = new StringBuilder();
+            logBuilder.AppendLine($"===== 字典打印日志 | 时间：{DateTime.Now:yyyy-MM-dd HH:mm:ss} =====");
+            logBuilder.AppendLine($"总键值对数量：{Huan.mmmm.Count}");
+            logBuilder.AppendLine("--------------------------------------");
+            logBuilder.AppendLine("序号 | 键（Key） | 值（Value）");
+            logBuilder.AppendLine("--------------------------------------");
+
+            // 2. 按值降序排序（核心：OrderByDescending(kvp => kvp.Value)）
+            var sortedKvps = Huan.mmmm.OrderByDescending(kvp => kvp.Value);
+
+            // 3. 遍历排序后的键值对，拼接日志
+            int index = 1;
+            foreach (var kvp in sortedKvps)
+            {
+                logBuilder.AppendLine($"{index,2}   | {kvp.Key,6}    | {kvp.Value,6}");
+                index++;
+            }
+
+            // 4. 写入文件
+            try
+            {
+                File.WriteAllText("log2.txt", logBuilder.ToString());
+                //Console.WriteLine("字典已按值降序打印到 log2.txt");
+            }
+            catch (Exception ex)
+            {
+                //Console.WriteLine($"写入失败：{ex.Message}");
+            }
+        }
+        public static HashSet<Keys> number_button = new HashSet<Keys> { Keys.Oemcomma, Keys.OemPeriod, Keys.Oem2, Keys.K, Keys.L, Keys.OemSemicolon, Keys.I, Keys.O, Keys.P, Keys.Space };
 
 
     }

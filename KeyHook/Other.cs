@@ -1,4 +1,5 @@
-﻿using System.Windows.Forms;
+﻿using Newtonsoft.Json.Linq;
+using System.Windows.Forms;
 using static keyupMusic2.Common;
 using static keyupMusic2.KeyboardMouseHook;
 using static keyupMusic2.Native;
@@ -25,7 +26,7 @@ namespace keyupMusic2
             list = tempList.ToArray();
         }
 
-        public void hook_KeyDown(KeyboardMouseHook.KeyEventArgs e)
+        public void HookEvent(KeyboardMouseHook.KeyEventArgs e)
         {
             string module_name = ProcessName;
             handling_keys = e.key;
@@ -49,11 +50,6 @@ namespace keyupMusic2
                     break;
                 case Common.ItTakesTwo:
                     HandleItTakesTwo(e.key);
-                    break;
-                case Common.cs2:
-                case Common.explorer:
-                    HandleProgman(e);
-                    HandleCS2(e);
                     break;
                 case Common.Broforce_beta:
                     HandleBroforceBeta(e.key);
@@ -92,6 +88,14 @@ namespace keyupMusic2
                     break;
                 case Common._哔哩哔哩:
                     Handle_哔哩哔哩(e);
+                    break;
+                case Common.cs2:
+                case Common.explorer:
+                    HandleProgman(e);
+                    HandleCS2(e);
+                    break;
+                case Common.keyupMusic2:
+                    if (e.key == S) { ConfigValue(ConfigLocation, huan.Location.X + "," + huan.Location.Y); }
                     break;
             }
 
@@ -166,7 +170,7 @@ namespace keyupMusic2
                         SystemParametersInfo(SPI_SETDESKWALLPAPER, 0, folderPath + s, SPIF_UPDATEINIFILE | SPIF_SENDCHANGE);
                         return;
                     }
-                    string nextWallpaper = GetNextWallpaper(); 
+                    string nextWallpaper = GetNextWallpaper();
                     SetDesktopWallpaper(nextWallpaper, WallpaperStyle.Fit, true);
                     break;
                 case Keys.Up:
@@ -232,16 +236,16 @@ namespace keyupMusic2
                         else
                             press(Keys.PageUp, 0);
                     break;
-                case Keys.VolumeDown:
-                    if (e.Y == screenHeight1)
-                        //press_rate(Keys.PageDown, 0);
-                        press(Keys.PageDown, 0);
-                    break;
-                case Keys.VolumeUp:
-                    if (e.Y == screenHeight1)
-                        //press_rate(Keys.PageUp, 0);
-                        press(Keys.PageUp, 0);
-                    break;
+                //case Keys.VolumeDown:
+                //    if (e.Y == screenHeight1)
+                //        //press_rate(Keys.PageDown, 0);
+                //        press(Keys.PageDown, 0);
+                //    break;
+                //case Keys.VolumeUp:
+                //    if (e.Y == screenHeight1)
+                //        //press_rate(Keys.PageUp, 0);
+                //        press(Keys.PageUp, 0);
+                //    break;
             }
         }
 
@@ -317,6 +321,12 @@ namespace keyupMusic2
                     mouse_click();
                     press("1654, 555;1564, 970;");
                     mouse_move(sfa);
+                    break;
+                case Keys.Enter:
+                    if (judge_color(1456, 553, Color.FromArgb(15, 15, 15)) && judge_color(1037, 886, Color.FromArgb(19, 19, 19)) && judge_color(1594, 851, Color.FromArgb(45, 45, 45)))
+                        press("1525,810;1525,810", 200);
+                    else if (judge_color(1585, 581, Color.FromArgb(38, 38, 38)) && judge_color(969, 577, Color.FromArgb(38, 38, 38)))
+                        press("1525,810;1525,810", 200);
                     break;
             }
         }

@@ -7,7 +7,7 @@ namespace keyupMusic2
 {
     public class AllClass : Default
     {
-        public void hook_KeyDown_ddzzq(KeyboardMouseHook.KeyEventArgs e)
+        public void HookEvent(KeyboardMouseHook.KeyEventArgs e)
         {
             string module_name = ProcessName;
             handling_keys = e.key;
@@ -22,8 +22,8 @@ namespace keyupMusic2
                 //    SuperClass.get_point_color(); break;
                 //case Keys.F2:
                 //    quick_scale(); break;
-                case Keys.F4:
-                    quick_close(); quick_sleep(); break;
+                //case Keys.F4:
+                //    quick_close(); quick_sleep(); break;
                 //case Keys.F10:
                 //    quick_what(); break;
                 //case Keys.F11:
@@ -51,7 +51,7 @@ namespace keyupMusic2
                     quick_prix_image(); break;
 
                 case Keys.OemPeriod:
-                    if (is_down(Keys.RControlKey)) SS().KeyPress(Keys.Apps); break;
+                    if (is_down(Keys.RControlKey)) press_raw(Apps); break;
             }
             //if (Position.Y == 0)
             //    switch (e.key)
@@ -70,6 +70,10 @@ namespace keyupMusic2
             if (!ProcessTitle.Contains("tudio") && IsFullScreen())
             {
                 LossScale();
+            }
+            else if (lock_err)
+            {
+                quick_sleep();
             }
         }
 
@@ -121,20 +125,10 @@ namespace keyupMusic2
             }
             catch (Exception ex)
             {
-                Console.WriteLine($"获取剪贴板内容失败: {ex.Message}");
+                Console2.WriteLine($"获取剪贴板内容失败: {ex.Message}");
             }
             return result;
         }
-
-        //static Dictionary<int, Keys[]> numkey = new Dictionary<int, Keys[]>()
-        //{
-
-        //};
-        //var requestBody = new
-        //{
-        //    A1 = new Keys[] { Keys.Left },
-        //    A2 = new Keys[] { Keys.Down },
-        //};
 
         public void quick_prix_image()
         {

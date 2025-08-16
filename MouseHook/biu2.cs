@@ -9,7 +9,13 @@ namespace keyupMusic2
 {
     public partial class biu
     {
+        public biu()
+        {
+            ReplaceKey2.init();
+            init();
+        }
         IntPtr last_hwnd = IntPtr.Zero;
+        Point click_r_point = new Point();
         private void easy_redad(KeyboardMouseHook.MouseEventArgs e)
         {
             if (isctrl())
@@ -23,7 +29,7 @@ namespace keyupMusic2
             string name = GetWindowName(hwnd);
             string title = GetWindowTitle(hwnd);
             last_hwnd = hwnd;
-            string message = ProcessName + " " + name + " " + title + " " + processWrapper?.classname;
+            string message = ProcessName + "+" + name + "+" + title + "+" + processWrapper?.classname;
             if (huan.label1.Text != message)
             {
                 if (name != ProcessName && name != explorer)
@@ -39,7 +45,8 @@ namespace keyupMusic2
         {
             if (e.Msg == MouseMsg.move)
             {
-                RateLimiter2.Execute(easy_redad, e);
+                //RateLimiter2.Execute(easy_redad, e);
+                easy_redad(e);
                 return;
             }
             if (ProcessName == VSCode) return;
@@ -53,7 +60,7 @@ namespace keyupMusic2
             huan.Invoke2(() =>
             {
                 IEnumerable<Keys> pressedKeys = GetPressedKeys();
-                msg = GetPointName() + " " + msg + "    " + string.Join(", ", pressedKeys);
+                msg = ProcessName + "-" + msg + string.Join(",", pressedKeys) + " " + DateTimeNow2();
                 huan.label1.Text = msg;
             }, 10);
         }

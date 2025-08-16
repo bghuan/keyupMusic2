@@ -24,6 +24,10 @@ namespace keyupMusic2
                 mouse_click2(0);
             else if (ProcessName == Common.explorer)
                 press([Keys.F5]);
+
+
+            else if (ProcessName == Common.devenv)
+                press([Keys.LMenu, F10]);
             return e.data;
         }
         private int _corner2(KeyboardMouseHook.MouseEventArgs e)
@@ -31,7 +35,11 @@ namespace keyupMusic2
             if (is_douyin())
                 CloseProcess();
             else if (ProcessName == Common.keyupMusic2)
-                HideProcess();
+            {
+                /*HideProcess();*/
+                if (ProcessTitle.Contains("keyupMusic2"))
+                    HideProcess(true);
+            }
             else if (Common.ACPhoenix.Equals(Common.ProcessName))
                 press([Keys.Space]);
             else if (ProcessName == Common.explorer && GetPointTitle() == FolderView)
@@ -46,6 +54,10 @@ namespace keyupMusic2
             { }
             else if (ProcessName == Common.gcc)
             { }
+            else if (ProcessName == Common.devenv || GetPointName() == Common.devenv)
+            {
+                HideProcess(devenv);
+            }
             else if (!IsFullScreen())
                 CloseProcess();
             else

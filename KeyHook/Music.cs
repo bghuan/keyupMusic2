@@ -18,7 +18,7 @@ namespace keyupMusic2
                     [Keys.Space, Keys.D0]
         }};
 
-        public static void hook_KeyDown_keyupMusic2(KeyboardMouseHook.KeyEventArgs e)
+        public static void HookEvent(KeyboardMouseHook.KeyEventArgs e)
         {
             return;
             hook_KeyDown_keyupMusic2222(e);

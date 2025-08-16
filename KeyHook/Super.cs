@@ -20,237 +20,260 @@ namespace keyupMusic2
         {
             Huan.keyupMusic2_onlisten = true;
             var e = new KeyboardMouseHook.KeyEventArgs(KeyType.Down, keys, 0, new Native.keyboardHookStruct());
-            new SuperClass().hook_KeyDown_keyupMusic2(e);
+            new SuperClass().HookEvent(e);
+            Huan.keyupMusic2_onlisten = false;
         }
-        public bool hook_KeyDown_keyupMusic2(KeyboardMouseHook.KeyEventArgs e)
+        public bool HookEvent(KeyboardMouseHook.KeyEventArgs e)
         {
             if (!Huan.keyupMusic2_onlisten) return false;
+            if (e.key == (Keys.LButton | Keys.OemClear)) return false;
+
             bool catched = true;
-            switch (e.key)
-            {
-                case Keys.Q:
-                    //Blob.Instance.changeFlag(false);
-                    break;
-                case Keys.W:
-                    //SSSS.KeyPress(Keys.LWin, "openvpn", Keys.Enter);
-                    //SSSS.KeyPress(Keys.LWin, "verge", Keys.Enter);
-                    mouse_move(2186, 1403, 100);
-                    var need_win = GetPointName() != explorer;
-                    if (need_win) press(LWin, 100);
-                    mouse_click_right();
-                    if (e.key == Q)
-                        press("2259,1112;300;2109,1107", 100);
-                    else
-                        press("2259,1112;300;2109,1180", 100);
-                    break;
-                    //2083,1180 2109,1107 2259,1112 2186,1403
-                    mouse_click_right(2186, 1403);
-                    press("2259,1112;2083,1180", 100);
-                    break;
-                case Keys.E:
-                    play_sound(Keys.D0);
-                    winBinWallpaper.changeImg();
-                    break;
-                case Keys.R:
-                    sound_setting();
-                    break;
-                case Keys.T:
-                    gcc_restart = true;
-                    break;
-                case Keys.Y:
-                    Common.cmd($"/c start ms-settings:taskbar");
-                    press("100;978,1042;978,1044;907,1227;2500,32;", 501);
-                    break;
-                case Keys.U:
-                    Common.cmd($"/c start ms-settings:personalization");
-                    press("200;1056,588;2118,530;2031,585;2516,8;", 801);
-                    break;
-                case Keys.I:
-                    SS().KeyPress(Keys.RButton);
-                    break;
-                case Keys.O:
-                    play_sound(Keys.D5);
-                    change_file_last(true);
-                    break;
-                case Keys.P:
-                    play_sound(Keys.D3);
-                    change_file_last(false);
-                    break;
-                case Keys.A:
-                    //start_record = !start_record;
-                    //Log.logcachesave();
-                    //string path = "";
-                    //Invoke(() =>
-                    //{
-                    //    path = Clipboard.GetText();
-                    //});
-                    //var a = GetAllFiles(path, false);
-                    //download_image(a);
-                    //start_listen_to_word();
-                    break;
-                case Keys.S:
-                    //SetWindowTitle();
-                    MoveSmallFilesRecursive();
-                    break;
-                case Keys.D:
-                    break;
-                case Keys.F:
-                    var aasad = "C:\\Users\\bu\\source\\repos\\keyupMusic2\\bin\\Debug\\net8.0-windows\\image\\downloaded_images\\33084\\0f4702772dd8fff945d5b066.png";
-                    FindDuplicatewebps(aasad, "C:\\Users\\bu\\source\\repos\\keyupMusic2\\bin\\Debug\\net8.0-windows\\image\\downloaded_images");
-                    break;
-                case Keys.G:
-                    var keys = new List<Keys>();
-                    for (int i = 0; i < 256; i++)
-                        keys.Add((Keys)i);
-                    huan.Invoke(() => { huan.label1.Text = "all key up " + keys.Count + keys.ToString(); });
-                    Sleep(200);
-                    foreach (var key in keys)
-                    {
-                        if (key == Keys.Apps) continue;
-                        if (is_down(Keys.CapsLock)) return true;
-                        huan.Invoke(() => { huan.label1.Text = ProcessName + " " + key.ToString(); });
-                        SS(10).KeyUp(key);
-                    }
-                    break;
-                case Keys.H:
-                    //string sourceImage = "input.png";
-                    //string targetImage = "output.png";
-                    ////ConvertAndResize(sourceImage, targetImage);
-                    ////ShowFadeInWallpaper(targetImage);
-                    //var aaa = GetWallpaperFromRegistry();
-                    //targetImage = "output.png";
-                    //BatchCompressImages("C:\\Users\\bu\\Pictures\\Screenshots\\dd\\20241022", "C:\\Users\\bu\\Desktop", 80, 1920, 1080);
-                    //VirtualKeyboardForm.Instance.TriggerKey(Q, false);
-                    break;
-                case Keys.J:
-                    //SetDesktopWallpaperAli(GetCurrentWallpaperPath());
-                    MoonTime.Instance.ChangeColor();
-                    break;
-                case Keys.K:
-                    huan.release_all_key(1000);
-                    break;
-                case Keys.L:
-                    //RemoveWebpWhiteBorder(GetCurrentWallpaperPath(), "a.webp");
-                    //var mp3Path = "C:\\Users\\bu\\Desktop\\a\\爸(19523708410)_20230728213046.mp3";
-                    //var wavPath = "C:\\Users\\bu\\Desktop\\b\\爸(19523708410)_20230728213046.wav";
-                    //ConvertMp3ToWav(mp3Path, wavPath);
-                    string windowTitle = "PowerToys.CropAndLock"; // 示例：记事本程序
-                    byte transparency = 160; // 半透明效果
-                    if (is_tran_powertoy)
-                        transparency = 255;
-                    is_tran_powertoy = !is_tran_powertoy;
-                    bool success = SetWindowTransparency(windowTitle, transparency);
-                    break;
-                case Keys.Z:
-                    //GoodDesktopWallpaper(); 
-                    //huan.Invoke(() => { Native.AllocConsole(); });
-                    TaskRun(() =>
-                    {
-                        press(S);
-                    }, 3300);
-                    break;
-                case Keys.X:
-                    AllClass.run_vis();
-                    break;
-                case Keys.C:
-                    press_middle_bottom();
-                    break;
-                case Keys.V:
-                    cmd_v();
-                    break;
-                case Keys.B:
-                    var pressedKeys = release_all_keydown();
-                    if (pressedKeys.Any())
-                        huan.Invoke2(() => { huan.label1.Text = "relese: " + string.Join(", ", pressedKeys); });
-                    Huan.handling_keys = new();
-                    break;
-                case Keys.M:
-                    chrome_m();
-                    break;
-                case Keys.N:
-                    notify();
-                    break;
-                case Keys.Space:
-                    Invoke(() =>
-                    {
-                        press([Keys.LControlKey, Keys.A, Keys.C], 200);
-                        press([Keys.LShiftKey], 100);
-                        string ddd = Clipboard.GetText().ToUpper();
-                        if (ddd.Length < 20)
-                            press(ddd);
-                    });
-                    break;
-                case Keys.F1:
-                    get_point_color();
-                    //if (VirMouseStateKey.Count > 0)
-                    //    log("VirMouseStateKey: " + string.Join(", ", VirMouseStateKey));
-                    break;
-                //case Keys.F2:
-                //    //LossScale();
-                //    break;
-                case Keys.F3:
-                    huan.temp_visiable = !huan.temp_visiable;
-                    huan.SetVisibleCore2(huan.temp_visiable);
-                    break;
-                case Keys.F4:
-                    press(Keys.MediaPlayPause);
-                    break;
-                case Keys.F5:
-                    play_sound(Keys.D2);
-                    ProcessRun("C:\\Program Files (x86)\\Steam\\steam.exe");
-                    break;
-                case Keys.F6:
-                    play_sound(Keys.D2);
-                    press(Keys.LWin);
-                    Sleep(180);
-                    mouse_click(1062, 899);
-                    break;
-                case Keys.F9:
-                    huan.system_sleep();
-                    break;
-                case Keys.F10:
-                    Common.no_move = !Common.no_move;
-                    break;
-                //case Keys.F11:
-                //case Keys.F12:
-                //    press(e.key);
-                //    break;
 
-                case Keys.Left:
-                    press(Keys.MediaPreviousTrack);
-                    break;
-                case Keys.Right:
-                    press(Keys.MediaNextTrack);
-                    break;
-                case Keys.Down:
-                    press(Keys.VolumeDown, 2, 10);
-                    break;
-                case Keys.Up:
-                    press(Keys.VolumeUp, 2, 10);
-                    break;
-                case Keys.PageDown:
-                    press(Keys.MediaPlayPause);
-                    break;
-                case Keys.D0:
-                    play_sound_bongocat(Keys.D0);
-                    NotityTime = DateTime.Now.AddMinutes(10);
-                    break;
+            if (e.key == Huan.super_key)
+                huan.SetVisibleCore2(!huan.Visible);
+            else if (e.key == Huan.super_key2)
+                huan.system_sleep();
+            else
+                switch (e.key)
+                {
+                    case Keys.Q:
+                        //Blob.Instance.changeFlag(false);
+                        mousewhell(4);
+                        break;
+                    case Keys.W:
+                        //SSSS.KeyPress(Keys.LWin, "openvpn", Keys.Enter);
+                        //SSSS.KeyPress(Keys.LWin, "verge", Keys.Enter);
+                        mouse_move(2186, 1403, 100);
+                        var need_win = GetPointName() != explorer;
+                        if (need_win) press(LWin, 100);
+                        mouse_click_right();
+                        if (e.key == Q)
+                            press("2259,1112;300;2109,1107", 100);
+                        else
+                            press("2259,1112;300;2109,1180", 100);
+                        break;
+                        //2083,1180 2109,1107 2259,1112 2186,1403
+                        mouse_click_right(2186, 1403);
+                        press("2259,1112;2083,1180", 100);
+                        break;
+                    case Keys.E:
+                        play_sound(Keys.D0);
+                        winBinWallpaper.changeImg();
+                        break;
+                    case Keys.R:
+                        sound_setting();
+                        break;
+                    case Keys.T:
+                        gcc_restart = true;
+                        break;
+                    case Keys.Y:
+                        Common.cmd($"/c start ms-settings:taskbar");
+                        press("100;978,1042;978,1044;907,1227;2500,32;", 501);
+                        break;
+                    case Keys.U:
+                        Common.cmd($"/c start ms-settings:personalization");
+                        press("200;1056,588;2118,530;2031,585;2516,8;", 801);
+                        break;
+                    case Keys.I:
+                        SS().KeyPress(Keys.RButton);
+                        break;
+                    case Keys.O:
+                        play_sound(Keys.D5);
+                        change_file_last(true);
+                        break;
+                    case Keys.P:
+                        play_sound(Keys.D3);
+                        change_file_last(false);
+                        break;
+                    case Keys.A:
+                        //start_record = !start_record;
+                        //Log.logcachesave();
+                        //string path = "";
+                        //Invoke(() =>
+                        //{
+                        //    path = Clipboard.GetText();
+                        //});
+                        //var a = GetAllFiles(path, false);
+                        //download_image(a);
+                        //start_listen_to_word();
+                        break;
+                    case Keys.S:
+                        //SetWindowTitle();
+                        MoveSmallFilesRecursive();
+                        break;
+                    case Keys.D:
+                        break;
+                    case Keys.F:
+                        var aasad = "C:\\Users\\bu\\source\\repos\\keyupMusic2\\bin\\Debug\\net8.0-windows\\image\\downloaded_images\\33084\\0f4702772dd8fff945d5b066.png";
+                        FindDuplicatewebps(aasad, "C:\\Users\\bu\\source\\repos\\keyupMusic2\\bin\\Debug\\net8.0-windows\\image\\downloaded_images");
+                        break;
+                    case Keys.G:
+                        var keys = new List<Keys>();
+                        for (int i = 0; i < 256; i++)
+                            keys.Add((Keys)i);
+                        huan.Invoke(() => { huan.label1.Text = "all key up " + keys.Count + keys.ToString(); });
+                        Sleep(200);
+                        foreach (var key in keys)
+                        {
+                            if (key == Keys.Apps) continue;
+                            if (is_down(Keys.CapsLock)) return true;
+                            huan.Invoke(() => { huan.label1.Text = ProcessName + " " + key.ToString(); });
+                            SS(10).KeyUp(key);
+                        }
+                        break;
+                    case Keys.H:
+                        //string sourceImage = "input.png";
+                        //string targetImage = "output.png";
+                        ////ConvertAndResize(sourceImage, targetImage);
+                        ////ShowFadeInWallpaper(targetImage);
+                        //var aaa = GetWallpaperFromRegistry();
+                        //targetImage = "output.png";
+                        //BatchCompressImages("C:\\Users\\bu\\Pictures\\Screenshots\\dd\\20241022", "C:\\Users\\bu\\Desktop", 80, 1920, 1080);
+                        //VirtualKeyboardForm.Instance.TriggerKey(Q, false);
+                        break;
+                    case Keys.J:
+                        //SetDesktopWallpaperAli(GetCurrentWallpaperPath());
+                        MoonTime.Instance.ChangeColor();
+                        break;
+                    case Keys.K:
+                        huan.release_all_key(1000);
+                        break;
+                    case Keys.L:
+                        //RemoveWebpWhiteBorder(GetCurrentWallpaperPath(), "a.webp");
+                        //var mp3Path = "C:\\Users\\bu\\Desktop\\a\\爸(19523708410)_20230728213046.mp3";
+                        //var wavPath = "C:\\Users\\bu\\Desktop\\b\\爸(19523708410)_20230728213046.wav";
+                        //ConvertMp3ToWav(mp3Path, wavPath);
+                        string windowTitle = "PowerToys.CropAndLock"; // 示例：记事本程序
+                        byte transparency = 160; // 半透明效果
+                        if (is_tran_powertoy)
+                            transparency = 255;
+                        is_tran_powertoy = !is_tran_powertoy;
+                        bool success = SetWindowTransparency(windowTitle, transparency);
+                        break;
+                    case Keys.Z:
+                        //GoodDesktopWallpaper(); 
+                        //huan.Invoke(() => { Native.AllocConsole(); });
+                        //TaskRun(() =>
+                        //{
+                        //    press(S);
+                        //}, 3300);
+                        break;
+                    case Keys.X:
+                        AllClass.run_vis();
+                        break;
+                    case Keys.C:
+                        press_middle_bottom();
+                        break;
+                    case Keys.V:
+                        cmd_v();
+                        break;
+                    case Keys.B:
+                        var pressedKeys = release_all_keydown();
+                        if (pressedKeys.Any())
+                            huan.Invoke2(() => { huan.label1.Text = "relese: " + string.Join(", ", pressedKeys); });
+                        Huan.handling_keys = new();
+                        break;
+                    case Keys.M:
+                        chrome_m();
+                        break;
+                    case Keys.N:
+                        notify();
+                        break;
+                    case Keys.Space:
+                        Invoke(() =>
+                        {
+                            press([Keys.LControlKey, Keys.A, Keys.C], 200);
+                            press([Keys.LShiftKey], 100);
+                            string ddd = Clipboard.GetText().ToUpper();
+                            if (ddd.Length < 20)
+                                press(ddd);
+                        });
+                        break;
+                    case Keys.F1:
+                        get_point_color();
+                        //if (VirMouseStateKey.Count > 0)
+                        //    log("VirMouseStateKey: " + string.Join(", ", VirMouseStateKey));
+                        break;
+                    case Keys.F2:
+                        //LossScale();
+                        CloseProcess(explorer);
+                        ProcessRun(explorer);
+                        break;
+                    //case Keys.F3:
+                    //    huan.SetVisibleCore2(!huan.Visible);
+                    //    break;
+                    case Keys.F4:
+                        press(Keys.MediaPlayPause);
+                        break;
+                    case Keys.F5:
+                        huan.Invoke((Delegate)(() =>
+                        {
+                            Native.AllocConsole();
+                            Console.SetOut(new StreamWriter(Console.OpenStandardOutput()) { AutoFlush = true });
+                            Console.SetError(new StreamWriter(Console.OpenStandardError()) { AutoFlush = true });
+                            Console.SetIn(new StreamReader(Console.OpenStandardInput()));
+                        }));
+                        break;
+                    case Keys.F6:
+                        play_sound(Keys.D2);
+                        press(Keys.LWin);
+                        Sleep(180);
+                        mouse_click(1062, 899);
+                        break;
+                    //case Keys.F9:
+                    //    huan.system_sleep();
+                    //    break;
+                    case Keys.F10:
+                        Common.no_move = !Common.no_move;
+                        HideProcess(true);
+                        break;
+                    //case Keys.F11:
+                    //case Keys.F12:
+                    //    press(e.key);
+                    //    break;
 
-                case Keys.Escape:
-                    huan._mouseKbdHook.ChangeMouseHooks();
-                    break;
-                case Keys.Delete:
-                    DeleteCurrentWallpaper();
-                    break;
-                case Keys.LWin:
-                case Keys.RWin:
-                    press(e.key);
-                    break;
+                    case Keys.Left:
+                        press(Keys.MediaPreviousTrack);
+                        //altshiftab();
+                        break;
+                    case Keys.Right:
+                        press(Keys.MediaNextTrack);
+                        //altab();
+                        break;
+                    case Keys.Down:
+                        press(Keys.VolumeDown, 3, 10);
+                        break;
+                    case Keys.Up:
+                        press(Keys.VolumeUp, 3, 10);
+                        break;
+                    case Keys.Enter:
+                        press(MediaPlayPause);
+                        break;
 
-                default:
-                    catched = false;
-                    break;
-            }
+                    case Keys.PageDown:
+                        press(Keys.MediaPlayPause);
+                        break;
+                    case Keys.D0:
+                        play_sound_bongocat(Keys.D0);
+                        NotityTime = DateTime.Now.AddMinutes(10);
+                        break;
+
+                    case Keys.Escape:
+                        huan._mouseKbdHook.ChangeMouseHooks();
+                        break;
+                    case Keys.Delete:
+                        DeleteCurrentWallpaper();
+                        break;
+                    case Keys.LWin:
+                    case Keys.RWin:
+                        press(e.key);
+                        break;
+
+                    default:
+                        catched = false;
+                        break;
+                }
 
             //if (key_sound && keys.Contains(e.key)) { play_sound(e.key); catched = true; }
             if (keys.Contains(e.key)) { play_sound(e.key); catched = true; }
@@ -316,7 +339,7 @@ namespace keyupMusic2
             }
             catch (Exception ex)
             {
-                Console.WriteLine($"Error opening image: {ex.Message}");
+                Console2.WriteLine($"Error opening image: {ex.Message}");
             }
         }
         public static void notify(string title = "拯救锁屏无登录", string msg = "这是一个系统通知内容。")
@@ -356,7 +379,7 @@ namespace keyupMusic2
                 Screen currentScreen = Screen.FromPoint(mousePosition);
                 int relativeX = (mousePosition.X - currentScreen.Bounds.X) * 1920 / currentScreen.Bounds.Width;
                 int relativeY = (mousePosition.Y - currentScreen.Bounds.Y) * 1080 / currentScreen.Bounds.Height;
-                Console.WriteLine($"相对坐标：({relativeX}, {relativeY})");
+                Console2.WriteLine($"相对坐标：({relativeX}, {relativeY})");
                 last_x = screenWidth + relativeX;
                 last_y = screenHeight + relativeY;
 

@@ -7,17 +7,13 @@ namespace keyupMusic2
     {
         protected virtual IntPtr KeyboardHookProc(int code, int wParam, IntPtr lParam)
         {
-            //Native.PostMessage(form_hwnd, Rawinput.WM_INPUT, wParam, 0);
-            //return new IntPtr(1);
             var kbdStruct = Marshal.PtrToStructure<Native.keyboardHookStruct>(lParam);
             var args = new KeyEventArgs(0, (Keys)kbdStruct.vkCode, wParam, kbdStruct);
             if (!args.isVir)
                 KeyEvent(args);
             if (args.Handled)
-            //{
-            //    Native.PostMessage(form_hwnd, Rawinput.WM_INPUT + 123, wParam, (IntPtr)kbdStruct.vkCode); 
                 return new IntPtr(1);
-            //}
+
             return Native.CallNextHookEx(_key_hookId, code, wParam, lParam);
         }
 
@@ -44,16 +40,13 @@ namespace keyupMusic2
             short buttonData = (short)((hookStruct.mouseData >> 16 & 0xFFFF));
 
             if (buttonData == 2 && (args.Msg == MouseMsg.back || args.Msg == MouseMsg.back_up))
-            {
                 args.Msg = args.Msg == MouseMsg.back
                            ? MouseMsg.go
                            : MouseMsg.go_up;
-            }
-            if (args.Msg == MouseMsg.wheel)
-            {
-                var scrollAmount = buttonData / 120;
-                args.data = scrollAmount;
-            }
+            else if (args.Msg == MouseMsg.wheel)
+                args.data = buttonData / 120;
+            else if (args.Msg == MouseMsg.wheel_h)
+                args.data = buttonData;
         }
 
         private IntPtr _key_hookId = IntPtr.Zero;
@@ -99,6 +92,7 @@ namespace keyupMusic2
             public int Y;
             public bool isVir;
             public string device;
+            public string dwExtraInfo2;
             public Point Pos => new Point() { X = X, Y = Y };
 
             public KeyEventArgs(KeyType type, Keys key, int wParam, Native.keyboardHookStruct lParam)
@@ -113,7 +107,7 @@ namespace keyupMusic2
                 this.Y = Cursor.Position.Y;
             }
 
-            public KeyEventArgs(KeyType type, Keys key, int dwExtraInfo, string device  )
+            public KeyEventArgs(KeyType type, Keys key, int dwExtraInfo, string device)
             {
                 Type = type;
                 this.key = key;
@@ -131,7 +125,7 @@ namespace keyupMusic2
         //public event Action<MouseEventArgs> MouseEvent;
         //public event Action<KeyEventArgs> KeyEvent;
         public string ModuleName => Process.GetCurrentProcess().MainModule.ModuleName;
-        public KeyboardMouseHook(nint form_hwnd )
+        public KeyboardMouseHook(nint form_hwnd)
         {
             _kbdHookProc = KeyboardHookProc;
             _mouseHookProc = MouseHookProc;
@@ -180,6 +174,7 @@ namespace keyupMusic2
         move = 0x0200,
 
         wheel = 0x020A,
+        wheel_h = 0x020E,
         middle = 0x0207,
         middle_up = 0X0208,
 
@@ -192,7 +187,7 @@ namespace keyupMusic2
         go = 0x920B,
         go_up = 0x920C,
 
-        none = 0x920D,
+        none = 0x0,
     }
 
     public enum KeyType

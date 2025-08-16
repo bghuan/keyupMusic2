@@ -93,8 +93,7 @@ namespace keyupMusic2
                 if (key == Keys.PageDown)
                     key = Keys.Space;
             }
-
-            if (ProcessName == Common.chrome && ProcessTitle.Contains("荔枝"))
+            else if (ProcessName == Common.chrome && ProcessTitle.Contains("荔枝"))
             {
                 if (key == Keys.PageDown)
                     mousewhell(-1);
@@ -110,6 +109,13 @@ namespace keyupMusic2
                     press([Keys.LWin, Keys.D]);
                 return;
             }
+            //else if (ProcessName == Common.chrome && GetPointName() == msedge)
+            //{
+            //    if (key == Keys.PageDown)
+            //        mousewhell(-4);
+            //    else if (key == Keys.Up)
+            //        mousewhell(4);
+            //}
 
             if (key == Keys.None) return;
 
@@ -117,7 +123,7 @@ namespace keyupMusic2
             if (key == F3 || is_douyin() || Huan.keyupMusic2_onlisten)
                 press_raw(key);
             else
-                press_rate(key);
+                press_raw(key);
             //log(msg + "-" + ProcessName2 + "-" + key);
         }
     }

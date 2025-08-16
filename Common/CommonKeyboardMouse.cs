@@ -15,7 +15,7 @@ using Point = System.Drawing.Point;
 
 namespace keyupMusic2
 {
-    public static partial class Common
+    public partial class Common
     {
         public static int[] deal_size_x_y(int x, int y, bool puls_one = true)
         {
@@ -136,7 +136,7 @@ namespace keyupMusic2
             var aa = Native.mouse_event(dwFlags, dx, dy, cButtons, (int)isVir);
             //if ((dwFlags & MOUSEEVENTF_LEFTDOWN) == 1) { Sleep(10); FreshProcessName(); }
             //if ((dwFlags & MOUSEEVENTF_MOVE) == 0) { FreshProcessName(); Task.Run(() => { Sleep(100); FreshProcessName(); }); }
-            if (dwFlags != MOUSEEVENTF_MOVE && dwFlags != MOUSEEVENTF_WHEEL) { FreshProcessName(); }
+            if (dwFlags != MOUSEEVENTF_MOVE && dwFlags != MOUSEEVENTF_WHEEL) { FreshProcessName2(); }
             return aa;
         }
         public static int mouse_event2(int dwFlags, int dx, int dy, int cButtons, int dwExtraInfo)
@@ -168,6 +168,11 @@ namespace keyupMusic2
         {
             mouse_event(MOUSEEVENTF_XDOWN, 0, 0, XBUTTON2, 0);
             mouse_event(MOUSEEVENTF_XUP, 0, 0, XBUTTON2, 0);
+        }
+        public static void mousegoback(bool go = true)
+        {
+            mouse_event(MOUSEEVENTF_XDOWN, 0, 0, go ? XBUTTON2 : XBUTTON1, 0);
+            mouse_event(MOUSEEVENTF_XUP, 0, 0, go ? XBUTTON2 : XBUTTON1, 0);
         }
 
         public static void mouseback()
@@ -206,15 +211,6 @@ namespace keyupMusic2
             mouse_event(MOUSEEVENTF_LEFTUP, 0, 0, 0, 0);
             Thread.Sleep(tick);
         }
-        public static bool is_down(Keys key)
-        {
-            return GetAsyncKeyState(key) < 0;
-        }
-        public static bool is_down_vir(Keys key)
-        {
-            return GetAsyncKeyState(key) < 0
-                || (VirMouseStateKey.ContainsKey(key) && VirMouseStateKey[key] == ProcessName);
-        }
         public static Dictionary<Keys, string> VirMouseStateKey = new Dictionary<Keys, string>();
         public static void VirKeyState(KeyboardMouseHook.KeyEventArgs e)
         {
@@ -235,7 +231,7 @@ namespace keyupMusic2
             if (!mousekeymap.ContainsKey(msg)) return;
             //bool up = msg.ToString().Contains("up");
             Keys key = mousekeymap[msg];
-            if (msg.IsUpEvent())
+            if (IsUpEvent(msg))
                 VirMouseStateKey.Remove(key);
             else
                 VirMouseStateKey[key] = ProcessName;
@@ -260,14 +256,23 @@ namespace keyupMusic2
                 VirMouseStateKey = new Dictionary<Keys, string>();
             }
         }
-        public static bool is_down(int key)
+        //public static bool is_down(int key)
+        //{
+        //    return GetAsyncKeyState(key) < 0;
+        //}
+
+        public static bool is_down(Keys key)
         {
             return GetAsyncKeyState(key) < 0;
         }
-
+        public static bool is_down_vir(Keys key)
+        {
+            return is_down(key) || (VirMouseStateKey.ContainsKey(key) && VirMouseStateKey[key] == ProcessName);
+        }
+        // job 一次按键监听一次缓存
         public static bool is_ctrl()
         {
-            return GetAsyncKeyState(Keys.ControlKey) < 0;
+            return is_down(Keys.ControlKey);
         }
         public static bool isctrl()
         {
@@ -275,26 +280,25 @@ namespace keyupMusic2
         }
         public static bool is_lbutton()
         {
-            return is_down(LButton);
+            return is_down(Keys.LButton);
         }
         public static bool is_ctrl_shift_alt()
         {
             return is_ctrl() || is_shift() || is_alt();
         }
-        public static bool is_esc()
+        public static bool is_esc(Keys keys = Keys.ControlKey)
         {
-            return GetAsyncKeyState(Keys.Escape) < 0;
+            return is_down(Keys.Escape);
         }
         public static bool is_alt()
         {
-            return GetAsyncKeyState(Keys.LMenu) < 0 || GetAsyncKeyState(Keys.RMenu) < 0;
+            return is_down(Keys.LMenu) || is_down(Keys.RMenu);
         }
 
         public static bool is_shift()
         {
-            return GetAsyncKeyState(Keys.ShiftKey) < 0;
+            return is_down(Keys.ShiftKey);
         }
-        public static readonly object _lockObject2 = new object();
 
         public static void press_rate(Keys num, int tick = 0)
         {
@@ -303,20 +307,15 @@ namespace keyupMusic2
         public static void press(Keys num, int tick = 0)
         {
             if (is_down(Keys.Delete)) return;
-            lock (_lockObject2)
-            {
-                press([num], tick);
-            }
+            if (num == Keys.MediaPlayPause) { if (!IsAnyMusicPlayerRunning()) StartNeteaseCloudMusic(); }
+            press([num], tick);
         }
         public static void press(Keys num, int times, int tick = 0)
         {
             if (is_down(Keys.Delete)) return;
-            lock (_lockObject2)
+            for (Int32 i = 0; i < times; i++)
             {
-                for (Int32 i = 0; i < times; i++)
-                {
-                    _press(num);
-                }
+                _press(num);
             }
             Thread.Sleep(tick);
         }
@@ -325,11 +324,17 @@ namespace keyupMusic2
             press([Keys.LMenu, Keys.Tab], tick);
             //Thread.Sleep(tick);
         }
+        public static void altshiftab(int tick = 10)
+        {
+            press([Keys.LMenu, Keys.LShiftKey, Keys.Tab], tick);
+            //Thread.Sleep(tick);
+        }
         public static void altabtab(int tick = 10)
         {
             press([Keys.LMenu, Keys.Tab, Keys.Tab], tick);
             //Thread.Sleep(tick);
         }
+        //job isvir move to keybd_event
         public static void press_raw(Keys num, int tick = 0)
         {
             isVir = 0;
@@ -374,6 +379,12 @@ namespace keyupMusic2
         {
             biu.RECTT.release();
             press(middle_bottom, 0);
+            biu.RECTT.release();
+        }
+        public static void press_middle_bottom3()
+        {
+            biu.RECTT.release();
+            mouse_move(screenWidth1, screenHeight1);
             biu.RECTT.release();
         }
         public static string middle_bottom = "1333.1439";
@@ -559,7 +570,7 @@ namespace keyupMusic2
 };
         static HashSet<byte> FreshProcessNameKeys = new HashSet<byte> { 0xA5, 0xA4, 0x5C, 0x5B, 0x09, 0x73 };
 
-        private static async void keybd_event(byte bVk, byte bScan, uint dwFlags, uint dwExtraInfo)
+        private static void keybd_event(byte bVk, byte bScan, uint dwFlags, uint dwExtraInfo)
         {
             if (ExtendedKeys.Contains(bVk))
                 dwFlags |= (uint)KeyboardFlag.ExtendedKey;
@@ -572,8 +583,7 @@ namespace keyupMusic2
             Native.keybd_event(bVk, MapVirtualKey[bVk], dwFlags, isVir);
 
             if (!FreshProcessNameKeys.Contains(bVk)) return;
-            await Task.Delay(10);
-            FreshProcessName();
+            FreshProcessName2();
         }
         [Flags]
         public enum KeyboardFlag : uint
@@ -593,7 +603,13 @@ namespace keyupMusic2
             MouseMsg.back_up,
             MouseMsg.go_up
         };
-        public static bool IsUpEvent(this MouseMsg msg)
+        public static readonly HashSet<MouseMsg> NoUp = new HashSet<MouseMsg>
+        {
+            MouseMsg.move,
+            MouseMsg.wheel,
+            MouseMsg.wheel_h
+        };
+        public static bool IsUpEvent(MouseMsg msg)
         {
             return UpEvents.Contains(msg);
         }

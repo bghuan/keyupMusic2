@@ -59,7 +59,7 @@ namespace keyupMusic2
             // 检查文件是否存在
             if (!File.Exists(filePath))
             {
-                Console.WriteLine("错误: 文件不存在 - " + filePath);
+                Console2.WriteLine("错误: 文件不存在 - " + filePath);
                 return;
             }
             {
@@ -210,7 +210,7 @@ Directory.GetCurrentDirectory(), "image", "downloaded_images", "2");
 
                         // 移动文件
                         fileInfo.MoveTo(destFilePath);
-                        Console.WriteLine($"已移动: {filePath} -> {destFilePath}");
+                        Console2.WriteLine($"已移动: {filePath} -> {destFilePath}");
                     }
                 }
 
@@ -225,15 +225,15 @@ Directory.GetCurrentDirectory(), "image", "downloaded_images", "2");
             }
             catch (UnauthorizedAccessException)
             {
-                Console.WriteLine($"警告: 访问被拒绝 - {sourceDir}");
+                Console2.WriteLine($"警告: 访问被拒绝 - {sourceDir}");
             }
             catch (DirectoryNotFoundException)
             {
-                Console.WriteLine($"警告: 目录不存在 - {sourceDir}");
+                Console2.WriteLine($"警告: 目录不存在 - {sourceDir}");
             }
             catch (Exception ex)
             {
-                Console.WriteLine($"处理目录 {sourceDir} 时出错: {ex.Message}");
+                Console2.WriteLine($"处理目录 {sourceDir} 时出错: {ex.Message}");
             }
         }
 
@@ -260,7 +260,7 @@ Directory.GetCurrentDirectory(), "image", "downloaded_images", "2");
                 // 检查目录是否存在
                 if (!Directory.Exists(directoryPath))
                 {
-                    Console.WriteLine($"错误：目录 '{directoryPath}' 不存在");
+                    Console2.WriteLine($"错误：目录 '{directoryPath}' 不存在");
                     return new List<string>();
                 }
 
@@ -283,7 +283,7 @@ Directory.GetCurrentDirectory(), "image", "downloaded_images", "2");
             }
             catch (Exception ex)
             {
-                Console.WriteLine($"获取文件时发生错误: {ex.Message}");
+                Console2.WriteLine($"获取文件时发生错误: {ex.Message}");
                 return new List<string>();
             }
         }
@@ -319,6 +319,7 @@ Directory.GetCurrentDirectory(), "image", "downloaded_images", "2");
                         .OrderBy(name => name)
                         .ToList();
 
+                idToFilesMap = new Dictionary<string, List<string>>();
                 // 并行扫描每个ID目录下的图片文件
                 Parallel.ForEach(allIds, id =>
                 {
@@ -333,7 +334,7 @@ Directory.GetCurrentDirectory(), "image", "downloaded_images", "2");
             }
             catch (Exception ex)
             {
-                Console.WriteLine($"扫描目录时出错: {ex.Message}");
+                Console2.WriteLine($"扫描目录时出错: {ex.Message}");
             }
         }
 
@@ -525,7 +526,7 @@ Directory.GetCurrentDirectory(), "image", "downloaded_images", "2");
             }
             catch (Exception ex)
             {
-                Console.WriteLine($"获取图片文件时出错: {ex.Message}");
+                Console2.WriteLine($"获取图片文件时出错: {ex.Message}");
                 return new List<string>();
             }
         }
@@ -559,7 +560,7 @@ Directory.GetCurrentDirectory(), "image", "downloaded_images", "2");
             }
             catch (Exception ex)
             {
-                Console.WriteLine($"保存状态时出错: {ex.Message}");
+                Console2.WriteLine($"保存状态时出错: {ex.Message}");
             }
         }
 
@@ -591,12 +592,12 @@ Directory.GetCurrentDirectory(), "image", "downloaded_images", "2");
             //    return;
             var _currentPath = GetWallpaperFromRegistry();
             if (!_currentPath.Contains(keyupMusic)) return;
-            if (IsDesktopFocused() || isctrl()) { } else return;
+            if (IsDesktopFocused() || isctrl() || ProcessName == cs2) { } else return;
             if (ali_image_success_time.AddSeconds(3) > DateTime.Now) return;
             string currentPath = _currentPath;
             if (string.IsNullOrEmpty(currentPath) || !File.Exists(currentPath))
             {
-                Console.WriteLine("当前壁纸不存在或路径无效");
+                Console2.WriteLine("当前壁纸不存在或路径无效");
                 return;
             }
 
@@ -622,10 +623,11 @@ Directory.GetCurrentDirectory(), "image", "downloaded_images", "2");
                     UIOption.OnlyErrorDialogs,
                     RecycleOption.SendToRecycleBin
                 );
+                InitializeFromCurrentWallpaper();
             }
             catch (Exception ex)
             {
-                Console.WriteLine($"删除壁纸时出错: {ex.Message}");
+                Console2.WriteLine($"删除壁纸时出错: {ex.Message}");
             }
         }// 查找相同的 PNG 文件
         public static List<string> FindDuplicatewebps(string targetFile, string searchDirectory)
@@ -698,11 +700,11 @@ Directory.GetCurrentDirectory(), "image", "downloaded_images", "2");
                 // 步骤 4: 强制刷新桌面
                 SystemParametersInfo(SPI_SETDESKWALLPAPER, 0, "", SPIF_UPDATEINIFILE | SPIF_SENDCHANGE);
 
-                Console.WriteLine("桌面背景已设置为纯黑色");
+                Console2.WriteLine("桌面背景已设置为纯黑色");
             }
             catch (Exception ex)
             {
-                Console.WriteLine($"设置桌面背景时出错: {ex.Message}");
+                Console2.WriteLine($"设置桌面背景时出错: {ex.Message}");
             }
         }
         public static void DeleteDuplicateFiles(string rootDirectory)
@@ -723,8 +725,8 @@ Directory.GetCurrentDirectory(), "image", "downloaded_images", "2");
                     // 检查文件名是否已存在
                     if (existingFiles.ContainsKey(fileName))
                     {
-                        Console.WriteLine($"发现重复文件: {filePath}");
-                        Console.WriteLine($"保留第一个文件: {existingFiles[fileName]}");
+                        Console2.WriteLine($"发现重复文件: {filePath}");
+                        Console2.WriteLine($"保留第一个文件: {existingFiles[fileName]}");
 
                         // 删除重复文件
                         try
@@ -732,26 +734,26 @@ Directory.GetCurrentDirectory(), "image", "downloaded_images", "2");
                             //File.Delete(filePath);
                             FileSystem.DeleteFile(filePath, UIOption.OnlyErrorDialogs, RecycleOption.SendToRecycleBin
                           );
-                            Console.WriteLine($"已删除: {filePath}");
+                            Console2.WriteLine($"已删除: {filePath}");
                         }
                         catch (Exception ex)
                         {
-                            Console.WriteLine($"删除失败: {filePath} - {ex.Message}");
+                            Console2.WriteLine($"删除失败: {filePath} - {ex.Message}");
                         }
                     }
                     else
                     {
                         // 记录首次出现的文件名和路径
                         existingFiles.Add(fileName, filePath);
-                        Console.WriteLine($"首次发现文件: {filePath}");
+                        Console2.WriteLine($"首次发现文件: {filePath}");
                     }
                 }
 
-                Console.WriteLine($"处理完成，共检查 {allFiles.Length} 个文件，保留 {existingFiles.Count} 个唯一文件");
+                Console2.WriteLine($"处理完成，共检查 {allFiles.Length} 个文件，保留 {existingFiles.Count} 个唯一文件");
             }
             catch (Exception ex)
             {
-                Console.WriteLine($"处理过程中发生错误: {ex.Message}");
+                Console2.WriteLine($"处理过程中发生错误: {ex.Message}");
             }
         }
         private const int SPI_GETDESKWALLPAPER = 0x0073;

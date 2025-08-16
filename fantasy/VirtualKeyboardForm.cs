@@ -53,6 +53,13 @@ namespace keyupMusic2
             // 先加载本地文件
             webView.CoreWebView2.Navigate(url2);
             //webView.CoreWebView2.OpenDevToolsWindow();
+            webView.KeyDown += (s, e) =>
+            {
+                if (e.KeyCode == Keys.F3 || e.KeyCode == Keys.F9)
+                {
+                    e.Handled = true; // 阻止继续传递
+                }
+            };
 
             // 尝试加载远程url，只有成功才切换
             webView.CoreWebView2.NavigationCompleted += async (s, args) =>

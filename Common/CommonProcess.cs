@@ -91,16 +91,36 @@ namespace keyupMusic2
         public const string lz_image_download = "lz_image_download";
 
         public const string acer = "acer";
+        public const string acerdevice = "VID_320F&PID_5088&MI_00";
+
+        public const string logi = "logi";
+        public const string logidevice = "_Dev_VID&02046d_PID&b034_REV";
+
         public const string coocaa = "coocaa";
-        public const string acerdevice = "VID_320F";
-        public const string coocaadevice = "_Dev_VID";
+        public const string coocaadevice = "_Dev_VID&010094_PID&0013_REV";
+
+        public const string airkeyboard = "airkeyboard";
+        public const string airkeyboarddevice = "VID_1915&PID_1025";
+
+        public const string airmouse = "airmouse";
+        public const string airmousedevice = "VID_1915&PID_1025&MI_03&Col01#7";
 
         public static string ProcessName = "";
         public static string ProcessTitle = "";
         public static string ProcessPath = "";
         public static ProcessWrapper processWrapper;
         public static bool iswinopen { get { return new[] { StartMenuExperienceHost, SearchHost }.Contains(ProcessName); } }
-        public static string FreshProcessName(bool force = false)
+        public static async Task FreshProcessName2(bool force = false)
+        {
+            FreshProcessName(force);
+            await Task.Delay(10);
+            FreshProcessName(force);
+            await Task.Delay(100);
+            FreshProcessName(force);
+            await Task.Delay(1000);
+            FreshProcessName(force);
+        }
+        private static string FreshProcessName(bool force = false)
         {
             IntPtr hwnd = Native.GetForegroundWindow(); // 获取当前活动窗口的句柄
             if (force) hwnd = Native.WindowFromPoint(Position);
@@ -125,6 +145,24 @@ namespace keyupMusic2
                     ProcessMap[hwnd].title = ProcessTitle;
                 }
                 processWrapper = ProcessMap[hwnd];
+                //Con("FreshProcessNameByMap " + ProcessMap[hwnd].ToString());
+            }
+        }
+        public static void FreshProcessNameByMap()
+        {
+            IntPtr hwnd = Native.GetForegroundWindow(); // 获取当前活动窗口的句柄
+            if (ProcessMap.ContainsKey(hwnd))
+            {
+                Common.ProcessName = ProcessMap[hwnd].name;
+                ProcessTitle = ProcessMap[hwnd].title;
+                ProcessPath = ProcessMap[hwnd].path;
+                if (refreshTitleList.Contains(ProcessName))
+                {
+                    ProcessTitle = GetWindowTitle(hwnd);
+                    ProcessMap[hwnd].title = ProcessTitle;
+                }
+                processWrapper = ProcessMap[hwnd];
+                //Con("FreshProcessNameByMap " + ProcessMap[hwnd].ToString());
             }
         }
         public static bool IsDiffProcess()
@@ -184,7 +222,7 @@ namespace keyupMusic2
         }
         public static bool is_steam_game()
         {
-            return ProcessPath != null && ProcessPath.Contains("steam");
+            return ProcessPath != null && ProcessPath.Contains("steam") && ProcessName != steam;
         }
 
         public static ConcurrentDictionary<IntPtr, ProcessWrapper> ProcessMap = new ConcurrentDictionary<IntPtr, ProcessWrapper>();
@@ -272,7 +310,9 @@ namespace keyupMusic2
                 //ShowWindow((hWnd), SW.SW_SHOWNA);
                 if (!front) return true;
                 SetForegroundWindow(objProcesses[0].MainWindowHandle);
-                FreshProcessNameByMap(objProcesses[0].MainWindowHandle);
+                FreshProcessNameByMap();
+                if (ProcessName != procName) ProcessRun(procName);
+
                 return true;
             }
             return false;
@@ -353,6 +393,15 @@ namespace keyupMusic2
             Native.ShowWindow(hwnd, Native.SW.SW_MINIMIZE);
         }
 
+        public static void HideProcess(bool force)
+        {
+            IntPtr hwnd = GetForegroundWindow(); // 获取当前活动窗口的句柄
+            var sw = SW.SW_MINIMIZE;
+            if (force) sw = SW.SW_HIDE;
+            else if (GetPointName().Contains(keyupMusic2)) sw = SW.SW_HIDE;
+            Native.ShowWindow(hwnd, sw);
+        }
+
         public static void HideProcess(string procName)
         {
             Process[] objProcesses = Process.GetProcessesByName(procName);
@@ -423,6 +472,7 @@ namespace keyupMusic2
             {
                 IntPtr hWnd = objProcesses[0].MainWindowHandle;
                 PostMessage(hWnd, (uint)WM_CLOSE, IntPtr.Zero, IntPtr.Zero);
+                objProcesses[0].Kill();
             }
         }
 
@@ -512,7 +562,7 @@ namespace keyupMusic2
             if (ProcessName != explorer) return false;
             string classNameStr = processWrapper?.classname;
             var title = GetPointTitle();
-            var istitle = title == FolderView;
+            var istitle = title == FolderView || Position.Y == screenHeight1;
             //istitle = istitle || title == "Program Manager";
             var aa = classNameStr == "Progman" || classNameStr == "WorkerW";
             if ((classNameStr == "Shell_TrayWnd" || classNameStr == "CabinetWClass") && istitle) aa = true;
@@ -523,5 +573,47 @@ namespace keyupMusic2
         public static bool is_lizhi => (ProcessTitle.Contains("荔枝") && !ProcessTitle.Contains("分类"));
         public static bool is_tran_powertoy = false;
 
+        private const double BytesToMB = 1024 * 1024; // 1MB = 1048576字节
+        public static string CounterName;
+        public static float GetUsage(string TargetProcessName, string usageName = "Thread Count")
+        {
+            var processes = Process.GetProcessesByName(TargetProcessName);
+            if (!processes.Any())
+                return -1;
+
+            if (string.IsNullOrEmpty(CounterName))
+            {
+                //var dsa = string.Join(", ", counterNames.ToArray());
+                //var dsad = "% Processor Time, % User Time, % Privileged Time, Virtual Bytes Peak, Virtual Bytes, Page Faults/sec, Working Set Peak, Working Set, Page File Bytes Peak, Page File Bytes, Private Bytes, Thread Count, Priority Base, Elapsed Time, ID Process, Creating Process ID, Pool Paged Bytes, Pool Nonpaged Bytes, Handle Count, IO Read Operations/sec, IO Write Operations/sec, IO Data Operations/sec, IO Other Operations/sec, IO Read Bytes/sec, IO Write Bytes/sec, IO Data Bytes/sec, IO Other Bytes/sec, Working Set - Private";
+
+                Task.Run(() =>
+                {
+                    var category = new PerformanceCounterCategory("Process");
+                    var counterNames = category.GetCounters(processes[0].ProcessName)
+                        .Select(c => c.CounterName)
+                        .ToList();
+                    CounterName = counterNames.FirstOrDefault(name => name.Contains(usageName));
+                });
+                return -2;
+
+            }
+
+            // 创建性能计数器并获取值
+            using (var counter = new PerformanceCounter("Process", CounterName, processes[0].ProcessName, true))
+            {
+                if (counter.NextValue() == 0)
+                {
+                    counter.NextValue();
+                    Thread.Sleep(100);
+                }
+
+                float value = counter.NextValue();
+                if (value > 10000)
+                    value = (float)Math.Round(value / BytesToMB, 2);
+
+                Console2.WriteLine($"{TargetProcessName} {value} MB/s");
+                return (float)value;
+            }
+        }
     }
 }

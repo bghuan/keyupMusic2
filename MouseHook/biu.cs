@@ -9,14 +9,6 @@ namespace keyupMusic2
 {
     public partial class biu
     {
-        public biu()
-        {
-            ReplaceKey2.init();
-            init();
-        }
-        public static Point r_down_x = Point.Empty;
-        bool menu_opened = false;
-
         public bool judge_handled(KeyboardMouseHook.MouseEventArgs e)
         {
             if (e.Msg == MouseMsg.move && Common.no_move && !is_down(LButton)) return true;
@@ -25,33 +17,12 @@ namespace keyupMusic2
             if (e.Msg == MouseMsg.click_up) return false;
             if (e.Msg == MouseMsg.middle) return true;
             if (e.Msg == MouseMsg.middle_up) return true;
-            if (e.Msg == MouseMsg.wheel && e.Y == 0) return true;
 
-            if (go_back_keys.Contains(e.Msg) && ReplaceKey2.Catched(ProcessName, e.Msg))
-            {
-                return true;
-            }
-            if (go_back_keys.Contains(e.Msg))
-            {
-                if (is_down(Keys.XButton1) || is_down(Keys.XButton2)) { return false; }
-                if (!list_go_back.Contains(ProcessName)) return true;
-                if (Common.cs2.Equals(ProcessName)) return true;
-                if (is_douyin()) return true;
-            }
-            if (e.Msg == MouseMsg.click_r || e.Msg == MouseMsg.click_r_up)
-            {
-                var list = new[] { devenv, Glass2, Glass3, BandiView };
-                if (list.Contains(Common.ProcessName))
-                {
-                    //if (is_down(Keys.RButton)) return false;
-                    if (!list.Contains(GetPointName())) return false;
-                    return true;
-                }
-                //if (ProcessName == chrome && ExistProcess(Common.PowerToysCropAndLock, true))
-                //    return true;
-            }
+            if (go_back_keys.Contains(e.Msg)) return true;
             if (e.Msg == MouseMsg.wheel)
             {
+                if (e.Y == 0)
+                    return true;
                 if (is_douyin() && (e.X == 0 || is_down(LButton)))
                     return true;
                 if (IsFullVedio())
@@ -65,14 +36,17 @@ namespace keyupMusic2
 
         public void MouseHookProc(KeyboardMouseHook.MouseEventArgs e)
         {
+            //if (e.Msg == MouseMsg.move) return;
             //need point hwnd and process name
             if (judge_handled(e)) { e.Handled = true; VirKeyState(e.Msg); }
 
             Task.Run(() =>
             {
-                //if (!string.IsNullOrEmpty(Common.DeviceName)) Common.DeviceName = "";
-                if (e.Msg != MouseMsg.move && e.Msg != MouseMsg.wheel) FreshProcessName();
-                if (e.Msg != MouseMsg.move && e.Msg != MouseMsg.wheel && huan.deal_handilngkey(mousekeymap[e.Msg], !e.Msg.IsUpEvent())) return;
+                if (!NoUp.Contains(e.Msg))
+                {
+                    FreshProcessName2();
+                    if (huan.deal_handilngkey(mousekeymap[e.Msg], !IsUpEvent(e.Msg))) return;
+                }
 
                 easy_read(e);
 
@@ -88,33 +62,27 @@ namespace keyupMusic2
                 All(e);
             });
         }
+
         private void All(KeyboardMouseHook.MouseEventArgs e)
         {
             if (e.Msg == MouseMsg.move) return;
 
             if (e.Msg == MouseMsg.middle)
-            {
-                if (!IsAnyMusicPlayerRunning()) StartNeteaseCloudMusic();
                 press(Keys.MediaPlayPause);
-            }
+            if (e.Msg == MouseMsg.wheel_h)
+                press(e.data > 0 ? VolumeDown : VolumeUp);
+            else if (e.Msg == MouseMsg.wheel && e.Y == 0 && e.X == 0)
+                press([LMenu, e.data > 0 ? F8 : F7]);
+            else if (e.Msg == MouseMsg.wheel && e.Y == 0 && e.X > screenWidth)
+                press([LShiftKey, e.data > 0 ? F8 : F7]);
             else if (e.Msg == MouseMsg.wheel && e.Y == 0)
-            {
-                Keys keys = Keys.F7;
-                if (e.data > 0) keys = Keys.F8;
-                press(keys);
-            }
+                press(e.data > 0 ? F8 : F7);
             else if (e.Msg == MouseMsg.wheel && is_douyin() && (e.X == 0 || is_down(LButton)))
-            {
-                Keys keys = Keys.Right;
-                if (e.data > 0) keys = Keys.Left;
-                press(keys);
-            }
+                press(e.data > 0 ? Left : Right);
             else if (e.Msg == MouseMsg.wheel && IsFullVedio() && !GetPointTitle().Contains("设置"))
-            {
-                Keys keys = Keys.Right;
-                if (e.data > 0) keys = Keys.Left;
-                press(keys);
-            }
+                press(e.data > 0 ? Left : Right);
+            else if (e.Msg == MouseMsg.wheel && ProcessName == msedge && e.Y == screenHeight1)
+                press(e.data > 0 ? Keys.PageUp : Keys.PageDown);
             else if (Common.no_move && (e.Msg == MouseMsg.click_r))
                 Common.no_move = false;
             else if (e.Msg == MouseMsg.click_up && LongPressClass.long_press_lbutton)
@@ -126,7 +94,6 @@ namespace keyupMusic2
 
             if (catch_state && catch_key == e.Msg) catch_ed = true;
         }
-        Point click_r_point = new Point();
 
     }
 }

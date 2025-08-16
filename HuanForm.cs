@@ -1,9 +1,11 @@
 using Microsoft.Win32;
 using Newtonsoft.Json.Linq;
 using System.Diagnostics;
+using System.Linq;
 using System.Runtime.InteropServices;
 using static keyupMusic2.Common;
 using static keyupMusic2.KeyboardMouseHook;
+using static keyupMusic2.Rawinput;
 
 namespace keyupMusic2
 {
@@ -32,6 +34,8 @@ namespace keyupMusic2
         private Point startPoint = new Point(1510, 100);
         private Point endPoint = new Point(2250, 100);
         private DateTime startTime;
+        public static Keys super_key = Keys.F3;
+        public static Keys super_key2 = Keys.F9;
 
         public Huan()
         {
@@ -156,40 +160,20 @@ namespace keyupMusic2
             }
             //is_init_show = Debugger.IsAttached ? !is_init_show : is_init_show;
             //Location = new Point(Screen.PrimaryScreen.Bounds.Width - 310, 100);
-            Location = new Point(2255, 37);
+            //Location = new Point(2255, 37);
 
             //startPoint = new Point(Location.X - 252, Location.Y);
             //endPoint = Location;
-            SystemEvents.PowerModeChanged += SystemEvents_PowerModeChanged;
             SystemEvents.SessionSwitch += SystemEvents_SessionSwitch;
 
             after_load();
         }
-        private bool justResumed = false;
 
-        private void SystemEvents_PowerModeChanged(object sender, PowerModeChangedEventArgs e)
-        {
-            if (e.Mode == PowerModes.Resume)
-            {
-                justResumed = true;
-            }
-        }
-
-        protected override CreateParams CreateParams
-        {
-            get
-            {
-                CreateParams cp = base.CreateParams;
-                cp.ExStyle |= 0x80;
-                return cp;
-            }
-        }
+        protected override CreateParams CreateParams { get { CreateParams cp = base.CreateParams; cp.ExStyle |= 0x80; return cp; } }
         void after_load()
         {
-            FreshProcessName();
             bland_title();
             if (!ExistProcess(TwinkleTray)) { ProcessRun(TwinkleTrayexe); }
-            //if (!Debugger.IsAttached) HideProcess(devenv);
             InitializeFromCurrentWallpaper();
 
             VirtualKeyboardForm virtualKeyboardForm = new VirtualKeyboardForm();
@@ -199,40 +183,59 @@ namespace keyupMusic2
 
             timerMove.Interval = 3000;
             timerMove.Tick += timerMove_Tick;
-            form_move();
+
+            TaskRun(() =>
+            {
+                form_move();
+                FreshProcessName2();
+            }, 100);
 
             if (ConfigValue(ConfigFormShow) == "0")
                 //SetVisibleCore(false);
-                TaskRun(() => { Invoke(() => SetVisibleCore(false)); }, 100);
+                TaskRun(() => { Invoke(() => SetVisibleCore(false)); }, 110);
 
-            //var sss= ConfigValue(ConfigFormShow);
+            string location = Common.ConfigValue(Common.ConfigLocation);
+            if (location.Split(',').Length < 2 || !int.TryParse(location.Split(',')[0], out int x)) x = 500;
+            if (location.Split(',').Length < 2 || !int.TryParse(location.Split(',')[1], out int y)) y = 500;
+            Location = new Point(x, y);
+
             if (isctrl())
                 Native.AllocConsole();
         }
+        public static Dictionary<int, int> mmmm = new Dictionary<int, int>();
         protected override void WndProc(ref Message m)
         {
-            if (m.Msg == Rawinput.WM_INPUT)
+            if (!mmmm.ContainsKey(m.Msg))
+                mmmm[m.Msg] = 0;
+            else
+                mmmm[m.Msg]++;
+            var lParam = m.LParam;
+            if (m.Msg == WM_INPUT)
             {
-                var e = Rawinput.ProcessRawInput2(m.LParam);
-                if (e == null) return;
-                Common.DeviceName = e.device;
-                ////Invoke(() => { label1.Text = DeviceNameFlag + "device"+i++; });
-                if (ProcessName == Common.keyupMusic2)
-                    KeyBoardHookProc(e);
+                Task.Run(() => ProcessRawInputAsync(lParam));
+                return;
             }
-            //if (m.Msg == 0x0104)
-            //{
-            //    var e = Rawinput.ProcessRawInput2(m.LParam);
-            //}
-            //if (m.Msg == 49643)
-            //{
-            //    var e = Rawinput.ProcessRawInput2(m.LParam);
-            //}
-            //else
-            //{
-            //    var e = Rawinput.ProcessRawInput2(m.LParam);
-            //}
             base.WndProc(ref m);
+        }
+        private async Task ProcessRawInputAsync(IntPtr lParam)
+        {
+            try
+            {
+                var e = Rawinput.ProcessRawInput2(lParam);
+                if (e == null)
+                    return;
+                Invoke((Delegate)(() => Console2.WriteLine(e.dwExtraInfo2)));
+                if ((e.key != 0 && e.key != VolumeDown && e.key != VolumeUp) || e.key == MediaPlayPause)
+                    Common.DeviceName = e.device;
+                else if (e.key == 0)
+                    Common.DeviceName2 = e.device;
+                if (ProcessName == Common.keyupMusic2 && e.key != 0)
+                    await Task.Run(() => KeyBoardHookProc(e));
+            }
+            catch (Exception ex)
+            {
+                Console2.WriteLine($"Error processing RawInput: {ex.Message}");
+            }
         }
     }
 }
