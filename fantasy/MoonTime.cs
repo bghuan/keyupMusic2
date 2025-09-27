@@ -147,6 +147,14 @@ namespace keyupMusic2
                 y = 500; 
             Location = new Point(x,y);
             if (Location.X > Screen.PrimaryScreen.Bounds.Width && Screen.AllScreens.Length == 1) Location = new Point(500, 500);
+            Task.Run(() => {
+                Thread.Sleep(500);
+                if (Screen.AllScreens.Length == 1)
+                {
+                    string js = $"small_size();";
+                    webView21.Invoke(() => webView21.CoreWebView2.ExecuteScriptAsync(js));
+                }
+            });
         }
         public static void vkMenuItem_Click(object sender, EventArgs e)
         {
@@ -177,7 +185,7 @@ namespace keyupMusic2
             if (webView21.InvokeRequired)
                 webView21.Invoke(new Action(() => webView21.CoreWebView2.ExecuteScriptAsync(js)));
             else
-                webView21.CoreWebView2.ExecuteScriptAsync(js);
+                webView21.CoreWebView2?.ExecuteScriptAsync(js);
         }
 
         // 在 C# 中调用 JS 的方法

@@ -21,12 +21,10 @@ namespace keyupMusic2
             if (go_back_keys.Contains(e.Msg)) return true;
             if (e.Msg == MouseMsg.wheel)
             {
-                if (e.Y == 0)
-                    return true;
-                if (is_douyin() && (e.X == 0 || is_down(LButton)))
-                    return true;
-                if (IsFullVedio())
-                    return true;
+                if (is_lbutton()) return false;
+                if (e.Y == 0) return true;
+                if (is_douyin() && (e.X == 0 || is_down(LButton))) return true;
+                if (IsFullVedio()) return true;
                 var list = new[] { Glass2, vlc, /*Honeyview*/ };
                 if (list.Contains(Common.ProcessName) && !GetPointTitle().Contains("设置"))
                     return true;
@@ -50,7 +48,7 @@ namespace keyupMusic2
 
                 easy_read(e);
 
-                Cornor(e);
+                Area(e);
                 BottomLine(e);
                 Other(e);
 
@@ -66,31 +64,42 @@ namespace keyupMusic2
         private void All(KeyboardMouseHook.MouseEventArgs e)
         {
             if (e.Msg == MouseMsg.move) return;
+            if (ProcessName == b1) return;
 
             if (e.Msg == MouseMsg.middle)
-                press(Keys.MediaPlayPause);
-            if (e.Msg == MouseMsg.wheel_h)
+            {
+                if (ProcessName == b1) mouse_middle();
+                else press(Keys.MediaPlayPause);
+            }
+            else if (e.Msg == MouseMsg.wheel)
+            {
+                if (e.Y == 0 && e.X == 0)
+                    press([LMenu, e.data > 0 ? F8 : F7]);
+                else if (e.Y == 0 && e.X > screenWidth)
+                    press([LShiftKey, e.data > 0 ? F8 : F7]);
+                else if (e.Y == 0)
+                    press(e.data > 0 ? F8 : F7);
+                else if (is_douyin() && (e.X == 0 || is_down(LButton)))
+                    press(e.data > 0 ? Left : Right);
+                else if (IsFullVedio() && !GetPointTitle().Contains("设置"))
+                    press(e.data > 0 ? Left : Right);
+                else if (ProcessName == Common.vlc)
+                    press(e.data > 0 ? Left : Right);
+                else if (ProcessName == Common.ApplicationFrameHost && (ProcessTitle.Contains("png") || GetPointName() == PhotoApps))
+                    press(e.data > 0 ? Left : Right);
+                else if (ProcessName == msedge && e.Y == screenHeight1)
+                    press(e.data > 0 ? Keys.PageUp : Keys.PageDown);
+            }
+            else if (e.Msg == MouseMsg.wheel_h)
                 press(e.data > 0 ? VolumeDown : VolumeUp);
-            else if (e.Msg == MouseMsg.wheel && e.Y == 0 && e.X == 0)
-                press([LMenu, e.data > 0 ? F8 : F7]);
-            else if (e.Msg == MouseMsg.wheel && e.Y == 0 && e.X > screenWidth)
-                press([LShiftKey, e.data > 0 ? F8 : F7]);
-            else if (e.Msg == MouseMsg.wheel && e.Y == 0)
-                press(e.data > 0 ? F8 : F7);
-            else if (e.Msg == MouseMsg.wheel && is_douyin() && (e.X == 0 || is_down(LButton)))
-                press(e.data > 0 ? Left : Right);
-            else if (e.Msg == MouseMsg.wheel && IsFullVedio() && !GetPointTitle().Contains("设置"))
-                press(e.data > 0 ? Left : Right);
-            else if (e.Msg == MouseMsg.wheel && ProcessName == msedge && e.Y == screenHeight1)
-                press(e.data > 0 ? Keys.PageUp : Keys.PageDown);
-            else if (Common.no_move && (e.Msg == MouseMsg.click_r))
+            else if (e.Msg == MouseMsg.click_r && Common.no_move)
                 Common.no_move = false;
+            else if (e.Msg == MouseMsg.click_r)
+                click_r_point = e.Pos;
             else if (e.Msg == MouseMsg.click_up && LongPressClass.long_press_lbutton)
                 LongPressClass.long_press_lbutton = false;
             else if (e.Msg == MouseMsg.click_r_up && LongPressClass.long_press_rbutton)
                 LongPressClass.long_press_rbutton = false;
-            else if (e.Msg == MouseMsg.click_r)
-                click_r_point = e.Pos;
 
             if (catch_state && catch_key == e.Msg) catch_ed = true;
         }

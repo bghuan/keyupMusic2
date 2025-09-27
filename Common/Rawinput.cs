@@ -19,6 +19,7 @@ namespace keyupMusic2
             { Common.logi,       Common.logidevice },
             { Common.airkeyboard,Common.airkeyboarddevice },
             { Common.airmouse,   Common.airmousedevice },
+            { Common.numberric,  Common.numberricdevice },
         };
 
         // Cache: raw device handle -> friendly device key

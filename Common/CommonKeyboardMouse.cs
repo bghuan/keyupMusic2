@@ -69,7 +69,8 @@ namespace keyupMusic2
 
         public static int screen2X = ScreenSecond.X;
         public static int screen2Y = ScreenSecond.Y;
-        public static int screen2Width = screen2X + ScreenSecond.Width - 1;
+        public static int screen2Width = screen2X + ScreenSecond.Width;
+        public static int screen2Width1 = screen2X + ScreenSecond.Width - 1;
         public static int screen2Height = ScreenSecond.Height + screen2Y;
         public static int screen2Height1 = screen2Height - 1;
         public static int screenHeightMax = Math.Max(screenHeight1, screen2Height1);
@@ -309,6 +310,10 @@ namespace keyupMusic2
             if (is_down(Keys.Delete)) return;
             if (num == Keys.MediaPlayPause) { if (!IsAnyMusicPlayerRunning()) StartNeteaseCloudMusic(); }
             press([num], tick);
+        }
+        public static void press_sync(Keys num, int tick)
+        {
+            TaskRun(() => { press(num); }, tick);
         }
         public static void press(Keys num, int times, int tick = 0)
         {

@@ -9,11 +9,12 @@ namespace keyupMusic2
 {
     partial class biu
     {
-        public void Cornor(KeyboardMouseHook.MouseEventArgs e)
+        public void Area(KeyboardMouseHook.MouseEventArgs e)
         {
             if (ProcessName == Common.cs2) { return; }
-            if (DeviceName2 == Common.airmouse) { return; }
+            if (DeviceName2 == Common.airmouse || DeviceName2 == Common.airkeyboard) { return; }
             if (e.Msg != MouseMsg.move) { RECTT.release(); return; }
+            if (isctrl()) { return; }
             //if (e.X > screen2Width || e.Y < 0 || e.Y > screenHeightMax) return;
 
             var rect = RECTT.get(e.Pos);
@@ -55,7 +56,7 @@ namespace keyupMusic2
         static int cha = screenWidth1;
 
         static int ga2 = screen2Height1;
-        static int ch2 = screen2Width;
+        static int ch2 = screen2Width1;
         static int ch0 = screen2X;
         static int ga0 = screen2Y;
         int chrome_x_min = -50;
@@ -250,7 +251,7 @@ namespace keyupMusic2
             {
                 foreach (var item in All) item.can = false;
             }
-            public static int[] special_int = [0, screenWidth1, screenHeight1, screenHeight1 - 1, screen2Width, screen2Height1];
+            public static int[] special_int = [0, screenWidth1, screenHeight1, screenHeight1 - 1, screen2Width1, screen2Height1];
             public static RECTT get(Point testPoint)
             {
                 //if (!(special_int.Contains(testPoint.X) || special_int.Contains(testPoint.Y))) return null;

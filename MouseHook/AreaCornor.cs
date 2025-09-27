@@ -58,6 +58,13 @@ namespace keyupMusic2
             {
                 HideProcess(devenv);
             }
+            else if (ProcessName != GetPointName())
+            {
+            }
+            if (Common.WeChat == ProcessName)
+            {
+                CloseProcess2(ProcessName);
+            }
             else if (!IsFullScreen())
                 CloseProcess();
             else
@@ -66,6 +73,7 @@ namespace keyupMusic2
         }
         private int _corner4(KeyboardMouseHook.MouseEventArgs e)
         {
+            return 0;
             if (GetPointName() == explorer) press([LWin, D]);
             return e.data;
         }
@@ -85,6 +93,8 @@ namespace keyupMusic2
             //mouse_click();
             //var list = new[] { Common.chrome };
             //if (list.Contains(Common.ProcessName))
+            if (!ExistProcess(clashverge))
+                ProcessRun(clashvergeexe);
             changeClash();
             //press(Keys.Escape);
             return e.data;

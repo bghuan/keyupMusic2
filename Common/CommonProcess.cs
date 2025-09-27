@@ -18,11 +18,13 @@ namespace keyupMusic2
         public const string keyupMusic = "keyupMusic";
         public const string keyupMusicexe = "C:\\Users\\bu\\source\\repos\\keyupMusic2\\keyupMusic2.sln";
         public const string keyupMusic2 = "keyupMusic4";
+        public const string OpenWith = "OpenWith";
         public const string _哔哩哔哩 = "哔哩哔哩";
         public const string PotPlayerMini64 = "PotPlayerMini64";
         public const string QuickLook = "QuickLook";
         public const string msedgewebview2 = "msedgewebview2";
         public const string ShellExperienceHost = "ShellExperienceHost";
+        public const string SIBJumpView = "SIBJumpView";
         public const string ElecHead = "ElecHead";
         public const string Windblown = "Windblown";
         public const string ACPhoenix = "ACPhoenix";
@@ -76,8 +78,10 @@ namespace keyupMusic2
         public const string cloudmusic = "cloudmusic";
         public const string cloudmusicexe = "C:\\Program Files (x86)\\Netease\\CloudMusic\\cloudmusic.exe";
         public const string clashverge = "clash-verge";
+        public const string clashvergeexe = "C:\\Program Files\\Clash Verge\\clash-verge.exe";
         public const string FolderView = "FolderView";
         public const string RSG = "RSG-Win64-Shipping";
+        public const string b1 = "b1-Win64-Shipping";
         public const string KingdomRush = "Kingdom Rush";
         public const string KingdomRush1 = "Kingdom Rush";
         public const string KingdomRushFrontiers = "Kingdom Rush Frontiers";
@@ -104,6 +108,9 @@ namespace keyupMusic2
 
         public const string airmouse = "airmouse";
         public const string airmousedevice = "VID_1915&PID_1025&MI_03&Col01#7";
+
+        public const string numberric = "numberric";
+        public const string numberricdevice = "VID_1EA7&PID_0166&MI_00#7";
 
         public static string ProcessName = "";
         public static string ProcessTitle = "";
@@ -218,7 +225,7 @@ namespace keyupMusic2
         }
         public static bool is_douyin()
         {
-            return ProcessName == douyin || (ProcessName == msedge && ProcessTitle?.IndexOf("抖音") >= 0);
+            return ProcessName == douyin || (ProcessName == msedge && ProcessTitle?.IndexOf("抖音") >= 0) || (ProcessName == chrome && ProcessTitle?.IndexOf("抖音") >= 0);
         }
         public static bool is_steam_game()
         {
@@ -289,7 +296,32 @@ namespace keyupMusic2
         {
             if (hwnd == IntPtr.Zero) return false;
             SetForegroundWindow(hwnd);
-            FreshProcessNameByMap(hwnd);
+            FreshProcessNameByMap();
+            return false;
+        }
+        public static bool FocusProcess2(string procName, bool front = true)
+        {
+            IntPtr current_hwnd = GetForegroundWindow(); // 获取当前活动窗口的句柄
+            Process[] objProcesses = Process.GetProcessesByName(procName);
+            if (objProcesses.Length > 0)
+            {
+                IntPtr hWnd = IntPtr.Zero;
+                hWnd = objProcesses[0].MainWindowHandle;
+                if (current_hwnd == hWnd)
+                    return true;
+                ShowWindow((hWnd), SW.SW_RESTORE);
+                if (procName != Dragonest && procName != chrome && procName != devenv)
+                    ShowWindowAsync(new HandleRef(null, hWnd), (int)SW.SW_RESTORE);
+                //ShowWindow((hWnd), SW.SW_SHOWMAXIMIZED);
+                //ShowWindow((hWnd), SW.SW_SHOW);
+                //ShowWindow((hWnd), SW.SW_SHOWNA);
+                if (!front) return true;
+                SetForegroundWindow(objProcesses[0].MainWindowHandle);
+                FreshProcessNameByMap();
+                if (ProcessName != procName) ProcessRun(procName);
+
+                return true;
+            }
             return false;
         }
         public static bool FocusProcess(string procName, bool front = true)
@@ -364,6 +396,19 @@ namespace keyupMusic2
             bool result = SetWindowText(hWnd, title);
             return result;
         }
+        public static bool SetWindowTitle3(string window)
+        {
+            string targetClassName = window;
+            IntPtr hWnd = GetProcessID(targetClassName);
+            string title = GetWindowTitle(hWnd);
+            if (title == null || title == "") return false;
+            if (title.IndexOf("(") > 0)
+                title = title.Substring(0, title.IndexOf("(") - 1);
+            else if (title.IndexOf("-") > 0)
+                title = title.Substring(0, title.IndexOf("-") - 1);
+            bool result = SetWindowText(hWnd, title);
+            return result;
+        }
         public static bool SetWindowTitle()
         {
             IntPtr hWnd = GetForegroundWindow();
@@ -412,39 +457,75 @@ namespace keyupMusic2
             }
         }
 
-        public static void HideProcess2(string procName)
+        public static IntPtr MainHandle(string procName)
         {
             Process[] objProcesses = Process.GetProcessesByName(procName);
             if (objProcesses.Length > 0)
             {
-                IntPtr hWnd = objProcesses[0].MainWindowHandle;
+                return objProcesses[0].MainWindowHandle;
+            }
+            return 0;
+        }
 
-                RECT windowRect;
-                GetWindowRect(hWnd, out windowRect);
+        public static void HideProcess2(string procName)
+        {
+            IntPtr hWnd = MainHandle(procName);
 
-                Task.Run(() =>
+            RECT windowRect;
+            GetWindowRect(hWnd, out windowRect);
+
+            var small = windowRect.Left == 2550 && windowRect.Top == 290;
+            if (small) return;
+
+            ShowWindow(hWnd, SW.SW_MINIMIZE);
+            //FocusProcess(hWnd);
+            //press([LWin, Down]);
+
+            Task.Run(() =>
+            {
+                int tick = 200;
+                for (int i = 0; i < 2000 / tick; i++)
                 {
-                    var small = windowRect.Left == 2550 && windowRect.Top == 290;
-                    if (small) return;
+                    IntPtr hWnd = MainHandle(procName);
 
-                    if ((windowRect.Left == 1048 && windowRect.Right == 1512) || IsFullScreen(hWnd))
+                    RECT windowRect;
+                    GetWindowRect(hWnd, out windowRect);
+                    //log(windowRect.Left + " " + windowRect.Top + " " + windowRect.Right + " " + windowRect.Bottom);
+                    Sleep(tick);
+                    if (windowRect.Left > -10000)
                     {
-                        //FocusProcess(hWnd);
-                        press(F11);
-                        //for (global::System.Int32 i = 0; i < 20; i++)
-                        {
-                            HideProcess3(chrome);
-                            //Sleep(100);
-                        }
+                        CloseProcess(procName);
                         return;
                     }
-                    //log(windowRect.Left + " " + windowRect.Top + " " + windowRect.Right + " " + windowRect.Bottom);
-                    //Sleep(2000);
-                    //play_sound_di();
+                }
+            });
 
-                    ShowWindow(hWnd, SW.SW_MINIMIZE);
-                });
-            }
+            //if ((windowRect.Left == 1048 && windowRect.Right == 1512) || IsFullScreen(hWnd))
+            //{
+            //    //if (ProcessName != procName)
+            //    //    FocusProcess(hWnd);
+            //    //if (ProcessName != procName)
+            //    //    FocusProcess(procName);
+            //    //Sleep(1000);
+
+            //    //IntPtr hwnd = Native.GetForegroundWindow(); // 获取当前活动窗口的句柄
+            //    //    if (ProcessMap.ContainsKey(hwnd))
+            //    //    {
+            //    //    }
+            //    //    if (ProcessName != procName)
+            //    //    {
+
+            //    //}
+
+            //    press(F11);
+            //    //Sleep(1000);
+
+            //    HideProcess3(chrome);
+            //    return;
+            //}
+            //log(windowRect.Left + " " + windowRect.Top + " " + windowRect.Right + " " + windowRect.Bottom);
+            //Sleep(2000);
+            //play_sound_di();
         }
 
         public static void HideProcess3(string procName)
@@ -474,6 +555,20 @@ namespace keyupMusic2
                 PostMessage(hWnd, (uint)WM_CLOSE, IntPtr.Zero, IntPtr.Zero);
                 objProcesses[0].Kill();
             }
+        }
+        public static void CloseProcess2(string procName)
+        {
+            Process[] objProcesses = Process.GetProcessesByName(procName);
+            if (objProcesses.Length > 0)
+            {
+                IntPtr hWnd = objProcesses[0].MainWindowHandle;
+                PostMessage(hWnd, (uint)WM_CLOSE, IntPtr.Zero, IntPtr.Zero);
+            }
+        }
+        public static void RestartProcess(string procName, string exe)
+        {
+            CloseProcess(procName);
+            ProcessRun(exe);
         }
 
         public static void CloseProcessFoce(string procName)
@@ -552,6 +647,8 @@ namespace keyupMusic2
         public static void bland_title()
         {
             //SetWindowTitle(Common.devenv, "");
+            SetWindowTitle3(Common.devenv);
+            SetWindowTitle3(Common.VSCode);
             //SetWindowTitle(Common.chrome, "");
             SetWindowTitle2(Common.chrome);
             SetWindowTitle(Common.PowerToysCropAndLock, "");

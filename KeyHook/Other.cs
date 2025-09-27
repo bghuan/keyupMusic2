@@ -197,6 +197,9 @@ namespace keyupMusic2
                     if (ProcessName == cs2) break;
                     SetDesktopWallpaperAli(GetNextWallpaper());
                     break;
+                case Keys.RShiftKey:
+                    DeleteCurrentWallpaper();
+                    break;
             }
         }
 
@@ -222,13 +225,9 @@ namespace keyupMusic2
                 case Keys.Left:
                     if (isctrl())
                     {
-                        if (WaitForKeysReleased(1000, isctrl))
-                        {
-                            if (e.key == Keys.Right)
-                                press(MediaNextTrack);
-                            else
-                                press(MediaPreviousTrack);
-                        }
+                        //if (WaitForKeysReleased(1000, isctrl))
+                        up_press(LControlKey);
+                        press(e.key == Keys.Right ? MediaNextTrack : MediaPreviousTrack);
                     }
                     else if (ProcessTitle?.Contains("起点中文网") == true)
                         if (e.key == Keys.Right)
@@ -236,16 +235,16 @@ namespace keyupMusic2
                         else
                             press(Keys.PageUp, 0);
                     break;
-                //case Keys.VolumeDown:
-                //    if (e.Y == screenHeight1)
-                //        //press_rate(Keys.PageDown, 0);
-                //        press(Keys.PageDown, 0);
-                //    break;
-                //case Keys.VolumeUp:
-                //    if (e.Y == screenHeight1)
-                //        //press_rate(Keys.PageUp, 0);
-                //        press(Keys.PageUp, 0);
-                //    break;
+                    //case Keys.VolumeDown:
+                    //    if (e.Y == screenHeight1)
+                    //        //press_rate(Keys.PageDown, 0);
+                    //        press(Keys.PageDown, 0);
+                    //    break;
+                    //case Keys.VolumeUp:
+                    //    if (e.Y == screenHeight1)
+                    //        //press_rate(Keys.PageUp, 0);
+                    //        press(Keys.PageUp, 0);
+                    //    break;
             }
         }
 
@@ -314,12 +313,12 @@ namespace keyupMusic2
                     press("1301,48;100;1274,178;2260,1374");
                     break;
                 case Keys.F6:
-                    press("Escape;1643,179;100;1466,818;1556,806");
+                    press("Escape;1643,179;100;1466,818;1556,806;1700;1301,48;100;1274,178;2260,1374");
                     break;
                 case Keys.OemPeriod:
                     var sfa = Position;
                     mouse_click();
-                    press("1654, 555;1564, 970;");
+                    press("1654, 555;1564, 970;", 60);
                     mouse_move(sfa);
                     break;
                 case Keys.Enter:

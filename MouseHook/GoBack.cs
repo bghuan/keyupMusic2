@@ -23,6 +23,12 @@ namespace keyupMusic2
             var back = e.Msg == MouseMsg.back_up;
             if (!(go || back)) return;
 
+            if (isctrl())
+            {
+                mousegoback(go);
+                return;
+            }
+
             if (is_douyin())
                 Douyin(go, back);
             else if (ProcessName == msedge)
@@ -42,7 +48,7 @@ namespace keyupMusic2
             else if (IsDesktopFocused())
                 press(go ? Keys.MediaNextTrack : Keys.MediaPreviousTrack);
             //if (!IsDesktopFocused() && list_go_back.Contains(ProcessName))
-            else if (goback.Contains(ProcessName) || ProcessName.Contains(studio) || ProcessTitle.Contains(studio))
+            else if (goback.Contains(ProcessName) || ProcessName.Contains(studio) || ProcessTitle.Contains(studio)|| ProcessPath.Contains(studio))
             {
                 mousegoback(go);
                 return;

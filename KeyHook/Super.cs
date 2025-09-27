@@ -30,7 +30,9 @@ namespace keyupMusic2
 
             bool catched = true;
 
-            if (e.key == Huan.super_key)
+            if (e.key == Huan.super_key && DeviceName != acer)
+                press(MediaPlayPause);
+            else if (e.key == Huan.super_key)
                 huan.SetVisibleCore2(!huan.Visible);
             else if (e.key == Huan.super_key2)
                 huan.system_sleep();
@@ -65,7 +67,7 @@ namespace keyupMusic2
                         sound_setting();
                         break;
                     case Keys.T:
-                        gcc_restart = true;
+
                         break;
                     case Keys.Y:
                         Common.cmd($"/c start ms-settings:taskbar");
@@ -137,13 +139,10 @@ namespace keyupMusic2
                         MoonTime.Instance.ChangeColor();
                         break;
                     case Keys.K:
-                        huan.release_all_key(1000);
+                        //huan.release_all_key(1000);
+                        VirtualKeyboardForm.Instance?.TriggerKey(Y, e.Type == KeyType.Up);
                         break;
                     case Keys.L:
-                        //RemoveWebpWhiteBorder(GetCurrentWallpaperPath(), "a.webp");
-                        //var mp3Path = "C:\\Users\\bu\\Desktop\\a\\爸(19523708410)_20230728213046.mp3";
-                        //var wavPath = "C:\\Users\\bu\\Desktop\\b\\爸(19523708410)_20230728213046.wav";
-                        //ConvertMp3ToWav(mp3Path, wavPath);
                         string windowTitle = "PowerToys.CropAndLock"; // 示例：记事本程序
                         byte transparency = 160; // 半透明效果
                         if (is_tran_powertoy)
@@ -152,12 +151,6 @@ namespace keyupMusic2
                         bool success = SetWindowTransparency(windowTitle, transparency);
                         break;
                     case Keys.Z:
-                        //GoodDesktopWallpaper(); 
-                        //huan.Invoke(() => { Native.AllocConsole(); });
-                        //TaskRun(() =>
-                        //{
-                        //    press(S);
-                        //}, 3300);
                         break;
                     case Keys.X:
                         AllClass.run_vis();
@@ -220,6 +213,8 @@ namespace keyupMusic2
                         press(Keys.LWin);
                         Sleep(180);
                         mouse_click(1062, 899);
+                        //steam://rungameid/730
+                        //ProcessRun("steam://rungameid/730");
                         break;
                     //case Keys.F9:
                     //    huan.system_sleep();
@@ -242,10 +237,12 @@ namespace keyupMusic2
                         //altab();
                         break;
                     case Keys.Down:
-                        press(Keys.VolumeDown, 3, 10);
+                        press(Keys.VolumeDown, 2, 10);
+                        catched = false;
                         break;
                     case Keys.Up:
-                        press(Keys.VolumeUp, 3, 10);
+                        press(Keys.VolumeUp, 2, 10);
+                        catched = false;
                         break;
                     case Keys.Enter:
                         press(MediaPlayPause);
@@ -268,6 +265,13 @@ namespace keyupMusic2
                     case Keys.LWin:
                     case Keys.RWin:
                         press(e.key);
+                        break;
+
+                    case Keys.D1:
+                        RestartProcess(TwinkleTray, TwinkleTrayexe);
+                        break;
+                    case Keys.D2:
+                        RestartProcess(cloudmusic, cloudmusicexe);
                         break;
 
                     default:

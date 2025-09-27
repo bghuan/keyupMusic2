@@ -9,6 +9,7 @@ namespace keyupMusic2
     public partial class Huan
     {
         public static ConcurrentDictionary<Keys, DateTime> handling_keys = new();
+        public static ConcurrentDictionary<Keys, DateTime> handling_keys2 = new();
         public async void Invoke2(Action action, int tick = 0)
         {
             await Task.Delay(tick);
@@ -67,7 +68,7 @@ namespace keyupMusic2
         {
             if (e.Type == KeyType.Up)
             {
-                Invoke2(() => label1.Text = /*Common.DeviceName + */label1.Text.Replace(easy_read2(e.key), easy_read2(e.key).ToLower()));
+                Invoke2(() => label1.Text = Common.DeviceName + label1.Text.Replace(easy_read2(e.key), easy_read2(e.key).ToLower()));
                 return;
             }
 
@@ -172,7 +173,7 @@ namespace keyupMusic2
                 press([LWin, D]);
             CloseDesktopWindow();
             //if (GetWindowTitle() == "关闭 Windows")
-            press(100, 500, Up, Return);
+            press(100, 500, Return);
         }
         //job no release f3 no hide no stop superlisten
         public void timer_stop()
@@ -253,6 +254,10 @@ namespace keyupMusic2
                 player.Stop();
                 CleanMouseState();
                 ready_to_sleep = false;
+                play_sound_bongocat(D4);
+                TaskRun(() => play_sound_bongocat(D5), 200);
+                TaskRun(() => play_sound_bongocat(D6), 300);
+                //RestartProcess(TwinkleTray, TwinkleTrayexe);
                 log("唤醒解锁");
             }
         }
@@ -274,6 +279,7 @@ namespace keyupMusic2
         {
             msg = msg.Replace(start_reflection, "");
             Common.ExecuteCommand(msg);
+            TaskRun(() => { VirtualKeyboardForm.Instance?.TriggerKey(LControlKey, true); }, 1000);
         }
         public static string start_next = "nextlocation";
         public void next_catch(string msg)

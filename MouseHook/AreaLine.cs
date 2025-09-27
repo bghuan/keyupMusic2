@@ -11,17 +11,23 @@ namespace keyupMusic2
         {
             if (ProcessName == Common.chrome)
             {
+                if (is_douyin()) return 0;
                 if (is_lizhi && GetPointName() != explorer) return 0;
                 if (chrome_red()) press(Keys.F);
-                var pos = ProcessPosition(chrome).X;
-                if (pos < screenWidth2 && IsFullScreen())
+                var pos = ProcessPosition(chrome);
+                if (pos.X < screenWidth2 && IsFullScreen())
                 {
                     if (!judge_color(1840, 51, Color.FromArgb(162, 37, 45)) && e.X < screenWidth2)
                         press(Keys.F, 51);
                     SS().MouseWhell(-1440);
                 }
+                if (pos.X > screenWidth)
+                {
+                    mouse_click2(0);
+                    return e.data;
+                }
             }
-            if (IsFullScreen()) return 0;
+            if (IsFullScreen()/* && GetPointName() != explorer*/) return 0;
             mouse_click2(0);
             return e.data;
         }

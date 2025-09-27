@@ -164,6 +164,7 @@ namespace keyupMusic2
 
         private void VirtualKeyboardForm_KeyDown(object sender, KeyEventArgs e)
         {
+            if (webView.CoreWebView2 == null) return;
             string id = KeyCodeToId(e.KeyCode, e.Modifiers);
             string js = $"highlightKeyAndNeighbors('{id}')";
             webView.Invoke(new Action(() => webView.CoreWebView2?.ExecuteScriptAsync(js)));
@@ -171,6 +172,7 @@ namespace keyupMusic2
 
         private void VirtualKeyboardForm_KeyUp(object sender, KeyEventArgs e)
         {
+            if (webView.CoreWebView2 == null) return;
             string id = KeyCodeToId(e.KeyCode, e.Modifiers);
             string js = $"unhighlightKeyAndNeighbors('{id}')";
             webView.Invoke(new Action(() => webView.CoreWebView2?.ExecuteScriptAsync(js)));
@@ -178,6 +180,7 @@ namespace keyupMusic2
 
         public void TriggerKey(Keys k, bool up = false)
         {
+            Common.WriteLine("------------------------------        " + k.ToString() + up);
             var args = new KeyEventArgs(k);
             if (up)
                 VirtualKeyboardForm_KeyUp(this, args);
@@ -186,6 +189,7 @@ namespace keyupMusic2
         }// 在 C# 中调用 JS 的方法
         public void SetInitClean()
         {
+            if (webView.CoreWebView2 == null) return;
             string js = $"clean();";
             webView.Invoke(new Action(() => webView.CoreWebView2.ExecuteScriptAsync(js)));
         }

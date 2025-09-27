@@ -29,10 +29,12 @@ namespace keyupMusic2
                 Msedge(e);
             else if (ProcessName == Common.RSG)
                 _Rsg(e);
-            else if (ProcessName == Common.vlc)
-                wheelleftright(e);
-            else if (ProcessName == Common.ApplicationFrameHost && ProcessTitle.Contains("png") || GetPointName() == PhotoApps)
-                wheelleftright(e);
+            else if (ProcessName == Common.b1)
+                _Rsg(e);
+            //else if (ProcessName == Common.vlc)
+            //    wheelleftright(e);
+            //else if (ProcessName == Common.ApplicationFrameHost && ProcessTitle.Contains("png") || GetPointName() == PhotoApps)
+            //    wheelleftright(e);
             else if (ProcessName.Contains(KingdomRush))
                 _KingdomRush(e);
             else if (ProcessName == Common.BandiView)
@@ -64,7 +66,7 @@ namespace keyupMusic2
             if (e.Msg == MouseMsg.move) return;
             if (e.Msg == MouseMsg.click_up)
             {
-                if (LongPressClass.long_press_lbutton && e.Y == screenHeight1)
+                if (LongPressClass.long_press_lbutton && (e.Y == screenHeight1 || e.Y == 0))
                     press(Delete);
             }
         }
@@ -81,7 +83,7 @@ namespace keyupMusic2
                 press(Delete);
                 var judge = () => { return GetPointTitle() == ""; };
                 var run = () => { press(Escape); };
-                DelayRun(judge, run, 1000, 100);
+                DelayRun(judge, run, 1000, 1);
             }
             //if (e.Msg == MouseMsg.wheel)
             //{
@@ -96,7 +98,7 @@ namespace keyupMusic2
             if (e.Msg == MouseMsg.wheel)
             {
                 string nextWallpaper = "";
-                if (e.data < 0 && (e.X == 0 || e.X == screen2Width)) nextWallpaper = GetNextIdFolder();
+                if (e.data < 0 && (e.X == 0 || e.X == screen2Width1)) nextWallpaper = GetNextIdFolder();
                 else if (e.data > 0 && e.X == 0) nextWallpaper = GetPreviousIdFolder();
                 else if (e.data < 0) nextWallpaper = GetNextWallpaper();
                 else if (e.data > 0) nextWallpaper = GetPreviousWallpaper();
@@ -110,7 +112,7 @@ namespace keyupMusic2
                     Sleep(20);
                     press(Escape);
                 }
-                else if (e.X == 0 || e.X == screen2Width)
+                else if (e.X == 0 || e.X == screen2Width1)
                 {
                     Sleep(20);
                     press(Escape);
@@ -228,13 +230,13 @@ namespace keyupMusic2
             //if (GetPointName() != chrome) return;
             if (e.Msg == MouseMsg.click_up && (e.X == screenWidth1))
                 CenterWindowOnScreen(chrome, e.Y >= screenHeight2);
-            //else if (e.Msg == MouseMsg.click_r_up && !LongPressClass.long_press_rbutton && ExistProcess(Common.PowerToysCropAndLock, true) && e.Pos == click_r_point)
-            //{
-            //    //if (e.X == 0) { press(Keys.OemPeriod); return; }
-            //    if (judge_color(1840, 51, Color.FromArgb(162, 37, 45)))
-            //        press(Keys.F, 51);
-            //    quick_max_chrome(e.Pos);
-            //}
+            else if (e.Msg == MouseMsg.click_r_up && !LongPressClass.long_press_rbutton && ExistProcess(Common.PowerToysCropAndLock, true) && e.Pos == click_r_point)
+            {
+                //if (e.X == 0) { press(Keys.OemPeriod); return; }
+                if (judge_color(1840, 51, Color.FromArgb(162, 37, 45)))
+                    press(Keys.F, 51);
+                quick_max_chrome(e.Pos);
+            }
             else if (e.Msg == MouseMsg.back_up && (judge_color(26, 94, Color.FromArgb(120, 123, 117))))
                 press([Keys.LControlKey, Keys.W]);
             else if (e.Msg == MouseMsg.click_r_up && e.Y < 200 && (ProcessTitle.Contains("荔枝") && ProcessTitle.Contains("详情")))
@@ -249,10 +251,7 @@ namespace keyupMusic2
 
         public static void wheelleftright(KeyboardMouseHook.MouseEventArgs e)
         {
-            if (e.Msg != MouseMsg.wheel) return;
-            Keys keys = Keys.Right;
-            if (e.data > 0) keys = Keys.Left;
-            press(keys);
+            if (e.Msg == MouseMsg.wheel) press(e.data > 0 ? Keys.Left : Keys.Right);
         }
     }
 }

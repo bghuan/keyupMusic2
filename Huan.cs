@@ -14,7 +14,7 @@ namespace keyupMusic2
 
         public bool judge_handled(KeyboardMouseHook.KeyEventArgs e)
         {
-            if (is_alt() && is_down(Keys.Tab)) return false;
+            //if (is_alt() && is_down(Keys.Tab)) return false;
             if (e.key == Keys.LWin) return false;
 
             if (e.key == Keys.BrowserHome) return true;
@@ -37,6 +37,7 @@ namespace keyupMusic2
             if (is_down(Keys.F1)) if (number_button.Contains(e.key)) return true;
 
             if (ProcessName == Common.VSCode) if (e.key == Keys.Q && isctrl()) return true;
+            if (ProcessName == Common.msedge) if (e.key == Keys.Tab && !is_alt()) return true;
 
             if (KeyFunc.judge(e)) return true;
             var flag = Chrome.judge_handled(e) || Douyin.judge_handled(e) || WinClass.judge_handled(e) || CoocaaClass.judge_handled(e) || AirKeyboardClass.judge_handled(e);
@@ -46,6 +47,8 @@ namespace keyupMusic2
         private void KeyBoardHookProc(KeyboardMouseHook.KeyEventArgs e)
         {
             if (e.key != F1) FreshProcessName2();
+            if (lock_err) play_sound(D8);
+            //if (ProcessName == SearchHost) return;
             if (judge_handled(e)) { e.Handled = true; VirKeyState(e); }
             var ha = deal_handilngkey(e.key, e.Type == KeyType.Down);
 
@@ -74,7 +77,12 @@ namespace keyupMusic2
                 if (AirKeyboardClass.Hooked(e)) return;
                 if (Super.HookEvent(e)) return;
                 // job f3 f9 to var special key and customs
-                if (e.key == Keys.F3 || e.key == Keys.F9) { super_listen(); form_move(); return; }
+                if (e.key == Keys.F3 || e.key == Keys.F9)
+                {
+                    if (e.key == F9) play_sound_di();
+                    super_listen();
+                    form_move(); return;
+                }
 
                 Devenv.HookEvent(e);
                 Douyin.HookEvent(e);
@@ -100,26 +108,30 @@ namespace keyupMusic2
             {
                 if (handling_keys.ContainsKey(key)) return true;
                 handling_keys[key] = DateTime.Now;
+                //if (key == LMenu) handling_keys[Menu] = DateTime.Now;
                 //log("2" + key + handling_keys[key]);
             }
             else
+            {
                 handling_keys.TryRemove(key, out _);
+                //if (key == LMenu) handling_keys.TryRemove(Menu, out _);
+            }
             return false;
         }
-
         public void start_catch(string msg)
         {
             play_sound_di2();
             if (msg.Contains(start_check_str))
             {
+                start_catch_time = DateTime.Now;
                 //log("start_catch " + ProcessName);
                 //string[] list_f1 = [StartMenuExperienceHost, SearchHost, clashverge,];
                 string[] list_f1 = [clashverge,];
                 string[] list_nothing = [devenv, Common.keyupMusic2, explorer, cs2];
                 if (Position.X == 0 && (Position.Y == screenHeight1 || Position.Y == 0))
                     AllClass.quick_visiualstudio();
-                else if (Position.Y == 0)
-                    Invoke(() => { SetVisibleCore(!Visible); });
+                //else if (Position.Y == 0)
+                //    Invoke(() => { SetVisibleCore(!Visible); });
                 else if (Position.X == screenWidth1 && Position.Y == screenHeight1)
                     system_sleep(true);
                 else if (Position.X == 0)
@@ -128,6 +140,8 @@ namespace keyupMusic2
                     Process.Start(executablePath);
                     Environment.Exit(0);
                 }
+                else if (ProcessName == cs2)
+                    press("1301,48;100;1274,178;2260,1374");
                 else if (list_f1.Contains(ProcessName))
                     changeClash();
                 else if (list_nothing.Contains(ProcessName)) { }

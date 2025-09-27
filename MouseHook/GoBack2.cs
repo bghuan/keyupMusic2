@@ -32,6 +32,7 @@ namespace keyupMusic2
             if (e.Msg == MouseMsg.move) return;
             if (!go_back_keys.Contains(e.Msg)) return;
             if (!ReplaceKey2.proName.Contains(ProcessName)) return;
+            if (is_douyin()) return;
 
             var replace = replace2;
             for (int i = 0; i < replace.Count; i++)

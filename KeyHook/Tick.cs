@@ -60,7 +60,8 @@ namespace keyupMusic2
             if (DateTime.Now.Minute % 10 == 0)
             {
                 IEnumerable<Keys> pressedKeys = GetPressedKeys();
-                if (!pressedKeys.Any()) {
+                if (!pressedKeys.Any())
+                {
                     press([LShiftKey, F1]);
                 }
                 //SetDesktopWallpaperFull();
@@ -86,6 +87,7 @@ namespace keyupMusic2
             if (ProcessName == cs2)
             {
                 if (ExistProcess(wemeetapp, true)) return;
+                if (GetPointName() != cs2) return;
                 if (!is_ctrl() && !is_down(Keys.LWin) && PositionMiddle == Position)
                     press(Keys.F1);
                 if (Position != PositionMiddle)
@@ -97,13 +99,13 @@ namespace keyupMusic2
             {
                 int slow = 1;
                 int end = 3 + slow;
-                if (system_sleep_count >= slow)
+                if (system_sleep_count > slow)
                     for (int i = end - system_sleep_count; i > 0; i--)
                     {
                         play_sound_di();
                         Sleep(100);
                     }
-                if (system_sleep_count >= end)
+                if (system_sleep_count > end)
                 {
                     log("tick system_hard_sleep");
                     system_hard_sleep();
@@ -120,11 +122,15 @@ namespace keyupMusic2
             {
                 press_middle_bottom();
             }
+            else if (ExistProcess(OpenWith))
+            {
+                CloseProcess(OpenWith);
+            }
             //else if (!VirtualKeyboardForm.Instance.Visible)
             //{
             //    VirtualKeyboardForm.Instance.Show();
             //}
-            VirtualKeyboardForm.Instance?.TriggerKey(Tab, true);
+            //VirtualKeyboardForm.Instance?.TriggerKey(Tab, true);
             bland_title();
             Console2.WriteLine($"Tick");
         }

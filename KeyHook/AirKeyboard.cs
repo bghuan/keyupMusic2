@@ -8,8 +8,9 @@ namespace keyupMusic2
 {
     public class AirKeyboardClass
     {
-        public static readonly HashSet<Keys> keys = new HashSet<Keys> { Up, Down, Keys.Right, Keys.Left, Enter, BrowserBack, BrowserHome, Apps, Back, VolumeMute };
+        public static readonly HashSet<Keys> keys = new HashSet<Keys> { Up, Down, Enter, BrowserBack, BrowserHome, Apps, Back, VolumeMute };
         public const Keys super_key = Keys.Enter;
+        public const Keys tab_key = Keys.Back;
         public static bool handled(KeyboardMouseHook.KeyEventArgs e)
         {
             return Common.DeviceName == Common.airkeyboard && keys.Contains(e.key);
@@ -59,7 +60,12 @@ namespace keyupMusic2
             {
                 if (e.key == BrowserBack) { press_raw2(PageUp); return true; }
                 else if (e.key == Apps) { press_raw2(Delete); return true; }
-                //else if (e.key == Keys.Sleep) { }
+                else if (e.key == super_key)
+                {
+                    press_raw2(F3);
+                    HideSomething(); return true;
+                }
+                else if (e.key == tab_key) { }
                 else return false;
             }
 
@@ -113,7 +119,7 @@ namespace keyupMusic2
                     }
                     mouseback();
                     break;
-                case Keys.Back:
+                case tab_key:
                     if (ProcessName == msedge && !ExistProcess(cs2))
                     {
                         HideProcess();

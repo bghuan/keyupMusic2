@@ -31,10 +31,10 @@ namespace keyupMusic2
                 //case Keys.F12:
                 //    quick_wechat_or_notify(); break;
 
-                case Keys.Home:
-                    copy_screen(); break;
-                case Keys.End:
-                    copy_secoed_screen(); break;
+                //case Keys.Home:
+                //    copy_screen(); break;
+                //case Keys.End:
+                //    copy_secoed_screen(); break;
                 case Keys.PageDown:
                     quick_gamg_alttab(e, module_name); break;
 
@@ -67,6 +67,10 @@ namespace keyupMusic2
         public static void quick_scale()
         {
             //var asd = IsFullScreen();
+            if (ProcessName == cs2)
+            {
+                return;
+            }
             if (!ProcessTitle.Contains("tudio") && IsFullScreen())
             {
                 LossScale();
@@ -180,7 +184,7 @@ namespace keyupMusic2
             //}
             if (Common.WeChat == module_name)
             {
-                CloseProcess(module_name);
+                CloseProcess2(module_name);
             }
             else if (GetWindowTitle() == UnlockingWindow || ProcessName == LockApp || ProcessName == err)
             {
@@ -266,12 +270,13 @@ namespace keyupMusic2
         }
         private static void run_wei()
         {
-            if (!Common.ExistProcess(Common.WeChat))
-            {
-                press("LWin;100;WEI;en;100;Enter;", 50);
-                return;
-            }
-            press([Keys.LControlKey, Keys.LMenu, Keys.W]);
+            //if (!Common.ExistProcess(Common.WeChat))
+            //{
+            //    press("LWin;100;WEI;en;100;Enter;", 50);
+            //    return;
+            //}
+            //press([Keys.LControlKey, Keys.LMenu, Keys.W]);
+            ProcessRun("C:\\Program Files\\Tencent\\Weixin\\Weixin.exe");
         }
 
         public static void run_vis()

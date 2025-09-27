@@ -231,6 +231,10 @@ namespace keyupMusic2
 
         [DllImport("kernel32.dll")]
         public static extern IntPtr LocalFree(IntPtr hMem);
+        // 窗口位置参数常量
+        public static readonly IntPtr HWND_TOPMOST = new IntPtr(-1);    // 置顶
+        public static readonly IntPtr HWND_NOTOPMOST = new IntPtr(-2);  // 取消置顶
+        public const uint SWP_SHOWWINDOW = 0x0040;  // 确保窗口可见
 
     }
 }

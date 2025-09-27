@@ -8,11 +8,11 @@ namespace keyupMusic2
 {
     public class CoocaaClass
     {
-        public static readonly HashSet<Keys> keys = new HashSet<Keys> { Up, Down, Keys.Right, Keys.Left, Keys.LButton | Keys.OemClear, BrowserHome, Apps, Keys.Sleep };
+        public static readonly HashSet<Keys> keys = new HashSet<Keys> { Up, Down, /*Keys.Right, Keys.Left,*/ Keys.LButton | Keys.OemClear, BrowserHome, Apps, Keys.Sleep };
         public const Keys super_key = Keys.LButton | Keys.OemClear;
         public static bool handled(KeyboardMouseHook.KeyEventArgs e)
         {
-            return ((Common.DeviceName == Common.coocaa && keys.Contains(e.key)) || e.key == Keys.Sleep);
+            return ((Common.DeviceName == Common.coocaa && keys.Contains(e.key)) || e.key == Keys.Sleep || e.key == super_key);
         }
         public static bool judge_handled(KeyboardMouseHook.KeyEventArgs e)
         {
@@ -88,9 +88,37 @@ namespace keyupMusic2
                         press(X);
                         break;
                     }
+                    else if (ProcessName == msedge)
+                    {
+                        press(MediaPreviousTrack);
+                        break;
+                    }
+                    else if (ProcessName == chrome)
+                    {
+                        press(F);
+                        break;
+                    }
                     mousego();
                     break;
                 case Keys.Apps:
+                    if (ProcessName == BandiView)
+                    {
+                        press(Delete);
+                        var judge = () => { return GetPointTitle() == ""; };
+                        var run = () => { press(Escape); };
+                        DelayRun(judge, run, 1000, 100);
+                        break;
+                    }
+                    else if (ProcessName == msedge)
+                    {
+                        press(MediaNextTrack);
+                        break;
+                    }
+                    else if (ProcessName == chrome)
+                    {
+                        press(M);
+                        break;
+                    }
                     mouseback();
                     break;
                 case Keys.Sleep:

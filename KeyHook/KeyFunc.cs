@@ -15,20 +15,48 @@ namespace keyupMusic2
     {
         public void init()
         {
-            new KeyFunc(steam, Keys.D8, Keys.D7);
-            new KeyFunc(steam, Keys.D7, Keys.D8);
+            //new KeyFunc(steam, Keys.D8, Keys.D7);
+            //new KeyFunc(steam, Keys.D7, Keys.D8);
             new KeyFunc(Windblown, Keys.W, Keys.S);
             new KeyFunc(Windblown, Keys.S, Keys.W);
+            new KeyFunc(cs2, Keys.Capital, Keys.Tab);
+            new KeyFunc(cs2, Keys.Oem3, Keys.Tab);
 
             new KeyFunc(Keys.RMenu, () =>
             {
                 if (isctrl())
-                    FocusProcess(cloudmusic);
+                {
+                    if (ProcessName == cloudmusic)
+                        HideProcess(cloudmusic);
+                    else
+                        FocusProcess(cloudmusic);
+                }
                 else
                     press(MediaPlayPause);
             })
-            { longPressAction = () => { } };
-            new KeyFunc("", RMenu, MediaPlayPause);
+            { longPressAction = () => { down_press(Keys.RMenu); }, type = KeyType.Up };
+
+            new KeyFunc(Keys.LMenu, () =>
+            {
+                if (is_lbutton()) return;
+                if (isctrl()) return;
+                if (is_down(LWin)) return;
+                if (Position.Y == 0) return;
+                //if (ExistProcess(cs2)) 
+                //var asd = DateTime.Now;
+                //if (start_catch_time.AddSeconds(1) < DateTime.Now)
+                //        press(Tab, 0);
+                //TaskRun(() =>
+                //{
+                //    if (start_catch_time.AddSeconds(1) < asd)
+                press(Tab, 0);
+                //}, 10);
+            })
+            { longPressAction = () => { }, handled = false };
+            //new KeyFunc("", RMenu, MediaPlayPause);
+
+            new KeyFunc(Keys.Home, copy_screen, Upp);
+            new KeyFunc(Keys.End, copy_secoed_screen, Upp);
 
             new KeyFunc(Keys.F1, SuperClass.get_point_color) { handledNot = isctrl };
             new KeyFunc(Keys.F2, AllClass.quick_scale) { type = KeyType.Up, handled = false };
@@ -79,7 +107,7 @@ namespace keyupMusic2
             All.Add(this);
             AllKeys.Add(key);
         }
-        public KeyFunc(Keys key, Action action)
+        public KeyFunc(Keys key, Action action, KeyType type = KeyType.Down)
         {
             this.key = key;
             this.action = action;
@@ -124,6 +152,7 @@ namespace keyupMusic2
             {
                 if (e.Type == KeyType.Down && hold) return false;
                 hold = e.Type == KeyType.Down;
+                if (e.Type == KeyType.Up && is_down(e.key)) up_press(e.key);
                 if (type != e.Type) return false;
                 if (LongPressKey == e.key && longPressRelease) return false;
                 action();

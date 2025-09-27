@@ -104,7 +104,7 @@ namespace keyupMusic2
                     timer.Stop();
                     timer.Dispose();
                 }
-                if (i > 8)
+                if (i > 12)
                 {
                     timer.Stop();
                     timer.Dispose();
@@ -288,8 +288,7 @@ namespace keyupMusic2
         public static string GetTaskResult(string taskId)
         {
             HttpClient _httpClient = new HttpClient();
-            var apiKey = ConfigValue(ConfigApiKey);
-            _httpClient.DefaultRequestHeaders.Add("Authorization", $"Bearer {apiKey}");
+            _httpClient.DefaultRequestHeaders.Add("Authorization", $"Bearer {_apiKey}");
             string resultUrl = $"https://dashscope.aliyuncs.com/api/v1/tasks/{taskId}";
             HttpResponseMessage response = _httpClient.GetAsync(resultUrl).Result;
 

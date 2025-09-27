@@ -142,7 +142,7 @@ namespace keyupMusic2
         #endregion
 
         public SmartLabel label1;
-        private NotifyIcon notifyIcon1;
+        public static NotifyIcon notifyIcon1;
         private ContextMenuStrip contextMenuStrip1;
         private ToolStripMenuItem[] letterMenuItems;
         private ToolStripMenuItem[] letterMenuItems2;

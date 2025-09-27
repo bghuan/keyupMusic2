@@ -256,12 +256,12 @@ namespace keyupMusic2
             else if (ProcessName == Common.chrome) path = "image\\encode\\" + file_date_name + "g";
             else path = user_path + file_date_name;
             bmpScreenshot_path = path;
-            //bmpScreenshot.Save(path, ImageFormat.Png);
+            bmpScreenshot.Save(path, ImageFormat.Png);
             //TaskRun(() => play_sound_di(), 80);
             gfxScreenshot.Dispose();
-            //bmpScreenshot.Dispose();
+            bmpScreenshot.Dispose();
         }
-        public static void copy_secoed_screen(string path = "")
+        public static void copy_secoed_screen()
         {
             try { if (!Debugger.IsAttached) bmpScreenshot.Dispose(); } catch (NullReferenceException e) { }
             play_sound_di();
@@ -273,12 +273,13 @@ namespace keyupMusic2
             bmpScreenshot = new Bitmap(1920, 1080, PixelFormat.Format32bppArgb);
             Graphics gfxScreenshot = Graphics.FromImage(bmpScreenshot);
             gfxScreenshot.CopyFromScreen(new Point(start_x, 0), Point.Empty, secondaryScreen.Bounds.Size);
+            string path = "";
             path = "image\\encode\\" + path + DateTime.Now.ToString("yyyyMMddHHmmss") + ".png" + "g";
             bmpScreenshot_path = path;
-            //bmpScreenshot.Save(path, ImageFormat.Png);
-            //TaskRun(() => play_sound_di(), 80);
+            bmpScreenshot.Save(path, ImageFormat.Png);
+            //TaskRun(() => play_sound_di(), 80);A
             gfxScreenshot.Dispose();
-            //bmpScreenshot.Dispose();
+            bmpScreenshot.Dispose();
         }
         public static void copy_ddzzq_screen()
         {
@@ -292,6 +293,7 @@ namespace keyupMusic2
                 bmpScreenshot.Save("C:\\Users\\bu\\Pictures\\Screenshots\\dd\\" + DateTime.Now.ToString("yyyyMMddHHmmss") + ".png", ImageFormat.Png);
             }
         }
+        public static bool RunProcess(string str, string arg = "", bool waitForExit = false) { return ProcessRun(str, arg, waitForExit); }
         public static bool ProcessRun(string str, string arg = "", bool waitForExit = false)
         {
             Process process = null;
@@ -303,7 +305,7 @@ namespace keyupMusic2
                 ProcessStartInfo startInfo = new ProcessStartInfo(str)
                 {
                     UseShellExecute = true,
-                    Verb = "runas" // 请求管理员权限
+                    Verb = "open" // 请求管理员权限
                 };
 
                 if (!string.IsNullOrEmpty(arg))
@@ -398,19 +400,19 @@ namespace keyupMusic2
             {
                 return false;
             }
-            if (Position.X < 0)
+            if (windowRect.Left < 0)
             {
-                return windowRect.Left == screen2Width &&
+                return windowRect.Left == screen2Width1 &&
                    windowRect.Top == 0 &&
                    windowRect.Right == 0 &&
-                   windowRect.Bottom == screen2Height;
+                   windowRect.Bottom >= screen2Height;
             }
-            if (Position.X > Common.screenWidth)
+            if (windowRect.Left > Common.screenWidth)
             {
                 return windowRect.Left == screen2X &&
                    windowRect.Top == 0 &&
-                   windowRect.Right == screen2Width &&
-                   windowRect.Bottom == screen2Height;
+                   windowRect.Right >= screen2Width1 &&
+                   windowRect.Bottom >= screen2Height1;
             }
             //Thread.Sleep(1000); 
             // Check if the window covers the entire screen  
@@ -563,19 +565,23 @@ namespace keyupMusic2
             if (point == new Point()) point = Position;
             if (ProcessName == chrome)
             {
+                if (GetPointName() != chrome) return;
                 press(Keys.F11);
                 CenterWindowOnScreen(chrome, true);
-                FocusProcess(PowerToysCropAndLock);
+                //FocusProcess2(PowerToysCropAndLock);
                 altabtab();
                 if (ExistProcess(cs2)) { Sleep(10); mouse_click(); }
             }
             else
             {
                 //放大
-                HideProcess(PowerToysCropAndLock);
+                //HideProcess(PowerToysCropAndLock);
                 if (ProcessName == cs2) point = PositionMiddle;
                 var pp = new Point(point.X - 450, point.Y - 450);
                 MoveProcessWindow(chrome, pp);
+                IntPtr targetWindowHandle = GetProcessID(chrome);
+                FocusProcess(targetWindowHandle);
+                //Sleep(1000);
                 mouse_click2(2);
                 CenterWindowOnScreen(chrome, true);
                 press(Keys.F11);
@@ -812,6 +818,13 @@ namespace keyupMusic2
             int windowHeight = windowRect.Bottom - windowRect.Top;
 
             MoveWindow(targetWindowHandle, point.X, point.Y, windowWidth, windowHeight, true);
+            // 置顶：hWndInsertAfter=HWND_TOPMOST，忽略大小和位置变化（只修改置顶属性）
+            SetWindowPos(
+                targetWindowHandle,
+                HWND_TOPMOST,
+                0, 0, 0, 0,
+                SWP_NOMOVE | SWP_NOSIZE | SWP_SHOWWINDOW
+            );
         }
         public static void MoveProcessWindow2(string targetWindowTitle, Keys key = Keys.None)
         {
@@ -883,7 +896,7 @@ namespace keyupMusic2
         public static void system_hard_sleep()
         {
             gcc_restart = true;
-            system_sleep_count = 0;
+            system_sleep_count = 1;
             Process.Start("rundll32.exe", "powrprof.dll,SetSuspendState 0,1,0");
         }
 
@@ -903,7 +916,7 @@ namespace keyupMusic2
             }
 
             IntPtr hwnd = GetForegroundWindow();
-            int tick = 200;
+            int tick = 100;
             Sleep(tick);
 
             var full = IsFullScreen(hwnd);
@@ -1141,6 +1154,9 @@ namespace keyupMusic2
         //顺便进入睡眠
         public static void CloseDesktopWindow()
         {
+            if (ProcessName == explorer)
+                press([LMenu, F4]);
+            return;
             IntPtr desktopHwnd = FindWindow("Progman", null);
             if (desktopHwnd != IntPtr.Zero)
             {
@@ -1174,9 +1190,9 @@ namespace keyupMusic2
 
         public static void HideSomething()
         {
-            HideProcess2(chrome);
-            HideProcess(PowerToysCropAndLock);
-            SetDesktopToBlack();
+            //HideProcess2(chrome);
+            //HideProcess(PowerToysCropAndLock);
+            //SetDesktopToBlack();
         }
         public static bool SetWindowTransparency(string proname, byte alpha)
         {
@@ -1267,6 +1283,9 @@ namespace keyupMusic2
         }
         public static HashSet<Keys> number_button = new HashSet<Keys> { Keys.Oemcomma, Keys.OemPeriod, Keys.Oem2, Keys.K, Keys.L, Keys.OemSemicolon, Keys.I, Keys.O, Keys.P, Keys.Space };
 
+        public const KeyType Upp = KeyType.Up;
+        public const KeyType Downn = KeyType.Down;
+        public static DateTime start_catch_time = DateTime.MinValue;
 
     }
 }

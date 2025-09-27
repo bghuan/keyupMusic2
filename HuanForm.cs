@@ -177,9 +177,13 @@ namespace keyupMusic2
             InitializeFromCurrentWallpaper();
 
             VirtualKeyboardForm virtualKeyboardForm = new VirtualKeyboardForm();
-            virtualKeyboardForm.Show();
             MoonTime moontimeForm = new MoonTime();
-            moontimeForm.Show();
+
+            if (ScreenPrimary.Width < 3000)
+            {
+                virtualKeyboardForm.Show();
+                moontimeForm.Show();
+            }
 
             timerMove.Interval = 3000;
             timerMove.Tick += timerMove_Tick;
@@ -225,12 +229,23 @@ namespace keyupMusic2
                 if (e == null)
                     return;
                 Invoke((Delegate)(() => Console2.WriteLine(e.dwExtraInfo2)));
-                if ((e.key != 0 && e.key != VolumeDown && e.key != VolumeUp) || e.key == MediaPlayPause)
+                if ((e.key != 0 && e.key != VolumeDown && e.key != VolumeUp && e.key != MediaPlayPause))
                     Common.DeviceName = e.device;
                 else if (e.key == 0)
                     Common.DeviceName2 = e.device;
                 if (ProcessName == Common.keyupMusic2 && e.key != 0)
                     await Task.Run(() => KeyBoardHookProc(e));
+
+                //if (e.key == Menu)
+                //{
+                //    var ha = handling_keys2.ContainsKey(e.key);
+                //    if (!ha && e.key == Menu && e.Type == Downn && e.device == acer)
+                //    {
+                //        press(Tab);
+                //    }
+                //    if (e.Type == Downn) { if (!handling_keys2.ContainsKey(e.key)) handling_keys2[e.key] = DateTime.Now; }
+                //    else handling_keys2.TryRemove(e.key, out _);
+                //}
             }
             catch (Exception ex)
             {

@@ -45,17 +45,20 @@ namespace keyupMusic2
             if (keys == Keys.F3)
                 huan.Invoke(() => { if (!huan.Visible) huan.Show(); else huan.Hide(); });
             else if (keys == Keys.F4 && !lock_err)
-                CloseProcess();
+            {
+                if (ProcessName == explorer && GetPointName() != ProcessName) { }
+                else CloseProcess();
+            }
             else if (keys == Keys.F9)
                 huan.system_sleep(true);
 
-            else if (keys == Keys.Home || keys == Keys.End)
-            {
-                try { Common.bmpScreenshot?.Save(Common.bmpScreenshot_path, ImageFormat.Png); }
-                catch (Exception ex) { }
-                play_sound_di();
-                //bmpScreenshot.Dispose();
-            }
+            //else if (keys == Keys.Home || keys == Keys.End)
+            //{
+            //    try { Common.bmpScreenshot?.Save(Common.bmpScreenshot_path, ImageFormat.Png); }
+            //    catch (Exception ex) { }
+            //    play_sound_di();
+            //    //bmpScreenshot.Dispose();
+            //}
             else if (keys == Keys.Escape)
                 HideSomething();
 
@@ -78,6 +81,7 @@ namespace keyupMusic2
 
             if (keys == Keys.RButton)
             {
+                if (is_steam_game()) return;
                 play_sound_di2();
                 Common.no_move = true;
             }
@@ -91,11 +95,13 @@ namespace keyupMusic2
             if (keys == Keys.Delete)
             {
                 play_sound_di2();
+                IEnumerable<Keys> pressedKeys = GetPressedKeys();
+                Sleep(300);
+                Show(pressedKeys.Count() + "-" + string.Join(",", pressedKeys), 2);
+                Sleep(2200);
                 var keysA = new List<Keys>();
                 for (int i = 0; i < 256; i++)
                     keysA.Add((Keys)i);
-                huan.Invoke(() => { huan.label1.Text = "all key up " + keysA.Count + keysA.ToString(); });
-                Sleep(200);
                 foreach (var key in keysA)
                 {
                     if (key == Keys.Apps) continue;
@@ -114,6 +120,10 @@ namespace keyupMusic2
             {
                 play_sound_di2();
                 Environment.Exit(0);
+            }
+            if (keys == Keys.F9)
+            {
+                system_hard_sleep();
             }
 
             if (keys == LWin) return;

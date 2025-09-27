@@ -30,7 +30,7 @@
 
                         if (filteredLines.Any())
                         {
-                            logEntry += $"{string.Join("/", filteredLines)}";
+                            logEntry += $" {string.Join("/", filteredLines)}";
                         }
                     }
 

@@ -1,4 +1,5 @@
-﻿using System.Windows.Forms;
+﻿using System.Text;
+using System.Windows.Forms;
 using static keyupMusic2.Common;
 using static keyupMusic2.KeyboardMouseHook;
 using static keyupMusic2.Native;
@@ -68,14 +69,26 @@ namespace keyupMusic2
         {
             if (e.Msg == MouseMsg.click_r_up)
             {
-                if (e.Y == screenHeight1 && !IsFullScreen())
+                if (ScreenPrimary.Width < 3000 && e.Y == screenHeight1 && !IsFullScreen())
                 {
                     Task.Run(() =>
                     {
                         Sleep(150);
-                        mouse_move_to(12, 1308 - screenHeight);
+                        mouse_move_to(12, 1328 - screenHeight);
                         DelayRun(
-                            () => GetPointName() == ShellExperienceHost,
+                            () =>
+                            {
+                                //IntPtr hwnd = Native.WindowFromPoint(Position);
+                                ////if (hwnd == last_hwnd) return;
+                                ////string name = GetWindowName(hwnd);
+                                //StringBuilder className = new StringBuilder(256);
+                                //GetClassName(hwnd, className, className.Capacity);
+                                //string classNameStr = className.ToString();
+                                string asde = processWrapper?.classname;
+                                //var asde = GetWindowTitle();
+                                //log(asde);
+                                return asde == SIBJumpView;
+                            },
                             () => mouse_click(),
                             400, 10);
                     });
