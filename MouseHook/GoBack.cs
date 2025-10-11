@@ -16,6 +16,7 @@ namespace keyupMusic2
 
         public static string studio = "tudio";
         public static List<string> goback = new List<string> { explorer, ApplicationFrameHost, Common.steam, PotPlayerMini64, _哔哩哔哩, };
+        public static List<string> goback_null = new List<string> { Common.Glass, Glass2, Glass3, };
         private void GoBack(KeyboardMouseHook.MouseEventArgs e)
         {
             if (e.Msg == MouseMsg.move) return;
@@ -32,6 +33,8 @@ namespace keyupMusic2
             if (is_douyin())
                 Douyin(go, back);
             else if (ProcessName == msedge)
+                Msedge(go, back);
+            else if (ProcessName == Common.keyupMusic2&&ProcessTitle=="Read")
                 Msedge(go, back);
             else if (ProcessName == Common.cs2)
                 cs2(go, back);
@@ -51,6 +54,10 @@ namespace keyupMusic2
             else if (goback.Contains(ProcessName) || ProcessName.Contains(studio) || ProcessTitle.Contains(studio)|| ProcessPath.Contains(studio))
             {
                 mousegoback(go);
+                return;
+            }
+            else if (goback_null.Contains(ProcessName))
+            {
                 return;
             }
             else

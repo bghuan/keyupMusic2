@@ -58,7 +58,7 @@ namespace keyupMusic2
             //    || judge_color(1996, 1400, Color.FromArgb(117, 46, 66)))
             int x = 2345;
             x -= 50;
-            //x -= 50;
+            x -= 50;
             press($"{x},1409;{x}," + (1030 + (num * 50)), 101);
         }
     }

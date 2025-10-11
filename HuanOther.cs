@@ -68,7 +68,7 @@ namespace keyupMusic2
         {
             if (e.Type == KeyType.Up)
             {
-                Invoke2(() => label1.Text = Common.DeviceName + label1.Text.Replace(easy_read2(e.key), easy_read2(e.key).ToLower()));
+                Invoke2(() => label1.Text = /*Common.DeviceName + */label1.Text.Replace(easy_read2(e.key), easy_read2(e.key).ToLower()));
                 return;
             }
 
@@ -79,7 +79,7 @@ namespace keyupMusic2
                     {
                         string asd = string.Join(" ", _handling_keys?.Select(key => easy_read(key.Key.ToString())));
                         if (label1.Text.ToLower() == asd.ToLower()) asd += " " + DateTimeNow2();
-                        label1.Text = Common.DeviceName + asd;
+                        label1.Text = /*Common.DeviceName + */asd;
                     }
                 );
             }
@@ -114,17 +114,17 @@ namespace keyupMusic2
             _mouseKbdHook = new KeyboardMouseHook(this.Handle);
             _mouseKbdHook.KeyEvent += KeyBoardHookProc;
 
-            if (is_mouse_hook)
+            //if (is_mouse_hook)
             {
                 var b = new biu();
                 _mouseKbdHook.MouseEvent += b.MouseHookProc;
                 //Invoke(() => { b.MoveStopClickListen(); }); 
                 //_mouseKbdHook.MouseHookEvent += new Douyin_game(this).MouseHookProc;
             }
-            else
-            {
-                Text = Text + "no mousehook";
-            }
+            //else
+            //{
+            //    Text = Text + "no mousehook";
+            //}
             _mouseKbdHook.Install();
             play_sound_di();
         }
@@ -248,6 +248,8 @@ namespace keyupMusic2
             if (e.Reason == SessionSwitchReason.SessionUnlock)
             {
                 MoonTime.Instance?.SetInitAngle();
+                if (MoonTime.Instance != null && MoonTime.Instance.Visible)
+                    MoonTime.vkMenuItem_DoubleClick(null, null);
                 VirtualKeyboardForm.Instance?.SetInitClean();
                 system_sleep_count = 0;
                 DaleyRun_stop = true;
@@ -292,11 +294,31 @@ namespace keyupMusic2
 
             Native.GetCursorPos(out var pos);
             //SuperClass.get_point_color();
-            mouse_move(x, y, 20);
-            mouse_middle_click(20);
+            mouse_move222(x, y + 20, 20);
+            //mouse_middle_click(20);
+            down_press(LControlKey);
+            mouse_click();
+            up_press(LControlKey);
             mouse_move(pos);
             //SuperClass.get_point_color();
             //TaskRun(() => { SuperClass.get_point_color(); }, 3000);
+        }
+
+        public bool deal_handilngkey(Keys key, bool down)
+        {
+            if (down)
+            {
+                if (handling_keys.ContainsKey(key)) return true;
+                handling_keys[key] = DateTime.Now;
+                //if (key == LMenu) handling_keys[Menu] = DateTime.Now;
+                //log("2" + key + handling_keys[key]);
+            }
+            else
+            {
+                handling_keys.TryRemove(key, out _);
+                //if (key == LMenu) handling_keys.TryRemove(Menu, out _);
+            }
+            return false;
         }
 
     }

@@ -97,6 +97,25 @@ namespace keyupMusic2
                 case Common.keyupMusic2:
                     if (e.key == S) { ConfigValue(ConfigLocation, huan.Location.X + "," + huan.Location.Y); }
                     break;
+                case Common.scrcpy:
+                    if (e.key == F5)
+                    {
+                        hideProcessTitle(scrcpy);
+                    }
+                    //if (e.key == PageDown)
+                    //{
+                    //    press("2169,1439");
+                    //}
+                    //if (e.key == PageUp || e.key == Left || e.key == Right)
+                    //{
+                    //    //mouse_move(1869, 1439);
+                    //    //down_mouse();
+                    //    //mouse_move(1969, 1439, 2121);
+                    //    //mouse_move(2169, 1439);
+                    //    //up_mouse();
+                    //    //press("2169.1439;_;1169.1439;-;300");
+                    //}
+                    break;
             }
 
         }
@@ -199,6 +218,9 @@ namespace keyupMusic2
                     break;
                 case Keys.RShiftKey:
                     DeleteCurrentWallpaper();
+                    break;
+                case Keys.Escape:
+                    SetDesktopToBlack();
                     break;
             }
         }

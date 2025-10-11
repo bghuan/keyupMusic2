@@ -1,3 +1,4 @@
+using keyupMusic2.fantasy;
 using Microsoft.Win32;
 using Newtonsoft.Json.Linq;
 using System.Diagnostics;
@@ -23,7 +24,7 @@ namespace keyupMusic2
         public OpencvReceive Opencv;
         public LongPressClass LongPress;
         //bool is_init_show = !(Position.Y == 0);
-        bool is_mouse_hook = !(Position.Y == 1439);
+        //bool is_mouse_hook = !(Position.Y == 1439);
         //bool is_mouse_hook = !is_shift();
         public static bool keyupMusic2_onlisten = false;
         DateTime super_listen_time = new DateTime();
@@ -45,7 +46,7 @@ namespace keyupMusic2
 
             try_restart_in_admin();
             release_all_key();
-            Rawinput.RegisterInputDevices(this.Handle);
+            //Rawinput.RegisterInputDevices(this.Handle);
             startListen();
 
             ACPhoenix = new ACPhoenixClass();
@@ -173,16 +174,16 @@ namespace keyupMusic2
         void after_load()
         {
             bland_title();
-            if (!ExistProcess(TwinkleTray)) { ProcessRun(TwinkleTrayexe); }
+            if (!ExistProcess(TwinkleTray) && ScreenPrimary.Width < 3000) { ProcessRun(TwinkleTrayexe); }
             InitializeFromCurrentWallpaper();
 
             VirtualKeyboardForm virtualKeyboardForm = new VirtualKeyboardForm();
             MoonTime moontimeForm = new MoonTime();
 
+            moontimeForm.Show();
             if (ScreenPrimary.Width < 3000)
             {
                 virtualKeyboardForm.Show();
-                moontimeForm.Show();
             }
 
             timerMove.Interval = 3000;
@@ -207,50 +208,50 @@ namespace keyupMusic2
                 Native.AllocConsole();
         }
         public static Dictionary<int, int> mmmm = new Dictionary<int, int>();
-        protected override void WndProc(ref Message m)
-        {
-            if (!mmmm.ContainsKey(m.Msg))
-                mmmm[m.Msg] = 0;
-            else
-                mmmm[m.Msg]++;
-            var lParam = m.LParam;
-            if (m.Msg == WM_INPUT)
-            {
-                Task.Run(() => ProcessRawInputAsync(lParam));
-                return;
-            }
-            base.WndProc(ref m);
-        }
-        private async Task ProcessRawInputAsync(IntPtr lParam)
-        {
-            try
-            {
-                var e = Rawinput.ProcessRawInput2(lParam);
-                if (e == null)
-                    return;
-                Invoke((Delegate)(() => Console2.WriteLine(e.dwExtraInfo2)));
-                if ((e.key != 0 && e.key != VolumeDown && e.key != VolumeUp && e.key != MediaPlayPause))
-                    Common.DeviceName = e.device;
-                else if (e.key == 0)
-                    Common.DeviceName2 = e.device;
-                if (ProcessName == Common.keyupMusic2 && e.key != 0)
-                    await Task.Run(() => KeyBoardHookProc(e));
+        //protected override void WndProc(ref Message m)
+        //{
+        //    if (!mmmm.ContainsKey(m.Msg))
+        //        mmmm[m.Msg] = 0;
+        //    else
+        //        mmmm[m.Msg]++;
+        //    var lParam = m.LParam;
+        //    if (m.Msg == WM_INPUT)
+        //    {
+        //        Task.Run(() => ProcessRawInputAsync(lParam));
+        //        return;
+        //    }
+        //    base.WndProc(ref m);
+        //}
+        //private async Task ProcessRawInputAsync(IntPtr lParam)
+        //{
+        //    try
+        //    {
+        //        var e = Rawinput.ProcessRawInput2(lParam);
+        //        if (e == null)
+        //            return;
+        //        Invoke((Delegate)(() => Console2.WriteLine(e.dwExtraInfo2)));
+        //        if ((e.key != 0 && e.key != VolumeDown && e.key != VolumeUp && e.key != MediaPlayPause))
+        //            Common.DeviceName = e.device;
+        //        else if (e.key == 0)
+        //            Common.DeviceName2 = e.device;
+        //        if (ProcessName == Common.keyupMusic2 && e.key != 0)
+        //            await Task.Run(() => KeyBoardHookProc(e));
 
-                //if (e.key == Menu)
-                //{
-                //    var ha = handling_keys2.ContainsKey(e.key);
-                //    if (!ha && e.key == Menu && e.Type == Downn && e.device == acer)
-                //    {
-                //        press(Tab);
-                //    }
-                //    if (e.Type == Downn) { if (!handling_keys2.ContainsKey(e.key)) handling_keys2[e.key] = DateTime.Now; }
-                //    else handling_keys2.TryRemove(e.key, out _);
-                //}
-            }
-            catch (Exception ex)
-            {
-                Console2.WriteLine($"Error processing RawInput: {ex.Message}");
-            }
-        }
+        //        //if (e.key == Menu)
+        //        //{
+        //        //    var ha = handling_keys2.ContainsKey(e.key);
+        //        //    if (!ha && e.key == Menu && e.Type == Downn && e.device == acer)
+        //        //    {
+        //        //        press(Tab);
+        //        //    }
+        //        //    if (e.Type == Downn) { if (!handling_keys2.ContainsKey(e.key)) handling_keys2[e.key] = DateTime.Now; }
+        //        //    else handling_keys2.TryRemove(e.key, out _);
+        //        //}
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        Console2.WriteLine($"Error processing RawInput: {ex.Message}");
+        //    }
+        //}
     }
 }

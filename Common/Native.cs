@@ -185,6 +185,7 @@ namespace keyupMusic2
         public const uint SWP_FRAMECHANGED = 0x0020;
         public const uint SWP_NOMOVE = 0x0002;
         public const uint SWP_NOSIZE = 0x0001;
+        public const uint SWP_NOACTIVATE = 0x0010;
         // 窗口消息常量
         public const uint WM_NCLBUTTONDOWN = 0x00A1;
         public const int HTCAPTION = 2;
@@ -235,6 +236,7 @@ namespace keyupMusic2
         public static readonly IntPtr HWND_TOPMOST = new IntPtr(-1);    // 置顶
         public static readonly IntPtr HWND_NOTOPMOST = new IntPtr(-2);  // 取消置顶
         public const uint SWP_SHOWWINDOW = 0x0040;  // 确保窗口可见
+        public const int WS_EX_TRANSPARENT = 0x20;
 
     }
 }

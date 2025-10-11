@@ -1,7 +1,9 @@
 ﻿using System.Diagnostics;
 using System.Diagnostics.Metrics;
+using System.IO;
 using static keyupMusic2.Common;
 using static keyupMusic2.KeyboardMouseHook;
+using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace keyupMusic2
 {
@@ -65,6 +67,7 @@ namespace keyupMusic2
                     break;
                 case Keys.D2:
                     string edgePath = @"C:\Program Files (x86)\Microsoft\Edge\Application\msedge_proxy.exe";
+                    edgePath = @"C:\Program Files\Google\Chrome\Application\chrome_proxy.exe";
                     string arguments = "--profile-directory=Default " +
                                       "--app-id=nddflfcbcnndpkncdlkndocendhgndbc " +
                                       "--app-url=https://www.douyin.com/?recommend=1";
@@ -75,17 +78,20 @@ namespace keyupMusic2
                     {
                         //FreshProcessName();
                         return
-                        judge_color(247, 229, Color.FromArgb(22, 24, 35), 0)
+                        judge_color(159, 818, Color.FromArgb(22, 24, 35), 0)
                         && !judge_color(525, 417, Color.FromArgb(22, 24, 35), 0)
                         && !judge_color(525, 417, Color.FromArgb(255, 255, 255), 0);
                     };
                     var run = () =>
                     {
-                        press("200;525.417;525,418;500;H;100;", 300);
+                        //press("200;525.417;525,418;500;H;100;", 300);
+                        press("200;H;100;", 300);
                         if (!IsFullScreen())
-                            press("100;525.417;525,418;500;H", 200);
+                            press("200;H;100;", 300);
+                        //if (!IsFullScreen())
+                        //    press("100;525.417;525,418;500;H", 200);
                         int x = 2218;
-                        //x -= 50;
+                        x -= 50;
                         press($"100;{x},1404;{x},1171;1703.1439", 200);
 
                         if (!IsFullScreen()) return;

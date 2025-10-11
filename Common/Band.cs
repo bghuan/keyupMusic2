@@ -44,7 +44,19 @@ namespace keyupMusic2
                 else if (key == Keys.F3)
                     key = Keys.X;
             }
-            else if (ProcessName == Common.msedge)
+            else if (ProcessName == Common.scrcpy)
+            {
+                if (key == Keys.PageDown)
+                    key = Keys.Down;
+                //if (key == Keys.Up)
+                //    key = Keys.PageUp;
+                //if (ProcessTitle.Contains("502") || ProcessTitle.Contains("503"))
+                //    if (key == Keys.PageDown)
+                //        key = Keys.F5;
+                //    else if (key == Keys.Up)
+                //        key = Keys.F11;
+            }
+            else if (ProcessName == Common.msedge || ProcessTitle == kmRead)
             {
                 if (key == Keys.Up)
                     key = Keys.PageUp;

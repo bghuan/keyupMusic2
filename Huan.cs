@@ -22,6 +22,7 @@ namespace keyupMusic2
             if (e.key == Keys.Apps) return true;
 
             if (e.key == Keys.F1 && !isctrl()) return true;
+            if (e.key == Keys.F2 && !ProcessTitle.Contains("tudio") && IsFullScreen()) return true;
             if (e.key == Keys.F3) return true;
             if (e.key == Keys.F9) return true;
             if (keyupMusic2_onlisten) { e.Handled = true; }
@@ -57,7 +58,8 @@ namespace keyupMusic2
 
             Task.Run(() =>
             {
-                print_easy_read(e);
+                if (!ha)
+                    print_easy_read(e);
 
                 //if (quick_replace_key(e)) return;
                 if (KeyFunc.HookEvent(e)) return;
@@ -101,23 +103,6 @@ namespace keyupMusic2
                     else if (e.key == Keys.PageUp || e.key == Keys.Up) mousewhell(4);
             });
         }
-
-        public bool deal_handilngkey(Keys key, bool down)
-        {
-            if (down)
-            {
-                if (handling_keys.ContainsKey(key)) return true;
-                handling_keys[key] = DateTime.Now;
-                //if (key == LMenu) handling_keys[Menu] = DateTime.Now;
-                //log("2" + key + handling_keys[key]);
-            }
-            else
-            {
-                handling_keys.TryRemove(key, out _);
-                //if (key == LMenu) handling_keys.TryRemove(Menu, out _);
-            }
-            return false;
-        }
         public void start_catch(string msg)
         {
             play_sound_di2();
@@ -127,31 +112,42 @@ namespace keyupMusic2
                 //log("start_catch " + ProcessName);
                 //string[] list_f1 = [StartMenuExperienceHost, SearchHost, clashverge,];
                 string[] list_f1 = [clashverge,];
-                string[] list_nothing = [devenv, Common.keyupMusic2, explorer, cs2];
-                if (Position.X == 0 && (Position.Y == screenHeight1 || Position.Y == 0))
+                //string[] list_nothing = [devenv, Common.keyupMusic2, explorer, cs2];
+
+                if (Position.X == 0 && Position.Y == 0)
+                {
                     AllClass.quick_visiualstudio();
-                //else if (Position.Y == 0)
-                //    Invoke(() => { SetVisibleCore(!Visible); });
+                    //SetTransparency();
+                }
                 else if (Position.X == screenWidth1 && Position.Y == screenHeight1)
+                {
                     system_sleep(true);
+                }
                 else if (Position.X == 0)
                 {
                     string executablePath = Process.GetCurrentProcess().MainModule.FileName;
                     Process.Start(executablePath);
                     Environment.Exit(0);
                 }
+                else if (Position.X == screenWidth1)
+                {
+                    SetTransparency();
+                }
+                else if (Position.Y == 0)
+                {
+                    LossScale();
+                }
+
                 else if (ProcessName == cs2)
                     press("1301,48;100;1274,178;2260,1374");
                 else if (list_f1.Contains(ProcessName))
                     changeClash();
-                else if (list_nothing.Contains(ProcessName)) { }
-                else if (IsDesktopFocused()) { }
-                else if (ProcessName == Honeyview)
-                    press_raw(OemPeriod);
+                //else if (list_nothing.Contains(ProcessName)) { }
+                //else if (IsDesktopFocused()) { }
                 //else if (is_steam_game())
-                //    record_screen();
-                else
-                    LossScale();
+                //    LossScale();
+                //else
+                //{ }
             }
             else if (msg.Contains(start_check_str2))
             {

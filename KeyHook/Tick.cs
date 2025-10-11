@@ -57,16 +57,16 @@ namespace keyupMusic2
                     if (is_music) press(Keys.MediaPlayPause);
                 });
             }
-            if (DateTime.Now.Minute % 10 == 0)
-            {
-                IEnumerable<Keys> pressedKeys = GetPressedKeys();
-                if (!pressedKeys.Any())
-                {
-                    press([LShiftKey, F1]);
-                }
-                //SetDesktopWallpaperFull();
-                //SetDesktopWallpaperAli(GetNextWallpaper(), false);
-            }
+            //if (DateTime.Now.Minute % 10 == 0)
+            //{
+            //    IEnumerable<Keys> pressedKeys = GetPressedKeys();
+            //    if (!pressedKeys.Any())
+            //    {
+            //        press([LShiftKey, F1]);
+            //    }
+            //    //SetDesktopWallpaperFull();
+            //    //SetDesktopWallpaperAli(GetNextWallpaper(), false);
+            //}
         }
 
         bool exp = false;

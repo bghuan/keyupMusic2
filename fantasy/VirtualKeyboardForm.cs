@@ -172,10 +172,10 @@ namespace keyupMusic2
 
         private void VirtualKeyboardForm_KeyUp(object sender, KeyEventArgs e)
         {
-            if (webView.CoreWebView2 == null) return;
+            webView.Invoke(new Action(() => { if (webView.CoreWebView2 == null) return;
             string id = KeyCodeToId(e.KeyCode, e.Modifiers);
             string js = $"unhighlightKeyAndNeighbors('{id}')";
-            webView.Invoke(new Action(() => webView.CoreWebView2?.ExecuteScriptAsync(js)));
+            webView.CoreWebView2?.ExecuteScriptAsync(js);}) );
         }
 
         public void TriggerKey(Keys k, bool up = false)

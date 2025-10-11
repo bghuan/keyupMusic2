@@ -228,6 +228,7 @@ namespace keyupMusic2
         private void Chrome(KeyboardMouseHook.MouseEventArgs e)
         {
             //if (GetPointName() != chrome) return;
+            if (is_douyin()) return;
             if (e.Msg == MouseMsg.click_up && (e.X == screenWidth1))
                 CenterWindowOnScreen(chrome, e.Y >= screenHeight2);
             else if (e.Msg == MouseMsg.click_r_up && !LongPressClass.long_press_rbutton && ExistProcess(Common.PowerToysCropAndLock, true) && e.Pos == click_r_point)

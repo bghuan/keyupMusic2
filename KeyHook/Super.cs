@@ -1,4 +1,5 @@
-﻿using Microsoft.VisualBasic.FileIO;
+﻿using keyupMusic2.fantasy;
+using Microsoft.VisualBasic.FileIO;
 using Newtonsoft.Json.Linq;
 using System.Collections.Concurrent;
 using System.Diagnostics;
@@ -151,9 +152,20 @@ namespace keyupMusic2
                         bool success = SetWindowTransparency(windowTitle, transparency);
                         break;
                     case Keys.Z:
+                        SetTransparency();
                         break;
                     case Keys.X:
-                        AllClass.run_vis();
+                        //AllClass.run_vis();
+                        //IntPtr hwnd = Native.GetForegroundWindow();
+                        //const uint WHITE_COLOR = 0x000000;
+                        //SetLayeredWindowAttributes(hwnd, WHITE_COLOR, 255, 0x1);
+                        huan.Invoke(() => {
+                            Read read = new Read();
+                            read.Show();
+                            read.Activate();         // 激活窗口
+                            read.BringToFront();     // 放到最前
+                            read.Focus();            // 设置输入焦点
+                        });
                         break;
                     case Keys.C:
                         press_middle_bottom();
@@ -197,7 +209,13 @@ namespace keyupMusic2
                     //    huan.SetVisibleCore2(!huan.Visible);
                     //    break;
                     case Keys.F4:
-                        press(Keys.MediaPlayPause);
+                        huan.Invoke(() => {
+                            Read read = new Read();
+                            read.Show();
+                            read.Activate();         // 激活窗口
+                            read.BringToFront();     // 放到最前
+                            read.Focus();            // 设置输入焦点
+                        });
                         break;
                     case Keys.F5:
                         huan.Invoke((Delegate)(() =>
@@ -272,6 +290,15 @@ namespace keyupMusic2
                         break;
                     case Keys.D2:
                         RestartProcess(cloudmusic, cloudmusicexe);
+                        break;
+                    case Keys.D3:
+                        SetResolution(1);
+                        break;
+                    case Keys.D4:
+                        SetResolution(2);
+                        break;
+                    case Keys.D5:
+                        RestartProcess(explorer, cloudmusicexe);
                         break;
 
                     default:

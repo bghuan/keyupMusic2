@@ -46,8 +46,10 @@ namespace keyupMusic2
                 //    shift(); break;
 
                 case Keys.Up:
+                    if (is_tran_process == ProcessName) { SetTransparency(16); break; }
                     quick_next_image(); break;
                 case Keys.Down:
+                    if (is_tran_process == ProcessName) { SetTransparency(-16); break; }
                     quick_prix_image(); break;
 
                 case Keys.OemPeriod:
@@ -72,6 +74,10 @@ namespace keyupMusic2
                 return;
             }
             if (!ProcessTitle.Contains("tudio") && IsFullScreen())
+            {
+                LossScale();
+            }
+            if (ProcessTitle == kmRead)
             {
                 LossScale();
             }
@@ -177,6 +183,11 @@ namespace keyupMusic2
         {
             string module_name = ProcessName;
             if (is_down(Keys.Delete) || is_ctrl()) return;
+            if (ProcessName == "msedgewebview2")
+            {
+                //press(F12);
+                return;
+            }
             //if (ProcessName == Common.keyupMusic2)
             //{
             //    press(F12);
@@ -201,8 +212,14 @@ namespace keyupMusic2
 
         public static void quick_visiualstudio()
         {
+            //return;
             string module_name = ProcessName;
             if (is_down(Keys.Delete) || is_ctrl()) return;
+            if (ProcessName == Common.keyupMusic2)
+            {
+                //press(F12);
+                return;
+            }
             if (Common.devenv == module_name)
             {
                 HideProcess(module_name);

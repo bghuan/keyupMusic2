@@ -23,11 +23,12 @@ namespace keyupMusic2
             {
                 if (is_lbutton()) return false;
                 if (e.Y == 0) return true;
-                if (is_douyin() && (e.X == 0 || is_down(LButton))) return true;
-                if (IsFullVedio()) return true;
-                var list = new[] { Glass2, vlc, /*Honeyview*/ };
-                if (list.Contains(Common.ProcessName) && !GetPointTitle().Contains("设置"))
-                    return true;
+                //if (is_douyin() && (e.X == 0 || is_down(LButton))) return true;
+                if (IsFullScreen() && e.Y == screenHeight1) return true;
+                //if (IsFullVedio()) return true;
+                //var list = new[] { Glass2, vlc, /*Honeyview*/ };
+                //if (list.Contains(Common.ProcessName) && !GetPointTitle().Contains("设置"))
+                //    return true;
             }
             return false;
         }
@@ -79,16 +80,22 @@ namespace keyupMusic2
                     press([LShiftKey, e.data > 0 ? F8 : F7]);
                 else if (e.Y == 0)
                     press(e.data > 0 ? F8 : F7);
-                else if (is_douyin() && (e.X == 0 || is_down(LButton)))
+                //else if (is_douyin() && (e.X == 0 || is_down(LButton)))
+                //    press(e.data > 0 ? Left : Right);
+                //else if (IsFullVedio() && !GetPointTitle().Contains("设置"))
+                //    press(e.data > 0 ? Left : Right);
+                else if (IsFullScreen() && e.Y == screenHeight1)
                     press(e.data > 0 ? Left : Right);
-                else if (IsFullVedio() && !GetPointTitle().Contains("设置"))
-                    press(e.data > 0 ? Left : Right);
-                else if (ProcessName == Common.vlc)
-                    press(e.data > 0 ? Left : Right);
+                //else if (ProcessName == Common.vlc)
+                //    press(e.data > 0 ? Left : Right);
                 else if (ProcessName == Common.ApplicationFrameHost && (ProcessTitle.Contains("png") || GetPointName() == PhotoApps))
                     press(e.data > 0 ? Left : Right);
                 else if (ProcessName == msedge && e.Y == screenHeight1)
                     press(e.data > 0 ? Keys.PageUp : Keys.PageDown);
+                else if (ProcessTitle == kmRead && e.Y == screenHeight1)
+                    press(e.data > 0 ? Keys.PageUp : Keys.PageDown);
+                else if (is_tran_process == ProcessName && e.X == screenWidth1)
+                    SetTransparency(e.data > 0 ? 16 : -16);
             }
             else if (e.Msg == MouseMsg.wheel_h)
                 press(e.data > 0 ? VolumeDown : VolumeUp);

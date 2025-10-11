@@ -9,22 +9,28 @@ namespace keyupMusic2
         public override bool judge_handled(KeyEvent e)
         {
             if (Common.ProcessName != chrome) return false;
+            if (is_douyin()) return false;
             if (judge_handled_key.Contains(e.key)) return true;
             return false;
         }
         public void handlehandle(KeyEvent e)
         {
             if (Common.ProcessName != chrome) return;
+            if (is_douyin()) return;
             pre_handling(e);
             do_handling(e);
             fin_handling(e);
         }
         public override void do_handling(KeyEvent e)
         {
+            if (is_douyin()) return;
             switch (e.key)
             {
                 case Keys.PageUp:
                     LossScale();
+                    break;
+                case Keys.PageDown:
+                    SetTransparency();
                     break;
             }
         }

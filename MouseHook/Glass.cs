@@ -49,6 +49,8 @@ namespace keyupMusic2
         }
         public bool IsMouseInCircle(KeyboardMouseHook.MouseEventArgs e, int centerX = 1285, int centerY = 695, int radius = 700)
         {
+            centerX = centerX / screenWidth * 2560;
+            centerY = centerX / screenHeight * 2560;
             int dx = e.X - centerX;
             int dy = e.Y - centerY;
             return dx * dx + dy * dy <= radius * radius;

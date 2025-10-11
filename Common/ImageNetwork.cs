@@ -33,6 +33,7 @@ namespace keyupMusic2
         static bool SetDesktopWallpaperAli_flag = false;
         public static void SetDesktopWallpaperAli(string filePath, bool di = true)
         {
+            return;
             if (SetDesktopWallpaperAli_flag)
             {
                 Task.Run(() =>

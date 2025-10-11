@@ -40,6 +40,11 @@ namespace keyupMusic2
             SetCursorPos(x, y);
             Thread.Sleep(tick);
         }
+        public static void mouse_move222(int x, int y, int tick = 0)
+        {
+            SetCursorPos(x, y);
+            Thread.Sleep(tick);
+        }
         public static void mouse_move_to(int x, int y, int tick = 0)
         {
             var Pos = Position;

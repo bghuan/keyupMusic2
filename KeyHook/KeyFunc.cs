@@ -15,8 +15,6 @@ namespace keyupMusic2
     {
         public void init()
         {
-            //new KeyFunc(steam, Keys.D8, Keys.D7);
-            //new KeyFunc(steam, Keys.D7, Keys.D8);
             new KeyFunc(Windblown, Keys.W, Keys.S);
             new KeyFunc(Windblown, Keys.S, Keys.W);
             new KeyFunc(cs2, Keys.Capital, Keys.Tab);
@@ -42,6 +40,8 @@ namespace keyupMusic2
                 if (isctrl()) return;
                 if (is_down(LWin)) return;
                 if (Position.Y == 0) return;
+                if (Position.X == 0) return;
+                if (Position.X == screenWidth1 && Position.Y != screenHeight1) return;
                 //if (ExistProcess(cs2)) 
                 //var asd = DateTime.Now;
                 //if (start_catch_time.AddSeconds(1) < DateTime.Now)
@@ -53,7 +53,6 @@ namespace keyupMusic2
                 //}, 10);
             })
             { longPressAction = () => { }, handled = false };
-            //new KeyFunc("", RMenu, MediaPlayPause);
 
             new KeyFunc(Keys.Home, copy_screen, Upp);
             new KeyFunc(Keys.End, copy_secoed_screen, Upp);

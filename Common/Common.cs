@@ -243,10 +243,10 @@ namespace keyupMusic2
         public static string bmpScreenshot_path;
         public static void copy_screen()
         {
-            try { if (!Debugger.IsAttached) bmpScreenshot.Dispose(); } catch (NullReferenceException e) { }
+            //try { if (!Debugger.IsAttached) bmpScreenshot.Dispose(); } catch (NullReferenceException e) { }
             play_sound_di();
             Screen secondaryScreen = Screen.PrimaryScreen;
-            bmpScreenshot = new Bitmap(secondaryScreen.Bounds.Width, secondaryScreen.Bounds.Height, PixelFormat.Format32bppArgb);
+            Bitmap bmpScreenshot = new Bitmap(secondaryScreen.Bounds.Width, secondaryScreen.Bounds.Height, PixelFormat.Format32bppArgb);
             Graphics gfxScreenshot = Graphics.FromImage(bmpScreenshot);
             gfxScreenshot.CopyFromScreen(new Point(0, 0), Point.Empty, secondaryScreen.Bounds.Size);
             string user_path = "C:\\Users\\bu\\Pictures\\Screenshots\\";
@@ -263,14 +263,14 @@ namespace keyupMusic2
         }
         public static void copy_secoed_screen()
         {
-            try { if (!Debugger.IsAttached) bmpScreenshot.Dispose(); } catch (NullReferenceException e) { }
+            //try { if (!Debugger.IsAttached) bmpScreenshot.Dispose(); } catch (NullReferenceException e) { }
             play_sound_di();
             Screen secondaryScreen = Screen.AllScreens.FirstOrDefault(scr => !scr.Primary);
             int start_x = screenWidth;
             if (screen2Width < 0)
                 start_x = -1920;
             if (secondaryScreen == null) { return; }
-            bmpScreenshot = new Bitmap(1920, 1080, PixelFormat.Format32bppArgb);
+            Bitmap bmpScreenshot = new Bitmap(1920, 1080, PixelFormat.Format32bppArgb);
             Graphics gfxScreenshot = Graphics.FromImage(bmpScreenshot);
             gfxScreenshot.CopyFromScreen(new Point(start_x, 0), Point.Empty, secondaryScreen.Bounds.Size);
             string path = "";
@@ -882,16 +882,16 @@ namespace keyupMusic2
                 ProcessRun(LosslessScalingexe);
                 play_sound_bongocat(D9);
             }
-            if (ProcessName == keyupMusic2 && GetPointName() != keyupMusic2)
-                mouse_click2();
+            //if (ProcessName == keyupMusic2 && GetPointName() != keyupMusic2 && ProcessTitle != kmRead)
+            //    mouse_click2();
 
             //var Usage = GetUsage(LosslessScaling);
             //var Running = Usage > 20;
 
             press([Keys.LControlKey, Keys.F2]);
 
-            if (Position.X > 0 && Position.X < screenWidth && (is_douyin() || ProcessName == chrome) && (ProcessName == GetPointName()) && (!ProcessTitle.Contains("nhub")) && (GetUsage(LosslessScaling) < 20))
-                press_middle_bottom();
+            //if (Position.X > 0 && Position.X < screenWidth && (is_douyin() || ProcessName == chrome) && (ProcessName == GetPointName()) && (!ProcessTitle.Contains("nhub")) && (GetUsage(LosslessScaling) < 20))
+            //    press_middle_bottom();
         }
         public static void system_hard_sleep()
         {
@@ -1194,6 +1194,7 @@ namespace keyupMusic2
             //HideProcess(PowerToysCropAndLock);
             //SetDesktopToBlack();
         }
+
         public static bool SetWindowTransparency(string proname, byte alpha)
         {
             // 1. 获取目标窗口句柄（根据窗口标题）
@@ -1201,17 +1202,55 @@ namespace keyupMusic2
             if (hWnd == IntPtr.Zero)
                 return false;
 
-            // 2. 检查窗口是否已设置为分层窗口，若未设置则添加样式
+            // 2. 获取当前扩展样式
             int exStyle = GetWindowLong(hWnd, GWL_EXSTYLE);
-            if ((exStyle & WS_EX_LAYERED) == 0)
-            {
-                // 添加分层窗口样式
-                SetWindowLong(hWnd, GWL_EXSTYLE, exStyle | WS_EX_LAYERED);
-            }
 
-            // 3. 设置透明度（alpha值）
+            // 3. 设置分层样式
+            exStyle |= WS_EX_LAYERED;
+
+            // 4. 根据透明度决定是否添加/移除穿透样式
+            if (alpha < 255)
+                exStyle |= WS_EX_TRANSPARENT; // 添加穿透
+            else
+                exStyle &= ~WS_EX_TRANSPARENT; // 移除穿透
+
+            SetWindowLong(hWnd, GWL_EXSTYLE, exStyle);
+
+            // 5. 设置透明度
             return SetLayeredWindowAttributes(hWnd, 0, alpha, LWA_ALPHA);
         }
+
+        public static void SetTransparency(int num = 0)
+        {
+            is_tran_alpha = (byte)Math.Clamp(is_tran_alpha + num, 0, 255);
+            if (num == 0) is_tran_alpha = 127;
+
+            byte alpha = (byte)is_tran_alpha; // 半透明效果
+
+            if (num == 0 && is_tran_powertoy2)
+                alpha = 255;
+            is_tran_powertoy2 = !is_tran_powertoy2;
+
+            IntPtr hwnd = Native.GetForegroundWindow();
+            int exStyle = GetWindowLong(hwnd, GWL_EXSTYLE);
+            exStyle |= WS_EX_LAYERED;
+            if (alpha < 255)
+            {
+                exStyle |= WS_EX_TRANSPARENT; // 添加穿透
+                SetWindowPos(hwnd, HWND_TOPMOST, 0, 0, 0, 0, SWP_NOMOVE | SWP_NOSIZE | SWP_NOACTIVATE); // 置顶
+                is_tran_process = ProcessName;
+                //altab();
+            }
+            else
+            {
+                exStyle &= ~WS_EX_TRANSPARENT; // 移除穿透
+                SetWindowPos(hwnd, HWND_NOTOPMOST, 0, 0, 0, 0, SWP_NOMOVE | SWP_NOSIZE | SWP_NOACTIVATE); // 取消置顶
+                is_tran_process = "";
+            }
+            SetWindowLong(hwnd, GWL_EXSTYLE, exStyle);
+            SetLayeredWindowAttributes(hwnd, 0, alpha, LWA_ALPHA);
+        }
+
         public static Keys LongPressKey;
         public static DateTime NotityTime = DateTime.MinValue;
         public static bool no_move;
@@ -1286,6 +1325,109 @@ namespace keyupMusic2
         public const KeyType Upp = KeyType.Up;
         public const KeyType Downn = KeyType.Down;
         public static DateTime start_catch_time = DateTime.MinValue;
+
+
+        [DllImport("user32.dll")]
+        private static extern bool EnumDisplaySettings(string lpszDeviceName, int iModeNum, ref DEVMODE lpDevMode);
+
+        [DllImport("user32.dll")]
+        private static extern int ChangeDisplaySettings(ref DEVMODE lpDevMode, uint dwFlags);
+
+        private const int ENUM_CURRENT_SETTINGS = -1;
+        private const uint CDS_UPDATEREGISTRY = 0x01;
+        private const uint CDS_TEST = 0x02;
+        private const int DISP_CHANGE_SUCCESSFUL = 0;
+        private const int DISP_CHANGE_BADMODE = 0x02;
+
+        [StructLayout(LayoutKind.Sequential, CharSet = CharSet.Ansi)]
+        private struct DEVMODE
+        {
+            [MarshalAs(UnmanagedType.ByValTStr, SizeConst = 32)]
+            public string dmDeviceName;
+            public short dmSpecVersion;
+            public short dmDriverVersion;
+            public short dmSize;
+            public short dmDriverExtra;
+            public int dmFields;
+            public int dmPositionX;
+            public int dmPositionY;
+            public int dmDisplayOrientation;
+            public int dmDisplayFixedOutput;
+            public short dmColor;
+            public short dmDuplex;
+            public short dmYResolution;
+            public short dmTTOption;
+            public short dmCollate;
+            [MarshalAs(UnmanagedType.ByValTStr, SizeConst = 32)]
+            public string dmFormName;
+            public short dmLogPixels;
+            public int dmBitsPerPel;
+            public int dmPelsWidth;
+            public int dmPelsHeight;
+            public int dmDisplayFlags;
+            public int dmDisplayFrequency;
+        }
+
+        // dmFields 标志位
+        private const int DM_PELSWIDTH = 0x80000;
+        private const int DM_PELSHEIGHT = 0x100000;
+        private const int DM_BITSPERPEL = 0x40000;
+        private const int DM_DISPLAYFREQUENCY = 0x400000;
+
+        /// <summary>
+        /// 根据参数设置分辨率和刷新率
+        /// </summary>
+        /// <param name="mode">1=1920x1080@144Hz, 2=3840x2160@120Hz</param>
+        /// <returns>是否设置成功</returns>
+        public static bool SetResolution(int mode)
+        {
+            int width = 1920, height = 1080, freq = 144;
+            if (mode == 2)
+            {
+                width = 3840;
+                height = 2160;
+                freq = 120;
+            }
+
+            DEVMODE devMode = new DEVMODE();
+            devMode.dmSize = (short)Marshal.SizeOf(typeof(DEVMODE));
+
+            if (!EnumDisplaySettings(null, ENUM_CURRENT_SETTINGS, ref devMode))
+            {
+                Console.WriteLine("无法获取当前显示设置");
+                return false;
+            }
+
+            devMode.dmPelsWidth = width;
+            devMode.dmPelsHeight = height;
+            devMode.dmDisplayFrequency = freq;
+            devMode.dmBitsPerPel = 32; // 推荐设置为32位色
+
+            devMode.dmFields = DM_PELSWIDTH | DM_PELSHEIGHT | DM_DISPLAYFREQUENCY | DM_BITSPERPEL;
+
+            int testResult = ChangeDisplaySettings(ref devMode, CDS_TEST);
+            if (testResult != DISP_CHANGE_SUCCESSFUL)
+            {
+                Console.WriteLine($"不支持{width}×{height} @{freq}Hz模式，错误码: {testResult}");
+                return false;
+            }
+
+            int result = ChangeDisplaySettings(ref devMode, CDS_UPDATEREGISTRY);
+            if (result == DISP_CHANGE_SUCCESSFUL)
+            {
+                Console.WriteLine($"成功设置为{width}×{height} @{freq}Hz");
+                return true;
+            }
+            else if (result == DISP_CHANGE_BADMODE)
+            {
+                Console.WriteLine("该显示模式不受支持");
+            }
+            else
+            {
+                Console.WriteLine($"设置失败，错误码: {result}");
+            }
+            return false;
+        }
 
     }
 }

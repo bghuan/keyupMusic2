@@ -44,7 +44,7 @@ namespace keyupMusic2
                 if (pos < screenWidth2 && IsFullScreen())
                 {
                     press(Keys.F, 51);
-                    SS().MouseWhell(1440);
+                    //SS().MouseWhell(1440);
                 }
             }
             else if (ProcessName == Common.vlc)

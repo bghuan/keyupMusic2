@@ -9,7 +9,7 @@ namespace keyupMusic2
     {
         private int _corner1(KeyboardMouseHook.MouseEventArgs e)
         {
-            var list = new[] { msedge, Common.chrome, Common.Honeyview, ApplicationFrameHost };
+            var list = new[] { msedge, Common.chrome, Common.Honeyview, ApplicationFrameHost, Common.keyupMusic2 };
             //var list = new[] { msedge };
 
             if (is_douyin())
@@ -65,6 +65,8 @@ namespace keyupMusic2
             {
                 CloseProcess2(ProcessName);
             }
+            //else if (!IsFullScreen())
+            //    CloseProcess();
             else if (!IsFullScreen())
                 CloseProcess();
             else

@@ -18,6 +18,8 @@ namespace keyupMusic2
         public const string keyupMusic = "keyupMusic";
         public const string keyupMusicexe = "C:\\Users\\bu\\source\\repos\\keyupMusic2\\keyupMusic2.sln";
         public const string keyupMusic2 = "keyupMusic4";
+        public const string scrcpy = "scrcpy";
+        public const string kmRead = "Read";
         public const string OpenWith = "OpenWith";
         public const string _哔哩哔哩 = "哔哩哔哩";
         public const string PotPlayerMini64 = "PotPlayerMini64";
@@ -37,6 +39,7 @@ namespace keyupMusic2
         public const string chrome = "chrome";
         public const string Taskmgr = "Taskmgr";
         public const string explorer = "explorer";
+        public const string explorerexe = "C:\\Windows\\explorer.exe";
         public const string SearchHost = "SearchHost";
         public const string QQMusic = "QQMusic";
         public const string HuyaClient = "HuyaClient";
@@ -252,6 +255,7 @@ namespace keyupMusic2
                 uint processId;
                 Native.GetWindowThreadProcessId(hwnd, out processId);
 
+                if (processId == 0) return;
                 StringBuilder className = new StringBuilder(256);
                 GetClassName(hwnd, className, className.Capacity);
                 string classNameStr = className.ToString();
@@ -619,25 +623,6 @@ namespace keyupMusic2
             }
             return new Point(0, 0);
         }
-        public static IntPtr FindEdgeWindow(string procName)
-        {
-            IntPtr current_hwnd = GetForegroundWindow();
-            Process[] objProcesses = Process.GetProcessesByName(procName);
-            if (objProcesses.Length > 0)
-            {
-                if (objProcesses[0].MainWindowHandle == IntPtr.Zero)
-                {
-                    for (int i = 1; i < objProcesses.Length; i++)
-                    {
-                        if (objProcesses[i].MainWindowHandle != IntPtr.Zero)
-                            return objProcesses[i].MainWindowHandle;
-                    }
-                }
-                return objProcesses[0].MainWindowHandle;
-            }
-
-            return IntPtr.Zero;
-        }
         public static bool Deven_runing()
         {
             return (ProcessTitle?.IndexOf("正在运行") >= 0 || ProcessTitle == "");
@@ -669,6 +654,9 @@ namespace keyupMusic2
         }
         public static bool is_lizhi => (ProcessTitle.Contains("荔枝") && !ProcessTitle.Contains("分类"));
         public static bool is_tran_powertoy = false;
+        public static int is_tran_alpha = 127;
+        public static bool is_tran_powertoy2 = false;
+        public static string is_tran_process = "";
 
         private const double BytesToMB = 1024 * 1024; // 1MB = 1048576字节
         public static string CounterName;
