@@ -7,20 +7,43 @@ namespace keyupMusic2
 {
     public class Tick
     {
-        private readonly Timer timer100msKeyPress = new() { Interval = 100, AutoReset = true };
-        private readonly Timer timer8000ms = new() { Interval = 8000, AutoReset = true };
+        private readonly Timer timer100ms = new() { Interval = 0_100, AutoReset = true };
+        private readonly Timer timer1000ms = new() { Interval = 0_200, AutoReset = true };
+        private readonly Timer timer8000ms = new() { Interval = 8_000, AutoReset = true };
         private readonly Timer timer60000ms = new() { Interval = 60_000, AutoReset = true };
 
         public Tick()
         {
-            timer100msKeyPress.Elapsed += (s, e) => LongPressClass.Every100msHandler();
-            timer100msKeyPress.Start();
+            timer100ms.Elapsed += (s, e) => LongPressClass.Every100msHandler();
+            timer100ms.Start();
+
+            timer1000ms.Elapsed += (s, e) => Every1000ms();
+            timer1000ms.Start();
 
             timer8000ms.Elapsed += (s, e) => Every8000ms();
             timer8000ms.Start();
 
             timer60000ms.Elapsed += (s, e) => Every60000msHandler();
             timer60000ms.Start();
+        }
+
+        private void Every1000ms()
+        {
+            if (ProcessName == ShapeofDreams)
+            {
+                if (judge_color(1363, 788, Color.FromArgb(254, 254, 254), 1) && judge_color(1383, 806, Color.FromArgb(20, 27, 32), 52))
+                { 
+                    press(1232, 786);
+                    mouse_move(2225, 827);
+                }
+                else if (judge_color(1363, 742, Color.FromArgb(254, 254, 254), 1) && judge_color(1414, 742, Color.FromArgb(13, 22, 28), 1))
+                {
+                    press(1234, 748);
+                    mouse_move(2225, 827);
+                }
+                //mouse_click_right();
+                //press("Q", 10);
+            }
         }
 
         private void Every60000msHandler()
@@ -35,7 +58,7 @@ namespace keyupMusic2
                 if (ProcessName == wemeetapp) return;
                 if (ProcessName == cs2) return;
                 if (ExistProcess(wemeetapp, true)) return;
-                float vol = 0.3f;
+                float vol = 0.2f;
 
                 var is_music = IsAnyAudioPlaying();
                 if (is_music) press(Keys.MediaPlayPause);
@@ -87,6 +110,7 @@ namespace keyupMusic2
             if (ProcessName == cs2)
             {
                 if (ExistProcess(wemeetapp, true)) return;
+                if (ExistProcess(LosslessScaling)) CloseProcess(LosslessScaling);
                 if (GetPointName() != cs2) return;
                 if (!is_ctrl() && !is_down(Keys.LWin) && PositionMiddle == Position)
                     press(Keys.F1);
@@ -118,10 +142,10 @@ namespace keyupMusic2
                 ProcessRun(gccexe);
                 gcc_restart = false;
             }
-            else if (ExistProcess(cs2) && Position == PositionMiddle && IsFullScreen())
-            {
-                press_middle_bottom();
-            }
+            //else if (ExistProcess(cs2) && Position == PositionMiddle && IsFullScreen())
+            //{
+            //    press_middle_bottom();
+            //}
             else if (ExistProcess(OpenWith))
             {
                 CloseProcess(OpenWith);

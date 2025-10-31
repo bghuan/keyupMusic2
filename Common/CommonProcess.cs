@@ -19,6 +19,7 @@ namespace keyupMusic2
         public const string keyupMusicexe = "C:\\Users\\bu\\source\\repos\\keyupMusic2\\keyupMusic2.sln";
         public const string keyupMusic2 = "keyupMusic4";
         public const string scrcpy = "scrcpy";
+        public const string ShapeofDreams = "Shape of Dreams";
         public const string kmRead = "Read";
         public const string OpenWith = "OpenWith";
         public const string _哔哩哔哩 = "哔哩哔哩";

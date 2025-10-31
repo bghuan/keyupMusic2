@@ -17,6 +17,8 @@ namespace keyupMusic2
 
             if (ProcessName == Common.PowerToysCropAndLock)
                 PowerToysCropAndLock(e);
+            else if (ProcessName == Common.ShapeofDreams)
+                S_hapeofDreams(e);
             else if (ProcessName == Common.chrome)
                 Chrome(e);
             else if (ProcessName == Common.cs2)
@@ -47,6 +49,19 @@ namespace keyupMusic2
             if (e.Msg != MouseMsg.move)
                 if (IsDesktopFocused())
                     change_image(e);
+        }
+
+        private void S_hapeofDreams(KeyboardMouseHook.MouseEventArgs e)
+        {
+            if (e.Msg == MouseMsg.move) return;
+            if (e.Msg == MouseMsg.click/* && !is_down(RButton)*/)
+            {
+                //press("E", 10);
+                //mouse_click_right();
+                if (is_shift())
+                    for (global::System.Int32 i = 0; i < 1000 && is_shift(); i++)
+                        mouse_click(1);
+            }
         }
 
         private void Handle_哔哩哔哩(KeyboardMouseHook.MouseEventArgs e)

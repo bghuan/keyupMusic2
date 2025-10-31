@@ -12,6 +12,7 @@ namespace keyupMusic2
             if (ProcessName == Common.chrome)
             {
                 if (is_douyin()) return 0;
+                if (ProcessTitle.Contains("YouTube")) return 0;
                 if (is_lizhi && GetPointName() != explorer) return 0;
                 if (chrome_red()) press(Keys.F);
                 var pos = ProcessPosition(chrome);
@@ -40,6 +41,7 @@ namespace keyupMusic2
             {
                 //if (!ProcessTitle.Contains("chat")) return 0;
                 if (chrome_red()) press(Keys.F);
+                if (ProcessTitle.Contains("YouTube")) return 0;
                 var pos = ProcessPosition(chrome).X;
                 if (pos < screenWidth2 && IsFullScreen())
                 {

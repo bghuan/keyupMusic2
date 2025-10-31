@@ -17,6 +17,8 @@ namespace keyupMusic2
         };
 
         public static List<ReplaceKey2> replace2 = new List<ReplaceKey2> {
+           new ReplaceKey2(ShapeofDreams,   MouseMsg.go,        Keys.F),
+           new ReplaceKey2(ShapeofDreams,   MouseMsg.back,        Keys.G),
            new ReplaceKey2(Honeyview,       MouseMsg.go,        Keys.Oem6),
            new ReplaceKey2(Honeyview,       MouseMsg.back,      Keys.Oem4),
            new ReplaceKey2(chrome,          MouseMsg.go,        Keys.F),

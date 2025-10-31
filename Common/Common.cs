@@ -1154,9 +1154,9 @@ namespace keyupMusic2
         //顺便进入睡眠
         public static void CloseDesktopWindow()
         {
-            if (ProcessName == explorer)
-                press([LMenu, F4]);
-            return;
+            //if (ProcessName == explorer)
+            //    press([LMenu, F4]);
+            //return;
             IntPtr desktopHwnd = FindWindow("Progman", null);
             if (desktopHwnd != IntPtr.Zero)
             {

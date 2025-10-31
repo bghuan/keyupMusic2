@@ -22,6 +22,7 @@ namespace keyupMusic2
 
             new KeyFunc(Keys.RMenu, () =>
             {
+                play_sound_di();
                 if (isctrl())
                 {
                     if (ProcessName == cloudmusic)
@@ -38,6 +39,7 @@ namespace keyupMusic2
             {
                 if (is_lbutton()) return;
                 if (isctrl()) return;
+                if (is_shift()) return;
                 if (is_down(LWin)) return;
                 if (Position.Y == 0) return;
                 if (Position.X == 0) return;

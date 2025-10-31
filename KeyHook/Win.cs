@@ -92,9 +92,9 @@ namespace keyupMusic2
                         //    press("100;525.417;525,418;500;H", 200);
                         int x = 2218;
                         x -= 50;
-                        press($"100;{x},1404;{x},1171;1703.1439", 200);
+                        //press($"100;{x},1404;{x},1171;1703.1439", 200);
 
-                        if (!IsFullScreen()) return;
+                        //if (!IsFullScreen()) return;
 
                         LossScale();
                     };

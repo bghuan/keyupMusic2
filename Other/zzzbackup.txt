@@ -1,4 +1,237 @@
-﻿using System;
+﻿// ==/UserScript==
+
+(function() {
+    'use strict';
+
+    // 批量隐藏元素
+    function hideElements(selectors, display) {
+        selectors.forEach(sel => {
+            document.querySelectorAll(sel).forEach(el => {
+                el.style.display = display;
+            });
+        });
+    }
+
+    function asd(flag = false) {
+        const display = flag ? '' : 'none';
+
+        // 需要隐藏的元素选择器
+        hideElements([
+            '.header-email-verification-warning',
+            '.fullscreen-top-controls',
+            '.player-controls-fullscreen__main',
+            '.player-controls-fullscreen__bottom',
+            '.player-controls-user__main-top',
+            '.cookies-reminder',
+            '.plugin-control-content__show-button-wrapper.slide-right-transition-enter-done',
+            '.board',
+            '.view-cam-model-tags',
+            '.messages',
+            //'.ViewCamModelListSectionTitle#Mb',
+            //'.model-list-wrapper',
+            // '.promo-banner-wrapper',
+        ], display);
+
+        // 特殊处理
+        // bottom
+        //document.querySelectorAll('.widescreen-container')[4]?.style && (document.querySelectorAll('.widescreen-container')[4].style.display = 'none');
+        document.querySelectorAll('.view-cam-model-tags')[0]?.parentNode?.style && (document.querySelectorAll('.view-cam-model-tags')[0].parentNode.style.display = 'none');
+        window.MAIN_FOOTER_ID && (window.MAIN_FOOTER_ID.style.display = 'none');
+
+        // 聊天布局
+        let chatLayout = document.querySelector('.chat');
+        if (chatLayout) chatLayout.style.display = (window.outerWidth < 1000 ? 'none' : display);
+
+        // 聊天布局
+        let promo = document.querySelector('.promo-banner-wrapper');
+        if (promo) promo.style.display = 'none';
+
+        // see-more-button 鼠标悬停自动点击
+        // let seeMoreBtn = document.querySelector('.btn.ds-btn-default.ds-btn-inline-block.see-more-button');
+        // if (seeMoreBtn) seeMoreBtn.onmouseover = e => e.target.click();
+
+        // 关闭按钮自动点击
+        // let a11yBtn = document.querySelector('.a11y-button.Header__button#gk');
+        // if (a11yBtn) a11yBtn.click();
+
+        // page-button-page 鼠标悬停自动点击
+        // document.querySelectorAll('.page-button-page').forEach(k => {
+        //     k.onmouseover = e => e.target.click();
+        // });
+
+        //document.getElementsByClassName('model-list-wrapper widescreen-container')[0].parentNode.style.marginLeft='222px'
+        document.getElementsByClassName('model-list-wrapper widescreen-container')[0].style.padding='0'
+        document.getElementsByClassName('model-list-wrapper widescreen-container')[1].style.padding='0'
+        document.getElementsByClassName('ViewCamModelListSectionTitle#Mb')[0].style.display='none'
+        document.getElementsByClassName('ViewCamModelListSectionTitle#Mb')[1].style.display='none'
+
+        removeExistingIframes()
+    }
+
+    // 定时隐藏
+    setInterval(() => asd(false), 3000);
+
+    // 鼠标移动时显示
+    document.body.onmousemove = () => asd(true);
+
+    // 快捷键：按下 . 返回主页
+    document.body.addEventListener("keyup", event => {
+        if (event.key === '.') location = location.origin;
+        if (event.key.toLowerCase() === 'b') document.getElementsByClassName('add-to-favorite-control__toggle')[0].click();
+        //document.querySelectorAll('.favorite-control button')[0].click()
+    });
+
+    // 鼠标侧键返回主页
+    document.body.addEventListener("mouseup", event => {
+        console.log(event.button)
+        if (event.button === 3 && event.screenX === 0) {
+            setTimeout(() => { location = location.origin; }, 10);
+        }
+    });
+
+//     document.addEventListener('contextmenu', function(e) {
+//     e.preventDefault();
+//     e.stopPropagation();
+//     e.stopImmediatePropagation();
+//         fetch("http://127.0.0.1:13000"+"?chrome_click_r_up123")
+//     return false;
+// }, {
+//     capture: true
+// });
+
+    function removeExistingIframes() {
+    const iframes = document.querySelectorAll('iframe');
+    iframes.forEach(iframe => {
+        const parent = iframe.parentNode;
+        if (parent) {
+            parent.removeChild(iframe);
+            console.log('已移除一个iframe'+new Date());
+        }
+    });
+}
+
+    // 获取目标元素（如页面的body或某个容器）
+const targetElement = document.documentElement || document.body;
+// 监听滚轮事件
+targetElement.addEventListener('wheel', (e) => {
+  // 获取当前滚动位置（scrollTop为0表示在最顶部）
+  const isAtTop = targetElement.scrollTop === 0;
+  const up=e.deltaY<0;
+  let fullddddd=true;
+  document.querySelectorAll('use').forEach(o=>{if(o.href&&o.href.baseVal.indexOf("fullscreen-on")>0){fullddddd=false}} )
+
+  if (up) {
+   document.querySelectorAll('use').forEach(o=>{if(o.href&&o.href.baseVal.indexOf("fullscreen-on")>0){o.parentNode.parentNode.click()}} )
+  } else {
+   document.querySelectorAll('use').forEach(o=>{if(o.href&&o.href.baseVal.indexOf("fullscreen-off")>0){o.parentNode.parentNode.click()}} )
+  }
+});
+// 事件委托与状态管理
+document.body.addEventListener('mouseover', handleMouseOver);
+document.body.addEventListener('mouseout', handleMouseOut);
+document.body.addEventListener('mousemove', (e) => isMouseMoved = true);
+
+let isMouseMoved = false;
+const hoverTimers = new Map(); // 存储元素的延迟定时器
+const innerMoveTimers = new Map(); // 存储元素内鼠标移动的“静止判断”定时器
+
+// 配置：新增needFullscreenClick变量，true=需要执行全屏点击，false=不需要
+const delayConfig = {
+    'page-button': { delay: 300, isSelf: true, needFullscreenClick: false },
+    'SliderNavigationButton#zN': { delay: 300, isSelf: true, needFullscreenClick: false },
+    'header-logo': { delay: 300, isSelf: true, needFullscreenClick: false }, // 示例：logo需要全屏点击
+    'model-list-item-link': { delay: 700, isSelf: true, needFullscreenClick: true }
+};
+
+// 悬停处理（进入元素时初始化静止监听）
+function handleMouseOver(e) {
+    const { el, cfg } = findTarget(e.target);
+    if (!el || !cfg) return;
+
+    // 清除元素已有的所有定时器（避免重复）
+    if (hoverTimers.has(el)) clearTimeout(hoverTimers.get(el));
+    if (innerMoveTimers.has(el)) clearTimeout(innerMoveTimers.get(el));
+
+    // 监听元素内的鼠标移动：每次移动都重置“静止判断”
+    const onInnerMove = () => {
+        // 鼠标在元素内移动，重置静止计时（100ms内无移动视为静止）
+        clearTimeout(innerMoveTimers.get(el));
+        innerMoveTimers.set(el, setTimeout(() => {
+            // 鼠标静止后，开始执行原延迟点击逻辑
+            if (isMouseMoved) {
+                const timer = setTimeout(() => {
+                    el.click(); // 先执行元素自身点击
+
+                    // 根据配置的needFullscreenClick，判断是否执行全屏点击
+                    if (cfg.needFullscreenClick) {
+                        document.querySelectorAll('use').forEach(o => {
+                            if (o.href && o.href.baseVal.indexOf("fullscreen-on") > 0) {
+                                o.parentNode.parentNode.click();
+                            }
+                        });
+                    }
+
+                    isMouseMoved = false;
+                    hoverTimers.delete(el);
+                }, cfg.delay);
+                hoverTimers.set(el, timer);
+            }
+            innerMoveTimers.delete(el); // 静止计时结束，清理标记
+        }, 100));
+    };
+
+    // 给当前元素绑定“内部移动”监听（仅在元素内生效）
+    el.addEventListener('mousemove', onInnerMove);
+    // 存储监听函数，方便离开时移除（避免内存泄漏）
+    el._innerMoveHandler = onInnerMove;
+
+    // 首次触发时先启动一次静止判断（处理鼠标直接静止在元素上的情况）
+    onInnerMove();
+}
+
+// 离开处理（清理所有定时器和监听）
+function handleMouseOut(e) {
+    const { el } = findTarget(e.target);
+    if (!el) return;
+
+    // 清除延迟点击定时器
+    if (hoverTimers.has(el)) {
+        clearTimeout(hoverTimers.get(el));
+        hoverTimers.delete(el);
+    }
+
+    // 清除静止判断定时器
+    if (innerMoveTimers.has(el)) {
+        clearTimeout(innerMoveTimers.get(el));
+        innerMoveTimers.delete(el);
+    }
+
+    // 移除元素内的鼠标移动监听（避免内存泄漏）
+    if (el._innerMoveHandler) {
+        el.removeEventListener('mousemove', el._innerMoveHandler);
+        delete el._innerMoveHandler;
+    }
+}
+
+// 查找元素或父元素中的目标类
+function findTarget(elem) {
+    let current = elem;
+    let depth = 0;
+    while (current && depth < 5) {
+        for (const [cls, cfg] of Object.entries(delayConfig)) {
+            if (current.classList.contains(cls)) {
+                return { el: current, cfg };
+            }
+        }
+        current = current.parentElement;
+        depth++;
+    }
+    return { el: null, cfg: null };
+}
+
+
+
+})();using System;
 using System.Diagnostics;
 using static keyupMusic2.biu;
 using static keyupMusic2.Common;

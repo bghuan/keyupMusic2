@@ -291,14 +291,14 @@ namespace keyupMusic2
                     case Keys.D2:
                         RestartProcess(cloudmusic, cloudmusicexe);
                         break;
-                    case Keys.D3:
-                        SetResolution(1);
-                        break;
-                    case Keys.D4:
-                        SetResolution(2);
-                        break;
+                    //case Keys.D3:
+                    //    SetResolution(1);
+                    //    break;
+                    //case Keys.D4:
+                    //    SetResolution(2);
+                    //    break;
                     case Keys.D5:
-                        RestartProcess(explorer, cloudmusicexe);
+                        RestartProcess(explorer, explorerexe);
                         break;
 
                     default:

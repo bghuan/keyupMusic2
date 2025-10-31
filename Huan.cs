@@ -22,7 +22,7 @@ namespace keyupMusic2
             if (e.key == Keys.Apps) return true;
 
             if (e.key == Keys.F1 && !isctrl()) return true;
-            if (e.key == Keys.F2 && !ProcessTitle.Contains("tudio") && IsFullScreen()) return true;
+            if (e.key == Keys.F2 && !ProcessTitle.Contains("tudio") && IsFullScreen() && ProcessName != cs2) return true;
             if (e.key == Keys.F3) return true;
             if (e.key == Keys.F9) return true;
             if (keyupMusic2_onlisten) { e.Handled = true; }
@@ -38,7 +38,7 @@ namespace keyupMusic2
             if (is_down(Keys.F1)) if (number_button.Contains(e.key)) return true;
 
             if (ProcessName == Common.VSCode) if (e.key == Keys.Q && isctrl()) return true;
-            if (ProcessName == Common.msedge) if (e.key == Keys.Tab && !is_alt()) return true;
+            //if (ProcessName == Common.msedge) if (e.key == Keys.Tab && !is_alt()) return true;
 
             if (KeyFunc.judge(e)) return true;
             var flag = Chrome.judge_handled(e) || Douyin.judge_handled(e) || WinClass.judge_handled(e) || CoocaaClass.judge_handled(e) || AirKeyboardClass.judge_handled(e);

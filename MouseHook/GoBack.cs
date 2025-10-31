@@ -154,7 +154,7 @@ namespace keyupMusic2
                 else if (is_down(Keys.D5)) press("B;985,969;1483,429;1483,568;1483,696;1483,969;B;D3;");
                 else press("B;985,699;1483,429;1483,568;1483,696;1483,828;1483,969;B;D3;");
             }
-            //if (go) press("Escape;", 100);
+            if (go) press("Escape;", 100);
         }
         private void Douyin(bool go, bool back)
         {

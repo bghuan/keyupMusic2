@@ -169,8 +169,8 @@ namespace keyupMusic2
             //press("500;LWin;1650,1300;", tick);
             log("system_sleep");
 
-            if (!IsDesktopFocused())
-                press([LWin, D]);
+            //if (!IsDesktopFocused())
+            //    press([LWin, D]);
             CloseDesktopWindow();
             //if (GetWindowTitle() == "关闭 Windows")
             press(100, 500, Return);

@@ -34,6 +34,9 @@ namespace keyupMusic2
                 case Keys.Left:
                     click_double_speed(e, num1222);
                     break;
+                case Keys.F1:
+                    mouseback();
+                    break;
             }
         }
         private void click_double_speed(KeyboardMouseHook.KeyEventArgs e, int num1222)

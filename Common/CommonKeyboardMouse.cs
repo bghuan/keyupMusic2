@@ -316,6 +316,11 @@ namespace keyupMusic2
             if (num == Keys.MediaPlayPause) { if (!IsAnyMusicPlayerRunning()) StartNeteaseCloudMusic(); }
             press([num], tick);
         }
+        public static void press(int num, int tick)
+        {
+            mouse_move(num, tick, 100);
+            mouse_click2(100);
+        }
         public static void press_sync(Keys num, int tick)
         {
             TaskRun(() => { press(num); }, tick);

@@ -79,12 +79,10 @@ namespace keyupMusic2
                 else if (e.Y == 0 && e.X > screenWidth)
                     press([LShiftKey, e.data > 0 ? F8 : F7]);
                 else if (e.Y == 0)
-                    press(e.data > 0 ? F8 : F7);
+                    press([LControlKey, e.data > 0 ? F8 : F7]);
                 //else if (is_douyin() && (e.X == 0 || is_down(LButton)))
                 //    press(e.data > 0 ? Left : Right);
-                //else if (IsFullVedio() && !GetPointTitle().Contains("设置"))
-                //    press(e.data > 0 ? Left : Right);
-                else if (IsFullScreen() && e.Y == screenHeight1)
+                else if (IsFullVedio() && !GetPointTitle().Contains("设置"))
                     press(e.data > 0 ? Left : Right);
                 //else if (ProcessName == Common.vlc)
                 //    press(e.data > 0 ? Left : Right);
@@ -96,6 +94,8 @@ namespace keyupMusic2
                     press(e.data > 0 ? Keys.PageUp : Keys.PageDown);
                 else if (is_tran_process == ProcessName && e.X == screenWidth1)
                     SetTransparency(e.data > 0 ? 16 : -16);
+                else if (e.Y == screenHeight1 && IsFullScreen())
+                    press(e.data > 0 ? Left : Right);
             }
             else if (e.Msg == MouseMsg.wheel_h)
                 press(e.data > 0 ? VolumeDown : VolumeUp);
