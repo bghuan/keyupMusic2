@@ -49,6 +49,7 @@ namespace keyupMusic2
         // 优化后的壁纸设置方法（最后触发的请求会使之前的无效）
         public static void SetDesktopWallpaper(string filePath, WallpaperStyle style = WallpaperStyle.Fit, bool force = false)
         {
+            return;
             if (!force)
             {
                 var currentPath = GetWallpaperFromRegistry();

@@ -127,13 +127,13 @@ function bottomLine() {
 }
 
 setBgTransparent(document.documentElement, 1);
-setInterval(()=>{setBgTransparent(document.documentElement, 1)}, 1000)
 
 const style = document.createElement('style');
 style.textContent = `::-webkit-scrollbar { display: none !important; }`;
 document.head.appendChild(style);
 
-document.body.addEventListener(""keyup"", event => { if (event.key === '.') (localStorage.textcolor = localStorage.textcolor == '#f3f3f3' ? '#000' : '#f3f3f3') })
+document.body.addEventListener(""keyup"", event => { if (event.key === '.') {(localStorage.textcolor = localStorage.textcolor == '#f3f3f3' ? '#000' : '#f3f3f3');
+setBgTransparent(document.documentElement, 1);}})
 
 if (location.href.indexOf('qidian') > 0) {
     var asddsadas = () => {
@@ -151,6 +151,8 @@ if (location.href.indexOf('qidian') > 0) {
 if (location.href.indexOf('dingdiange') > 0) {
     apprecom1.style.display = 'none'; apprecom2.style.display = 'none'; document.querySelector('.reader_mark1').style.display = 'none'; document.querySelector('.reader_mark0').style.display = 'none'; box_con.style.border = 'none';
     box_con.children[4].style.display = 'none'
+let replace_str=[[""<br>\n<br>\n"",""<br>\n""],[""()"",""""],[""海城"",""海口""],[""：。："",""""],[/《.*?》/g, """"],[""神只"", ""神祗""],[""无错版本在69书吧读！6=9+书_吧首发本。"", """"]]
+    replace_str.forEach(br => content.innerHTML=content.innerHTML.replaceAll(br[0],br[1]));
     bottomLine()
     var asdddd = (event) => {
         if (Math.ceil(window.pageYOffset) + Math.ceil(window.innerHeight) + 100 >= document.body.scrollHeight) {

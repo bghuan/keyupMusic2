@@ -159,7 +159,8 @@ namespace keyupMusic2
                         //IntPtr hwnd = Native.GetForegroundWindow();
                         //const uint WHITE_COLOR = 0x000000;
                         //SetLayeredWindowAttributes(hwnd, WHITE_COLOR, 255, 0x1);
-                        huan.Invoke(() => {
+                        huan.Invoke(() =>
+                        {
                             Read read = new Read();
                             read.Show();
                             read.Activate();         // 激活窗口
@@ -209,7 +210,8 @@ namespace keyupMusic2
                     //    huan.SetVisibleCore2(!huan.Visible);
                     //    break;
                     case Keys.F4:
-                        huan.Invoke(() => {
+                        huan.Invoke(() =>
+                        {
                             Read read = new Read();
                             read.Show();
                             read.Activate();         // 激活窗口
@@ -296,7 +298,7 @@ namespace keyupMusic2
                     //    break;
                     //case Keys.D4:
                     //    SetResolution(2);
-                    //    break;
+                    //break;
                     case Keys.D5:
                         RestartProcess(explorer, explorerexe);
                         break;
