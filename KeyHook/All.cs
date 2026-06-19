@@ -53,7 +53,9 @@ namespace keyupMusic2
                     quick_prix_image(); break;
 
                 case Keys.OemPeriod:
-                    if (is_down(Keys.RControlKey)) press_raw(Apps); break;
+                    if (is_down(Keys.RControlKey)) { press_raw(Apps); break; }
+                    if (is_down_vir(Keys.RMenu)) { press(MediaStop); Native.LockWorkStation(); break; }
+                    break;
             }
             //if (Position.Y == 0)
             //    switch (e.key)
@@ -203,7 +205,8 @@ namespace keyupMusic2
             }
             else
             {
-                Common.FocusProcess(Common.WeChat);
+                press([Keys.LControlKey, Keys.LMenu, Keys.W]);
+                //Common.FocusProcess(Common.WeChat);
                 Thread.Sleep(10);
                 if (ProcessName == Common.WeChat) return;
                 run_wei();

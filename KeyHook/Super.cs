@@ -65,14 +65,23 @@ namespace keyupMusic2
                         winBinWallpaper.changeImg();
                         break;
                     case Keys.R:
-                        sound_setting();
+                        //sound_setting();
+                        huan.Invoke(() =>
+                        {
+                            Read read = new Read(); 
+                            read.Show();
+                            read.Activate();         // 激活窗口
+                            read.BringToFront();     // 放到最前
+                            read.Focus();            // 设置输入焦点
+                        }); 
                         break;
                     case Keys.T:
 
                         break;
                     case Keys.Y:
-                        Common.cmd($"/c start ms-settings:taskbar");
-                        press("100;978,1042;978,1044;907,1227;2500,32;", 501);
+                        //Common.cmd($"/c start ms-settings:taskbar");
+                        //press("100;978,1042;978,1044;907,1227;2500,32;", 501);
+                        Common.cmd($"/c start ms-settings:bluetooth"); // 打开 → 蓝牙和设备
                         break;
                     case Keys.U:
                         Common.cmd($"/c start ms-settings:personalization");
@@ -159,14 +168,15 @@ namespace keyupMusic2
                         //IntPtr hwnd = Native.GetForegroundWindow();
                         //const uint WHITE_COLOR = 0x000000;
                         //SetLayeredWindowAttributes(hwnd, WHITE_COLOR, 255, 0x1);
-                        huan.Invoke(() =>
-                        {
-                            Read read = new Read();
-                            read.Show();
-                            read.Activate();         // 激活窗口
-                            read.BringToFront();     // 放到最前
-                            read.Focus();            // 设置输入焦点
-                        });
+                        //huan.Invoke(() =>
+                        //{
+                        //    Read read = new Read();
+                        //    read.Show();
+                        //    read.Activate();         // 激活窗口
+                        //    read.BringToFront();     // 放到最前
+                        //    read.Focus();            // 设置输入焦点
+                        //});
+                        press([A,D1,D2,D4,D5,D6,D7,Keys.OemPeriod],100);
                         break;
                     case Keys.C:
                         press_middle_bottom();
@@ -203,21 +213,27 @@ namespace keyupMusic2
                         break;
                     case Keys.F2:
                         //LossScale();
-                        CloseProcess(explorer);
-                        ProcessRun(explorer);
+                        //CloseProcess(explorer);
+                        //ProcessRun(explorer);
+
+                        //ProcessRun("C:\\Windows\\explorer.exe steam://rungameid/730");
+                        press("LWin;1515,1003;");
                         break;
                     //case Keys.F3:
                     //    huan.SetVisibleCore2(!huan.Visible);
                     //    break;
                     case Keys.F4:
-                        huan.Invoke(() =>
-                        {
-                            Read read = new Read();
-                            read.Show();
-                            read.Activate();         // 激活窗口
-                            read.BringToFront();     // 放到最前
-                            read.Focus();            // 设置输入焦点
-                        });
+                        //huan.Invoke(() =>
+                        //{
+                        //    Read read = new Read();啊24567.
+                        //    read.Show();
+                        //    read.Activate();         // 激活窗口
+                        //    read.BringToFront();     // 放到最前
+                        //    read.Focus();            // 设置输入焦点
+                        //});a124567.
+                        //press([A, D1, D2, D4, D5, D6, D7, Keys.OemPeriod], 100);
+                        //S100.KeyPress([A, D1, D2, D4, D5, D6, D7, Keys.OemPeriod]);
+                        Common.cmd($"/c start ms-settings:bluetooth"); // 打开 → 蓝牙和设备
                         break;
                     case Keys.F5:
                         huan.Invoke((Delegate)(() =>
@@ -229,10 +245,11 @@ namespace keyupMusic2
                         }));
                         break;
                     case Keys.F6:
-                        play_sound(Keys.D2);
-                        press(Keys.LWin);
-                        Sleep(180);
-                        mouse_click(1062, 899);
+                        //play_sound(Keys.D2);
+                        //press(Keys.LWin);
+                        //Sleep(180);
+                        //mouse_click(1062, 899);
+                        hideProcessTitle(Common.chrome);
                         //steam://rungameid/730
                         //ProcessRun("steam://rungameid/730");
                         break;
@@ -288,7 +305,7 @@ namespace keyupMusic2
                         break;
 
                     case Keys.D1:
-                        RestartProcess(TwinkleTray, TwinkleTrayexe);
+                        RestartProcess(explorer, explorerexe);
                         break;
                     case Keys.D2:
                         RestartProcess(cloudmusic, cloudmusicexe);
@@ -300,7 +317,10 @@ namespace keyupMusic2
                     //    SetResolution(2);
                     //break;
                     case Keys.D5:
-                        RestartProcess(explorer, explorerexe);
+                        //RestartProcess(TwinkleTray, TwinkleTrayexe);
+                        break;
+                    case Keys.D6:
+                        //TaskRun(() => { press(Keys.F13); }, 1000);
                         break;
 
                     default:

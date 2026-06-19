@@ -34,7 +34,11 @@ namespace keyupMusic2
                 Douyin(go, back);
             else if (ProcessName == msedge)
                 Msedge(go, back);
-            else if (ProcessName == Common.keyupMusic2&&ProcessTitle=="Read")
+            else if (ProcessName == vlc)
+                Vlc(go, back);
+            else if (ProcessName == Common.mhtab)
+                mhtab2(go, back);
+            else if (ProcessName == Common.keyupMusic2 && ProcessTitle == "Read")
                 Msedge(go, back);
             else if (ProcessName == Common.cs2)
                 cs2(go, back);
@@ -51,7 +55,7 @@ namespace keyupMusic2
             else if (IsDesktopFocused())
                 press(go ? Keys.MediaNextTrack : Keys.MediaPreviousTrack);
             //if (!IsDesktopFocused() && list_go_back.Contains(ProcessName))
-            else if (goback.Contains(ProcessName) || ProcessName.Contains(studio) || ProcessTitle.Contains(studio)|| ProcessPath.Contains(studio))
+            else if (goback.Contains(ProcessName) || ProcessName.Contains(studio) || ProcessTitle.Contains(studio) || ProcessPath.Contains(studio))
             {
                 mousegoback(go);
                 return;
@@ -62,6 +66,38 @@ namespace keyupMusic2
             }
             else
                 press(go ? Keys.MediaNextTrack : Keys.MediaPreviousTrack);
+        }
+
+        private void Vlc(bool go, bool back)
+        {
+            if (go)
+            {
+                press(N);
+            }
+            if (back)
+            {
+                press(P);
+            }
+        }
+
+        private void mhtab2(bool go, bool back)
+        {
+            if (go)
+            {
+                press([LControlKey, Keys.Tab]);
+            }
+            if (back)
+            {
+                if (Position.Y == 0)
+                    press([LMenu, K]);
+                else if (Position.X == 0)
+                    //press([Keys.Tab]);
+                    press([Keys.Tab]);
+                else
+                    //press([Keys.Tab]);
+                    press([LMenu, E]);
+                //press([LMenu, Q]);
+            }
         }
 
         private static void steam(bool go)
@@ -122,7 +158,8 @@ namespace keyupMusic2
         private void Msedge(bool go, bool back)
         {
             if (back)
-                if (judge_color(33, 80, Color.FromArgb(183, 183, 183), 3))
+                if (judge_color(20, 60, Color.FromArgb(216, 216, 216), 3))
+                    //if (judge_color(33, 80, Color.FromArgb(183, 183, 183), 3))
                     //if (judge_color(92, 73, Color.FromArgb(0, 0, 0), null, 0))
                     press([Keys.LControlKey, Keys.W]);
                 else if (ProcessTitle.Contains("起点中文网") && !ProcessTitle.Contains("类"))

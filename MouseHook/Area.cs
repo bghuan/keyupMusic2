@@ -65,7 +65,7 @@ namespace keyupMusic2
         public static RECTT line2 = new RECTT(nameof(line2),
                                 new JU(0, gao, cha, gao),
                                 new JU(0, gao - far + 200, cha, gao),
-                                new JU(_fa - 200, gao, cha, gao),
+                                new JU(_fa - 00, gao, cha, gao),
                                 () => { return GetPointName() == explorer; });
         //左
         public static RECTT line3 = new RECTT(nameof(line3),

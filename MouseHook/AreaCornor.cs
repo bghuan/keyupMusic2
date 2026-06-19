@@ -83,6 +83,8 @@ namespace keyupMusic2
         }
         private int _corner4(KeyboardMouseHook.MouseEventArgs e)
         {
+            HideProcess();
+            return 0;
             return 0;
             if (GetPointName() == explorer) press([LWin, D]);
             return e.data;

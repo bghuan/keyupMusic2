@@ -264,12 +264,12 @@ namespace keyupMusic2
         public static void copy_secoed_screen()
         {
             //try { if (!Debugger.IsAttached) bmpScreenshot.Dispose(); } catch (NullReferenceException e) { }
-            play_sound_di();
             Screen secondaryScreen = Screen.AllScreens.FirstOrDefault(scr => !scr.Primary);
             int start_x = screenWidth;
             if (screen2Width < 0)
                 start_x = -1920;
             if (secondaryScreen == null) { return; }
+            play_sound_di();
             Bitmap bmpScreenshot = new Bitmap(1920, 1080, PixelFormat.Format32bppArgb);
             Graphics gfxScreenshot = Graphics.FromImage(bmpScreenshot);
             gfxScreenshot.CopyFromScreen(new Point(start_x, 0), Point.Empty, secondaryScreen.Bounds.Size);
@@ -421,7 +421,7 @@ namespace keyupMusic2
                    windowRect.Right >= screenWidth1 &&
                    windowRect.Bottom >= screenHeight1;
         }
-        public static List<string> FullVedioTitles = new List<string>() { "nhub", "bilibili", "多多自走棋 梦境", "vip:88", "热门视频", "mster", };
+        public static List<string> FullVedioTitles = new List<string>() { "nhub", "bilibili", "多多自走棋 梦境", "vip:88", "热门视频", "mster", "抖音", };
         public static bool IsFullVedio() => (ProcessName == msedge || ProcessName == chrome) && FullVedioTitles.Where(e => ProcessTitle.Contains(e)).Count() > 0 && IsFullScreen() && !judge_color(890, 38, Color.FromArgb(27, 33, 26), 1) && !judge_color(1336, 13, Color.FromArgb(0, 0, 0), 1);
         public static void change_file_last(bool pngg)
         {
@@ -646,8 +646,15 @@ namespace keyupMusic2
                 int newWidth = rect.Right - rect.Left - borderAdjust - 18;
                 int newHeight = rect.Bottom - rect.Top - (captionAdjust + borderAdjust / 2) - 8;
 
+                var top = rect.Top;
+                if (targetWindowTitle == Common.chrome)
+                {
+                    top += 80;
+                    newHeight -= 80;
+                }
+
                 // 更新窗口布局，使修改生效，并调整窗口大小
-                SetWindowPos(targetWindowHandle, IntPtr.Zero, rect.Left, rect.Top, newWidth, newHeight, SWP_FRAMECHANGED | SWP_NOMOVE);
+                SetWindowPos(targetWindowHandle, IntPtr.Zero, rect.Left, top, newWidth, newHeight, SWP_FRAMECHANGED | SWP_NOMOVE);
                 Console2.WriteLine("标题栏和边框已隐藏");
                 return true;
             }
@@ -736,7 +743,7 @@ namespace keyupMusic2
             if (targetWindowTitle == chrome)
             {
                 windowWidth = 1301;
-                windowHeight = 861;
+                windowHeight = 817;
             }
             if (targetWindowTitle == chrome && screenHeight < 1200)
             {
@@ -1427,6 +1434,32 @@ namespace keyupMusic2
                 Console.WriteLine($"设置失败，错误码: {result}");
             }
             return false;
+        }        /// <summary>
+                 /// 判断窗口是否已经置顶
+                 /// </summary>
+        public static bool IsWindowTopMost(IntPtr hWnd)
+        {
+            int exStyle = GetWindowLong(hWnd, GWL_EXSTYLE);
+            return (exStyle & WS_EX_TOPMOST) == WS_EX_TOPMOST;
+        }
+        /// <summary>
+        /// 切换置顶状态（Toggle）
+        /// </summary>
+        public static void ToggleTopMost()
+        {
+            IntPtr hWnd = Native.GetForegroundWindow();
+            if (IsWindowTopMost(hWnd))
+            {
+                // 取消置顶
+                SetWindowPos(hWnd, HWND_NOTOPMOST, 0, 0, 0, 0, TOPMOST_FLAGS);
+                Console.WriteLine("已取消置顶");
+            }
+            else
+            {
+                // 设置置顶
+                SetWindowPos(hWnd, HWND_TOPMOST, 0, 0, 0, 0, TOPMOST_FLAGS);
+                Console.WriteLine("已设置置顶");
+            }
         }
 
     }

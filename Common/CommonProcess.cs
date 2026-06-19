@@ -32,6 +32,7 @@ namespace keyupMusic2
         public const string Windblown = "Windblown";
         public const string ACPhoenix = "ACPhoenix";
         public const string Dragonest = "DragonestGameLauncher";
+        public const string mhtab = "mhtab";
         public const string devenv = "devenv";
         public const string devenvexe = "C:\\Program Files\\Microsoft Visual Studio\\2022\\Community\\Common7\\IDE\\devenv.exe";
         public const string WeChat = "Weixin"; //"WeChat";
@@ -68,6 +69,7 @@ namespace keyupMusic2
         public const string WeChatAppEx = "WeChatAppEx";
         public const string cs2 = "cs2";
         public const string PowerToysCropAndLock = "PowerToys.CropAndLock";
+        public const string spacedeskServiceTray = "spacedeskServiceTray";
         public const string Broforce_beta = "Broforce_beta";
         public const string oriwotw = "oriwotw";
         public const string LosslessScaling = "LosslessScaling";
@@ -553,6 +555,7 @@ namespace keyupMusic2
         }
         public static void CloseProcess(string procName)
         {
+            if (ProcessName == Common.mhtab) return;
             Process[] objProcesses = Process.GetProcessesByName(procName);
             if (objProcesses.Length > 0)
             {
@@ -563,6 +566,7 @@ namespace keyupMusic2
         }
         public static void CloseProcess2(string procName)
         {
+            if (ProcessName == Common.mhtab) return;
             Process[] objProcesses = Process.GetProcessesByName(procName);
             if (objProcesses.Length > 0)
             {
@@ -572,12 +576,14 @@ namespace keyupMusic2
         }
         public static void RestartProcess(string procName, string exe)
         {
+            if (ProcessName == Common.mhtab) return;
             CloseProcess(procName);
             ProcessRun(exe);
         }
 
         public static void CloseProcessFoce(string procName)
         {
+            if (ProcessName == Common.mhtab) return;
             Process[] objProcesses = Process.GetProcessesByName(procName);
             if (objProcesses.Length > 0)
             {
@@ -589,6 +595,7 @@ namespace keyupMusic2
         }
         public static void CloseProcess()
         {
+            if (ProcessName == Common.mhtab) return;
             IntPtr hwnd = Native.GetForegroundWindow();
             PostMessage(hwnd, (uint)WM_CLOSE, IntPtr.Zero, IntPtr.Zero);
         }
@@ -638,6 +645,7 @@ namespace keyupMusic2
             //SetWindowTitle(Common.chrome, "");
             SetWindowTitle2(Common.chrome);
             SetWindowTitle(Common.PowerToysCropAndLock, "");
+            //SetWindowTitle(Common.spacedeskServiceTray, "");
             //SetWindowTitle(Common.wemeetapp, "");
         }
         public static bool IsDesktopFocused()

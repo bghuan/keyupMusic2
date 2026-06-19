@@ -19,6 +19,8 @@ namespace keyupMusic2
                 PowerToysCropAndLock(e);
             else if (ProcessName == Common.ShapeofDreams)
                 S_hapeofDreams(e);
+            else if (ProcessName == Common.mhtab)
+                mhtab(e);
             else if (ProcessName == Common.chrome)
                 Chrome(e);
             else if (ProcessName == Common.cs2)
@@ -49,6 +51,11 @@ namespace keyupMusic2
             if (e.Msg != MouseMsg.move)
                 if (IsDesktopFocused())
                     change_image(e);
+        }
+
+        private void mhtab(KeyboardMouseHook.MouseEventArgs e)
+        {
+            
         }
 
         private void S_hapeofDreams(KeyboardMouseHook.MouseEventArgs e)

@@ -151,7 +151,7 @@ if (location.href.indexOf('qidian') > 0) {
 if (location.href.indexOf('dingdiange') > 0) {
     apprecom1.style.display = 'none'; apprecom2.style.display = 'none'; document.querySelector('.reader_mark1').style.display = 'none'; document.querySelector('.reader_mark0').style.display = 'none'; box_con.style.border = 'none';
     box_con.children[4].style.display = 'none'
-let replace_str=[[""<br>\n<br>\n"",""<br>\n""],[""()"",""""],[""海城"",""海口""],[""：。："",""""],[/《.*?》/g, """"],[""神只"", ""神祗""],[""无错版本在69书吧读！6=9+书_吧首发本。"", """"]]
+    let replace_str=[[""<br>\n<br>\n"",""<br>\n""],[/《.*?》/g, """"],[""()"",""""],[""海城"",""海口""],[""：。："",""""],[""无一错一首一发一内一容一在一一看！"",""""],[""在一一看无一错版本！"",""""],[""本作品由整理上传~~"", """"],[""于生"", ""于生生""],[""神只"", ""神祗""],[""无错版本在69书吧读！6=9+书_吧首发本。"", """"]]
     replace_str.forEach(br => content.innerHTML=content.innerHTML.replaceAll(br[0],br[1]));
     bottomLine()
     var asdddd = (event) => {

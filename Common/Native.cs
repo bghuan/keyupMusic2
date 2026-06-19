@@ -236,7 +236,11 @@ namespace keyupMusic2
         public static readonly IntPtr HWND_TOPMOST = new IntPtr(-1);    // 置顶
         public static readonly IntPtr HWND_NOTOPMOST = new IntPtr(-2);  // 取消置顶
         public const uint SWP_SHOWWINDOW = 0x0040;  // 确保窗口可见
-        public const int WS_EX_TRANSPARENT = 0x20;
+        public const int WS_EX_TRANSPARENT = 0x20;        // 窗口位置参数常量
+        public const int WS_EX_TOPMOST = 0x0008;    // 置顶样式的位掩码
+        public const uint TOPMOST_FLAGS = SWP_NOMOVE | SWP_NOSIZE; 
+        [DllImport("user32.dll")]
+        public static extern bool ReleaseCapture();
 
     }
 }

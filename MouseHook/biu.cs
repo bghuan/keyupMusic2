@@ -37,7 +37,9 @@ namespace keyupMusic2
         {
             //if (e.Msg == MouseMsg.move) return;
             //need point hwnd and process name
-            if (judge_handled(e)) { e.Handled = true; VirKeyState(e.Msg); }
+            var handleddd = judge_handled(e);
+            if (handleddd) { e.Handled = true; VirKeyState(e.Msg); }
+            if (!handleddd && !huan.Focused) Native.ReleaseCapture();
 
             Task.Run(() =>
             {
@@ -75,11 +77,16 @@ namespace keyupMusic2
             else if (e.Msg == MouseMsg.wheel)
             {
                 if (e.Y == 0 && e.X == 0)
-                    press([LMenu, e.data > 0 ? F8 : F7]);
+                    //press([LMenu, e.data > 0 ? F8 : F7]);
+                    press([LControlKey, e.data > 0 ?Keys.Oemplus : OemMinus]);
+                //else if (is_down_vir(LWin))
+                //    press([LControlKey, e.data > 0 ? Left : Right]);
                 else if (e.Y == 0 && e.X > screenWidth)
                     press([LShiftKey, e.data > 0 ? F8 : F7]);
-                else if (e.Y == 0)
-                    press([LControlKey, e.data > 0 ? F8 : F7]);
+                else if (e.X == 0)
+                    press(e.data > 0 ? VolumeUp : VolumeDown);
+                //else if (e.Y == 0)
+                //    press([LControlKey, e.data > 0 ? F8 : F7]);
                 //else if (is_douyin() && (e.X == 0 || is_down(LButton)))
                 //    press(e.data > 0 ? Left : Right);
                 else if (IsFullVedio() && !GetPointTitle().Contains("设置"))

@@ -23,20 +23,21 @@ namespace keyupMusic2
             timer8000ms.Elapsed += (s, e) => Every8000ms();
             timer8000ms.Start();
 
-            timer60000ms.Elapsed += (s, e) => Every60000msHandler();
-            timer60000ms.Start();
+            //timer60000ms.Elapsed += (s, e) => Every60000msHandler();
+            //timer60000ms.Start();
         }
 
         private void Every1000ms()
         {
             if (ProcessName == ShapeofDreams)
             {
-                if (judge_color(1363, 788, Color.FromArgb(254, 254, 254), 1) && judge_color(1383, 806, Color.FromArgb(20, 27, 32), 52))
-                { 
-                    press(1232, 786);
-                    mouse_move(2225, 827);
-                }
-                else if (judge_color(1363, 742, Color.FromArgb(254, 254, 254), 1) && judge_color(1414, 742, Color.FromArgb(13, 22, 28), 1))
+                //if (judge_color(1363, 788, Color.FromArgb(254, 254, 254), 1) && judge_color(1383, 806, Color.FromArgb(20, 27, 32), 52))
+                //{ 
+                //    press(1232, 786);
+                //    mouse_move(2225, 827);
+                //}
+                //else
+                if (judge_color(1363, 742, Color.FromArgb(254, 254, 254), 1) && judge_color(1414, 742, Color.FromArgb(13, 22, 28), 1))
                 {
                     press(1234, 748);
                     mouse_move(2225, 827);

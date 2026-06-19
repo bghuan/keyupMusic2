@@ -3,6 +3,7 @@ using Newtonsoft.Json.Linq;
 using System.Collections.Concurrent;
 using System.Diagnostics;
 using System.Drawing.Imaging;
+using System.Reflection.Metadata;
 using System.Windows.Forms;
 using static keyupMusic2.Common;
 using static keyupMusic2.KeyboardMouseHook;
@@ -13,6 +14,7 @@ namespace keyupMusic2
 {
     public class KeyFunc2
     {
+        bool downWin;
         public void init()
         {
             new KeyFunc(Windblown, Keys.W, Keys.S);
@@ -33,26 +35,46 @@ namespace keyupMusic2
                 else
                     press(MediaPlayPause);
             })
-            { longPressAction = () => { down_press(Keys.RMenu); }, type = KeyType.Up };
+            { longPressAction = () => { down_press(Keys.RMenu); } };
+
+
+            //new KeyFunc(Keys.LWin, () =>
+            //{
+            //    if (downWin)
+            //    {
+            //        up_press(LControlKey);
+            //        downWin = false;
+            //    }
+            //    else if (Position.X == 0 && Position.Y == 0)
+            //    {     
+            //        down_press(LControlKey); downWin = true;
+            //    }
+            //})
+            //{ longPressAction = () => { }, handled = true, type = KeyType.Yo };
+
+            //new KeyFunc(Keys.V, () =>
+            //{
+            //    if (downWin && is_down_vir(A)) up_press(A);
+            //    if (Position.X == 0 && Position.Y == 0)
+            //    {
+            //        down_press(A); downWin = true;
+            //    }
+            //})
+            //{ longPressAction = () => { }, handled = true };
 
             new KeyFunc(Keys.LMenu, () =>
             {
-                if (is_lbutton()) return;
+                //if (ProcessName == WeChat) { }                                       
+                //if (is_lbutton()) return;
                 if (isctrl()) return;
-                if (is_shift()) return;
+                if (is_shift()) return;     
                 if (is_down(LWin)) return;
-                if (Position.Y == 0) return;
-                if (Position.X == 0) return;
-                if (Position.X == screenWidth1 && Position.Y != screenHeight1) return;
-                //if (ExistProcess(cs2)) 
-                //var asd = DateTime.Now;
+                //if (Position.Y == 0) return;
+                //if (Position.X == 0) return;
+                //if (Position.X == screenWidth1 && Position.Y != screenHeight1) return;
                 //if (start_catch_time.AddSeconds(1) < DateTime.Now)
-                //        press(Tab, 0);
-                //TaskRun(() =>
-                //{
-                //    if (start_catch_time.AddSeconds(1) < asd)
-                press(Tab, 0);
-                //}, 10);
+                //        press(Tab, 0);                            
+                press(Tab, 10);
             })
             { longPressAction = () => { }, handled = false };
 
@@ -61,9 +83,23 @@ namespace keyupMusic2
 
             new KeyFunc(Keys.F1, SuperClass.get_point_color) { handledNot = isctrl };
             new KeyFunc(Keys.F2, AllClass.quick_scale) { type = KeyType.Up, handled = false };
-            new KeyFunc(Keys.F10, () => { HideProcess(isctrl()); }) { type = KeyType.Up };
+            //new KeyFunc(Keys.F10, () => { HideProcess(isctrl()); }) { type = KeyType.Up };
+            //new KeyFunc(Keys.F10, () => { SetTransparency(); }) { type = KeyType.Up };
+            new KeyFunc(Keys.F10, () => { ToggleTopMost(); }) { type = KeyType.Up };
             new KeyFunc(Keys.F11, AllClass.quick_visiualstudio) { type = KeyType.Up };
+
+            //new KeyFunc(Keys.Up, () => { /*if (is_tran_process == ProcessName)*/ { SetTransparency(2); } }) { type = KeyType.Down, handled = false, repeat = true, resume = true };
+            //new KeyFunc(Keys.Down, () => { /*if (is_tran_process == ProcessName)*/ { SetTransparency(-8); } }) { type = KeyType.Down, handled = false, repeat = true, resume = true };
+            //new KeyFunc(Keys.CapsLock, () =>
+            //{
+            //    //if (capslock_vloumn)
+            //    //{
+            //    //    capslock_vloumn = false;
+            //    //    //press(CapsLock);
             new KeyFunc(Keys.F12, AllClass.quick_wechat_or_notify) { type = KeyType.Up };
+            //    //}                                           
+            //})
+            //{ type = KeyType.Up, handled = false };
             //new KeyFunc(Keys.D5, () => { press(MediaPlayPause); }, msedge);
             //{
             //    var processName = SearchHost;
@@ -99,6 +135,8 @@ namespace keyupMusic2
         public string processTitle = "";
         public Action action;
         public bool hold;
+        public bool repeat;
+        public bool resume;
         public Action longPressAction;
         public bool handled = true;
         public Func<bool> handledNot;
@@ -123,6 +161,23 @@ namespace keyupMusic2
             All.Add(this);
             AllKeys.Add(key);
         }
+        public KeyFunc(Func<bool> aaa, Keys key, Keys replaceKey)
+        {
+            //this.processName = processName;
+            if (aaa())
+            {
+                this.key = key;
+                this.replaceKey = replaceKey;
+            }
+            else
+            {
+                this.key = key;
+                this.replaceKey = key;
+            }
+            All.Add(this);
+            AllKeys.Add(key);
+        }
+        public bool aaa() { return true; }
         internal static bool LongPressFlag(Keys keys)
         {
             for (int i = 0; i < KeyFunc.All.Count; i++)
@@ -151,12 +206,14 @@ namespace keyupMusic2
             }
             if (action != null)
             {
-                if (e.Type == KeyType.Down && hold) return false;
+                if (e.Type == KeyType.Down && hold && !repeat) return false;
                 hold = e.Type == KeyType.Down;
                 if (e.Type == KeyType.Up && is_down(e.key)) up_press(e.key);
                 if (type != e.Type) return false;
-                if (LongPressKey == e.key && longPressRelease) return false;
+                //if (type != e.Type && e.Type != KeyType.Yo) return false;
+                if (LongPressKey == e.key && (longPressRelease && !repeat)) return false;
                 action();
+                if (resume) return false;
                 return true;
             }
 
@@ -181,6 +238,10 @@ namespace keyupMusic2
                     return true;
                 }
                 if (keyfunc[i].handledNot == null || !keyfunc[i].handledNot())
+                {
+                    return true;
+                }
+                if (keyfunc[i].action != null)
                 {
                     return true;
                 }

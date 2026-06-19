@@ -4,6 +4,7 @@ using System;
 using System.Diagnostics;
 using static keyupMusic2.Common;
 using static keyupMusic2.KeyboardMouseHook;
+using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace keyupMusic2
 {
@@ -49,8 +50,11 @@ namespace keyupMusic2
         {
             if (e.key != F1) FreshProcessName2();
             if (lock_err) play_sound(D8);
+            if (ProcessName == Common.mhtab) return;
             //if (ProcessName == SearchHost) return;
-            if (judge_handled(e)) { e.Handled = true; VirKeyState(e); }
+            var handleddd = judge_handled(e);
+            if (handleddd) { e.Handled = true; VirKeyState(e); }
+            if (!handleddd) Native.ReleaseCapture();
             var ha = deal_handilngkey(e.key, e.Type == KeyType.Down);
 
             if (!ha && (!is_steam_game() || (e.key == Tab && e.Type == KeyType.Up)))
@@ -81,6 +85,7 @@ namespace keyupMusic2
                 // job f3 f9 to var special key and customs
                 if (e.key == Keys.F3 || e.key == Keys.F9)
                 {
+                    if (e.key == F3 && isctrl()) { start_catch(start_check_str); return; }
                     if (e.key == F9) play_sound_di();
                     super_listen();
                     form_move(); return;
@@ -98,9 +103,9 @@ namespace keyupMusic2
 
                 Music.HookEvent(e);
 
-                if (GetPointName() == msedge && ProcessName != msedge)
-                    if (e.key == Keys.PageDown || e.key == Space) mousewhell(-4);
-                    else if (e.key == Keys.PageUp || e.key == Keys.Up) mousewhell(4);
+                //if (GetPointName() == msedge && ProcessName != msedge)
+                //    if (e.key == Keys.PageDown || e.key == Space) mousewhell(-4);
+                //    else if (e.key == Keys.PageUp || e.key == Keys.Up) mousewhell(4);
             });
         }
         public void start_catch(string msg)
@@ -121,7 +126,8 @@ namespace keyupMusic2
                 }
                 else if (Position.X == screenWidth1 && Position.Y == screenHeight1)
                 {
-                    system_sleep(true);
+                    //system_sleep(true);
+                    huan._mouseKbdHook.ChangeMouseHooks();
                 }
                 else if (Position.X == 0)
                 {

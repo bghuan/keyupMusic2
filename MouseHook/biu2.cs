@@ -71,27 +71,29 @@ namespace keyupMusic2
             {
                 if (ScreenPrimary.Width < 3000 && e.Y == screenHeight1 && !IsFullScreen())
                 {
-                    Task.Run(() =>
-                    {
-                        Sleep(150);
-                        mouse_move_to(12, 1328 - screenHeight);
-                        DelayRun(
-                            () =>
-                            {
-                                //IntPtr hwnd = Native.WindowFromPoint(Position);
-                                ////if (hwnd == last_hwnd) return;
-                                ////string name = GetWindowName(hwnd);
-                                //StringBuilder className = new StringBuilder(256);
-                                //GetClassName(hwnd, className, className.Capacity);
-                                //string classNameStr = className.ToString();
-                                string asde = processWrapper?.classname;
-                                //var asde = GetWindowTitle();
-                                //log(asde);
-                                return asde == SIBJumpView;
-                            },
-                            () => mouse_click(),
-                            400, 10);
-                    });
+                    if (ProcessName == Common.mhtab) return;
+                    CloseProcess();
+                    //Task.Run(() =>
+                    //{
+                    //    Sleep(150);
+                    //    mouse_move_to(12, 1328 - screenHeight);
+                    //    DelayRun(
+                    //        () =>
+                    //        {
+                    //            //IntPtr hwnd = Native.WindowFromPoint(Position);
+                    //            ////if (hwnd == last_hwnd) return;
+                    //            ////string name = GetWindowName(hwnd);
+                    //            //StringBuilder className = new StringBuilder(256);
+                    //            //GetClassName(hwnd, className, className.Capacity);
+                    //            //string classNameStr = className.ToString();
+                    //            string asde = processWrapper?.classname;
+                    //            //var asde = GetWindowTitle();
+                    //            //log(asde);
+                    //            return asde == SIBJumpView;
+                    //        },
+                    //        () => mouse_click(),
+                    //        400, 10);
+                    //});
                 }
             }
         }

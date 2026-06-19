@@ -9,6 +9,7 @@ namespace keyupMusic2
     {
         private int _line2(KeyboardMouseHook.MouseEventArgs e)
         {
+            if (ProcessName == Common.mhtab) return 0;
             if (ProcessName == Common.chrome)
             {
                 if (is_douyin()) return 0;
@@ -35,6 +36,7 @@ namespace keyupMusic2
 
         private int _line3(KeyboardMouseHook.MouseEventArgs e)
         {
+            if (ProcessName == Common.mhtab) return 0;
             if (is_douyin())
                 return 0;
             else if (ProcessName == Common.chrome)

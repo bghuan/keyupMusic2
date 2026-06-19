@@ -191,7 +191,7 @@ namespace keyupMusic2
 
             TaskRun(() =>
             {
-                form_move();
+                //form_move();
                 FreshProcessName2();
             }, 100);
 

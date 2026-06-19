@@ -192,7 +192,7 @@ namespace keyupMusic2
 
     public enum KeyType
     {
-        Down, Up
+        Down, Up/*, Yo*/
     }
 
     [StructLayout(LayoutKind.Sequential)]
