@@ -23,9 +23,6 @@ namespace keyupMusic4
         internal WinClass Win;
         public OpencvReceive Opencv;
         public LongPressClass LongPress;
-        //bool is_init_show = !(Position.Y == 0);
-        //bool is_mouse_hook = !(Position.Y == 1439);
-        //bool is_mouse_hook = !is_shift();
         public static bool keyupMusic4_onlisten = false;
         DateTime super_listen_time = new DateTime();
         static int super_listen_tick = 144 * 14;
@@ -46,7 +43,6 @@ namespace keyupMusic4
 
             try_restart_in_admin();
             release_all_key();
-            //Rawinput.RegisterInputDevices(this.Handle);
             startListen();
 
             ACPhoenix = new ACPhoenixClass();
@@ -134,8 +130,6 @@ namespace keyupMusic4
             base.SetVisibleCore(value);
             key_sound = value;
             ConfigValue(ConfigFormShow, value ? "1" : "0");
-            //if (!value)
-            //    Task.Run(() => { Sleep(200); player.Stop(); });
         }
         public void SetVisibleCore2(bool value)
         {
@@ -147,8 +141,6 @@ namespace keyupMusic4
         private void label1_Click(object sender, EventArgs e)
         {
             // 创建并显示WebView2窗口
-            //MoonTime webViewWindow = new MoonTime();
-            //webViewWindow.Show();
         }
 
         private void Form1_Load(object sender, EventArgs e)
@@ -161,12 +153,7 @@ namespace keyupMusic4
                     if (process.Id != currentProcessId && IsAdministrator())
                         process.Kill();
             }
-            //is_init_show = Debugger.IsAttached ? !is_init_show : is_init_show;
-            //Location = new Point(Screen.PrimaryScreen.Bounds.Width - 310, 100);
-            //Location = new Point(2255, 37);
 
-            //startPoint = new Point(Location.X - 252, Location.Y);
-            //endPoint = Location;
             SystemEvents.SessionSwitch += SystemEvents_SessionSwitch;
 
             after_load();
@@ -193,12 +180,10 @@ namespace keyupMusic4
 
             TaskRun(() =>
             {
-                //form_move();
                 FreshProcessName2();
             }, 100);
 
             if (ConfigValue(ConfigFormShow) == "0")
-                //SetVisibleCore(false);
                 TaskRun(() => { Invoke(() => SetVisibleCore(false)); }, 110);
 
             string location = Common.ConfigValue(Common.ConfigLocation);
@@ -210,50 +195,7 @@ namespace keyupMusic4
                 Native.AllocConsole();
         }
         public static Dictionary<int, int> mmmm = new Dictionary<int, int>();
-        //protected override void WndProc(ref Message m)
-        //{
-        //    if (!mmmm.ContainsKey(m.Msg))
-        //        mmmm[m.Msg] = 0;
-        //    else
-        //        mmmm[m.Msg]++;
-        //    var lParam = m.LParam;
-        //    if (m.Msg == WM_INPUT)
-        //    {
-        //        Task.Run(() => ProcessRawInputAsync(lParam));
-        //        return;
-        //    }
-        //    base.WndProc(ref m);
-        //}
-        //private async Task ProcessRawInputAsync(IntPtr lParam)
-        //{
         //    try
-        //    {
-        //        var e = Rawinput.ProcessRawInput2(lParam);
-        //        if (e == null)
-        //            return;
-        //        Invoke((Delegate)(() => Console2.WriteLine(e.dwExtraInfo2)));
-        //        if ((e.key != 0 && e.key != VolumeDown && e.key != VolumeUp && e.key != MediaPlayPause))
-        //            Common.DeviceName = e.device;
-        //        else if (e.key == 0)
-        //            Common.DeviceName2 = e.device;
-        //        if (ProcessName == Common.AppName && e.key != 0)
-        //            await Task.Run(() => KeyBoardHookProc(e));
 
-        //        //if (e.key == Menu)
-        //        //{
-        //        //    var ha = handling_keys2.ContainsKey(e.key);
-        //        //    if (!ha && e.key == Menu && e.Type == Downn && e.device == acer)
-        //        //    {
-        //        //        press(Tab);
-        //        //    }
-        //        //    if (e.Type == Downn) { if (!handling_keys2.ContainsKey(e.key)) handling_keys2[e.key] = DateTime.Now; }
-        //        //    else handling_keys2.TryRemove(e.key, out _);
-        //        //}
-        //    }
-        //    catch (Exception ex)
-        //    {
-        //        Console2.WriteLine($"Error processing RawInput: {ex.Message}");
-        //    }
-        //}
     }
 }

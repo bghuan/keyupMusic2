@@ -5,7 +5,6 @@ namespace keyupMusic4
 {
     public class DouyinClass : Default
     {
-        bool signle = true;
         public static Keys[] judge_handled_key = { Keys.X, Keys.H, };
         int num;
         int num1222 = 1;
@@ -24,7 +23,6 @@ namespace keyupMusic4
             if (not_in_class) return;
             if (is_down(Keys.LWin)) return;
             if (e.Handled && e.key == Keys.PageDown) return;
-            //if (!handling) return;
             handling_keys = e.key;
             switch (e.key)
             {
@@ -56,9 +54,6 @@ namespace keyupMusic4
             if (num1222 == 2) num = 5;
             else if (num1222 == 3) num = 6;
             else num = 1;
-            //if (judge_color(2469, 646, Color.FromArgb(254, 44, 85)) 
-            //    || judge_color(1996, 1400, Color.FromArgb(254, 21, 89))
-            //    || judge_color(1996, 1400, Color.FromArgb(117, 46, 66)))
             int x = 2345;
             x -= 50;
             x -= 50;

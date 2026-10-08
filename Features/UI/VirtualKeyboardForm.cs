@@ -10,7 +10,6 @@ namespace keyupMusic4
         private WebView2 webView;
         private string url = "http://localhost/fantasy/moon/keyboardlight.html";
         private string url2 = "C:\\Users\\bu\\Documents\\fantasy\\fantasy\\moon\\keyboardlight.html";
-        private NotifyIcon trayIcon;
 
         public VirtualKeyboardForm()
         {
@@ -52,7 +51,6 @@ namespace keyupMusic4
 
             // 先加载本地文件
             webView.CoreWebView2.Navigate(url2);
-            //webView.CoreWebView2.OpenDevToolsWindow();
             webView.KeyDown += (s, e) =>
             {
                 if (e.KeyCode == Keys.F3 || e.KeyCode == Keys.F9)

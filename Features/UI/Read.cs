@@ -50,13 +50,11 @@ namespace keyupMusic4.fantasy
                 if (e.KeyCode == Keys.F2)
                 {
                     myZoom = 1.75;
-                    //Common.LossScale();
                     e.Handled = true; // 阻止继续传递
                 }
                 if (e.KeyCode == Keys.F1)
                 {
                     myZoom = 1.25;
-                    //TopMost = !TopMost;
                     e.Handled = true; // 阻止继续传递
                 }
                 if (e.KeyCode == Keys.F11)
@@ -65,8 +63,6 @@ namespace keyupMusic4.fantasy
                     {
                         FormBorderStyle = FormBorderStyle.None;
                         TopMost = true;
-                        //TransparencyKey = Color.Fuchsia;
-                        //BackColor = Color.Fuchsia;
                         WindowState = FormWindowState.Normal;
                         Bounds = Screen.FromControl(this).Bounds;
                         textBox1.Hide();
@@ -75,8 +71,6 @@ namespace keyupMusic4.fantasy
                     {
                         FormBorderStyle = FormBorderStyle.Sizable;
                         TopMost = false;
-                        //TransparencyKey = Color.Red;
-                        //BackColor = Color.Red;
                         WindowState = FormWindowState.Normal;
                         Size = new Size(2000, 1200); // 恢复默认大小
                         StartPosition = FormStartPosition.WindowsDefaultBounds;
@@ -89,7 +83,6 @@ namespace keyupMusic4.fantasy
 
             webView21.CoreWebView2.NavigationStarting += (s, e) =>
             {
-                //webView21.Visible = false; // 跳转时先隐藏
             };
             webView21.CoreWebView2.NavigationCompleted += async (s, e) =>
             {
@@ -97,7 +90,6 @@ namespace keyupMusic4.fantasy
                     webView21.ZoomFactor = 1.25;
                 else
                     webView21.ZoomFactor = myZoom;
-                //webView21.Visible = true;      // 再显示，避免缩放跳变
                 string currentUrl = webView21.CoreWebView2.Source;
                 Common.ConfigValue("aaa", currentUrl);
                 string aaaa = @"

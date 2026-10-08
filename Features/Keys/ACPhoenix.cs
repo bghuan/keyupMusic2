@@ -13,7 +13,6 @@ namespace keyupMusic4
             if (ProcessName != ACPhoenix) return;
             string nothing = "1834.1103";
             string nothing2 = screenWidth2 + "." + screenHeight2;
-            string nothing3 = "1280.634";
             string nothing4 = "1284.640";
             handling_keys = e.key;
             isMouseStopped = true;
@@ -21,7 +20,6 @@ namespace keyupMusic4
             switch (e.key)
             {
                 case Keys.Space:
-                    //if (Position.Y == 0) { press(Keys.MediaNextTrack); break; }
                     if (try_press(Color.FromArgb(255, 162, 16))) break;
                     if (try_press(Color.FromArgb(32, 104, 234))) break;
                     if (try_press(Color.FromArgb(220, 163, 51))) break;
@@ -72,8 +70,6 @@ namespace keyupMusic4
                     if (try_press(138, 1149, Color.FromArgb(222, 35, 10), () => { press("200,710", 101); })) break;
                     break;
                 case Keys.Oem7:
-                    //if (!judge_color(1353, 1407, Color.FromArgb(255, 162, 16), () => { })) break;
-                    //SS(100).KeyPress(new Keys[] { Keys.LControlKey, Keys.A }, "谢谢老板");
                     SS(100).KeyPress("谢谢老板");
                     break;
                 case Keys.Z:
@@ -84,7 +80,6 @@ namespace keyupMusic4
                     if (!is_ctrl()) break;
                     press("2473,50;2472,50;1115,324;", 100);
                     press("_;272.700;272.600;272.400;272.330;100;-;272,330", 100);
-                    //Ssss.MouseWhell(-120 * 10);
                     break;
                 case Keys.X:
                     if (judge_color(2141, 214, Color.FromArgb(215, 214, 216), 10)) { press(Keys.E); break; }
@@ -120,12 +115,6 @@ namespace keyupMusic4
                         break;
                     }//装备重铸
                     break;
-                //case Keys.F2:
-                //    mouse_click();
-                //    press("1525,1072;", 0);
-                //    //if (try_press(Color.FromArgb(220, 163, 51))) break;
-                //    //if (try_press(1447, 1068, Color.FromArgb(245, 194, 55), () => { })) break;
-                //    break;
                 case Keys.F4:
                     if (is_alt()) break;
                     if (ProcessName != keyupMusic4.Common.ACPhoenix) { break; }
@@ -135,30 +124,13 @@ namespace keyupMusic4
                     press("2450,73;2107,229;1302,253;2355,237;2408,1000;", 201);
                     break;
                 case Keys.F6:
-                    //(2381, 805, Color.FromArgb(60, 68, 82)
                     press("2494,68;2135,805;1087,235;56,67;", 501);
                     break;
-                //case Keys.Home:
                 case Keys.PageUp:
-                    //if (judge_color(2098, 188, Color.FromArgb(109, 189, 205)))
                     {
-                        //(1555, 1150, Color.FromArgb(250, 198, 131)(2074, 386, Color.FromArgb(246, 250, 253)(2219, 231, Color.FromArgb(201, 202, 201)
                         press("2094, 187;2219, 231;2074, 386;1555, 1150", 200);
                     }
                     break;
-                //case Keys.PageDown:
-                //    var altTabProcess = AltTabProcess();
-                //    switch (altTabProcess)
-                //    {
-                //        case msedge:
-                //            press(Keys.PageDown, 100);
-                //            break;
-                //        case QyClient:
-                //            press(Keys.Space, 100);
-                //            break;
-                //    }
-                //    altab();
-                //    break;
                 case Keys.A:
                     if (is_ctrl()) { press(Keys.A); press(Keys.A); press(Keys.A); break; }
                     break;
@@ -183,24 +155,9 @@ namespace keyupMusic4
             else if (e.Msg == MouseMsg.click_r)
             {
                 if (ProcessName != Common.ACPhoenix) return;
-                //if (ACPhoenix_mouse_down == false) mouse_down();
-                //else mouse_up();
-                //ACPhoenix_mouse_down = !ACPhoenix_mouse_down;
                 mouse_click();
                 press("100;1525,1072;100;1300,930;", 0);
             }
         }
-        //if (Common.ACPhoenix_mouse_hook && ProcessName == Common.ACPhoenix && (_mouseKbdHook == null || !_mouseKbdHook.is_install))
-        //{
-        //    _mouseKbdHook = new MouseKeyboardHook();
-        //    _mouseKbdHook.MouseHookEvent += aCPhoenix.MouseHookProc;
-        //    _mouseKbdHook.Install();
-        //}
-        //else if (_mouseKbdHook != null && _mouseKbdHook.is_install && ProcessName != Common.ACPhoenix)
-        //{
-        //    _mouseKbdHook.Uninstall();
-        //    _mouseKbdHook.Dispose();
-        //    Common.ACPhoenix_mouse_hook = false;
-        //}
     }
 }

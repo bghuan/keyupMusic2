@@ -63,7 +63,6 @@ namespace keyupMusic4
                    windowRect.Right >= screen2Width1 &&
                    windowRect.Bottom >= screen2Height1;
             }
-            //Thread.Sleep(1000); 
             // Check if the window covers the entire screen  
             return windowRect.Left == 0 &&
                    windowRect.Top == 0 &&
@@ -82,20 +81,17 @@ namespace keyupMusic4
                 if (GetPointName() != chrome) return;
                 press(Keys.F11);
                 CenterWindowOnScreen(chrome, true);
-                //FocusProcess2(PowerToysCropAndLock);
                 altabtab();
                 if (ExistProcess(cs2)) { Sleep(10); mouse_click(); }
             }
             else
             {
                 //放大
-                //HideProcess(PowerToysCropAndLock);
                 if (ProcessName == cs2) point = PositionMiddle;
                 var pp = new Point(point.X - 450, point.Y - 450);
                 MoveProcessWindow(chrome, pp);
                 IntPtr targetWindowHandle = GetProcessID(chrome);
                 FocusProcess(targetWindowHandle);
-                //Sleep(1000);
                 mouse_click2(2);
                 CenterWindowOnScreen(chrome, true);
                 press(Keys.F11);
@@ -145,11 +141,6 @@ namespace keyupMusic4
                 RECT rect;
                 GetWindowRect(targetWindowHandle, out rect);
 
-                //int newWidth = rect.Right - rect.Left - 22;
-                //int newWidth = rect.Right - rect.Left - 26;
-                //int newHeight = rect.Bottom - rect.Top - 55;
-                //PowerToysCropAndLock_Height = newHeight;
-                //PowerToysCropAndLock_Wight = newWidth;
 
                 // 动态计算调整值（根据DPI和窗口类型自适应）
                 var dpiScale = GetWindowScalingFactor(targetWindowHandle);
@@ -199,8 +190,6 @@ namespace keyupMusic4
                     PowerToysCropAndLock_Wight = width;
                     PowerToysCropAndLock_Height = height;
                 }
-
-                double scaleFactor = 1.1; // 缩放比例，可根据需要调整
 
                 double aspectRatio = (double)width / height; // 计算原始宽高比
 
@@ -269,11 +258,6 @@ namespace keyupMusic4
                 windowWidth = 1927;
                 windowHeight = 1132;
             }
-            //if (targetWindowTitle == chrome)
-            //{
-            //    windowWidth = 1937;
-            //    windowHeight = 1175;
-            //}
 
             // 移动窗口到屏幕中间
             if (!MoveWindow(targetWindowHandle, newX, newY, windowWidth, windowHeight, true))
@@ -291,13 +275,6 @@ namespace keyupMusic4
                 return;
             }
             //// 获取当前窗口样式
-            //int currentStyle = GetWindowLong(targetWindowHandle, GWL_STYLE);
-            //bool hasCaption = (currentStyle & WS_CAPTION) != 0;
-            //if (hasCaption)
-            //{
-            //    int newStyle = currentStyle & ~(WS_CAPTION | WS_BORDER | WS_THICKFRAME);
-            //    SetWindowLong(targetWindowHandle, GWL_STYLE, newStyle);
-            //}
 
             // 获取目标窗口的矩形信息
             RECT windowRect;
@@ -314,10 +291,6 @@ namespace keyupMusic4
             // 更新窗口布局，使修改生效，并调整窗口大小
             SetWindowPos(targetWindowHandle, IntPtr.Zero, 0, 0, (int)windowWidth, (int)windowHeight, SWP_FRAMECHANGED | SWP_NOMOVE);
             //// 移动窗口到屏幕中间
-            //if (!MoveWindow(targetWindowHandle, newX, newY, windowWidth, windowHeight, true))
-            //{
-            //    Console.WriteLine("无法移动窗口到指定位置。");
-            //}
         }
         public static void MoveProcessWindow(IntPtr targetWindowHandle, Point point)
         {
@@ -339,7 +312,6 @@ namespace keyupMusic4
             int windowHeight = windowRect.Bottom - windowRect.Top;
 
             MoveWindow(targetWindowHandle, point.X, point.Y, windowWidth, windowHeight, true);
-            // 置顶：hWndInsertAfter=HWND_TOPMOST，忽略大小和位置变化（只修改置顶属性）
             SetWindowPos(
                 targetWindowHandle,
                 HWND_TOPMOST,
@@ -413,7 +385,6 @@ namespace keyupMusic4
                 }
             }
         }
-        //public static List<ReplaceKey> replace = ReplaceKey.replace;
         public static bool lock_err
         {
             get
@@ -455,15 +426,11 @@ namespace keyupMusic4
             Common.LabelTick = tick;
             Common.LabelTicking = true;
             huan.Invoke(() => { huan.label1.Text = msg; });
-            //Socket.socket_write(Huan.huan_invoke + ProcessName + " " + msg);
         }
 
         //顺便进入睡眠
         public static void CloseDesktopWindow()
         {
-            //if (ProcessName == explorer)
-            //    press([LMenu, F4]);
-            //return;
             IntPtr desktopHwnd = FindWindow("Progman", null);
             if (desktopHwnd != IntPtr.Zero)
             {
@@ -515,7 +482,6 @@ namespace keyupMusic4
                 exStyle |= WS_EX_TRANSPARENT; // 添加穿透
                 SetWindowPos(hwnd, HWND_TOPMOST, 0, 0, 0, 0, SWP_NOMOVE | SWP_NOSIZE | SWP_NOACTIVATE); // 置顶
                 is_tran_process = ProcessName;
-                //altab();
             }
             else
             {

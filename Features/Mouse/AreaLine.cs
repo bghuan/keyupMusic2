@@ -16,7 +16,6 @@ namespace keyupMusic4
             else if (ProcessName == Common.chrome)
             {
                 if (is_douyin()) return 0;
-                //if (ProcessTitle.Contains("YouTube")) return 0;
                 if (is_lizhi && GetPointName() != explorer) return 0;
                 if (chrome_red()) press(Keys.F);
                 var pos = ProcessPosition(chrome);
@@ -43,14 +42,12 @@ namespace keyupMusic4
                 return 0;
             else if (ProcessName == Common.chrome)
             {
-                //if (!ProcessTitle.Contains("chat")) return 0;
                 if (chrome_red()) press(Keys.F);
                 if (ProcessTitle.Contains("YouTube")) return 0;
                 var pos = ProcessPosition(chrome).X;
                 if (pos < screenWidth2 && IsFullScreen())
                 {
                     press(Keys.F, 51);
-                    //SS().MouseWhell(1440);
                 }
             }
             else if (ProcessName == Common.vlc)

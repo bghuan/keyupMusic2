@@ -34,9 +34,6 @@ namespace keyupMusic4
             x = deal_size_x_y(x, y)[0];
             y = deal_size_x_y(x, y)[1];
 
-            //if (x > 0 && x < screenWidth)
-            //    mouse_event(MOUSEEVENTF_ABSOLUTE | MOUSEEVENTF_MOVE, x * 65536 / screenWidth, y * 65536 / screenHeight, 0, 0);
-            //else
             SetCursorPos(x, y);
             Thread.Sleep(tick);
         }
@@ -68,9 +65,6 @@ namespace keyupMusic4
         public static int screenWidth2 = ScreenPrimary.Width / 2;
         public static int screenHeight2 = ScreenPrimary.Height / 2;
 
-        //public static int screen2Width = -2880;
-        //public static int screen2Height = 1620;
-        //public static int screen2Height1 = 1619;
 
         public static int screen2X = ScreenSecond.X;
         public static int screen2Y = ScreenSecond.Y;
@@ -140,8 +134,6 @@ namespace keyupMusic4
         public static int mouse_event(int dwFlags, int dx, int dy, int cButtons, int dwExtraInfo)
         {
             var aa = Native.mouse_event(dwFlags, dx, dy, cButtons, (int)isVir);
-            //if ((dwFlags & MOUSEEVENTF_LEFTDOWN) == 1) { Sleep(10); FreshProcessName(); }
-            //if ((dwFlags & MOUSEEVENTF_MOVE) == 0) { FreshProcessName(); Task.Run(() => { Sleep(100); FreshProcessName(); }); }
             if (dwFlags != MOUSEEVENTF_MOVE && dwFlags != MOUSEEVENTF_WHEEL) { FreshProcessName2(); }
             return aa;
         }
@@ -235,7 +227,6 @@ namespace keyupMusic4
         public static void VirKeyState(MouseMsg msg)
         {
             if (!mousekeymap.ContainsKey(msg)) return;
-            //bool up = msg.ToString().Contains("up");
             Keys key = mousekeymap[msg];
             if (IsUpEvent(msg))
                 VirMouseStateKey.Remove(key);
@@ -262,10 +253,6 @@ namespace keyupMusic4
                 VirMouseStateKey = new Dictionary<Keys, string>();
             }
         }
-        //public static bool is_down(int key)
-        //{
-        //    return GetAsyncKeyState(key) < 0;
-        //}
 
         public static bool is_down(Keys key)
         {
@@ -346,17 +333,14 @@ namespace keyupMusic4
         public static void altab(int tick = 10)
         {
             press([Keys.LMenu, Keys.Tab], tick);
-            //Thread.Sleep(tick);
         }
         public static void altshiftab(int tick = 10)
         {
             press([Keys.LMenu, Keys.LShiftKey, Keys.Tab], tick);
-            //Thread.Sleep(tick);
         }
         public static void altabtab(int tick = 10)
         {
             press([Keys.LMenu, Keys.Tab, Keys.Tab], tick);
-            //Thread.Sleep(tick);
         }
         //job isvir move to keybd_event
         public static void press_raw(Keys num, int tick = 0)
@@ -426,9 +410,6 @@ namespace keyupMusic4
 
         public static void ctrl_shift_win_search(bool zh = true)
         {
-            //var _zh = (judge_color(2290, 1411, Color.FromArgb(242, 242, 242)));
-            //var _zh = (judge_color(2281, 1413, Color.FromArgb(242, 242, 242)));
-            //var _zh = (judge_color(1397, 419, Color.FromArgb(255, 255, 255)));
             var _zh = (judge_color(980, 420, Color.FromArgb(255, 255, 255)));
             var _en = !_zh;
             if (zh && _en)
@@ -442,7 +423,7 @@ namespace keyupMusic4
         {
             foreach (var item in inputs)
             {
-                if ("en" == item)
+                if (item is "en")
                     ctrl_shift_win_search(false);
                 else if (item is Keys keys)
                     press(keys, tick);
@@ -465,7 +446,6 @@ namespace keyupMusic4
         public static void press(string str, int tick = 100, bool force = false)
         {
             if (is_down(Keys.Delete) && !force) return;
-            //KeyboardHook.stop_next = false;
             bool isLastDigitOne = (tick % 10) == 1;
             if (isLastDigitOne) mousePosition = Cursor.Position;
             var list = str.Split(";");
@@ -483,7 +463,6 @@ namespace keyupMusic4
                     else
                         press(Keys.LWin);
                     Thread.Sleep(100);
-                    //ctrl_shift(false);
                 }
                 else if (item == "close")
                     CloseProcess();
@@ -497,8 +476,6 @@ namespace keyupMusic4
                 {
                     if (!int.TryParse(item.Substring(0, click + move + 1), out int x)) continue;
                     if (!int.TryParse(item.Substring(click + move + 1 + 1), out int y)) continue;
-                    //var x = int.Parse(item.Substring(0, click + move + 1));
-                    //var y = int.Parse(item.Substring(click + move + 1 + 1));
                     mouse_move(x, y, 10);
                     if (click > 0) mouse_click(30);
                 }
@@ -598,8 +575,6 @@ namespace keyupMusic4
         {
             if (ExtendedKeys.Contains(bVk))
                 dwFlags |= (uint)KeyboardFlag.ExtendedKey;
-            //else if (is_douyin())
-            //    dwFlags |= (uint)KeyboardFlag.ExtendedKey;
 
             if (!MapVirtualKey.ContainsKey(bVk))
                 MapVirtualKey[bVk] = (byte)(MapVirtualKey(bVk, 0) & 0xFFU);

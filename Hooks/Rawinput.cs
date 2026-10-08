@@ -11,7 +11,6 @@ namespace keyupMusic4
     public class Rawinput
     {
         // err 开始handled后,切换设备按下被特殊键盘监听的键,device name 不改变,handled了proc接受不到了
-        // Map friendly device keys -> identifying substrings
         public static readonly Dictionary<string, string> devices = new()
         {
             { Common.acer,       Common.acerdevice },
@@ -22,7 +21,6 @@ namespace keyupMusic4
             { Common.numberric,  Common.numberricdevice },
         };
 
-        // Cache: raw device handle -> friendly device key
         public static readonly Dictionary<IntPtr, string> devicesMap = new();
 
         private static string NormalizeDeviceKey(string deviceName)
@@ -148,18 +146,14 @@ namespace keyupMusic4
         {
             if (deviceHandle == IntPtr.Zero) return string.Empty;
 
-            //if (devicesMap.TryGetValue(deviceHandle, out var cached) && cached != null)
-            //    return cached;
 
             string raw = GetDeviceName(deviceHandle) ?? string.Empty;
             string normalized = NormalizeDeviceKey(raw);
-            //devicesMap[deviceHandle] = normalized;
             return normalized;
         }
 
         public static void RegisterInputDevices(IntPtr hwnd)
         {
-            // Register for keyboard in INPUTSINK mode (receive when not focused)
             var rid = new RAWINPUTDEVICE[]
   {
     new RAWINPUTDEVICE { usUsagePage = 0x01, usUsage = 0x06, dwFlags = RIDEV_INPUTSINK, hwndTarget = hwnd },
@@ -178,7 +172,6 @@ namespace keyupMusic4
         public static string GetDeviceName(IntPtr deviceHandle)
         {
             uint size = 0;
-            // First call to get required buffer size (in characters for Unicode)
             GetRawInputDeviceInfo(deviceHandle, RIDI_DEVICENAME, IntPtr.Zero, ref size);
             if (size == 0) return null;
 
@@ -201,7 +194,6 @@ namespace keyupMusic4
             return null;
         }
 
-        // ==== Structs & P/Invoke ====
         private const uint RIM_TYPEMOUSE = 0;
         private const uint RIM_TYPEKEYBOARD = 1;
         private const uint RIM_TYPEHID = 2;

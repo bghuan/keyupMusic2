@@ -3,7 +3,7 @@
   <PropertyGroup>
     <OutputType>WinExe</OutputType>
     <TargetFramework>net8.0-windows</TargetFramework>
-    <Nullable>enable</Nullable>
+    <Nullable>disable</Nullable>
     <UseWindowsForms>true</UseWindowsForms>
     <ImplicitUsings>enable</ImplicitUsings>
     <StartupObject>keyupMusic4.Program</StartupObject>
@@ -14,6 +14,8 @@
     <EnableNETAnalyzers>True</EnableNETAnalyzers>
     <SignAssembly>True</SignAssembly>
     <RootNamespace>keyupMusic4</RootNamespace>
+    <!-- 项目历史风格：小写类型名、fire-and-forget 异步调用、nullable 关闭、WebView2 包冲突、nullable 注解残留 -->
+    <NoWarn>$(NoWarn);CS8981;CS4014;MSB3277;CS8632</NoWarn>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
@@ -25,19 +27,12 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <Compile Remove="keyupmusic2_test\**" />
     <Compile Remove="keyupMusic3\**" />
     <Compile Remove="mouse_hook_douyin_game\**" />
-    <EmbeddedResource Remove="keyupmusic2_test\**" />
     <EmbeddedResource Remove="keyupMusic3\**" />
     <EmbeddedResource Remove="mouse_hook_douyin_game\**" />
-    <None Remove="keyupmusic2_test\**" />
     <None Remove="keyupMusic3\**" />
     <None Remove="mouse_hook_douyin_game\**" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <Compile Remove="Common\Class2.cs" />
   </ItemGroup>
 
   <ItemGroup>

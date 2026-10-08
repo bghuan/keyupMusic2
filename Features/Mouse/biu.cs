@@ -26,10 +26,6 @@ namespace keyupMusic4
                 if (is_douyin()) return true;
                 if (IsFullScreen() && e.Y == screenHeight1) return true;
                 if (GetPointName() == Common.mhmain && ProcessName == Common.mhtab) return true;
-                //if (IsFullVedio()) return true;
-                //var list = new[] { Glass2, vlc, /*Honeyview*/ };
-                //if (list.Contains(Common.ProcessName) && !GetPointTitle().Contains("设置"))
-                //    return true;
             }
             return false;
         }
@@ -41,7 +37,6 @@ namespace keyupMusic4
             if (handleddd) { e.Handled = true; VirKeyState(e.Msg); }
             if (!handleddd && !huan.Focused) Native.ReleaseCapture();
 
-            // 鼠标移动：走轻量路径，不进 Task.Run。
             // easy_read 内部已限频(200ms + hwnd 缓存)；Area 保持每帧保证边缘检测精度；Other 保持每帧（PowerToysCropAndLock 拖窗依赖 move）
             if (e.Msg == MouseMsg.move)
             {
@@ -62,14 +57,12 @@ namespace keyupMusic4
                 easy_read(e);
 
                 Area(e);
-                //BottomLine(e);
                 Other(e);
 
                 Glass(e);
 
                 GoBack(e);
                 GoBack2(e);
-                //Gestures(e);
                 All(e);
             });
         }
@@ -100,16 +93,9 @@ namespace keyupMusic4
                         press([LMenu, K]);
                 }
                 else if (e.Y == 0 && e.X == 0)
-                    //press([LMenu, e.data > 0 ? F8 : F7]);
                     press([LControlKey, e.data > 0 ? Keys.Oemplus : OemMinus]);
-                //else if (is_down_vir(LWin))
-                //    press([LControlKey, e.data > 0 ? Left : Right]);
-                //else if (e.Y == 0 && e.X > screenWidth)
-                //    press([LShiftKey, e.data > 0 ? F8 : F7]);
                 else if (e.Y == 0)
                     press([e.data > 0 ? F8 : F7]);
-                //else if (e.Y == 0)
-                //    press([LControlKey, e.data > 0 ? F8 : F7]);
                 else if (is_douyin() && (e.X == 0))
                     press(e.data > 0 ? Left : Right);
                 else if (is_douyin())
@@ -118,8 +104,6 @@ namespace keyupMusic4
                     press(e.data > 0 ? Keys.PageUp : Keys.PageDown);
                 else if (IsFullVedio() && !GetPointTitle().Contains("设置"))
                     press(e.data > 0 ? Left : Right);
-                //else if (ProcessName == Common.vlc)
-                //    press(e.data > 0 ? Left : Right);
                 else if (ProcessName == Common.ApplicationFrameHost && (ProcessTitle.Contains("png") || GetPointName() == PhotoApps))
                     press(e.data > 0 ? Left : Right);
                 else if (ProcessTitle == kmRead && e.Y == screenHeight1)

@@ -27,13 +27,10 @@ namespace keyupMusic4
         /// <summary>
         /// 解析字符串并通过反射执行对应方法
         /// </summary>
-        /// <param name="command">格式如：'press([Keys.A,Keys.B])'</param>
-        /// <param name="target">包含目标方法的实例</param>
         public static void ExecuteCommand(string command)
         {
             try
             {
-                // 1. 解析方法名（提取press(...)中的方法名）
                 int openParenIndex = command.IndexOf('(');
                 int closeParenIndex = command.LastIndexOf(')');
                 if (openParenIndex <= 0 || closeParenIndex <= openParenIndex)
@@ -43,7 +40,6 @@ namespace keyupMusic4
                 string methodName = command.Substring(0, openParenIndex).Trim();
                 string paramContent = command.Substring(openParenIndex + 1, closeParenIndex - openParenIndex - 1).Trim();
 
-                // 2. 解析参数（处理[Keys.A, Keys.B]格式）
                 var parameters = ParseParameters(paramContent);
 
                 // 3. 获取静态类Common的类型
@@ -58,10 +54,6 @@ namespace keyupMusic4
                 MethodInfo[] methods = staticType.GetMethods(bindingFlags);
 
                 // 过滤掉滤掉特殊方法（如静态构造函数、Object基类方法等）
-                //var filteredMethods = methods
-                //    .Where(m => !m.IsSpecialName)  // 排除特殊方法（如构造函数、属性访问器等）
-                //    .OrderBy(m => m.Name)          // 按方法名排序
-                //    .ToList();
 
                 // 4. 获取静态方法（注意BindingFlags需Static）
                 MethodInfo method = staticType.GetMethod(
@@ -89,7 +81,6 @@ namespace keyupMusic4
         /// <summary>
         /// 解析参数字符串为Keys数组
         /// </summary>
-        /// <param name="paramContent">如："[Keys.A, Keys.B]" 或 "Keys.A, Keys.B"</param>
         /// <returns>解析后的Keys数组</returns>
         private static Keys[] ParseParameters(string paramContent)
         {
@@ -100,7 +91,6 @@ namespace keyupMusic4
                 return Array.Empty<Keys>();
             }
 
-            // 分割参数项（如"Keys.A, Keys.B" → ["Keys.A", "Keys.B"]）
             string[] keyParts = paramContent.Split(new[] { ',' }, StringSplitOptions.RemoveEmptyEntries)
                                            .Select(p => p.Trim())
                                            .ToArray();
@@ -109,7 +99,6 @@ namespace keyupMusic4
             List<Keys> keys = new List<Keys>();
             foreach (string part in keyParts)
             {
-                // 提取枚举成员名（如"Keys.A" → "A"）
                 string enumMember = part.Replace("Keys.", "").Trim();
                 if (Enum.TryParse<Keys>(enumMember, out Keys key))
                 {

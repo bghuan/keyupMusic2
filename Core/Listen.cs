@@ -13,14 +13,7 @@ namespace keyupMusic4
         public static int sssssegmentIndex;
         public static void handle_word(string text, int segmentIndex, bool show = true)
         {
-            //if (segmentIndex == sssssegmentIndex) { return; }
-            //speak_word = text + "_";
-            ////if (text == "UP") { press(Keys.PageUp, 0); return; }
-            //press(Keys.PageDown, 0);
-            //sssssegmentIndex = segmentIndex;
-            //return;
             if (show) huan.Invoke(new MethodInvoker(() => { huan.label1.Text = text; }));
-            //if (ProcessName == msedge)
 
             string text_backup = text;
 
@@ -36,7 +29,6 @@ namespace keyupMusic4
             if (b.Length >= 3) b3 = b.Substring(0, 3);
             if (b.Length >= 4) b4 = b.Substring(0, 4);
             c = text;
-            //log($"{a}    {b}    {c}");
 
             lastText = text;
 
@@ -62,15 +54,10 @@ namespace keyupMusic4
             }
             else if (c.Length > 2 && c.IndexOf("打开") >= 0 && !string.IsNullOrEmpty(b))
             {
-                //Invoke(() => Clipboard.SetText(b1));
-                //press([Keys.ControlKey, Keys.V]);
 
-                //press(Keys.Enter);
             }
             else if (c.Length > 2 && c.IndexOf("输入") >= 0 && !string.IsNullOrEmpty(b))
             {
-                //Invoke(() => Clipboard.SetText(b1));
-                //press([Keys.ControlKey, Keys.V]);
             }
             else if (KeyMap.TryGetValue(c, out Keys[] keys3))
             {
@@ -79,7 +66,6 @@ namespace keyupMusic4
             else if (c == "显示")
             {
                 Common.FocusProcess(Process.GetCurrentProcess().ProcessName);
-                ////Invoke(() => SetVisibleCore(true));
             }
             else if (c == "连接")
             {
@@ -87,11 +73,9 @@ namespace keyupMusic4
             }
             else if (c == "隐藏")
             {
-                ////Invoke(() => SetVisibleCore(false));
             }
             else if (c == "边框")
             {
-                ////Invoke(() => FormBorderStyle = FormBorderStyle == FormBorderStyle.None ? FormBorderStyle.Sizable : FormBorderStyle.None);
             }
             else if (c == "下" || c == "NEXT")
             {
@@ -116,14 +100,8 @@ namespace keyupMusic4
             { "播放",     [Keys.MediaPlayPause]},
             { "音乐",     [Keys.MediaPlayPause]},
 
-            //{ "大",       [Keys.VolumeUp,Keys.VolumeUp,Keys.VolumeUp,Keys.VolumeUp]},
-            //{ "小",       [Keys.VolumeDown,Keys.VolumeDown,Keys.VolumeDown,Keys.VolumeDown]},
             { "音量20",   [Keys.MediaPlayPause]},
 
-            //{ "上",       [Keys.Up]},
-            //{ "下",       [Keys.Down]},
-            //{ "左",       [Keys.Left]},
-            //{ "右",       [Keys.Right]},
 
             { "H",        [Keys.H]},
             { "X",        [Keys.X]},
@@ -140,8 +118,6 @@ namespace keyupMusic4
         public static bool is_listen = false;
         public static DateTime time_last = DateTime.Now;
 
-        public delegate void aaaEventHandler(string e, int a, bool s = true);
-        public static event aaaEventHandler aaaEvent;
         public static string ModelDir = LoadModelDir();
         static string LoadModelDir()
         {
@@ -266,7 +242,6 @@ namespace keyupMusic4
 
             Console.WriteLine(param);
             Console.WriteLine("Started! Please speak\n\n");
-            //this.Invoke(new MethodInvoker(() => { label1.Text = "Started! Please speak\n\n"; }));
 
             stream.Start();
 
@@ -282,20 +257,11 @@ namespace keyupMusic4
 
                 var text = recognizer.GetResult(s).Text;
                 bool isEndpoint = recognizer.IsEndpoint(s);
-                //
-                //if (!string.IsNullOrWhiteSpace(text) && (lastText != text || (time_last.AddMilliseconds(2000) < DateTime.Now)))
-                //if (!string.IsNullOrWhiteSpace(text) && (lastText != text)&& (time_last.AddMilliseconds(1544) < DateTime.Now))
                 if (!string.IsNullOrWhiteSpace(text) && (lastText != text))
-                //if (!string.IsNullOrWhiteSpace(text)) 
-                //if (!string.IsNullOrWhiteSpace(text) && (lastText != text || (time_last.AddSeconds(3) < DateTime.Now)))
                 {
-                    //log("--------" + time_last.AddMilliseconds(800).ToString("yyyy-MM-dd HH:mm:ss.fff") + "-----" + DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss.fff"));
                     lastText = text;
                     Console.Write($"\r{segmentIndex}: {lastText}");
 
-                    //Common.log($"{segmentIndex}-{lastText}" + "--------" + time_last.ToString("yyyy-MM-dd HH:mm:ss.fff") + "--------" + time_last.AddMilliseconds(2000).ToString("yyyy-MM-dd HH:mm:ss.fff") + "-----" + DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss.fff"));
-                    //action(lastText, segmentIndex);
-                    //aaaEvent(lastText, segmentIndex);
                     handle_word(lastText, segmentIndex);
 
                     time_last = DateTime.Now;
@@ -311,7 +277,6 @@ namespace keyupMusic4
                     recognizer.Reset(s);
                 }
 
-                //
                 Thread.Sleep(200); // ms
             }
             // 停止音频流  

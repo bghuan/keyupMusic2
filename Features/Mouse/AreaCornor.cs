@@ -10,12 +10,9 @@ namespace keyupMusic4
         private int _corner1(KeyboardMouseHook.MouseEventArgs e)
         {
             var list = new[] { msedge, Common.chrome, Common.Honeyview, ApplicationFrameHost, Common.AppName };
-            //var list = new[] { msedge };
 
             if (is_douyin())
                 press(Keys.H);
-            //else if (ProcessName == Common.chrome && (judge_color(Color.FromArgb(162, 37, 45))))
-            //    press($"10;{Position.X + 216},{Position.Y + 42};{Position.X + 216},{Position.Y + 43}");
             else if (list.Contains(Common.ProcessName))
                 press([Keys.F11]);
             else if (PotPlayerMini64.Equals(Common.ProcessName))
@@ -35,11 +32,6 @@ namespace keyupMusic4
         {
             if (is_douyin())
                 CloseProcess();
-            //else if (ProcessName != GetPointName())
-            //{
-            //    play_sound_di2();
-            //    FocusPointProcess();
-            //}
             else if (ProcessName == Common.AppName)
             {
                 /*HideProcess();*/
@@ -80,8 +72,6 @@ namespace keyupMusic4
             {
                 HideProcess(ProcessName);
             }
-            //else if (!IsFullScreen())
-            //    CloseProcess();
             else if (!IsFullScreen())
                 CloseProcess();
             else
@@ -90,7 +80,6 @@ namespace keyupMusic4
         }
         private int _corner4(KeyboardMouseHook.MouseEventArgs e)
         {
-            //HideSomething();
             if (IsDesktopFocused()) return 0;
             if (ProcessName == Common.AppName) return 0;
             HideProcess();
@@ -102,22 +91,15 @@ namespace keyupMusic4
         private int _corner5(KeyboardMouseHook.MouseEventArgs e)
         {
             mouse_click();
-            //if (ProcessName == Common.chrome && (judge_color(Color.FromArgb(162, 37, 45))))
-            //    press($"10;{Position.X + 216},{Position.Y + 42};{Position.X + 216},{Position.Y + 43}");
-            //else
             press([Keys.F11]);
             return e.data;
         }
 
         private int _corner6(KeyboardMouseHook.MouseEventArgs e)
         {
-            //mouse_click();
-            //var list = new[] { Common.chrome };
-            //if (list.Contains(Common.ProcessName))
             if (!ExistProcess(clashverge))
                 ProcessRun(clashvergeexe);
             changeClash();
-            //press(Keys.Escape);
             return e.data;
         }
     }

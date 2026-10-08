@@ -21,9 +21,7 @@
             webView21 = new Microsoft.Web.WebView2.WinForms.WebView2();
             ((System.ComponentModel.ISupportInitialize)webView21).BeginInit();
             SuspendLayout();
-            // 
             // webView21
-            // 
             webView21.AllowExternalDrop = true;
             webView21.CreationProperties = null;
             webView21.DefaultBackgroundColor = Color.White;
@@ -33,9 +31,7 @@
             webView21.Size = new Size(936, 803);
             webView21.TabIndex = 0;
             webView21.ZoomFactor = 1D;
-            // 
             // MoonTime
-            // 
             AutoScaleDimensions = new SizeF(11F, 24F);
             AutoScaleMode = AutoScaleMode.Font;
             BackColor = SystemColors.ActiveCaption;

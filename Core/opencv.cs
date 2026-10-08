@@ -18,10 +18,6 @@ namespace keyupMusic4
             y = 400 - x2;
             x = x * screenHeight / 475 ;
             y = y * screenHeight / 400 ;
-            //huan.Invoke(() =>
-            //{
-            //    huan.label1.Text = "" + x + "," + y;
-            //});
             mouse_move(x,y);
         }
     }

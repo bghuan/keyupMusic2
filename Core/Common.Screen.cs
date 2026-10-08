@@ -31,8 +31,6 @@ namespace keyupMusic4
             y = deal_size_x_y(x, y, false)[1];
             var asd = get_mouse_postion_color(new Point(x, y));
             var flag = AreColorsSimilar(asd, color, similar);
-            //log($"judge_color flag:{flag} x:{x} y:{y} target:{asd} source:{color} similar:{similar}");
-            //if (flag && action != null) action();
             return flag;
         }
 
@@ -81,7 +79,7 @@ namespace keyupMusic4
                     }
                 }
             }
-            catch (Exception e) { }
+            catch (Exception) { }
             return Color.Black;
         }
 
@@ -92,7 +90,6 @@ namespace keyupMusic4
 
         public static bool try_press2(int x, int y, Color color, Action action = null, int similar = 70)
         {
-            //var pos = Position;
             mouse_move(x, y);
             Thread.Sleep(10);
             var asd = get_mouse_postion_color(new Point(x, y));
@@ -105,7 +102,6 @@ namespace keyupMusic4
                 else lastPosition = Position;
             }
             log("try_press:" + x + "," + y + "," + color.R + "," + color.G + "," + color.B + " " + asd.R + "," + asd.G + "," + asd.B);
-            //mouse_move(pos);
             return flag;
         }
 
@@ -159,7 +155,6 @@ namespace keyupMusic4
         public static string bmpScreenshot_path;
         public static void copy_screen()
         {
-            //try { if (!Debugger.IsAttached) bmpScreenshot.Dispose(); } catch (NullReferenceException e) { }
             play_sound_di();
             Screen secondaryScreen = Screen.PrimaryScreen;
             Bitmap bmpScreenshot = new Bitmap(secondaryScreen.Bounds.Width, secondaryScreen.Bounds.Height, PixelFormat.Format32bppArgb);
@@ -176,13 +171,11 @@ namespace keyupMusic4
             else path = user_path + file_date_name;
             bmpScreenshot_path = path;
             bmpScreenshot.Save(path, ImageFormat.Png);
-            //TaskRun(() => play_sound_di(), 80);
             gfxScreenshot.Dispose();
             bmpScreenshot.Dispose();
         }
         public static void copy_secoed_screen()
         {
-            //try { if (!Debugger.IsAttached) bmpScreenshot.Dispose(); } catch (NullReferenceException e) { }
             Screen secondaryScreen = Screen.AllScreens.FirstOrDefault(scr => !scr.Primary);
             int start_x = screenWidth;
             if (screen2Width < 0)
@@ -196,7 +189,6 @@ namespace keyupMusic4
             path = "image\\encode\\" + path + DateTime.Now.ToString("yyyyMMddHHmmss") + ".png" + "g";
             bmpScreenshot_path = path;
             bmpScreenshot.Save(path, ImageFormat.Png);
-            //TaskRun(() => play_sound_di(), 80);A
             gfxScreenshot.Dispose();
             bmpScreenshot.Dispose();
         }
@@ -255,8 +247,6 @@ namespace keyupMusic4
                             var fi = new FileInfo(filePath);
 
                             //// 非空判断与大小范围过滤（仅处理大小在 2000 ~ 2100 字节之间的文件）
-                            //if (fi.Length == 0) continue;
-                            //if (fi.Length < 2000 || fi.Length > 2100) continue;
 
                             string newFilePath = Path.Combine(fi.DirectoryName ?? folder, Path.GetFileNameWithoutExtension(fi.Name) + "." + newExtension);
 

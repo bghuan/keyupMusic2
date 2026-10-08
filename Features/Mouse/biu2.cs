@@ -18,7 +18,8 @@ namespace keyupMusic4
         IntPtr last_hwnd = IntPtr.Zero;
         DateTime last_read_time = DateTime.MinValue;
         Point click_r_point = new Point();
-        private void easy_redad(KeyboardMouseHook.MouseEventArgs e)
+        // 鼠标移动时刷新窗口信息（限频 200ms + hwnd 缓存，避免高频进程查询）
+        private void refresh_point_info(KeyboardMouseHook.MouseEventArgs e)
         {
             if (isctrl())
             {
@@ -49,16 +50,12 @@ namespace keyupMusic4
         {
             if (e.Msg == MouseMsg.move)
             {
-                //RateLimiter2.Execute(easy_redad, e);
-                easy_redad(e);
+                refresh_point_info(e);
                 return;
             }
             if (ProcessName == VSCode) return;
             if (ProcessName == chrome && e.Msg == MouseMsg.click) return;
 
-            //if (e.Msg != MouseMsg.wheel)
-            //    Log.logcache(e.Msg.ToString());
-            //process_and_log(e.Msg.ToString());
 
             string msg = e.Msg.ToString();
             huan.Invoke2(() =>
@@ -80,24 +77,6 @@ namespace keyupMusic4
                         press(Keys.Escape);
                         Sleep(100);
                         CloseProcess();
-                        //    Sleep(150);
-                        //    mouse_move_to(12, 1328 - screenHeight);
-                        //    DelayRun(
-                        //        () =>
-                        //        {
-                        //            //IntPtr hwnd = Native.WindowFromPoint(Position);
-                        //            ////if (hwnd == last_hwnd) return;
-                        //            ////string name = GetWindowName(hwnd);
-                        //            //StringBuilder className = new StringBuilder(256);
-                        //            //GetClassName(hwnd, className, className.Capacity);
-                        //            //string classNameStr = className.ToString();
-                        //            string asde = processWrapper?.classname;
-                        //            //var asde = GetWindowTitle();
-                        //            //log(asde);
-                        //            return asde == SIBJumpView;
-                        //        },
-                        //        () => mouse_click(),
-                        //        400, 10);
                     }, 100);
                 }
             }

@@ -65,32 +65,20 @@ namespace keyupMusic4
 
         public static void LossScale()
         {
-            //if (is_douyin()) { }
-            //else if (IsDiffProcess()) mouse_click();
-            //press([Keys.LControlKey, Keys.F2]);return;
 
             if (!ExistProcess(LosslessScaling))
             {
                 ProcessRun(LosslessScalingexe);
                 play_sound_bongocat(D9);
             }
-            //if (ProcessName == keyupMusic4 && GetPointName() != keyupMusic4 && ProcessTitle != kmRead)
-            //    mouse_click2();
 
-            //var Usage = GetUsage(LosslessScaling);
-            //var Running = Usage > 20;
 
             press([Keys.LControlKey, Keys.F2]);
 
-            //if (Position.X > 0 && Position.X < screenWidth && (is_douyin() || ProcessName == chrome) && (ProcessName == GetPointName()) && (!ProcessTitle.Contains("nhub")) && (GetUsage(LosslessScaling) < 20))
-            //    press_middle_bottom();
         }
+        // 已禁用（基线行为：原实现被 return 截断，现为空实现；恢复功能可从 git 历史取回原实现）
         public static void system_hard_sleep()
         {
-            return;
-            gcc_restart = true;
-            system_sleep_count = 1;
-            Process.Start("rundll32.exe", "powrprof.dll,SetSuspendState 0,1,0");
         }
 
 
@@ -131,9 +119,7 @@ namespace keyupMusic4
 
         public static void HideSomething()
         {
-            //HideProcess2(chrome);
             HideProcess(PowerToysCropAndLock);
-            //SetDesktopToBlack();
         }
     }
 }

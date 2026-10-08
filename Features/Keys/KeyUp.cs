@@ -66,67 +66,6 @@ namespace keyupMusic4
             }
 
             return;
-            if (_all)
-            {
-                press(D0);
-                numkeylist = new List<Keys> { Left, Down, Right };
-            }
-            else if (!_left && !_down && !_right)
-            {
-                //if (numkeylist.Count == 0)
-                if (!numkeylist.Contains(key))
-                {
-                    if (left && !down && !right) press(D1);
-                    if (!left && down && !right) press(D2);
-                    if (!left && !down && right) press(D3);
-                }
-                else
-                {
-                    numkeylist = new List<Keys> { };
-                }
-            }
-            else if (_left && !_down && !_right)
-            {
-                if (!numkeylist.Contains(key))
-                {
-                    if (!left && down && !right) press(D4);
-                    if (!left && !down && right) press(D5);
-                    if (!numkeylist.Contains(Keys.Left))
-                        numkeylist.Add(Keys.Left);
-                }
-                else
-                {
-                    numkeylist = new List<Keys> { Left };
-                }
-            }
-            else if (!_left && _down && !_right)
-            {
-                if (!numkeylist.Contains(key))
-                {
-                    if (left && !down && !right) press(D6);
-                    if (!left && !down && right) press(D7);
-                    if (!numkeylist.Contains(Keys.Down))
-                        numkeylist.Add(Keys.Down);
-                }
-                else
-                {
-                    numkeylist = new List<Keys> { Down };
-                }
-            }
-            else if (!_left && !_down && _right)
-            {
-                if (!numkeylist.Contains(key))
-                {
-                    if (left && !down && !right) press(D8);
-                    if (!left && down && !right) press(D9);
-                    if (!numkeylist.Contains(Keys.Right))
-                        numkeylist.Add(Keys.Right);
-                }
-                else
-                {
-                    numkeylist = new List<Keys> { Right };
-                }
-            }
         }
         public static bool yo(KeyboardMouseHook.KeyEventArgs e)
         {
@@ -144,7 +83,7 @@ namespace keyupMusic4
             {
                 case Keys.Home:
                 case Keys.End:
-                    try { bmpScreenshot.Dispose(); } catch (NullReferenceException eee) { }
+                    try { bmpScreenshot.Dispose(); } catch (NullReferenceException) { }
                     break;
             }
 

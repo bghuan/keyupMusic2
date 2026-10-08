@@ -171,7 +171,6 @@ namespace keyupMusic4
             if (hwnd == IntPtr.Zero) return "";
             if (!ProcessMap.ContainsKey(hwnd))
                 ProcessMap[hwnd] = new ProcessWrapper(hwnd);
-            //else
             FreshProcessNameByMap(hwnd);
             return ProcessName;
         }
@@ -189,7 +188,6 @@ namespace keyupMusic4
                     ProcessMap[hwnd].title = ProcessTitle;
                 }
                 processWrapper = ProcessMap[hwnd];
-                //Con("FreshProcessNameByMap " + ProcessMap[hwnd].ToString());
             }
         }
         public static void FreshProcessNameByMap()
@@ -206,7 +204,6 @@ namespace keyupMusic4
                     ProcessMap[hwnd].title = ProcessTitle;
                 }
                 processWrapper = ProcessMap[hwnd];
-                //Con("FreshProcessNameByMap " + ProcessMap[hwnd].ToString());
             }
         }
         public static bool IsDiffProcess()
@@ -217,13 +214,6 @@ namespace keyupMusic4
             if (ProcessMap.ContainsKey(hwnd) && ProcessMap.ContainsKey(point_hwnd))
                 if (ProcessMap[hwnd].name == ProcessMap[point_hwnd].name)
                     return false;
-            //IntPtr point_process_hwnd = GetPointProcessHwnd();
-            //if (hwnd == point_process_hwnd) return false;
-            //if (ProcessMap.ContainsKey(hwnd) && ProcessMap[hwnd].name == LosslessScaling)
-            //    return false;
-            //if (ProcessMap.ContainsKey(hwnd) && ProcessMap.ContainsKey(point_process_hwnd))
-            //    if (ProcessMap[hwnd].name == ProcessMap[point_process_hwnd].name)
-            //        return false;
             return true;
         }
         public static string GetPointName()
@@ -252,7 +242,7 @@ namespace keyupMusic4
             if (!ProcessMap.ContainsKey(hwnd))
             {
                 try { ProcessMap[hwnd] = new ProcessWrapper(hwnd); }
-                catch (Exception e) { return ""; }
+                catch (Exception) { return ""; }
             }
             return ProcessMap.TryGetValue(hwnd, out var wrapper) ? wrapper?.name ?? "" : "";
         }
@@ -273,13 +263,6 @@ namespace keyupMusic4
             public string path { get; set; }
             public string classname { get; set; }
 
-            //public ProcessWrapper(string name, string title, string path, string classname)
-            //{
-            //    this.name = name;
-            //    this.title = title;
-            //    this.path = path;
-            //    this.classname = classname;
-            //}
             public ProcessWrapper(IntPtr hwnd)
             {
                 uint processId;
@@ -297,7 +280,7 @@ namespace keyupMusic4
                 this.classname = classNameStr;
                 process.Dispose();
             }
-            public string ToString()
+            public override string ToString()
             {
                 return this.name + " " + this.title + " " + this.path + " " + this.classname;
             }
@@ -346,9 +329,6 @@ namespace keyupMusic4
                 ShowWindow((hWnd), SW.SW_RESTORE);
                 if (procName != Dragonest && procName != chrome && procName != devenv)
                     ShowWindowAsync(new HandleRef(null, hWnd), (int)SW.SW_RESTORE);
-                //ShowWindow((hWnd), SW.SW_SHOWMAXIMIZED);
-                //ShowWindow((hWnd), SW.SW_SHOW);
-                //ShowWindow((hWnd), SW.SW_SHOWNA);
                 if (!front) return true;
                 SetForegroundWindow(objProcesses[0].MainWindowHandle);
                 FreshProcessNameByMap();
@@ -368,12 +348,6 @@ namespace keyupMusic4
                 hWnd = objProcesses[0].MainWindowHandle;
                 if (current_hwnd == hWnd)
                     return true;
-                //ShowWindow((hWnd), SW.SW_RESTORE);
-                //if (procName != Dragonest && procName != chrome && procName != devenv)
-                //    ShowWindowAsync(new HandleRef(null, hWnd), (int)SW.SW_RESTORE);
-                //ShowWindow((hWnd), SW.SW_SHOWMAXIMIZED);
-                //ShowWindow((hWnd), SW.SW_SHOW);
-                //ShowWindow((hWnd), SW.SW_SHOWNA);
                 if (!front) return true;
                 SetForegroundWindow(objProcesses[0].MainWindowHandle);
                 FreshProcessNameByMap();
@@ -422,11 +396,6 @@ namespace keyupMusic4
             string targetClassName = window;
             IntPtr hWnd = GetProcessID(targetClassName);
             string title = GetWindowTitle(hWnd);
-            //if (title == null || title == "") return false;
-            //if (title.IndexOf(")") >= 0)
-            //    title = title.Substring(title.IndexOf(")") + 1, title.Length - title.IndexOf(")") - 1);
-            //if (title.IndexOf("主") > 0)
-            //    title = title.Substring(0, title.IndexOf("主"));
             string name = ExtractStreamerName(title);
             title = name;
             bool result = SetWindowText(hWnd, title);
@@ -454,12 +423,6 @@ namespace keyupMusic4
         public static bool ExistProcess(string procName, bool front = false)
         {
             Process[] objProcesses = Process.GetProcessesByName(procName);
-            //if (objProcesses.Length > 0)
-            //{
-            //    if (objProcesses[0].MainWindowHandle == 0 && front)
-            //        return false;
-            //    return true;
-            //}
             foreach (Process proc in objProcesses)
             {
                 if (!front || proc.MainWindowHandle != 0)
@@ -514,8 +477,6 @@ namespace keyupMusic4
             if (small) return;
 
             ShowWindow(hWnd, SW.SW_MINIMIZE);
-            //FocusProcess(hWnd);
-            //press([LWin, Down]);
 
             Task.Run(() =>
             {
@@ -526,7 +487,6 @@ namespace keyupMusic4
 
                     RECT windowRect;
                     GetWindowRect(hWnd, out windowRect);
-                    //log(windowRect.Left + " " + windowRect.Top + " " + windowRect.Right + " " + windowRect.Bottom);
                     Sleep(tick);
                     if (windowRect.Left > -10000)
                     {
@@ -536,32 +496,10 @@ namespace keyupMusic4
                 }
             });
 
-            //if ((windowRect.Left == 1048 && windowRect.Right == 1512) || IsFullScreen(hWnd))
-            //{
-            //    //if (ProcessName != procName)
-            //    //    FocusProcess(hWnd);
-            //    //if (ProcessName != procName)
-            //    //    FocusProcess(procName);
-            //    //Sleep(1000);
 
-            //    //IntPtr hwnd = Native.GetForegroundWindow(); // 获取当前活动窗口的句柄
-            //    //    if (ProcessMap.ContainsKey(hwnd))
-            //    //    {
-            //    //    }
-            //    //    if (ProcessName != procName)
-            //    //    {
 
-            //    //}
 
-            //    press(F11);
-            //    //Sleep(1000);
 
-            //    HideProcess3(chrome);
-            //    return;
-            //}
-            //log(windowRect.Left + " " + windowRect.Top + " " + windowRect.Right + " " + windowRect.Bottom);
-            //Sleep(2000);
-            //play_sound_di();
         }
 
         public static void HideProcess3(string procName)
@@ -570,7 +508,6 @@ namespace keyupMusic4
             if (objProcesses.Length > 0)
             {
                 IntPtr hWnd = objProcesses[0].MainWindowHandle;
-                //log(hWnd + "");
                 ShowWindow(hWnd, SW.SW_MINIMIZE);
             }
         }
@@ -633,7 +570,6 @@ namespace keyupMusic4
             IntPtr hwnd = Native.GetForegroundWindow(); // 获取当前活动窗口的句柄
 
             string windowTitle = GetWindowTitle(hwnd);
-            //Console.WriteLine("当前活动窗口名称: " + windowTitle);
 
             return windowTitle;
         }
@@ -668,14 +604,10 @@ namespace keyupMusic4
 
         public static void bland_title()
         {
-            //SetWindowTitle(Common.devenv, "");
             SetWindowTitle3(Common.devenv);
             SetWindowTitle3(Common.VSCode);
-            //SetWindowTitle(Common.chrome, "");
             SetWindowTitle2(Common.chrome);
             SetWindowTitle(Common.PowerToysCropAndLock, "");
-            //SetWindowTitle(Common.spacedeskServiceTray, "");
-            //SetWindowTitle(Common.wemeetapp, "");
         }
         public static bool IsDesktopFocused()
         {
@@ -683,11 +615,9 @@ namespace keyupMusic4
             string classNameStr = processWrapper?.classname;
             var title = GetPointTitle();
             var istitle = title == FolderView || Position.Y == screenHeight1;
-            //istitle = istitle || title == "Program Manager";
             var aa = classNameStr == "Progman" || classNameStr == "WorkerW";
             if ((classNameStr == "Shell_TrayWnd" || classNameStr == "CabinetWClass") && istitle) aa = true;
             aa = aa && istitle;
-            //aa = aa || ProcessName == Common.AppName;
             return aa;
         }
         public static bool is_lizhi => (ProcessTitle.Contains("荔枝") && !ProcessTitle.Contains("分类"));
@@ -706,8 +636,6 @@ namespace keyupMusic4
 
             if (string.IsNullOrEmpty(CounterName))
             {
-                //var dsa = string.Join(", ", counterNames.ToArray());
-                //var dsad = "% Processor Time, % User Time, % Privileged Time, Virtual Bytes Peak, Virtual Bytes, Page Faults/sec, Working Set Peak, Working Set, Page File Bytes Peak, Page File Bytes, Private Bytes, Thread Count, Priority Base, Elapsed Time, ID Process, Creating Process ID, Pool Paged Bytes, Pool Nonpaged Bytes, Handle Count, IO Read Operations/sec, IO Write Operations/sec, IO Data Operations/sec, IO Other Operations/sec, IO Read Bytes/sec, IO Write Bytes/sec, IO Data Bytes/sec, IO Other Bytes/sec, Working Set - Private";
 
                 Task.Run(() =>
                 {

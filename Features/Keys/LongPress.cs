@@ -13,11 +13,9 @@ namespace keyupMusic4
         public static bool long_press_rbutton = false;
         public static void Every100msHandler()
         {
-            //PrintDictSortedByValueDesc();
             if (Huan.handling_keys.Count == 0) return;
 
             var handling_keys = Huan.handling_keys;
-            //if (is_steam_game()) return;
             foreach (var key in handling_keys)
             {
                 if (DateTime.Now - key.Value > TimeSpan.FromMilliseconds(LongPressClass.long_press_tick))
@@ -39,7 +37,6 @@ namespace keyupMusic4
         }
         public static void deal(Keys keys)
         {
-            //play_sound_di();
             huan.Invoke2(() => { huan.label1.Text = ProcessName + " longpress " + keys; });
 
             if (keys == Keys.F3)
@@ -49,16 +46,7 @@ namespace keyupMusic4
                 if (ProcessName == explorer && GetPointName() != ProcessName) { }
                 else CloseProcess();
             }
-            //else if (keys == Keys.F9)
-            //    huan.system_sleep(true);
 
-            //else if (keys == Keys.Home || keys == Keys.End)
-            //{
-            //    try { Common.bmpScreenshot?.Save(Common.bmpScreenshot_path, ImageFormat.Png); }
-            //    catch (Exception ex) { }
-            //    play_sound_di();
-            //    //bmpScreenshot.Dispose();
-            //}
             else if (keys == Keys.Escape)
                 HideSomething();
 
@@ -83,7 +71,6 @@ namespace keyupMusic4
         }
         public static void deal2(Keys keys)
         {
-            //play_sound_di2();
             huan.Invoke2(() => { huan.label1.Text = ProcessName + " longlongpress " + keys; });
 
             if (keys == Keys.RButton)
@@ -105,11 +92,6 @@ namespace keyupMusic4
                 CloseProcessFoce(Common.mhtab);
             }
 
-            //if (keys == Keys.F9)
-            //{
-            //    play_sound_di2();
-            //    //CloseProcessFoce(Common.mhtab);
-            //}
 
 
             if (keys == Keys.Delete)
@@ -125,7 +107,6 @@ namespace keyupMusic4
                 foreach (var key in keysA)
                 {
                     if (key == Keys.Apps) continue;
-                    //if (is_down(Keys.CapsLock)) return true;
                     huan.Invoke(() => { huan.label1.Text = ProcessName + " " + key.ToString(); });
                     SS(10).KeyUp(key);
                 }
@@ -133,7 +114,6 @@ namespace keyupMusic4
         }
         public static void deal3(Keys keys)
         {
-            //play_sound_di2();
             huan.Invoke2(() => { huan.label1.Text = ProcessName + " longlonglongpress " + keys; });
 
             if (keys == Keys.Escape)

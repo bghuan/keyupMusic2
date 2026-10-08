@@ -15,11 +15,9 @@ namespace keyupMusic4
 
         public bool judge_handled(KeyboardMouseHook.KeyEventArgs e)
         {
-            //if (is_alt() && is_down(Keys.Tab)) return false;
             if (e.key == Keys.LWin) return false;
 
             if (e.key == Keys.BrowserHome) return true;
-            //if (e.key == Keys.MediaPlayPause) return true;
             if (e.key == Keys.Apps) return true;
 
             if (e.key == Keys.F1 && !isctrl()) return true;
@@ -39,7 +37,6 @@ namespace keyupMusic4
             if (is_down(Keys.F1)) if (number_button.Contains(e.key)) return true;
 
             if (ProcessName == Common.VSCode) if (e.key == Keys.Q && isctrl()) return true;
-            //if (ProcessName == Common.msedge) if (e.key == Keys.Tab && !is_alt()) return true;
 
             if (KeyFunc.judge(e)) return true;
             return HookRegistry.JudgeChain(e);
@@ -48,9 +45,7 @@ namespace keyupMusic4
         private void KeyBoardHookProc(KeyboardMouseHook.KeyEventArgs e)
         {
             if (e.key != F1) FreshProcessName2();
-            //if (lock_err) play_sound(D8);
             if (!(e.key == Keys.F3) && ProcessName == Common.mhtab) return;
-            //if (ProcessName == SearchHost) return;
             var handleddd = judge_handled(e);
             if (handleddd) { e.Handled = true; VirKeyState(e); }
             if (!handleddd) Native.ReleaseCapture();
@@ -86,10 +81,7 @@ namespace keyupMusic4
             if (msg.Contains(start_check_str))
             {
                 start_catch_time = DateTime.Now;
-                //log("start_catch " + ProcessName);
-                //string[] list_f1 = [StartMenuExperienceHost, SearchHost, clashverge,];
                 string[] list_f1 = [clashverge,];
-                //string[] list_nothing = [devenv, Common.AppName, explorer, cs2];
                 if (ProcessName == Common.mhtab && GetPointName() == Common.mhtab)
                 {
                     LossScale();
@@ -101,14 +93,10 @@ namespace keyupMusic4
                         press([LControlKey, LShiftKey, B]);
                     }
                     else
-                        //AllClass.quick_visiualstudio();
                         ProcessRun(clashvergeexe);
-                    //SetTransparency();
                 }
                 else if (Position.X == screenWidth1 && Position.Y == screenHeight1)
                 {
-                    //system_sleep(true);
-                    //huan._mouseKbdHook.ChangeMouseHooks();
                     {
                         press(MediaStop); Native.LockWorkStation();
                     }
@@ -135,14 +123,6 @@ namespace keyupMusic4
                 {
                     changeClash();
                 }
-                //else if (ProcessName == cs2)
-                //    press("1301,48;100;1274,178;2260,1374");
-                //else if (list_f1.Contains(ProcessName))
-                //    changeClash();
-                //else if (list_nothing.Contains(ProcessName)) { }
-                //else if (IsDesktopFocused()) { }
-                //else if (is_steam_game())
-                //    LossScale();
                 else
                 {
                     huan.Invoke(() =>

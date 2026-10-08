@@ -25,11 +25,6 @@ namespace keyupMusic4
            new ReplaceKey2(chrome,          MouseMsg.back,      Keys.F,       mouseback),
            new ReplaceKey2(KingOfHill,      MouseMsg.go,        Keys.Q),
            new ReplaceKey2(KingOfHill,      MouseMsg.back,      Keys.W),
-           //new ReplaceKey2(Common.cs2,      MouseMsg.go,        Keys.Escape),
-           //new ReplaceKey2(msedge,          MouseMsg.go,        Keys.Home,       ()=>{ }),
-           //new ReplaceKey(msedge,          MouseMsg.go_up,   Keys.Home,       ()=>{ }),
-           //new ReplaceKey(string.Empty,    MouseMsg.go,        Keys.MediaNextTrack),
-           //new ReplaceKey(string.Empty,    MouseMsg.go,        Keys.MediaPreviousTrack),
         };
         private void GoBack2(KeyboardMouseHook.MouseEventArgs e)
         {

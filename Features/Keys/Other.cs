@@ -102,19 +102,6 @@ namespace keyupMusic4
                     {
                         hideProcessTitle(scrcpy);
                     }
-                    //if (e.key == PageDown)
-                    //{
-                    //    press("2169,1439");
-                    //}
-                    //if (e.key == PageUp || e.key == Left || e.key == Right)
-                    //{
-                    //    //mouse_move(1869, 1439);
-                    //    //down_mouse();
-                    //    //mouse_move(1969, 1439, 2121);
-                    //    //mouse_move(2169, 1439);
-                    //    //up_mouse();
-                    //    //press("2169.1439;_;1169.1439;-;300");
-                    //}
                     break;
             }
 
@@ -209,7 +196,6 @@ namespace keyupMusic4
                     GoodDesktopWallpaper();
                     break;
                 case Keys.PageUp:
-                    //if (ProcessName == cs2) break;
                     SetDesktopWallpaperAli(GetCurrentWallpaperPath());
                     break;
                 case Keys.PageDown:
@@ -247,7 +233,6 @@ namespace keyupMusic4
                 case Keys.Left:
                     if (isctrl())
                     {
-                        //if (WaitForKeysReleased(1000, isctrl))
                         up_press(LControlKey);
                         press(e.key == Keys.Right ? MediaNextTrack : MediaPreviousTrack);
                     }
@@ -257,16 +242,6 @@ namespace keyupMusic4
                         else
                             press(Keys.PageUp, 0);
                     break;
-                    //case Keys.VolumeDown:
-                    //    if (e.Y == screenHeight1)
-                    //        //press_rate(Keys.PageDown, 0);
-                    //        press(Keys.PageDown, 0);
-                    //    break;
-                    //case Keys.VolumeUp:
-                    //    if (e.Y == screenHeight1)
-                    //        //press_rate(Keys.PageUp, 0);
-                    //        press(Keys.PageUp, 0);
-                    //    break;
             }
         }
 
@@ -325,12 +300,6 @@ namespace keyupMusic4
             if (ProcessName != cs2) return;
             switch (e.key)
             {
-                //case Keys.F1:
-                //    break;
-                //case Keys.F2:
-                //    Sleep(100);
-                //    press(Keys.D3);
-                //    break;
                 case Keys.F5:
                     press("1301,48;100;1274,178;2260,1374");
                     break;
@@ -389,10 +358,6 @@ namespace keyupMusic4
                     press("H;200;955,332;1179,335;1395,336;1613,332;" +
                         "732,922;902,939;1183,939;1060,780;H;");
                     break;
-                    //case Keys.F2:
-                    //    press("H;200;955,332;1179,335;1395,336;1613,332;" +
-                    //        "1378,1102;1519,1113;1685,785;1183,939;H;");
-                    //    break;
             }
         }
 

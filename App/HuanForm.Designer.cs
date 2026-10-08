@@ -12,15 +12,6 @@ namespace keyupMusic4
         /// <summary>
         ///  Clean up any resources being used.
         /// </summary>
-        /// <param name="disposing">true if managed resources should be disposed; otherwise, false.</param>
-        //protected override void Dispose(bool disposing)
-        //{
-        //    if (disposing && (components != null))
-        //    {
-        //        components.Dispose();
-        //    }
-        //    base.Dispose(disposing);
-        //}
 
         #region Windows Form Designer generated code
 
@@ -39,9 +30,7 @@ namespace keyupMusic4
             label2 = new Label();
             contextMenuStrip1.SuspendLayout();
             SuspendLayout();
-            // 
             // label1
-            // 
             label1.AutoSize = true;
             label1.Location = new Point(7, 0);
             label1.Margin = new Padding(4, 0, 4, 0);
@@ -50,18 +39,14 @@ namespace keyupMusic4
             label1.TabIndex = 1;
             label1.Text = "label1";
             label1.Click += label1_Click;
-            // 
             // notifyIcon1
-            // 
             notifyIcon1.ContextMenuStrip = contextMenuStrip1;
             notifyIcon1.Icon = (Icon)resources.GetObject("notifyIcon1.Icon");
             notifyIcon1.Text = "幻";
             notifyIcon1.Visible = true;
             notifyIcon1.DoubleClick += notifyIcon1_DoubleClick;
             notifyIcon1.MouseClick += notifyIcon1_MouseClick;
-            // 
             // contextMenuStrip1
-            // 
             contextMenuStrip1.ImageScalingSize = new Size(24, 24);
             string[] menuKeys = new string[]
             {
@@ -102,18 +87,14 @@ namespace keyupMusic4
 
             letterMenuItems2= new ToolStripMenuItem[] { vkMenuItem1 , vkMenuItem2 , vkMenuItem3 , vkMenuItem4 };
             contextMenuStrip1.Items.AddRange(letterMenuItems2);
-            // 
             // label2
-            // 
             label2.AutoSize = true;
             label2.Location = new Point(180, 0);
             label2.Name = "label2";
             label2.Size = new Size(63, 24);
             label2.TabIndex = 2;
             label2.Text = "label2";
-            // 
             // Huan
-            // 
             AutoScaleDimensions = new SizeF(11F, 24F);
             AutoScaleMode = AutoScaleMode.Font;
             BackColor = SystemColors.Window;

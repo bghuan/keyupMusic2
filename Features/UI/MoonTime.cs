@@ -9,7 +9,6 @@ namespace keyupMusic4
         private string url = "http://localhost/fantasy/moon/index.html";
         private string url2 = "C:\\Users\\bu\\Documents\\fantasy\\fantasy\\moon\\index.html";
         private string moontime_url = "log\\moontimeurl.txt";
-        private string moontime_location = "log\\moontimelocation.txt";
         double scalingFactor;
         private int diameter;
         private System.Timers.Timer timer_Every100ms;
@@ -28,7 +27,6 @@ namespace keyupMusic4
             diameter = (int)(360 * scalingFactor);
             Size = new Size(diameter, diameter);
             Size = new Size(144, 144);
-            //webView21.Size = new Size(936 / 3, 803 / 3);
 
             InitializeAsync();
         }
@@ -86,7 +84,6 @@ namespace keyupMusic4
             else if (message == ("location"))
             {
                 Common.ConfigValue(Common.ConfigMoonTimeLocation, Location.X + "," + Location.Y);
-                //File.WriteAllTextAsync(moontime_location, Location.X + "," + Location.Y);
             }
             else if (message == "url")
             {
@@ -141,7 +138,6 @@ namespace keyupMusic4
         {
             Every100ms();
 
-            //string location = File.ReadAllText(moontime_location);
             string location = Common.ConfigValue(Common.ConfigMoonTimeLocation);
             if(location.Split(',').Length < 2 || !int.TryParse(location.Split(',')[0], out int x))
                 x = 500;

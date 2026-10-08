@@ -166,8 +166,6 @@ namespace keyupMusic4
             var keys = new List<Keys>();
             for (int i = 0; i < 256; i++)
             {
-                //if (i == (int)Keys.Menu || i == (int)Keys.LMenu)
-                //    continue;
                 if (Native.GetAsyncKeyState(i) < 0)
                 {
                     keys.Add((Keys)i);
@@ -177,7 +175,6 @@ namespace keyupMusic4
         }
         public static Dictionary<Keys, string> GetVirPressedKeys()
         {
-            //return VirMouseStateKey;
             IEnumerable<Keys> keys = GetPressedKeys();
             Dictionary<Keys, string> virPressedKeys = VirMouseStateKey;
             var mergedDictionary = virPressedKeys
@@ -202,7 +199,6 @@ namespace keyupMusic4
         /// <summary>
         /// 获取指定类型中所有 public const string 成员
         /// </summary>
-        /// <param name="type">要检查的类型</param>
         /// <returns>一个字典，键为常量名，值为常量值</returns>
         public static Dictionary<string, string> GetPublicConstStrings(Type type)
         {
@@ -367,7 +363,6 @@ namespace keyupMusic4
             logBuilder.AppendLine("序号 | 键（Key） | 值（Value）");
             logBuilder.AppendLine("--------------------------------------");
 
-            // 2. 按值降序排序（核心：OrderByDescending(kvp => kvp.Value)）
             var sortedKvps = Huan.mmmm.OrderByDescending(kvp => kvp.Value);
 
             // 3. 遍历排序后的键值对，拼接日志
@@ -382,11 +377,9 @@ namespace keyupMusic4
             try
             {
                 File.WriteAllText("log2.txt", logBuilder.ToString());
-                //Console.WriteLine("字典已按值降序打印到 log2.txt");
             }
-            catch (Exception ex)
+            catch (Exception)
             {
-                //Console.WriteLine($"写入失败：{ex.Message}");
             }
         }
         public static HashSet<Keys> number_button = new HashSet<Keys> { Keys.Oemcomma, Keys.OemPeriod, Keys.Oem2, Keys.K, Keys.L, Keys.OemSemicolon, Keys.I, Keys.O, Keys.P, Keys.Space };
@@ -446,7 +439,6 @@ namespace keyupMusic4
         /// <summary>
         /// 根据参数设置分辨率和刷新率
         /// </summary>
-        /// <param name="mode">1=1920x1080@144Hz, 2=3840x2160@120Hz</param>
         /// <returns>是否设置成功</returns>
     }
 }

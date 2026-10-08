@@ -23,27 +23,17 @@ namespace keyupMusic4
             timer8000ms.Elapsed += (s, e) => Every8000ms();
             timer8000ms.Start();
 
-            //timer60000ms.Elapsed += (s, e) => Every60000msHandler();
-            //timer60000ms.Start();
         }
 
         private void Every1000ms()
         {
             if (ProcessName == ShapeofDreams)
             {
-                //if (judge_color(1363, 788, Color.FromArgb(254, 254, 254), 1) && judge_color(1383, 806, Color.FromArgb(20, 27, 32), 52))
-                //{ 
-                //    press(1232, 786);
-                //    mouse_move(2225, 827);
-                //}
-                //else
                 if (judge_color(1363, 742, Color.FromArgb(254, 254, 254), 1) && judge_color(1414, 742, Color.FromArgb(13, 22, 28), 1))
                 {
                     press(1234, 748);
                     mouse_move(2225, 827);
                 }
-                //mouse_click_right();
-                //press("Q", 10);
             }
         }
 
@@ -81,32 +71,10 @@ namespace keyupMusic4
                     if (is_music) press(Keys.MediaPlayPause);
                 });
             }
-            //if (DateTime.Now.Minute % 10 == 0)
-            //{
-            //    IEnumerable<Keys> pressedKeys = GetPressedKeys();
-            //    if (!pressedKeys.Any())
-            //    {
-            //        press([LShiftKey, F1]);
-            //    }
-            //    //SetDesktopWallpaperFull();
-            //    //SetDesktopWallpaperAli(GetNextWallpaper(), false);
-            //}
         }
 
-        bool exp = false;
         private void Every8000ms()
         {
-            //FreshProcessName();
-            //IEnumerable<Keys> pressedKeys = GetPressedKeys().Where(x => x != Menu && x != ShiftKey && x != ControlKey);
-            //if (!exp && pressedKeys.Count() != Huan.handling_keys.Count)
-            //{
-            //    exp = true;
-            //    throw new Exception("exp " + string.Join(",", pressedKeys) + " " + string.Join(",", Huan.handling_keys));
-            //}
-            //else
-            //{
-            //    exp = false;
-            //}
 
             if (ProcessName == cs2)
             {
@@ -117,45 +85,13 @@ namespace keyupMusic4
                     press(Keys.F1);
                 if (Position != PositionMiddle)
                     PositionMiddle = Position;
-                //if (VirtualKeyboardForm.Instance.Visible)
-                //    VirtualKeyboardForm.Instance.Hide();
             }
-            //else if (system_sleep_count > 0)
-            //{
-            //    int slow = 1;
-            //    int end = 3 + slow;
-            //    if (system_sleep_count > slow)
-            //        for (int i = end - system_sleep_count; i > 0; i--)
-            //        {
-            //            play_sound_di();
-            //            Sleep(100);
-            //        }
-            //    if (system_sleep_count > end)
-            //    {
-            //        log("tick system_hard_sleep");
-            //        system_hard_sleep();
-            //    }
-            //    system_sleep_count++;
-            //}
             else if (gcc_restart)
             {
                 CloseProcessFoce(gcc);
                 ProcessRun(gccexe);
                 gcc_restart = false;
             }
-            //else if (ExistProcess(cs2) && Position == PositionMiddle && IsFullScreen())
-            //{
-            //    press_middle_bottom();
-            //}
-            //else if (ExistProcess(OpenWith))
-            //{
-            //    CloseProcess(OpenWith);
-            //}
-            //else if (!VirtualKeyboardForm.Instance.Visible)
-            //{
-            //    VirtualKeyboardForm.Instance.Show();
-            //}
-            //VirtualKeyboardForm.Instance?.TriggerKey(Tab, true);
             bland_title();
             Console2.WriteLine($"Tick");
         }

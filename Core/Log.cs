@@ -65,7 +65,6 @@
                 processed = processed.Substring(0, paramStartIndex);
             }
 
-            // 处理匿名方法的特殊命名（如<>c__DisplayClass4_0.<KeyBoardHookProc>b__0 -> KeyBoardHookProc）
             if (processed.Contains("<") && processed.Contains(">"))
             {
                 int start = processed.IndexOf('<') + 1;

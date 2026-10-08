@@ -31,9 +31,7 @@ namespace keyupMusic4
         public static void CleanMouseState()
         {
             biu.catch_off();
-            //biuCL.RECTT.release();
             CleanVirMouseState();
-            //biu.r_down_x = Point.Empty;
         }
 
         static string proc_info = "";
@@ -42,8 +40,6 @@ namespace keyupMusic4
             IntPtr hwnd = Native.GetForegroundWindow();
             string Title = GetWindowTitle(hwnd);
             bool IsFull = IsFullScreen(hwnd);
-
-            var filePath = "a.txt";
 
             var Path = "err";
             var module_name = "err";
@@ -72,7 +68,6 @@ namespace keyupMusic4
             proc_info = curr_proc_info;
 
             log(txt);
-            //log(DateTime.Now.ToString("") + " " + windowTitle + " " + fildsadsePath + module_nasme + "\n");
             return Name;
         }
         public static void log(string message)

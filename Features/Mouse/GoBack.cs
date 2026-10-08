@@ -56,7 +56,6 @@ namespace keyupMusic4
             { }
             else if (IsDesktopFocused())
                 press(go ? Keys.MediaNextTrack : Keys.MediaPreviousTrack);
-            //if (!IsDesktopFocused() && list_go_back.Contains(ProcessName))
             else if (goback.Contains(ProcessName) || ProcessName.Contains(studio) || ProcessTitle.Contains(studio) || ProcessPath.Contains(studio))
             {
                 mousegoback(go);
@@ -87,25 +86,17 @@ namespace keyupMusic4
             if (go)
             {
                 press([LMenu, W]);
-                //press([LControlKey, Keys.Tab]);
-                //press([Keys.Tab]);
-                //press([Keys.F2]);
             }
             if (back)
             {
-                //log(GetPointName());
                 if (Position.Y == 0)
                     press([LMenu, K]);
                 else if (GetPointName() != Common.mhtab && GetPointName() != Common.mhmain)
-                    //press([Keys.Tab]);
                     press([Keys.Tab]);
                 else if (Position.X == 0)
-                    //press([Keys.Tab]);
                     press([Keys.Tab]);
                 else
-                    //press([Keys.Tab]);
                     press([LMenu, E]);
-                //press([LMenu, Q]);
             }
         }
 
@@ -122,8 +113,6 @@ namespace keyupMusic4
 
         private void _lz_image_download(bool go, bool back)
         {
-            //if (back)
-            //    CloseProcess();
         }
 
         private void _KingdomRush(bool go, bool back)
@@ -151,47 +140,20 @@ namespace keyupMusic4
         {
             if (go && !IsFullScreen() && (judge_color(26, 94, Color.FromArgb(120, 123, 117))) && WindowWidth() >= screenWidth)
                 press([Keys.LControlKey, Keys.W]);
-            ////if (back)
-            ////    if ((judge_color(3876, 95, Color.FromArgb(104, 107, 101)))
-            ////        && judge_color(6437, 147, Color.FromArgb(55, 61, 53)))
-            ////        press([Keys.LControlKey, Keys.W]);
-            //if (back)
-            //    if ((judge_color(27, 95, Color.FromArgb(120, 123, 117))
-            //        && judge_color(2496, 121, Color.FromArgb(55, 61, 53))))
-            //        press([Keys.LControlKey, Keys.W]);
-            ////else if (is_lizhi)
-            ////{
-            ////    press([Keys.LControlKey, Keys.W]);
-            ////}
-            ////if (go) press(Keys.F);
 
         }
         private void Msedge(bool go, bool back)
         {
             if (back)
                 if (judge_color(20, 60, Color.FromArgb(216, 216, 216), 3))
-                    //if (judge_color(33, 80, Color.FromArgb(183, 183, 183), 3))
-                    //if (judge_color(92, 73, Color.FromArgb(0, 0, 0), null, 0))
                     press([Keys.LControlKey, Keys.W]);
                 else if (ProcessTitle.Contains("起点中文网") && !ProcessTitle.Contains("类"))
                     press([Keys.LControlKey, Keys.W]);
                 else
                     mouseback();
             if (go) press(Keys.Right);
-            //if (back)
-            //{
 
-            //    IntPtr hwnd = GetForegroundWindow();
-            //    Bitmap before = CaptureWindow(hwnd);
-            //    Thread.Sleep(200);
-            //    Bitmap after = CaptureWindow(hwnd);
-            //    bool changed = !BitmapsAreSimilar(before, after);
-            //    before.Dispose();
-            //    after.Dispose();
 
-            //    if (!changed)
-            //        press_raw([LControlKey, W]);
-            //}
         }
         private void cs2(bool go, bool back)
         {
@@ -216,15 +178,6 @@ namespace keyupMusic4
                 {
                     SS().KeyPress(Keys.H);
                 }
-                //else if (e.Msg == MouseMsg.click_up)
-                //{
-                //    Common.isVir = 0;
-                //    if (e.Y == screenHeight1 && e.X < screenWidth2)
-                //        SS().KeyPress(Keys.PageUp);
-                //    else if (e.Y == screenHeight1 && e.X < screenWidth1)
-                //        SS().KeyPress(Keys.PageDown);
-                //    Common.isVir = 3;
-                //}
                 return;
             }
         }

@@ -48,13 +48,6 @@ namespace keyupMusic4
             {
                 if (key == Keys.PageDown)
                     key = Keys.Down;
-                //if (key == Keys.Up)
-                //    key = Keys.PageUp;
-                //if (ProcessTitle.Contains("502") || ProcessTitle.Contains("503"))
-                //    if (key == Keys.PageDown)
-                //        key = Keys.F5;
-                //    else if (key == Keys.Up)
-                //        key = Keys.F11;
             }
             else if (ProcessName == Common.msedge || ProcessTitle == kmRead)
             {
@@ -121,22 +114,13 @@ namespace keyupMusic4
                     press([Keys.LWin, Keys.D]);
                 return;
             }
-            //else if (ProcessName == Common.chrome && GetPointName() == msedge)
-            //{
-            //    if (key == Keys.PageDown)
-            //        mousewhell(-4);
-            //    else if (key == Keys.Up)
-            //        mousewhell(4);
-            //}
 
             if (key == Keys.None) return;
 
-            //play_sound_di(0.1f);
             if (key == F3 || is_douyin() || Huan.keyupMusic4_onlisten)
                 press_raw(key);
             else
                 press_raw(key);
-            //log(msg + "-" + ProcessName2 + "-" + key);
         }
     }
 }
@@ -144,16 +128,3 @@ namespace keyupMusic4
 
 
 
-//            else if (ProcessName == Common.ACPhoenix)
-//{
-//    if (key == Keys.PageDown)
-//        key = Keys.Space;
-//    else if (key == Keys.Left)
-//        key = Keys.Tab;
-//    else if (key == Keys.Right)
-//        key = Keys.Tab;
-//    else if (key == Keys.Up)
-//        key = Keys.E;
-//    else if (key == Keys.Down)
-//        key = Keys.E;
-//}

@@ -2,7 +2,6 @@
 {
     public partial class Common
     {
-        //press(100, LWin, "chrome", "en", Enter, _(Keys.LControlKey, Keys.A));
         public static Keys[] KC(params Keys[] keys) => keys;
 
         public static Keys Ctrl = Keys.LControlKey;
@@ -98,7 +97,6 @@
         public static Keys LWin = Keys.LWin;
         public static Keys RWin = Keys.RWin;
         public static Keys Apps = Keys.Apps;
-        //public static Keys Sleep = Keys.Sleep;
         public static Keys NumPad0 = Keys.NumPad0;
         public static Keys NumPad1 = Keys.NumPad1;
         public static Keys NumPad2 = Keys.NumPad2;
@@ -167,8 +165,6 @@
         public static Keys LaunchApplication2 = Keys.LaunchApplication2;
         public static Keys Oem1 = Keys.Oem1;
         public static Keys OemSemicolon = Oem1 = Keys.OemSemicolon; // 别名
-                                                                    //public static Keys OemPlus = Keys.OemPlus;
-                                                                    //public static Keys OemComma = Keys.OemComma;
         public static Keys OemMinus = Keys.OemMinus;
         public static Keys OemPeriod = Keys.OemPeriod;
         public static Keys Oem2 = Keys.Oem2;

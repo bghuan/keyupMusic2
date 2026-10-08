@@ -66,7 +66,7 @@ namespace keyupMusic4
                         }
                     }
                 }
-                catch (Exception ex)
+                catch (Exception)
                 {
 
                 }
@@ -82,12 +82,10 @@ namespace keyupMusic4
                 return parameters;
 
             string firstLine = request.Substring(0, endOfFirstLine);
-            // 第一行格式: "GET /?a=123 HTTP/1.1"
             string[] parts = firstLine.Split(new[] { ' ' }, StringSplitOptions.RemoveEmptyEntries);
             if (parts.Length < 2)
                 return parameters;
 
-            // 获取URL部分（如 "/?a=123"）
             string url = parts[1];
 
             // 提取查询字符串（?后面的部分）
@@ -158,11 +156,8 @@ namespace keyupMusic4
                             huan.Invoke(() => { huan.label1.Text = msg.Substring(11); });
                         else if (msg.StartsWith(download_image_prix))
                             download_image(msg);
-                        //else if (msg.Contains(OpencvReceive.opencvstr))
-                        //    huan.Opencv.deal(msg);
                         else if (Band.band_handle(msg))
                             Band.Button1(msg);
-                        //huan.Invoke(() => { huan.label1.Text = msg; });
                     }
                     catch (Exception ex)
                     {

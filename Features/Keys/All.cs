@@ -12,29 +12,12 @@ namespace keyupMusic4
             string module_name = ProcessName;
             handling_keys = e.key;
             bool right_top = Position.Y == 0 && Position.X == 2559;
-            //if (!handling) return;
 
             quick_number(e);
 
             switch (e.key)
             {
-                //case Keys.F1:
-                //    SuperClass.get_point_color(); break;
-                //case Keys.F2:
-                //    quick_scale(); break;
-                //case Keys.F4:
-                //    quick_close(); quick_sleep(); break;
-                //case Keys.F10:
-                //    quick_what(); break;
-                //case Keys.F11:
-                //    quick_visiualstudio(); break;
-                //case Keys.F12:
-                //    quick_wechat_or_notify(); break;
 
-                //case Keys.Home:
-                //    copy_screen(); break;
-                //case Keys.End:
-                //    copy_secoed_screen(); break;
                 case Keys.PageDown:
                     quick_gamg_alttab(e, module_name); break;
 
@@ -42,8 +25,6 @@ namespace keyupMusic4
                     clean(); DeleteCurrentWallpaper(); break;
                 case Keys.Escape:
                     clean(); break;
-                //case Keys.LShiftKey:
-                //    shift(); break;
 
                 case Keys.Up:
                     if (is_tran_process == ProcessName) { SetTransparency(16); break; }
@@ -54,23 +35,13 @@ namespace keyupMusic4
 
                 case Keys.OemPeriod:
                     if (is_down(Keys.RControlKey)) { press_raw(Apps); break; }
-                    //if (is_down_vir(Keys.RControlKey)) { press(MediaStop); Native.LockWorkStation(); break; }
                     break;
             }
-            //if (Position.Y == 0)
-            //    switch (e.key)
-            //    {
-            //        case Keys.Left:
-            //        case Keys.Down:
-            //        case Keys.Right:
-            //            quick_number2(e.key); break;
-            //    }
 
         }
 
         public static void quick_scale()
         {
-            //var asd = IsFullScreen();
             if (ProcessName == cs2)
             {
                 return;
@@ -114,7 +85,6 @@ namespace keyupMusic4
                 : clipboardText.ToUpper();
 
             // 再次等待按键释放，然后按下 Shift 键
-            //if (WaitForKeysReleased(1000, isctrl, is_shift))
             {
                 press(new[] { Keys.LShiftKey }, 50);
                 press(processedText);
@@ -156,10 +126,6 @@ namespace keyupMusic4
 
         public static void quick_what()
         {
-            //if (TryFocusProcess(Common.cs2)) return;
-            //if (TryFocusProcess(Common.SplitFiction)) return;
-            ////if (TryFocusProcess(Common.steam)) break;
-            //quick_max_chrome();
         }
 
         public static void quick_gamg_alttab(KeyboardMouseHook.KeyEventArgs e, string module_name)
@@ -187,14 +153,8 @@ namespace keyupMusic4
             if (is_down(Keys.Delete) || is_ctrl()) return;
             if (ProcessName == "msedgewebview2")
             {
-                //press(F12);
                 return;
             }
-            //if (ProcessName == Common.AppName)
-            //{
-            //    press(F12);
-            //    return;
-            //}
             if (Common.WeChat == module_name)
             {
                 CloseProcess2(module_name);
@@ -206,7 +166,6 @@ namespace keyupMusic4
             else
             {
                 press([Keys.LControlKey, Keys.LMenu, Keys.W]);
-                //Common.FocusProcess(Common.WeChat);
                 Thread.Sleep(10);
                 if (ProcessName == Common.WeChat) return;
                 run_wei();
@@ -215,12 +174,10 @@ namespace keyupMusic4
 
         public static void quick_visiualstudio()
         {
-            //return;
             string module_name = ProcessName;
             if (is_down(Keys.Delete) || is_ctrl()) return;
             if (ProcessName == Common.AppName)
             {
-                //press(F12);
                 return;
             }
             if (Common.devenv == module_name)
@@ -290,23 +247,11 @@ namespace keyupMusic4
         }
         private static void run_wei()
         {
-            //if (!Common.ExistProcess(Common.WeChat))
-            //{
-            //    press("LWin;100;WEI;en;100;Enter;", 50);
-            //    return;
-            //}
-            //press([Keys.LControlKey, Keys.LMenu, Keys.W]);
             ProcessRun("C:\\Program Files\\Tencent\\Weixin\\Weixin.exe");
         }
 
         public static void run_vis()
         {
-            //press("LWin;VISUAL;en;100;Apps;100;Enter;1000;1271.654;", 100);
-            ////DaleyRun(
-            ////    () => GetPointTitle() == "Microsoft Visual Studio(管理员)",
-            ////    () => press("100;Tab;Down;Enter;", 100),
-            ////    3000, 200);
-            //TaskRun(() => { press("Tab;Down;Enter;", 50); }, 800);
             ProcessRun(devenvexe, keyupMusicexe);
         }
     }

@@ -122,8 +122,6 @@ namespace keyupMusic4
         public event KeyboardHookEventHandler KeyEvent;
         public delegate void MouseHookEventHandler(MouseEventArgs e);
         public delegate void KeyboardHookEventHandler(KeyEventArgs e);
-        //public event Action<MouseEventArgs> MouseEvent;
-        //public event Action<KeyEventArgs> KeyEvent;
         public string ModuleName => Process.GetCurrentProcess().MainModule.ModuleName;
         public KeyboardMouseHook(nint form_hwnd)
         {
@@ -137,11 +135,6 @@ namespace keyupMusic4
                 _key_hookId = Native.SetKeyboardHook(_kbdHookProc, ModuleName);
             if (_mouse_hookId == IntPtr.Zero && MouseEvent != null)
                 _mouse_hookId = Native.SetMouseHook(_mouseHookProc, ModuleName);
-            //InstallCbtHook();
-            //UninstallCbtHook();
-            //InstallSHELLHook();
-            //UninstallSHELLHook();
-            //InstallHook();
         }
 
         public void Uninstall()

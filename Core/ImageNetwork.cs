@@ -31,6 +31,7 @@ namespace keyupMusic4
         }
         static int SetDesktopWallpaperAli_count = 0;
         static bool SetDesktopWallpaperAli_flag = false;
+        // 注意：已禁用（基线行为：方法以 return 开头，调用即返回；恢复功能时可从 git 历史取回完整实现）
         public static void SetDesktopWallpaperAli(string filePath, bool di = true)
         {
             return;
@@ -170,7 +171,7 @@ namespace keyupMusic4
                     play_sound_bongocat(1);
                 return true;
             }
-            catch (Exception ex)
+            catch (Exception)
             {
                 //UploadImage("https://bghuan.cn/api/saveimage", _wallpapersPath_temp);
             }

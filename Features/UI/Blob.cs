@@ -15,7 +15,6 @@ namespace keyupMusic4
     {
         private static Blob _instance;
         public static Blob Instance => _instance;
-        //private string url = "http://localhost/fantasy/moon/blob.html";
         private string url2 = "C:\\Users\\bu\\Documents\\fantasy\\fantasy\\moon\\blob.html";
         public Blob()
         {
@@ -28,8 +27,6 @@ namespace keyupMusic4
             TopMost = true;
             Text = "Blob";
             ShowInTaskbar = false;
-            //this.Width = Screen.PrimaryScreen.Bounds.Width;
-            //this.Height = Screen.PrimaryScreen.Bounds.Height - 70;
             this.Width = 400;
             this.Height = 400;
             this.StartPosition = FormStartPosition.Manual; // 很重要！
@@ -43,8 +40,6 @@ namespace keyupMusic4
             await webView21.EnsureCoreWebView2Async(null);
             webView21.CoreWebView2.NavigationCompleted += CoreWebView2_NavigationCompleted;
             webView21.CoreWebView2.WebMessageReceived += CoreWebView2_WebMessageReceived;
-            //webView21.DefaultBackgroundColor = Color.Transparent;
-            //webView21.CoreWebView2.OpenDevToolsWindow();
             webView21.KeyDown += (s, e) =>
             {
                 if (e.KeyCode == Keys.F3 || e.KeyCode == Keys.F9)
@@ -64,15 +59,7 @@ namespace keyupMusic4
         {
             var testWebView = new Microsoft.Web.WebView2.WinForms.WebView2();
             await testWebView.EnsureCoreWebView2Async(null);
-            //testWebView.CoreWebView2.NavigationCompleted += (sender, args) =>
-            //{
-            //    if (args.IsSuccess)
-            //    {
             //        // 远程url可用，切换主webView21显示
-            //        webView21.CoreWebView2.Navigate(url);
-            //    }
-            //    testWebView.Dispose();
-            //};
             testWebView.CoreWebView2.Navigate(url2);
         }
 
@@ -103,8 +90,6 @@ namespace keyupMusic4
         public void changeFlag(bool flag)
         {
             if (webView21.CoreWebView2 == null) return;
-            //webView21.CoreWebView2.ExecuteScriptAsync("console.log('测试JS通信');");
-            //webView21.CoreWebView2.ExecuteScriptAsync("console.log(changeFlag);");
             string js = $"changeFlag({(flag ? 1 : 0)});";
             webView21.Invoke(new Action(() => webView21.CoreWebView2.ExecuteScriptAsync(js)));
         }

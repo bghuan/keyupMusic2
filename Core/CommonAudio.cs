@@ -24,7 +24,6 @@ namespace keyupMusic4
         {
             if (is_down(Keys.LWin)) return;
             if (Position.Y == 0) return;
-            //if (key_sound && keys.Contains(e.key))
             if (key_sound || force)
             {
                 string wav = "wav\\" + key.ToString().Replace("D", "").Replace("F", "") + ".wav";
@@ -156,7 +155,6 @@ namespace keyupMusic4
         {
             using (var mp3Reader = new Mp3FileReader(mp3File))
             {
-                // Convert MP3 to PCM (16-bit, SubChunk1Size = 16)
                 var pcmFormat = new WaveFormat(16000, 16, 1); // 44.1kHz, 16-bit, stereo
                 using (var pcmStream = new MediaFoundationResampler(mp3Reader, pcmFormat))
                 {

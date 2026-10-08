@@ -10,12 +10,6 @@ namespace keyupMusic4
         }
         public int tick = 0;
 
-        //public Simulate KeyPress(params object[] inputs)
-        //    => inputs.Aggregate(this, (sim, input)
-        //    => input is Keys key ? sim.KeyPress(key) :
-        //       input is Keys[] keys ? sim.KeyPress(keys) :
-        //       input is string str ? sim.KeyPress(str) :
-        //       sim);
 
         public Simulate KeyPress(string text)
         {
@@ -45,8 +39,6 @@ namespace keyupMusic4
             if (tick > 0) Thread.Sleep(tick);
             return this;
         }
-        //[DllImport("user32.dll", SetLastError = true)]
-        //public static extern uint SendInput(UInt32 numberOfInputs, KeyboardInput.INPUT[] inputs, Int32 sizeOfInputStructure);
         public Simulate KeyPress(Keys[] key)
         {
             var inputs = new KeyboardInput.INPUT[key.Length * 2];

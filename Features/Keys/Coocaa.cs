@@ -53,7 +53,6 @@ namespace keyupMusic4
             if (!handled(e)) return false;
             if (e.Type == KeyType.Down)
                 return KeyDown(e);
-            //if (e.Type == KeyType.Up)
             return KeyUp(e);
 
         }

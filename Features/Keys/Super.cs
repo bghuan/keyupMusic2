@@ -41,12 +41,9 @@ namespace keyupMusic4
                 switch (e.key)
                 {
                     case Keys.Q:
-                        //Blob.Instance.changeFlag(false);
                         mousewhell(4);
                         break;
                     case Keys.W:
-                        //SSSS.KeyPress(Keys.LWin, "openvpn", Keys.Enter);
-                        //SSSS.KeyPress(Keys.LWin, "verge", Keys.Enter);
                         mouse_move(2186, 1403, 100);
                         var need_win = GetPointName() != explorer;
                         if (need_win) press(LWin, 100);
@@ -56,16 +53,11 @@ namespace keyupMusic4
                         else
                             press("2259,1112;300;2109,1180", 100);
                         break;
-                        //2083,1180 2109,1107 2259,1112 2186,1403
-                        mouse_click_right(2186, 1403);
-                        press("2259,1112;2083,1180", 100);
-                        break;
                     case Keys.E:
                         play_sound(Keys.D0);
                         winBinWallpaper.changeImg();
                         break;
                     case Keys.R:
-                        //sound_setting();
                         huan.Invoke(() =>
                         {
                             Read read = new Read();
@@ -79,8 +71,6 @@ namespace keyupMusic4
                         CloseProcessFoce(Common.mhtab);
                         break;
                     case Keys.Y:
-                        //Common.cmd($"/c start ms-settings:taskbar");
-                        //press("100;978,1042;978,1044;907,1227;2500,32;", 501);
                         Common.cmd($"/c start ms-settings:bluetooth"); // 打开 → 蓝牙和设备
                         break;
                     case Keys.U:
@@ -99,19 +89,8 @@ namespace keyupMusic4
                         change_file_last(false);
                         break;
                     case Keys.A:
-                        //start_record = !start_record;
-                        //Log.logcachesave();
-                        //string path = "";
-                        //Invoke(() =>
-                        //{
-                        //    path = Clipboard.GetText();
-                        //});
-                        //var a = GetAllFiles(path, false);
-                        //download_image(a);
-                        //start_listen_to_word();
                         break;
                     case Keys.S:
-                        //SetWindowTitle();
                         MoveSmallFilesRecursive();
                         break;
                     case Keys.D:
@@ -135,21 +114,11 @@ namespace keyupMusic4
                         }
                         break;
                     case Keys.H:
-                        //string sourceImage = "input.png";
-                        //string targetImage = "output.png";
-                        ////ConvertAndResize(sourceImage, targetImage);
-                        ////ShowFadeInWallpaper(targetImage);
-                        //var aaa = GetWallpaperFromRegistry();
-                        //targetImage = "output.png";
-                        //BatchCompressImages("C:\\Users\\bu\\Pictures\\Screenshots\\dd\\20241022", "C:\\Users\\bu\\Desktop", 80, 1920, 1080);
-                        //VirtualKeyboardForm.Instance.TriggerKey(Q, false);
                         break;
                     case Keys.J:
-                        //SetDesktopWallpaperAli(GetCurrentWallpaperPath());
                         MoonTime.Instance.ChangeColor();
                         break;
                     case Keys.K:
-                        //huan.release_all_key(1000);
                         VirtualKeyboardForm.Instance?.TriggerKey(Y, e.Type == KeyType.Up);
                         break;
                     case Keys.L:
@@ -164,10 +133,6 @@ namespace keyupMusic4
                         SetTransparency();
                         break;
                     case Keys.X:
-                        //AllClass.run_vis();
-                        //IntPtr hwnd = Native.GetForegroundWindow();
-                        //const uint WHITE_COLOR = 0x000000;
-                        //SetLayeredWindowAttributes(hwnd, WHITE_COLOR, 255, 0x1);
                         huan.Invoke(() =>
                         {
                             Read read = new Read();
@@ -176,7 +141,6 @@ namespace keyupMusic4
                             read.BringToFront();     // 放到最前
                             read.Focus();            // 设置输入焦点
                         });
-                        //press([A,D1,D2,D4,D5,D6,D7,Keys.OemPeriod],100);
                         break;
                     case Keys.C:
                         press_middle_bottom();
@@ -208,31 +172,12 @@ namespace keyupMusic4
                         break;
                     case Keys.F1:
                         get_point_color();
-                        //if (VirMouseStateKey.Count > 0)
-                        //    log("VirMouseStateKey: " + string.Join(", ", VirMouseStateKey));
                         break;
                     case Keys.F2:
-                        //LossScale();
-                        //CloseProcess(explorer);
-                        //ProcessRun(explorer);
 
-                        //ProcessRun("C:\\Windows\\explorer.exe steam://rungameid/730");
                         press("LWin;1515,1003;");
                         break;
-                    //case Keys.F3:
-                    //    huan.SetVisibleCore2(!huan.Visible);
-                    //    break;
                     case Keys.F4:
-                        //huan.Invoke(() =>
-                        //{
-                        //    Read read = new Read();啊24567.
-                        //    read.Show();
-                        //    read.Activate();         // 激活窗口
-                        //    read.BringToFront();     // 放到最前
-                        //    read.Focus();            // 设置输入焦点
-                        //});a124567.
-                        //press([A, D1, D2, D4, D5, D6, D7, Keys.OemPeriod], 100);
-                        //S100.KeyPress([A, D1, D2, D4, D5, D6, D7, Keys.OemPeriod]);
                         Common.cmd($"/c start ms-settings:bluetooth"); // 打开 → 蓝牙和设备
                         break;
                     case Keys.F5:
@@ -245,33 +190,19 @@ namespace keyupMusic4
                         }));
                         break;
                     case Keys.F6:
-                        //play_sound(Keys.D2);
-                        //press(Keys.LWin);
-                        //Sleep(180);
-                        //mouse_click(1062, 899);
                         hideProcessTitle(Common.chrome);
                         //steam://rungameid/730
-                        //ProcessRun("steam://rungameid/730");
                         break;
-                    //case Keys.F9:
-                    //    huan.system_sleep();
-                    //    break;
                     case Keys.F10:
                         Common.no_move = !Common.no_move;
                         HideProcess(true);
                         break;
-                    //case Keys.F11:
-                    //case Keys.F12:
-                    //    press(e.key);
-                    //    break;
 
                     case Keys.Left:
                         press(Keys.MediaPreviousTrack);
-                        //altshiftab();
                         break;
                     case Keys.Right:
                         press(Keys.MediaNextTrack);
-                        //altab();
                         break;
                     case Keys.Down:
                         press(Keys.VolumeDown, 2, 10);
@@ -314,16 +245,11 @@ namespace keyupMusic4
                         break;
                     case Keys.D3:
                         RestartProcess(cloudmusic, cloudmusicexe);
-                        //SetResolution(1);
                         break;
-                    //case Keys.D4:
-                    //    SetResolution(2);
-                    //break;
                     case Keys.D5:
                         RestartProcess(TwinkleTray, TwinkleTrayexe);
                         break;
                     case Keys.D6:
-                        //TaskRun(() => { press(Keys.F13); }, 1000);
                         break;
 
                     default:
@@ -331,14 +257,11 @@ namespace keyupMusic4
                         break;
                 }
 
-            //if (key_sound && keys.Contains(e.key)) { play_sound(e.key); catched = true; }
             if (keys.Contains(e.key)) { play_sound(e.key); catched = true; }
 
             if (catched)
             {
                 huan.Invoke2(() => { Huan.keyupMusic4_onlisten = false; huan.BackColor = Color.White; /*huan.label1.Text = e.key.ToString();*/ }, 10);
-                //Invoke((() => { label1.Text = label_backup; }));
-                //KeyboardHook.stop_next = true;
             }
             return true;
         }
@@ -377,7 +300,6 @@ namespace keyupMusic4
                 return;
             }
             Invoke(() => { try { press(Clipboard.GetText()); } catch { } });
-            //play_sound(Keys.D1);
         }
 
         private static void quick_dir_file()
@@ -499,7 +421,6 @@ namespace keyupMusic4
                 var color = bmpScreenshot.GetPixel(relativeX, relativeY);
                 string asd = $"({mousePosition.X},{mousePosition.Y}, Color.FromArgb({color.R},{color.G},{color.B}))";
                 log(processWrapper.ToString() + " " + GetPointName() + " " + asd);
-                //process_and_log(e?.key.ToString());
                 huan.Invoke(() => Clipboard.SetText(asd));
                 return;
             }
@@ -510,7 +431,6 @@ namespace keyupMusic4
                     g.CopyFromScreen(last_x, last_y, 0, 0, new System.Drawing.Size(1, 1));
                     var color = bitmap.GetPixel(0, 0);
                     string asd = $"({mousePosition.X},{mousePosition.Y}, Color.FromArgb({color.R},{color.G},{color.B}))";
-                    //process_and_log(e?.key.ToString());
                     log(processWrapper.ToString() + " " + GetPointName() + " " + asd);
                     asd = $"{mousePosition.X},{mousePosition.Y}";
                     huan.Invoke(() => Clipboard.SetText(asd));
@@ -521,8 +441,6 @@ namespace keyupMusic4
         private void start_listen_to_word()
         {
             Listen.is_listen = !Listen.is_listen;
-            //Invoke(() => huan.SetVisibleCore2(Listen.is_listen));
-            //Listen.aaaEvent += huan.handle_word;
             if (Listen.is_listen) Task.Run(() => Listen.listen_word(new string[] { }, (string deal, int a) => { }));
             Listen.speak_word = "";
         }

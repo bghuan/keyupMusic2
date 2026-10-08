@@ -155,8 +155,6 @@ namespace keyupMusic4
         public static extern int mouse_event(int dwFlags, int dx, int dy, int cButtons, int dwExtraInfo);
 
         //// 声明 mouse_event 函数  
-        //[DllImport("user32.dll", CharSet = CharSet.Auto, CallingConvention = CallingConvention.StdCall)]
-        //public static extern void mouse_event(uint dwFlags, uint dx, uint dy, uint cButtons, uint dwExtraInfo);
 
 
         [DllImport("user32.dll")]

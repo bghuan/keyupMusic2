@@ -10,7 +10,6 @@ namespace keyupMusic4
 {
     public class SmartLabel : Label
     {
-        private string _lastText = "";
         private DateTime lastLabel1SetTime = DateTime.MinValue;
 
         public new string Text
@@ -23,7 +22,6 @@ namespace keyupMusic4
                     base.Text = value;
                     Task.Run(() =>
                     {
-                        //await Task.Delay(LabelTick * 1000);
                         Thread.Sleep(Common.LabelTick * 1000);
                         Common.LabelTick = 0;
                     });

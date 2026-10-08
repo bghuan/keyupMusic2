@@ -15,12 +15,8 @@ namespace keyupMusic4
         public const int SPIF_UPDATEINIFILE = 0x01;
         public const int SPIF_SENDCHANGE = 0x02;
 
-        // 请求状态管理
-        private static WallpaperRequest currentRequest = null;
-        private static CancellationTokenSource cancellationToken = null;
-        private static System.Threading.Timer debounceTimer = null;
+        // 请求状态管理（currentRequest/cancellationToken/debounceTimer/requestCounter 为不可达死代码，已清理）
         private static readonly object requestLock = new object();
-        private static int requestCounter = 0;
 
         private class WallpaperRequest
         {
@@ -47,6 +43,7 @@ namespace keyupMusic4
             SetDesktopWallpaper(filePath, WallpaperStyle.Stretched, true);
         }
         // 优化后的壁纸设置方法（最后触发的请求会使之前的无效）
+        // 注意：已禁用（基线行为：方法以 return 开头，调用即返回；恢复功能时可从 git 历史取回完整实现）
         public static void SetDesktopWallpaper(string filePath, WallpaperStyle style = WallpaperStyle.Fit, bool force = false)
         {
             return;
@@ -169,7 +166,7 @@ Directory.GetCurrentDirectory(), "image", "downloaded_images", "2");
                     RecycleOption.SendToRecycleBin
                 );
             }
-            catch (Exception e)
+            catch (Exception)
             {
                 MessageBox.Show("can't delete");
             }

@@ -15,7 +15,6 @@ namespace keyupMusic4
             if (DeviceName2 == Common.airmouse || DeviceName2 == Common.airkeyboard) { return; }
             if (e.Msg != MouseMsg.move) { RECTT.release(); return; }
             if (isctrl()) { return; }
-            //if (e.X > screen2Width || e.Y < 0 || e.Y > screenHeightMax) return;
 
             var rect = RECTT.get(e.Pos);
             if (rect == null)
@@ -26,7 +25,6 @@ namespace keyupMusic4
             }
             if (is_down(LButton) || is_down(RButton)) { RECTT.release(); return; }
 
-            //log(rect.name + " " + e.X + " " + e.Y);
 
             rect.doo(e);// Main
 
@@ -45,9 +43,6 @@ namespace keyupMusic4
             corner5.aMouseHookEvent += _corner5;
             corner6.aMouseHookEvent += _corner6;
 
-            //block1.aMouseHookEvent += _block1;
-            //block2.aMouseHookEvent += _block2;
-            //block3.aMouseHookEvent += _block3;
         }
 
         static int far = 300;
@@ -59,7 +54,6 @@ namespace keyupMusic4
         static int ch2 = screen2Width1;
         static int ch0 = screen2X;
         static int ga0 = screen2Y;
-        int chrome_x_min = -50;
 
         //下
         public static RECTT line2 = new RECTT(nameof(line2),
@@ -97,8 +91,6 @@ namespace keyupMusic4
         {
             return judge_color(6095, 56, Color.FromArgb(162, 37, 45))
                        && judge_color(4646, 56, Color.FromArgb(162, 37, 45));
-            //return (judge_color(-1783, 51, Color.FromArgb(162, 37, 45))
-            //           && judge_color(-645, 45, Color.FromArgb(162, 37, 45)));
         }
 
         public struct JU
@@ -143,14 +135,12 @@ namespace keyupMusic4
                 if (aMouseHookEvent != null)
                 {
                     FreshProcessName2();
-                    //log(ProcessName);
                     int result = aMouseHookEvent.Invoke(e);
 
                     if (result == 0) return;
                     Show(name, 1);
                     play_sound_bongocat(result);
                     FreshProcessName2();
-                    //log(ProcessName);
                 }
             }
 
@@ -244,13 +234,6 @@ namespace keyupMusic4
             }
             public static RECTT ignoreAll(Point testPoint)
             {
-                //foreach (var item in All)
-                //{
-                //    if (item.can) continue;
-                //    var outB = !(testPoint.X >= item.b.Left && testPoint.X <= item.b.Right &&
-                //                 testPoint.Y >= item.b.Top && testPoint.Y <= item.b.Bottom);
-                //    if (outB) item.can = true;
-                //}
                 foreach (var item in All)
                     if (item.ignore(testPoint)) return item;
                 return null;
@@ -262,7 +245,6 @@ namespace keyupMusic4
             public static int[] special_int = [0, screenWidth1, screenHeight1, screenHeight1 - 1, screen2Width1, screen2Height1];
             public static RECTT get(Point testPoint)
             {
-                //if (!(special_int.Contains(testPoint.X) || special_int.Contains(testPoint.Y))) return null;
                 foreach (var item in All)
                     if (item.target(testPoint)) return item;
                 return null;

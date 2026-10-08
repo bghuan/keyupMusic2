@@ -13,7 +13,6 @@ namespace keyupMusic4
         static bool is_PowerToysCropAndLock_down = false;
         public void Other(KeyboardMouseHook.MouseEventArgs e)
         {
-            //bool double_click = e.Msg == MouseMsg.WM_LBUTTONUP && is_double_click();
 
             if (ProcessName == Common.PowerToysCropAndLock)
                 PowerToysCropAndLock(e);
@@ -29,18 +28,12 @@ namespace keyupMusic4
                 Cs2(e);
             else if (ProcessName == Common.devenv)
                 Devenv(e);
-            //else if (is_douyin())
-            //    Douyin(e);
             else if (ProcessName == Common.msedge)
                 Msedge(e);
             else if (ProcessName == Common.RSG)
                 _Rsg(e);
             else if (ProcessName == Common.b1)
                 _Rsg(e);
-            //else if (ProcessName == Common.vlc)
-            //    wheelleftright(e);
-            //else if (ProcessName == Common.ApplicationFrameHost && ProcessTitle.Contains("png") || GetPointName() == PhotoApps)
-            //    wheelleftright(e);
             else if (ProcessName.Contains(KingdomRush))
                 _KingdomRush(e);
             else if (ProcessName == Common.BandiView)
@@ -59,10 +52,6 @@ namespace keyupMusic4
         {
             if (e.Msg == MouseMsg.move) return;
             if (isctrl()) return;
-            //if (e.Msg == MouseMsg.click_r_up)
-            //{
-            //    press(R);
-            //}
             if (e.Msg == MouseMsg.click_r_up && !is_down_vir(LButton))
             {
                 down_mouse();
@@ -83,8 +72,6 @@ namespace keyupMusic4
             if (e.Msg == MouseMsg.move) return;
             if (e.Msg == MouseMsg.click/* && !is_down(RButton)*/)
             {
-                //press("E", 10);
-                //mouse_click_right();
                 if (is_shift())
                     for (global::System.Int32 i = 0; i < 1000 && is_shift(); i++)
                         mouse_click(1);
@@ -118,8 +105,6 @@ namespace keyupMusic4
             if (e.Msg == MouseMsg.move) return;
             if (GetPointName() != Honeyview) return;
 
-            //if (e.Msg == MouseMsg.click_up && !isctrl())
-            //    press([LControlKey, D0]);
             if (e.Msg == MouseMsg.click_r)
             {
                 press(Delete);
@@ -127,12 +112,6 @@ namespace keyupMusic4
                 var run = () => { press(Escape); };
                 DelayRun(judge, run, 1000, 1);
             }
-            //if (e.Msg == MouseMsg.wheel)
-            //{
-            //    if (e.data > 0 && Common.ProcessTitle.IndexOf("id") == 0) press(Delete);
-            //    else mousewhell(e.data);
-            //}
-            //press(10, 400, Escape, Delete, 200, Return);
         }
 
         private static void change_image(KeyboardMouseHook.MouseEventArgs e)
@@ -159,7 +138,6 @@ namespace keyupMusic4
                     Sleep(20);
                     press(Escape);
                     SetDesktopWallpaperAli(GetCurrentWallpaperPath());
-                    //press(Escape);
                 }
             }
         }
@@ -201,10 +179,6 @@ namespace keyupMusic4
                         DelayRun(judge, run, 1000, 1);
                     }
                 }
-            //if (e.Msg == MouseMsg.click_r)
-            //{
-            //    catch_on(MouseMsg.click);
-            //}
             if (e.Msg == MouseMsg.click_r_up)
             {
                 if (!is_down(Keys.LButton))
@@ -213,18 +187,12 @@ namespace keyupMusic4
                     {
                         if (Deven_runing()) press("583,74");
                         else press("116,69");
-                        //else press("898,71");
                     }
-                    //else if (!catch_ed)
-                    //    mouse_click_right();
                 }
-                //catch_off();
             }
         }
         private void PowerToysCropAndLock(KeyboardMouseHook.MouseEventArgs e)
         {
-            //if (!is_no_title(PowerToysCropAndLock))
-            //    break;
             if (is_down(Keys.LWin)) return;
             if (e.Msg == MouseMsg.click)
                 is_PowerToysCropAndLock_down = true;
@@ -242,7 +210,6 @@ namespace keyupMusic4
                     CloseProcess(Common.PowerToysCropAndLock);
                     return;
                 }
-                //if (is_double_click()) quick_max_chrome(e.Pos);
                 is_PowerToysCropAndLock_down = false;
             }
             else if (e.Msg == MouseMsg.click_r_up)
@@ -264,18 +231,15 @@ namespace keyupMusic4
             }
             else if (e.Msg == MouseMsg.wheel)
             {
-                //HandleMouseWheel(e);
             }
         }
         private void Chrome(KeyboardMouseHook.MouseEventArgs e)
         {
-            //if (GetPointName() != chrome) return;
             if (is_douyin()) return;
             if (e.Msg == MouseMsg.click_up && (e.X == screenWidth1))
                 CenterWindowOnScreen(chrome, e.Y >= screenHeight2);
             else if (e.Msg == MouseMsg.click_r_up && !LongPressClass.long_press_rbutton && ExistProcess(Common.PowerToysCropAndLock, true) && e.Pos == click_r_point)
             {
-                //if (e.X == 0) { press(Keys.OemPeriod); return; }
                 if (judge_color(1840, 51, Color.FromArgb(162, 37, 45)))
                     press(Keys.F, 51);
                 quick_max_chrome(e.Pos);

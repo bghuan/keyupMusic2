@@ -23,7 +23,7 @@ namespace keyupMusic4
                 point_start = new Point(int.Parse(match.Groups["x"].Value), int.Parse(match.Groups["y"].Value));
                 R = double.Parse(R_str);
             }
-            catch (Exception e)
+            catch (Exception)
             {
             }
         }
@@ -45,19 +45,15 @@ namespace keyupMusic4
 
         public void MouseHookProcDouyin(KeyboardMouseHook.MouseEventArgs e)
         {
-            //if (ProcessName != douyin && ProcessName != ApplicationFrameHost && ProcessName != explorer) return;
             if (ProcessName != Common.douyin && (ProcessName != ApplicationFrameHost|| ProcessTitle?.IndexOf("照片") < 0) && ProcessTitle?.IndexOf("抖音") < 0) return;
-            //if (e.Msg == MouseMsg.WM_MOUSEMOVE) return;
             int x = e.X - point_start.X;
             int y = -(e.Y - point_start.Y);
-            //R = 50;
 
             if (e.Msg == MouseMsg.move)
             {
                 var area_start = get_area_number(x, y, true);
                 var sss = huan.label1.Text;
                 if (area_start == sss || area_start == ExtractAfterAttack(sss)) return;
-                //if (string.IsNullOrEmpty(area_start)) return;
                 huan.Invoke(() =>
                 {
                     huan.label1.Text = area_start;
@@ -102,12 +98,7 @@ namespace keyupMusic4
                 else if (old_cmd == cmd + ",第三次") { cmd += ",第四次"; }
                 old_cmd = cmd;
 
-                //string dsadsad = DateTime.Now.ToString("hh:mm+ss=");
-                //dsadsad = ConvertNumberToChinese(dsadsad);
-                //{ cmd += ",时间:" + dsadsad; }
 
-                //if (cmd.IndexOf("第") > 0)
-                //    cmd += "全军出啊吧啊吧看不到我吗?啊?抖音?";
 
                 string url = "https://bghuan.cn/api/save.php/?namespace=douyin_game&format=string&str=" + cmd;
                 HttpGet(url);
@@ -150,9 +141,6 @@ namespace keyupMusic4
             else
             {
                 var color = Color.FromArgb(10, 8, 18);
-                //var a1 = judge_color(673, 787, color) && judge_color(1355, 788, color);
-                //var a2 = judge_color(696, 812, color) && judge_color(1329, 811, color);
-                //var a3 = judge_color(1012, 1036, color) && judge_color(741, 878, color);
                 var a2 = judge_color(890, 1050, color, 22);
                 var a3 = judge_color(926, 1047, color, 22);
                 var a4 = judge_color(1011, 1035, color, 22);
@@ -170,7 +158,6 @@ namespace keyupMusic4
             {
                 double current_y = -4 + i;
                 current_y = little_change(current_y);
-                //var RY = R * 50 / 44;
                 double current_x = arr_start_x[i];
                 double current_point_y = (current_y * R * 2);
 
@@ -201,9 +188,6 @@ namespace keyupMusic4
             else
             {
                 var color = Color.FromArgb(10, 8, 18);
-                //var a1 = judge_color(673, 787, color) && judge_color(1355, 788, color);
-                //var a2 = judge_color(696, 812, color) && judge_color(1329, 811, color);
-                //var a3 = judge_color(1012, 1036, color) && judge_color(741, 878, color);
                 var a2 = judge_color(890, 1050, color, 22);
                 var a3 = judge_color(926, 1047, color, 22);
                 var a4 = judge_color(1011, 1035, color, 22);
@@ -222,7 +206,6 @@ namespace keyupMusic4
             {
                 double current_y = -4 + i;
                 current_y = little_change(current_y);
-                //var RY = R * 50 / 44;
                 double current_x = arr_start_x[i];
                 double current_point_y = (current_y * R * 2);
 
@@ -250,17 +233,6 @@ namespace keyupMusic4
         {
 
             //44/50
-            //switch (current_y)
-            //{
-            //    case -4: current_y = -3.6; break;
-            //    case -3: current_y = -2.7; break;
-            //    case -2: current_y = -1.8; break;
-            //    case -1: current_y = -0.9; break;
-            //    case 1: current_y = 0.9; break;
-            //    case 2: current_y = 1.8; break;
-            //    case 3: current_y = 2.7; break;
-            //    case 4: current_y = 3.6; break;
-            //}
             ////44/50
             switch (current_y)
             {

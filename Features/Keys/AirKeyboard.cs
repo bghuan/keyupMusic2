@@ -18,8 +18,6 @@ namespace keyupMusic4
         public static bool judged;
         public static bool judge_handled(KeyboardMouseHook.KeyEventArgs e)
         {
-            //judged = handled(e);
-            //return judged;
             if (handled(e)) return true;
             return false;
         }
@@ -46,7 +44,6 @@ namespace keyupMusic4
             {
                 if (e.Type == KeyType.Down)
                     return KeyDown(e);
-                //if (e.Type == KeyType.Up)
                 return KeyUp(e);
             }
             finally
@@ -72,10 +69,6 @@ namespace keyupMusic4
             timer_endtime = DateTime.Now.AddMilliseconds(timer_tick);
             switch (e.key)
             {
-                //case Keys.MediaPlayPause:
-                //    press_raw2(F3);
-                //    HideSomething();
-                //    break;
                 case super_key:
                     press_raw2(F3);
                     HideSomething();

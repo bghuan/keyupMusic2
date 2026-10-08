@@ -16,11 +16,11 @@ namespace keyupMusic4
             Invoke(action);
         }
 
-        public void Invoke(Action method)
+        public new void Invoke(Action method)
         {
             if (IsDisposed) return;
             try { base.Invoke(method); }
-            catch (Exception ex) { }
+            catch (Exception) { }
         }
         public void release_all_key(int tick = 1000)
         {
@@ -31,7 +31,6 @@ namespace keyupMusic4
         public void system_sleep(bool force = false)
         {
             press(Keys.MediaStop);
-            //HomeProcess(chrome);
 
             ready_to_sleep = true;
             Invoke(() => { SetVisibleCore(true); });
@@ -52,7 +51,6 @@ namespace keyupMusic4
 
         private void start_record(KeyboardMouseHook.KeyEventArgs e)
         {
-            //if (SuperClass.start_record)
             {
                 log(e.key.ToString());
             }
@@ -83,7 +81,7 @@ namespace keyupMusic4
                     }
                 );
             }
-            catch (ArgumentException ex) { }
+            catch (ArgumentException) { }
         }
         private static string easy_read(string asd)
         {
@@ -114,17 +112,10 @@ namespace keyupMusic4
             _mouseKbdHook = new KeyboardMouseHook(this.Handle);
             _mouseKbdHook.KeyEvent += KeyBoardHookProc;
 
-            //if (is_mouse_hook)
             {
                 var b = new biu();
                 _mouseKbdHook.MouseEvent += b.MouseHookProc;
-                //Invoke(() => { b.MoveStopClickListen(); }); 
-                //_mouseKbdHook.MouseHookEvent += new Douyin_game(this).MouseHookProc;
             }
-            //else
-            //{
-            //    Text = Text + "no mousehook";
-            //}
             _mouseKbdHook.Install();
             play_sound_di();
         }
@@ -148,13 +139,8 @@ namespace keyupMusic4
         }
         private void timerMove_Tick(object sender, EventArgs e)
         {
-            //TimeSpan elapsed = DateTime.Now - startTime;
 
-            //int currentX = (int)(startPoint.X + (endPoint.X - startPoint.X) * (elapsed.TotalMilliseconds / timerMove_Tick_tick));
-            //int currentY = startPoint.Y;
-            ////Location = new Point(currentX, currentY);
 
-            //if (elapsed.TotalMilliseconds > timerMove_Tick_tick) { timer_stop(); }
             timer_stop();
         }
 
@@ -165,14 +151,9 @@ namespace keyupMusic4
             ready_to_sleep = false;
             system_sleep_count = 1;
             Invoke(() => { SetVisibleCore(false); });
-            //press("500;LWin;1650,1300;1650,1140", tick);
-            //press("500;LWin;1650,1300;", tick);
             log("system_sleep");
 
-            //if (!IsDesktopFocused())
-            //    press([LWin, D]);
             CloseDesktopWindow();
-            //if (GetWindowTitle() == "关闭 Windows")
             press(100, 500, Return);
         }
         //job no release f3 no hide no stop superlisten
@@ -180,9 +161,7 @@ namespace keyupMusic4
         {
             blobForm.Hide();
             blobForm.changeFlag(false);
-            //Location = endPoint;
             timerMove.Stop();
-            //if (!temp_visiable) SetVisibleCore(false);
         }
         private void form_move()
         {
@@ -190,18 +169,12 @@ namespace keyupMusic4
             {
                 if (Opacity == 0) { return; }
                 var current_hwnd = ProcessName;
-                //temp_visiable = Visible;
-                //if (!Visible) { SetVisibleCore(true); }
                 if (Focused && current_hwnd == "") { altab(); }
                 else if (Focused) { FocusProcessSimple(current_hwnd); }
                 blobForm.Show();
                 blobForm.changeFlag(true);
-                //timerMove.Interval = 1000 / 144;
                 //// 解除旧的事件绑定，防止叠加
-                //timerMove.Tick -= timerMove_Tick;
-                //timerMove.Tick += timerMove_Tick;
                 timerMove.Start();
-                //Location = startPoint;
                 startTime = DateTime.Now;
             });
         }
@@ -259,7 +232,6 @@ namespace keyupMusic4
                 play_sound_bongocat(D4);
                 TaskRun(() => play_sound_bongocat(D5), 200);
                 TaskRun(() => play_sound_bongocat(D6), 300);
-                //RestartProcess(TwinkleTray, TwinkleTrayexe);
                 log("唤醒解锁");
             }
         }
@@ -293,15 +265,11 @@ namespace keyupMusic4
             if (!WaitForKeysReleased(1000, is_lbutton)) return;
 
             Native.GetCursorPos(out var pos);
-            //SuperClass.get_point_color();
             mouse_move222(x, y + 20, 20);
-            //mouse_middle_click(20);
             down_press(LControlKey);
             mouse_click();
             up_press(LControlKey);
             mouse_move(pos);
-            //SuperClass.get_point_color();
-            //TaskRun(() => { SuperClass.get_point_color(); }, 3000);
         }
 
         public bool deal_handilngkey(Keys key, bool down)
@@ -310,13 +278,10 @@ namespace keyupMusic4
             {
                 if (handling_keys.ContainsKey(key)) return true;
                 handling_keys[key] = DateTime.Now;
-                //if (key == LMenu) handling_keys[Menu] = DateTime.Now;
-                //log("2" + key + handling_keys[key]);
             }
             else
             {
                 handling_keys.TryRemove(key, out _);
-                //if (key == LMenu) handling_keys.TryRemove(Menu, out _);
             }
             return false;
         }

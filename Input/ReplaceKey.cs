@@ -10,11 +10,6 @@ namespace keyupMusic4
     {
 
         public static List<ReplaceKey> replace = new List<ReplaceKey> {
-           //new ReplaceKey(steam,       Keys.D7,     Keys.D8),
-           //new ReplaceKey(steam,       Keys.D8,     Keys.D7),
-           //new ReplaceKey(Windblown,   Keys.W,      Keys.S),
-           //new ReplaceKey(Windblown,   Keys.S,      Keys.W),
-           //new ReplaceKey("",          Keys.RMenu,  Keys.None){ action=()=>{if(isctrl())FocusProcess(cloudmusic);else press(MediaPlayPause); } }
         };
         public static bool quick_replace_key(KeyboardMouseHook.KeyEventArgs e)
         {

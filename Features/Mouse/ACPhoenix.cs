@@ -23,7 +23,6 @@ namespace keyupMusic4
             }
             else if (e.Msg == MouseMsg.click_r)
             {
-                //downing2 = true;
                 if (!(right_top_exit(e)))
                     Task.Run(() =>
                     {
@@ -32,14 +31,12 @@ namespace keyupMusic4
                         Thread.Sleep(50);
                         for (var i = 0; i < 50; i++)
                         {
-                            //if (!downing2) break;
                             mouse_click2(50);
                         }
                     });
             }
             else if (e.Msg == MouseMsg.click_r_up)
             {
-                //downing2 = false;
                 if ((e.Y < (493 * screenHeight / DesignHeight) && e.Y > (190 * screenHeight / DesignHeight)) && e.X < (2066 * screenWidth / DesignWidth))
                     press(Keys.Space);
                 if (try_press(1433, 1072, Color.FromArgb(245, 194, 55), () => { }))
@@ -47,7 +44,6 @@ namespace keyupMusic4
                 //退出观战
                 if ((right_top_exit(e)))
                 {
-                    //press("111"); press(Keys.F4); press("1625.1078");
                     if (is_alt()) return;
                     press("2478,51;2492,1299;1625.1078", 200);
                 }
@@ -56,7 +52,6 @@ namespace keyupMusic4
 
             if (e.Msg == MouseMsg.move)
             {
-                //var aaa = 1430 * 2160 / 1440;
                 if (!listen_move || (e.Y < screenHeight - 10) || (e.X > screenWidth)) { return; }
                 if (ProcessName == keyupMusic4.Common.ACPhoenix) { press(Keys.S, 0); ; }
                 listen_move = false;
