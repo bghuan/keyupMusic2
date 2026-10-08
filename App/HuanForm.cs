@@ -13,14 +13,14 @@ namespace keyupMusic4
     public partial class Huan : Form
     {
         Blob blobForm = new Blob();
-        ACPhoenixClass ACPhoenix;
-        DevenvClass Devenv;
-        DouyinClass Douyin;
-        OtherClass Other;
-        AllClass All;
-        SuperClass Super;
-        ChromeClass Chrome;
-        WinClass Win;
+        internal ACPhoenixClass ACPhoenix;
+        internal DevenvClass Devenv;
+        internal DouyinClass Douyin;
+        internal OtherClass Other;
+        internal AllClass All;
+        internal SuperClass Super;
+        internal ChromeClass Chrome;
+        internal WinClass Win;
         public OpencvReceive Opencv;
         public LongPressClass LongPress;
         //bool is_init_show = !(Position.Y == 0);
@@ -57,6 +57,8 @@ namespace keyupMusic4
             Super = new SuperClass();
             Chrome = new ChromeClass();
             Win = new WinClass();
+
+            HookRegistry.Init(this);
 
             new Socket();
             new Tick(); ;

@@ -42,8 +42,7 @@ namespace keyupMusic4
             //if (ProcessName == Common.msedge) if (e.key == Keys.Tab && !is_alt()) return true;
 
             if (KeyFunc.judge(e)) return true;
-            var flag = Chrome.judge_handled(e) || Douyin.judge_handled(e) || WinClass.judge_handled(e) || CoocaaClass.judge_handled(e) || AirKeyboardClass.judge_handled(e);
-            return flag;
+            return HookRegistry.JudgeChain(e);
         }
 
         private void KeyBoardHookProc(KeyboardMouseHook.KeyEventArgs e)
@@ -65,23 +64,9 @@ namespace keyupMusic4
                 if (!ha)
                     print_easy_read(e);
 
-                //if (quick_replace_key(e)) return;
-                if (KeyFunc.HookEvent(e)) return;
-                if (ha) { return; }
+                // KeyFunc → 按键映射 → KeyUp → 抬起终止 → 头部模块（Coocaa/AirKeyboard/Super）
+                if (HookRegistry.KeyHookChainHead(e, ha)) return;
 
-                keyupMusic4.KeyUp.yo(e);
-
-                if (e.Type == KeyType.Up) return;
-                //{
-                //if (CoocaaClass.Hooked(e)) return;
-                //keyupMusic4.KeyUp.yo(e);
-                //    return;
-                //}
-                Console2.WriteLine($"Hook, {e.key}, {Common.DeviceName}, {e.Type.ToString()} ");
-
-                if (CoocaaClass.Hooked(e)) return;
-                if (AirKeyboardClass.Hooked(e)) return;
-                if (Super.HookEvent(e)) return;
                 // job f3 f9 to var special key and customs
                 if (e.key == Keys.F3 || e.key == Keys.F9)
                 {
@@ -91,21 +76,8 @@ namespace keyupMusic4
                     form_move(); return;
                 }
 
-                Devenv.HookEvent(e);
-                Douyin.HookEvent(e);
-                Chrome.handlehandle(e);
-
-                Other.HookEvent(e);
-                All.HookEvent(e);
-                Win.HookEvent(e);
-
-                //KeyFunc.HookEvent(e);
-
-                Music.HookEvent(e);
-
-                //if (GetPointName() == msedge && ProcessName != msedge)
-                //    if (e.key == Keys.PageDown || e.key == Space) mousewhell(-4);
-                //    else if (e.key == Keys.PageUp || e.key == Keys.Up) mousewhell(4);
+                // 尾部模块：Devenv → Douyin → Chrome → Other → All → Win → Music
+                HookRegistry.KeyHookChainTail(e);
             });
         }
         public void start_catch(string msg)
