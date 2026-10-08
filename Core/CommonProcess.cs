@@ -16,7 +16,7 @@ namespace keyupMusic4
     public partial class Common
     {
         public const string keyupMusic = "keyupMusic";
-        public const string keyupMusicexe = "C:\\Users\\bu\\source\\repos\\keyupMusic4\\keyupMusic4.sln";
+        public static readonly string keyupMusicexe = LoadPath("Path.keyupMusicSln", "C:\\Users\\bu\\source\\repos\\keyupMusic4\\keyupMusic4.sln");
         public const string AppName = "keyupMusic4";
         public const string scrcpy = "scrcpy";
         public const string ShapeofDreams = "Shape of Dreams";
@@ -36,7 +36,7 @@ namespace keyupMusic4
         public const string mhtab = "mhtab";
         public const string mhmain = "mhmain";
         public const string devenv = "devenv";
-        public const string devenvexe = "C:\\Program Files\\Microsoft Visual Studio\\2022\\Community\\Common7\\IDE\\devenv.exe";
+        public static readonly string devenvexe = LoadPath("Path.devenv", "C:\\Program Files\\Microsoft Visual Studio\\2022\\Community\\Common7\\IDE\\devenv.exe");
         public const string WeChat = "Weixin"; //"WeChat";
         public const string douyin = "douyin";
         public const string msedge = "msedge";
@@ -44,7 +44,7 @@ namespace keyupMusic4
         public const string KingOfHill = "KingOfHill";
         public const string Taskmgr = "Taskmgr";
         public const string explorer = "explorer";
-        public const string explorerexe = "C:\\Windows\\explorer.exe";
+        public static readonly string explorerexe = LoadPath("Path.explorer", "C:\\Windows\\explorer.exe");
         public const string SearchHost = "SearchHost";
         public const string QQMusic = "QQMusic";
         public const string HuyaClient = "HuyaClient";
@@ -76,18 +76,18 @@ namespace keyupMusic4
         public const string Broforce_beta = "Broforce_beta";
         public const string oriwotw = "oriwotw";
         public const string LosslessScaling = "LosslessScaling";
-        public const string LosslessScalingexe = "C:\\Program Files (x86)\\Steam\\steamapps\\common\\Lossless Scaling\\LosslessScaling.exe";
+        public static readonly string LosslessScalingexe = LoadPath("Path.losslessScaling", "C:\\Program Files (x86)\\Steam\\steamapps\\common\\Lossless Scaling\\LosslessScaling.exe");
         public const string wemeetapp = "wemeetapp";
         public const string SplitFiction = "SplitFiction";
         public const string gcc = "GCC";
-        public const string gccexe = "C:\\Program Files\\GIGABYTE\\Control Center\\GCC.exe";
+        public static readonly string gccexe = LoadPath("Path.gcc", "C:\\Program Files\\GIGABYTE\\Control Center\\GCC.exe");
         public const string TwinkleTray = "Twinkle Tray";
-        public const string TwinkleTrayexe = "C:\\Users\\bu\\AppData\\Local\\Programs\\twinkle-tray\\Twinkle Tray.exe";
+        public static readonly string TwinkleTrayexe = LoadPath("Path.twinkleTray", "C:\\Users\\bu\\AppData\\Local\\Programs\\twinkle-tray\\Twinkle Tray.exe");
         public const string androidstudio = "studio64";
         public const string cloudmusic = "cloudmusic";
-        public const string cloudmusicexe = "C:\\Program Files (x86)\\Netease\\CloudMusic\\cloudmusic.exe";
+        public static readonly string cloudmusicexe = LoadPath("Path.cloudmusic", "C:\\Program Files (x86)\\Netease\\CloudMusic\\cloudmusic.exe");
         public const string clashverge = "clash-verge";
-        public const string clashvergeexe = "C:\\Program Files\\Clash Verge\\clash-verge.exe";
+        public static readonly string clashvergeexe = LoadPath("Path.clashVerge", "C:\\Program Files\\Clash Verge\\clash-verge.exe");
         public const string FolderView = "FolderView";
         public const string RSG = "RSG-Win64-Shipping";
         public const string b1 = "b1-Win64-Shipping";
@@ -97,7 +97,7 @@ namespace keyupMusic4
         public const string Kingdom = "Kingdom Rush Vengeance";
         public const string Kingdom5 = "Kingdom Rush Alliance";
         public const string Progman = "Progman";
-        public const string lz_image_downloadexe = "C:\\Users\\bu\\source\\repos\\lz_image_download\\bin\\Debug\\net8.0\\lz_image_download.exe";
+        public static readonly string lz_image_downloadexe = LoadPath("Path.lzImageDownload", "C:\\Users\\bu\\source\\repos\\lz_image_download\\bin\\Debug\\net8.0\\lz_image_download.exe");
         public const string PhotoApps = "PhotoApps";
         public const string BandiView = "Honeyview";
         public const string Honeyview = "Honeyview";
@@ -123,6 +123,34 @@ namespace keyupMusic4
 
         public static string ProcessName = "";
         public static string ProcessTitle = "";
+
+        /// <summary>从 config.txt 读取路径配置，未配置时回退到默认值（重构前硬编码路径）。</summary>
+        private static string LoadPath(string key, string defaultValue)
+        {
+            try
+            {
+                var v = GetConfigValue(key);
+                return string.IsNullOrWhiteSpace(v) ? defaultValue : v;
+            }
+            catch
+            {
+                return defaultValue;
+            }
+        }
+
+        /// <summary>坐标/分辨率适配的设计基准分辨率（默认 2560x1440，可在 config.txt 覆盖）。</summary>
+        public static readonly int DesignWidth = LoadInt("Screen.designWidth", 2560);
+        public static readonly int DesignHeight = LoadInt("Screen.designHeight", 1440);
+
+        private static int LoadInt(string key, int defaultValue)
+        {
+            try
+            {
+                var v = GetConfigValue(key);
+                return int.TryParse(v, out var r) ? r : defaultValue;
+            }
+            catch { return defaultValue; }
+        }
         public static string ProcessPath = "";
         public static ProcessWrapper processWrapper;
         public static bool iswinopen { get { return new[] { StartMenuExperienceHost, SearchHost }.Contains(ProcessName); } }

@@ -40,7 +40,7 @@ namespace keyupMusic4
             else if (e.Msg == MouseMsg.click_r_up)
             {
                 //downing2 = false;
-                if ((e.Y < (493 * screenHeight / 1440) && e.Y > (190 * screenHeight / 1440)) && e.X < (2066 * screenWidth / 2560))
+                if ((e.Y < (493 * screenHeight / DesignHeight) && e.Y > (190 * screenHeight / DesignHeight)) && e.X < (2066 * screenWidth / DesignWidth))
                     press(Keys.Space);
                 if (try_press(1433, 1072, Color.FromArgb(245, 194, 55), () => { }))
                 { }

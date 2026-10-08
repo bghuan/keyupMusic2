@@ -19,14 +19,14 @@ namespace keyupMusic4
     {
         public static int[] deal_size_x_y(int x, int y, bool puls_one = true)
         {
-            if (screenWidth == 2560 && screenHeight == 1440) return new int[] { x, y };
+            if (screenWidth == Common.DesignWidth && screenHeight == Common.DesignHeight) return new int[] { x, y };
             if (puls_one)
             {
                 x = x + 1;
                 y = y + 1;
             }
-            x = x * screenWidth / 2560;
-            y = y * screenHeight / 1440;
+            x = x * screenWidth / Common.DesignWidth;
+            y = y * screenHeight / Common.DesignHeight;
             return new int[] { x, y };
         }
         public static void mouse_move(int x, int y, int tick = 0)
@@ -518,7 +518,7 @@ namespace keyupMusic4
                 if (!ReferenceEquals(item, list.Last()) || list.Length == 1)
                     Thread.Sleep(tick);
             }
-            if (isLastDigitOne && mousePosition.X < 2560)
+            if (isLastDigitOne && mousePosition.X < screenWidth)
                 mouse_move(mousePosition.X, mousePosition.Y, 100);
         }
         public static void _press(Keys keys)

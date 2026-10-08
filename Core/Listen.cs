@@ -142,16 +142,26 @@ namespace keyupMusic4
 
         public delegate void aaaEventHandler(string e, int a, bool s = true);
         public static event aaaEventHandler aaaEvent;
+        public static string ModelDir = LoadModelDir();
+        static string LoadModelDir()
+        {
+            try
+            {
+                var v = GetConfigValue("Listen.modelDir");
+                return string.IsNullOrWhiteSpace(v) ? "ncnn" : v;
+            }
+            catch { return "ncnn"; }
+        }
         public static void listen_word(String[] args, Action<string, int> action)
         {
             args = new string[] {
-      "ncnn/tokens.txt",
-      "ncnn/encoder_jit_trace-pnnx.ncnn.param" ,
-      "ncnn/encoder_jit_trace-pnnx.ncnn.bin",
-      "ncnn/decoder_jit_trace-pnnx.ncnn.param" ,
-      "ncnn/decoder_jit_trace-pnnx.ncnn.bin",
-      "ncnn/joiner_jit_trace-pnnx.ncnn.param",
-      "ncnn/joiner_jit_trace-pnnx.ncnn.bin" };
+      ModelDir + "/tokens.txt",
+      ModelDir + "/encoder_jit_trace-pnnx.ncnn.param" ,
+      ModelDir + "/encoder_jit_trace-pnnx.ncnn.bin",
+      ModelDir + "/decoder_jit_trace-pnnx.ncnn.param" ,
+      ModelDir + "/decoder_jit_trace-pnnx.ncnn.bin",
+      ModelDir + "/joiner_jit_trace-pnnx.ncnn.param",
+      ModelDir + "/joiner_jit_trace-pnnx.ncnn.bin" };
             String usage = @"1111";
             if (args.Length < 7 || args.Length > 9)
             {

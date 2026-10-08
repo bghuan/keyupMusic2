@@ -205,7 +205,7 @@ namespace keyupMusic4
             Screen secondaryScreen = Screen.PrimaryScreen;
             if (secondaryScreen != null)
             {
-                Bitmap bmpScreenshot = new Bitmap(2560, 1440, PixelFormat.Format32bppArgb);
+                Bitmap bmpScreenshot = new Bitmap(DesignWidth, DesignHeight, PixelFormat.Format32bppArgb);
                 Graphics gfxScreenshot = Graphics.FromImage(bmpScreenshot);
                 gfxScreenshot.CopyFromScreen(new Point(0, 0), Point.Empty, secondaryScreen.Bounds.Size);
                 gfxScreenshot.Dispose();

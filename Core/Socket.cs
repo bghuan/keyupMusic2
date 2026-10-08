@@ -9,7 +9,17 @@ namespace keyupMusic4
     public class Socket
     {
         private const string Hostname = "127.0.0.1";
-        private const int pport = 13000;
+        private static readonly int pport = LoadInt("Socket.port", 13000);
+
+        private static int LoadInt(string key, int defaultValue)
+        {
+            try
+            {
+                var v = GetConfigValue(key);
+                return int.TryParse(v, out var r) ? r : defaultValue;
+            }
+            catch { return defaultValue; }
+        }
 
         public static TcpListener listener;
         public static TcpClient client;
@@ -20,8 +30,9 @@ namespace keyupMusic4
             if (!socket_run) return;
             StartServer();
         }
-        public static void StartServer(int port = pport)
+        public static void StartServer(int port = 0)
         {
+            if (port == 0) port = pport;
             Task.Run(() =>
             {
                 try
