@@ -8,6 +8,7 @@ using System.Runtime.InteropServices;
 using System.Security.Principal;
 using System.Text;
 using System.Text.Json;
+using System.Text.RegularExpressions;
 using static keyupMusic2.Native;
 using Point = System.Drawing.Point;
 using RECT = keyupMusic2.Native.RECT;
@@ -238,6 +239,51 @@ namespace keyupMusic2
                 dragonest_notity_click(true);
             }
         }
+        public static string ExtractStreamerName(string input)
+        {
+            if (string.IsNullOrWhiteSpace(input)) return string.Empty;
+
+            // 去掉开头所有的括号组，例如 "(27) " 或 "(a)(b) "
+            string s = Regex.Replace(input, @"^\s*(\([^)]*\)\s*)+", string.Empty);
+
+            // 若出现“主播”，截取其前面的内容
+            int idx = s.IndexOf("主播", StringComparison.Ordinal);
+            if (idx >= 0) s = s.Substring(0, idx);
+
+            // 去除尾部的中文/英文冒号、引号、空白等
+            s = s.Trim();
+            s = Regex.Replace(s, @"[:：\s""'”“]+$", string.Empty);
+            s = s.Trim();
+
+            // 限制最终长度为最多12个字符
+            if (s.Length > 12)
+            {
+                s = s.Substring(0, 12);
+            }
+            // 若中文字符超过 2 个，返回空字符串
+            {
+                int chineseCount = 0;
+                ReadOnlySpan<char> span = s.AsSpan();
+                int offset = 0;
+                while (offset < span.Length)
+                {
+                    var slice = span.Slice(offset);
+                    var status = Rune.DecodeFromUtf16(slice, out Rune rune, out int charsUsed);
+                    if (status != System.Buffers.OperationStatus.Done) break;
+                    uint v = (uint)rune.Value;
+                    // 常用汉字与 CJK 扩展区间
+                    if ((v >= 0x4E00 && v <= 0x9FFF) || (v >= 0x3400 && v <= 0x4DBF) ||
+                        (v >= 0x20000 && v <= 0x2A6DF) || (v >= 0x2A700 && v <= 0x2B73F) ||
+                        (v >= 0x2B740 && v <= 0x2B81F) || (v >= 0x2B820 && v <= 0x2CEAF))
+                    {
+                        chineseCount++;
+                        if (chineseCount > 2) return string.Empty;
+                    }
+                    offset += charsUsed;
+                }
+            }
+            return s;
+        }
 
         public static Bitmap bmpScreenshot;
         public static string bmpScreenshot_path;
@@ -251,6 +297,9 @@ namespace keyupMusic2
             gfxScreenshot.CopyFromScreen(new Point(0, 0), Point.Empty, secondaryScreen.Bounds.Size);
             string user_path = "C:\\Users\\bu\\Pictures\\Screenshots\\";
             string file_date_name = DateTime.Now.ToString("yyyyMMddHHmmss") + ".png";
+            string name = ExtractStreamerName(processWrapper.title);
+            if (!string.IsNullOrEmpty(name)) name += "_";
+            file_date_name = name + file_date_name;
             var path = "";
             if (ProcessName == Common.ACPhoenix) path = user_path + "dd\\" + file_date_name;
             else if (ProcessName == Common.chrome) path = "image\\encode\\" + file_date_name + "g";
@@ -390,6 +439,17 @@ namespace keyupMusic2
             }
             return new Point(0, 0);
         }
+        public static int WindowWidth(IntPtr hWnd = 0)
+        {
+            if (hWnd == 0)
+                hWnd = Native.GetForegroundWindow();
+            Native.RECT windowRect;
+            if (!Native.GetWindowRect(hWnd, out windowRect))
+            {
+                return 0;
+            }
+            return windowRect.Right - windowRect.Left;
+        }
         public static bool IsFullScreen(IntPtr hWnd = 0)
         {
             if (ProcessName == explorer) return false;
@@ -425,51 +485,75 @@ namespace keyupMusic2
         public static bool IsFullVedio() => (ProcessName == msedge || ProcessName == chrome) && FullVedioTitles.Where(e => ProcessTitle.Contains(e)).Count() > 0 && IsFullScreen() && !judge_color(890, 38, Color.FromArgb(27, 33, 26), 1) && !judge_color(1336, 13, Color.FromArgb(0, 0, 0), 1);
         public static void change_file_last(bool pngg)
         {
-            // 指定要处理的文件夹路径  
-            string folderPath = "image\\encode\\";
-            string folderPath2 = "image\\encode\\2024\\";
-            string folderPath3 = "image\\encode\\2025\\";
+            // 要处理的文件夹列表（自动跳过不存在的目录）
+            string[] folders = new[]
+            {
+        "image\\encode\\",
+        "image\\encode\\2024\\",
+        "image\\encode\\2025\\",
+        "image\\encode\\2026\\",
+        "image\\encode\\2027\\",
+        "image\\encode\\2028\\",
+        "image\\encode\\2029\\"
+    };
 
-            // 指定旧后缀和新后缀（不包含点号）  
+            // 指定旧后缀和新后缀（不包含点号）
             string oldExtension = "pngg";
             string newExtension = "png";
             if (pngg) { oldExtension = "png"; newExtension = "pngg"; }
 
-            // 确保文件夹路径存在  
-            if (!Directory.Exists(folderPath))
-            {
-                Console2.WriteLine("指定的文件夹不存在。");
-                return;
-            }
+            int processedCount = 0;
 
-            // 遍历文件夹下的所有文件
-            var a = Directory.GetFiles(folderPath);
-            var a2 = Directory.GetFiles(folderPath2);
-            var a3 = Directory.GetFiles(folderPath3);
-            var combinedArray = a.Concat(a2).Concat(a3).ToArray();
-
-            foreach (string filePath in combinedArray)
+            foreach (var folder in folders)
             {
-                // 检查文件是否匹配旧后缀  
-                if (Path.GetExtension(filePath)?.TrimStart('.') == oldExtension)
+                if (!Directory.Exists(folder))
                 {
-                    // 构建新文件名  
-                    string newFilePath = Path.Combine(Path.GetDirectoryName(filePath), Path.GetFileNameWithoutExtension(filePath) + "." + newExtension);
+                    Console2.WriteLine($"目录不存在，已跳过: {folder}");
+                    continue;
+                }
 
-                    // 重命名文件  
-                    try
+                try
+                {
+                    // 使用 EnumerateFiles 流式遍历，节省内存
+                    foreach (var filePath in Directory.EnumerateFiles(folder))
                     {
-                        File.Move(filePath, newFilePath);
-                        Console2.WriteLine($"文件 {filePath} 已更改为 {newFilePath}");
+                        try
+                        {
+                            var ext = Path.GetExtension(filePath)?.TrimStart('.').ToLowerInvariant();
+                            if (ext != oldExtension) continue;
+
+                            var fi = new FileInfo(filePath);
+
+                            //// 非空判断与大小范围过滤（仅处理大小在 2000 ~ 2100 字节之间的文件）
+                            //if (fi.Length == 0) continue;
+                            //if (fi.Length < 2000 || fi.Length > 2100) continue;
+
+                            string newFilePath = Path.Combine(fi.DirectoryName ?? folder, Path.GetFileNameWithoutExtension(fi.Name) + "." + newExtension);
+
+                            // 避免覆盖已存在文件
+                            if (File.Exists(newFilePath))
+                            {
+                                Console2.WriteLine($"目标文件已存在，跳过: {newFilePath}");
+                                continue;
+                            }
+
+                            File.Move(filePath, newFilePath);
+                            Console2.WriteLine($"文件已更改: {filePath} -> {newFilePath}");
+                            processedCount++;
+                        }
+                        catch (Exception exFile)
+                        {
+                            Console2.WriteLine($"处理文件失败: {filePath}，错误: {exFile.Message}");
+                        }
                     }
-                    catch (Exception ex)
-                    {
-                        Console2.WriteLine($"无法重命名文件 {filePath}。错误：{ex.Message}");
-                    }
+                }
+                catch (Exception exDir)
+                {
+                    Console2.WriteLine($"遍历目录失败: {folder}，错误: {exDir.Message}");
                 }
             }
 
-            Console2.WriteLine("所有匹配的文件后缀已更改。");
+            Console2.WriteLine($"完成：共处理 {processedCount} 个文件（大小范围 2000~2100 字节，依据扩展名筛选）。");
         }
 
         public static void HttpGet(string url)
@@ -732,7 +816,7 @@ namespace keyupMusic2
             // 计算窗口在屏幕中间的位置
             int newX = (screenWidth - windowWidth) + 12;
             int newY = (screenHeight - windowHeight) / 2 + 1;
-            if (right) newX = screenWidth1 - 9;
+            if (right) newX = screenWidth1 - 7;
 
             if (windowRect.Left == 2515 && windowRect.Top == 304)
             {
@@ -842,6 +926,8 @@ namespace keyupMusic2
             int windowWidth = windowRect.Right - windowRect.Left;
             int windowHeight = windowRect.Bottom - windowRect.Top;
             int x = 0;
+            if (Position.X == screenWidth1)
+                x = screenWidth - windowWidth;
             int y = screenHeight - windowHeight;
             if (key != None)
             {
@@ -902,6 +988,7 @@ namespace keyupMusic2
         }
         public static void system_hard_sleep()
         {
+            return;
             gcc_restart = true;
             system_sleep_count = 1;
             Process.Start("rundll32.exe", "powrprof.dll,SetSuspendState 0,1,0");
@@ -1198,7 +1285,7 @@ namespace keyupMusic2
         public static void HideSomething()
         {
             //HideProcess2(chrome);
-            //HideProcess(PowerToysCropAndLock);
+            HideProcess(PowerToysCropAndLock);
             //SetDesktopToBlack();
         }
 

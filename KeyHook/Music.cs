@@ -20,8 +20,8 @@ namespace keyupMusic2
 
         public static void HookEvent(KeyboardMouseHook.KeyEventArgs e)
         {
-            return;
-            hook_KeyDown_keyupMusic2222(e);
+            //return;
+            //hook_KeyDown_keyupMusic2222(e);1111222255
             if (!key_sound) return;
             if (!keys.Contains(e.key)) return;
             if (expect.ContainsKey(ProcessName) && expect[ProcessName].Contains(e.key)) return;

@@ -9,11 +9,14 @@ namespace keyupMusic2
     {
         private int _line2(KeyboardMouseHook.MouseEventArgs e)
         {
-            if (ProcessName == Common.mhtab) return 0;
-            if (ProcessName == Common.chrome)
+            if (ProcessName == Common.chrome && ProcessTitle.Contains("YouTube"))
+            {
+
+            }
+            else if (ProcessName == Common.chrome)
             {
                 if (is_douyin()) return 0;
-                if (ProcessTitle.Contains("YouTube")) return 0;
+                //if (ProcessTitle.Contains("YouTube")) return 0;
                 if (is_lizhi && GetPointName() != explorer) return 0;
                 if (chrome_red()) press(Keys.F);
                 var pos = ProcessPosition(chrome);
@@ -36,7 +39,6 @@ namespace keyupMusic2
 
         private int _line3(KeyboardMouseHook.MouseEventArgs e)
         {
-            if (ProcessName == Common.mhtab) return 0;
             if (is_douyin())
                 return 0;
             else if (ProcessName == Common.chrome)

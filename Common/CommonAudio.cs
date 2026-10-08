@@ -75,7 +75,7 @@ namespace keyupMusic2
             {
                 player_reader_bongo = new WaveFileReader(wav);
                 float volume = GetSystemVolume();
-                if (volume > 0.2) { volume = 0.2f / volume; }
+                if (volume > 0.1) { volume = 0.1f / volume; }
                 var volumeProvider2 = new VolumeWaveProvider16(player_reader_bongo) { Volume = volume };
                 player_bongo.Stop();
                 player_bongo.Init(volumeProvider2);

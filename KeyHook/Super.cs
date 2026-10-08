@@ -68,15 +68,15 @@ namespace keyupMusic2
                         //sound_setting();
                         huan.Invoke(() =>
                         {
-                            Read read = new Read(); 
+                            Read read = new Read();
                             read.Show();
                             read.Activate();         // 激活窗口
                             read.BringToFront();     // 放到最前
                             read.Focus();            // 设置输入焦点
-                        }); 
+                        });
                         break;
                     case Keys.T:
-
+                        CloseProcessFoce(Common.mhtab);
                         break;
                     case Keys.Y:
                         //Common.cmd($"/c start ms-settings:taskbar");
@@ -168,15 +168,15 @@ namespace keyupMusic2
                         //IntPtr hwnd = Native.GetForegroundWindow();
                         //const uint WHITE_COLOR = 0x000000;
                         //SetLayeredWindowAttributes(hwnd, WHITE_COLOR, 255, 0x1);
-                        //huan.Invoke(() =>
-                        //{
-                        //    Read read = new Read();
-                        //    read.Show();
-                        //    read.Activate();         // 激活窗口
-                        //    read.BringToFront();     // 放到最前
-                        //    read.Focus();            // 设置输入焦点
-                        //});
-                        press([A,D1,D2,D4,D5,D6,D7,Keys.OemPeriod],100);
+                        huan.Invoke(() =>
+                        {
+                            Read read = new Read();
+                            read.Show();
+                            read.Activate();         // 激活窗口
+                            read.BringToFront();     // 放到最前
+                            read.Focus();            // 设置输入焦点
+                        });
+                        //press([A,D1,D2,D4,D5,D6,D7,Keys.OemPeriod],100);
                         break;
                     case Keys.C:
                         press_middle_bottom();
@@ -308,16 +308,19 @@ namespace keyupMusic2
                         RestartProcess(explorer, explorerexe);
                         break;
                     case Keys.D2:
-                        RestartProcess(cloudmusic, cloudmusicexe);
+                        string executablePath = Process.GetCurrentProcess().MainModule.FileName;
+                        Process.Start(executablePath);
+                        Environment.Exit(0);
                         break;
-                    //case Keys.D3:
-                    //    SetResolution(1);
-                    //    break;
+                    case Keys.D3:
+                        RestartProcess(cloudmusic, cloudmusicexe);
+                        //SetResolution(1);
+                        break;
                     //case Keys.D4:
                     //    SetResolution(2);
                     //break;
                     case Keys.D5:
-                        //RestartProcess(TwinkleTray, TwinkleTrayexe);
+                        RestartProcess(TwinkleTray, TwinkleTrayexe);
                         break;
                     case Keys.D6:
                         //TaskRun(() => { press(Keys.F13); }, 1000);
@@ -421,8 +424,61 @@ namespace keyupMusic2
             mouse_move(2220, 1070);
             Common.cmd($"/c start ms-settings:sound", action2, 200);
         }
-
+        public static void get_point_color2()
+        {
+            Point pos = Cursor.Position;
+            try
+            {
+                using (Bitmap bmp = new Bitmap(1, 1, PixelFormat.Format32bppArgb))
+                using (Graphics g = Graphics.FromImage(bmp))
+                {
+                    g.CopyFromScreen(pos, Point.Empty, new Size(1, 1));
+                    var color = bmp.GetPixel(0, 0);
+                    string asd = $"({pos.X},{pos.Y}, Color.FromArgb({color.R},{color.G},{color.B}))";
+                    log(processWrapper.ToString() + " " + GetPointName() + " " + asd);
+                    huan.Invoke(() => Clipboard.SetText(asd));
+                }
+            }
+            catch (Exception ex)
+            {
+                Console2.WriteLine("get_point_color error: " + ex.Message);
+            }
+        }
         public static void get_point_color()
+        {
+            Point pos = Cursor.Position;
+            int srcX = pos.X;
+            int srcY = pos.Y;
+
+            // 保留原来的分支逻辑（多屏时按原有比例映射）
+            if (srcX > screenWidth)
+            {
+                Screen currentScreen = Screen.FromPoint(pos);
+                int relativeX = (pos.X - currentScreen.Bounds.X) * 1920 / currentScreen.Bounds.Width;
+                int relativeY = (pos.Y - currentScreen.Bounds.Y) * 1080 / currentScreen.Bounds.Height;
+                Console2.WriteLine($"相对坐标：({relativeX}, {relativeY})");
+                srcX = screenWidth + relativeX;
+                srcY = screenHeight + relativeY;
+            }
+
+            try
+            {
+                using (Bitmap bmp = new Bitmap(1, 1, PixelFormat.Format32bppArgb))
+                using (Graphics g = Graphics.FromImage(bmp))
+                {
+                    g.CopyFromScreen(srcX, srcY, 0, 0, new Size(1, 1));
+                    var color = bmp.GetPixel(0, 0);
+                    string asd = $"({pos.X},{pos.Y}, Color.FromArgb({color.R},{color.G},{color.B})){WindowWidth()}";
+                    log(processWrapper.ToString() + " " + GetPointName() + " " + asd);
+                    huan.Invoke(() => Clipboard.SetText(asd));
+                }
+            }
+            catch (Exception ex)
+            {
+                Console2.WriteLine("get_point_color error: " + ex.Message);
+            }
+        }
+        public static void get_point_color33()
         {
             Point mousePosition = Cursor.Position;
             var last_x = Cursor.Position.X;

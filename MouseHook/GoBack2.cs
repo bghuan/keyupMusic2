@@ -23,6 +23,8 @@ namespace keyupMusic2
            new ReplaceKey2(Honeyview,       MouseMsg.back,      Keys.Oem4),
            new ReplaceKey2(chrome,          MouseMsg.go,        Keys.F),
            new ReplaceKey2(chrome,          MouseMsg.back,      Keys.F,       mouseback),
+           new ReplaceKey2(KingOfHill,      MouseMsg.go,        Keys.Q),
+           new ReplaceKey2(KingOfHill,      MouseMsg.back,      Keys.W),
            //new ReplaceKey2(Common.cs2,      MouseMsg.go,        Keys.Escape),
            //new ReplaceKey2(msedge,          MouseMsg.go,        Keys.Home,       ()=>{ }),
            //new ReplaceKey(msedge,          MouseMsg.go_up,   Keys.Home,       ()=>{ }),

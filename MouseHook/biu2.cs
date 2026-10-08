@@ -16,6 +16,7 @@ namespace keyupMusic2
             init();
         }
         IntPtr last_hwnd = IntPtr.Zero;
+        DateTime last_read_time = DateTime.MinValue;
         Point click_r_point = new Point();
         private void easy_redad(KeyboardMouseHook.MouseEventArgs e)
         {
@@ -26,10 +27,12 @@ namespace keyupMusic2
             }
 
             IntPtr hwnd = Native.WindowFromPoint(Position);
-            //if (hwnd == last_hwnd) return;
+            // 限频 + hwnd 缓存：指针未离开当前窗口且距上次读取不足 200ms 时跳过，避免每次移动都做进程查询
+            if (hwnd == last_hwnd && (DateTime.Now - last_read_time).TotalMilliseconds < 200) return;
+            last_hwnd = hwnd;
+            last_read_time = DateTime.Now;
             string name = GetWindowName(hwnd);
             string title = GetWindowTitle(hwnd);
-            last_hwnd = hwnd;
             string message = ProcessName + "+" + name + "+" + title + "+" + processWrapper?.classname;
             if (huan.label1.Text != message)
             {
@@ -72,28 +75,30 @@ namespace keyupMusic2
                 if (ScreenPrimary.Width < 3000 && e.Y == screenHeight1 && !IsFullScreen())
                 {
                     if (ProcessName == Common.mhtab) return;
-                    CloseProcess();
-                    //Task.Run(() =>
-                    //{
-                    //    Sleep(150);
-                    //    mouse_move_to(12, 1328 - screenHeight);
-                    //    DelayRun(
-                    //        () =>
-                    //        {
-                    //            //IntPtr hwnd = Native.WindowFromPoint(Position);
-                    //            ////if (hwnd == last_hwnd) return;
-                    //            ////string name = GetWindowName(hwnd);
-                    //            //StringBuilder className = new StringBuilder(256);
-                    //            //GetClassName(hwnd, className, className.Capacity);
-                    //            //string classNameStr = className.ToString();
-                    //            string asde = processWrapper?.classname;
-                    //            //var asde = GetWindowTitle();
-                    //            //log(asde);
-                    //            return asde == SIBJumpView;
-                    //        },
-                    //        () => mouse_click(),
-                    //        400, 10);
-                    //});
+                    TaskRun(() =>
+                    {
+                        press(Keys.Escape);
+                        Sleep(100);
+                        CloseProcess();
+                        //    Sleep(150);
+                        //    mouse_move_to(12, 1328 - screenHeight);
+                        //    DelayRun(
+                        //        () =>
+                        //        {
+                        //            //IntPtr hwnd = Native.WindowFromPoint(Position);
+                        //            ////if (hwnd == last_hwnd) return;
+                        //            ////string name = GetWindowName(hwnd);
+                        //            //StringBuilder className = new StringBuilder(256);
+                        //            //GetClassName(hwnd, className, className.Capacity);
+                        //            //string classNameStr = className.ToString();
+                        //            string asde = processWrapper?.classname;
+                        //            //var asde = GetWindowTitle();
+                        //            //log(asde);
+                        //            return asde == SIBJumpView;
+                        //        },
+                        //        () => mouse_click(),
+                        //        400, 10);
+                    }, 100);
                 }
             }
         }
@@ -115,3 +120,4 @@ namespace keyupMusic2
 
     }
 }
+;

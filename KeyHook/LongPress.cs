@@ -49,8 +49,8 @@ namespace keyupMusic2
                 if (ProcessName == explorer && GetPointName() != ProcessName) { }
                 else CloseProcess();
             }
-            else if (keys == Keys.F9)
-                huan.system_sleep(true);
+            //else if (keys == Keys.F9)
+            //    huan.system_sleep(true);
 
             //else if (keys == Keys.Home || keys == Keys.End)
             //{
@@ -65,7 +65,14 @@ namespace keyupMusic2
             else if (keys == Keys.LButton)
                 long_press_lbutton = true;
             else if (keys == Keys.RButton)
+            {
                 long_press_rbutton = true;
+                if (ProcessName == Common.mhtab) press(Keys.Tab);
+            }
+            else if (keys == Keys.OemPeriod)
+            {
+                press(MediaStop); Native.LockWorkStation();
+            }
 
             if (IsDesktopFocused())
                 play_sound_di();
@@ -82,6 +89,7 @@ namespace keyupMusic2
             if (keys == Keys.RButton)
             {
                 if (is_steam_game()) return;
+                if (ProcessName == Common.mhtab) return;
                 play_sound_di2();
                 Common.no_move = true;
             }
@@ -91,6 +99,18 @@ namespace keyupMusic2
                 play_sound_di2();
                 huan._mouseKbdHook.ChangeMouseHooks();
             }
+            if (keys == Keys.F3 && ProcessName == Common.mhtab)
+            {
+                play_sound_di2();
+                CloseProcessFoce(Common.mhtab);
+            }
+
+            //if (keys == Keys.F9)
+            //{
+            //    play_sound_di2();
+            //    //CloseProcessFoce(Common.mhtab);
+            //}
+
 
             if (keys == Keys.Delete)
             {

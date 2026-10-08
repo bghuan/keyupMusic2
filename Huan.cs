@@ -49,8 +49,8 @@ namespace keyupMusic2
         private void KeyBoardHookProc(KeyboardMouseHook.KeyEventArgs e)
         {
             if (e.key != F1) FreshProcessName2();
-            if (lock_err) play_sound(D8);
-            if (ProcessName == Common.mhtab) return;
+            //if (lock_err) play_sound(D8);
+            if (!(e.key == Keys.F3) && ProcessName == Common.mhtab) return;
             //if (ProcessName == SearchHost) return;
             var handleddd = judge_handled(e);
             if (handleddd) { e.Handled = true; VirKeyState(e); }
@@ -118,42 +118,69 @@ namespace keyupMusic2
                 //string[] list_f1 = [StartMenuExperienceHost, SearchHost, clashverge,];
                 string[] list_f1 = [clashverge,];
                 //string[] list_nothing = [devenv, Common.keyupMusic2, explorer, cs2];
-
-                if (Position.X == 0 && Position.Y == 0)
+                if (ProcessName == Common.mhtab && GetPointName() == Common.mhtab)
                 {
-                    AllClass.quick_visiualstudio();
+                    LossScale();
+                }
+                else if (Position.X == 0 && Position.Y == 0)
+                {
+                    if (ProcessName == devenv)
+                    {
+                        press([LControlKey, LShiftKey, B]);
+                    }
+                    else
+                        //AllClass.quick_visiualstudio();
+                        ProcessRun(clashvergeexe);
                     //SetTransparency();
                 }
                 else if (Position.X == screenWidth1 && Position.Y == screenHeight1)
                 {
                     //system_sleep(true);
-                    huan._mouseKbdHook.ChangeMouseHooks();
+                    //huan._mouseKbdHook.ChangeMouseHooks();
+                    {
+                        press(MediaStop); Native.LockWorkStation();
+                    }
                 }
                 else if (Position.X == 0)
                 {
-                    string executablePath = Process.GetCurrentProcess().MainModule.FileName;
-                    Process.Start(executablePath);
-                    Environment.Exit(0);
-                }
-                else if (Position.X == screenWidth1)
-                {
-                    SetTransparency();
+
+                    {
+                        string executablePath = Process.GetCurrentProcess().MainModule.FileName;
+                        Process.Start(executablePath);
+                        Environment.Exit(0);
+                    }
                 }
                 else if (Position.Y == 0)
                 {
                     LossScale();
                 }
-
-                else if (ProcessName == cs2)
-                    press("1301,48;100;1274,178;2260,1374");
-                else if (list_f1.Contains(ProcessName))
+                else if (Position.X == screenWidth1)
+                {
+                    if (ProcessName != explorer)
+                        SetTransparency();
+                }
+                else if (Position.Y == screenHeight1)
+                {
                     changeClash();
+                }
+                //else if (ProcessName == cs2)
+                //    press("1301,48;100;1274,178;2260,1374");
+                //else if (list_f1.Contains(ProcessName))
+                //    changeClash();
                 //else if (list_nothing.Contains(ProcessName)) { }
                 //else if (IsDesktopFocused()) { }
                 //else if (is_steam_game())
                 //    LossScale();
-                //else
-                //{ }
+                else
+                {
+                    huan.Invoke(() =>
+                    {
+                        if (!huan.Visible) huan.Show();
+                        else huan.Hide();
+                        if (MoonTime.Instance != null)
+                            MoonTime.Instance.TopMost = true;
+                    });
+                }
             }
             else if (msg.Contains(start_check_str2))
             {

@@ -28,8 +28,9 @@ namespace keyupMusic2
 
             else if (ProcessName == Common.devenv)
                 press([Keys.LMenu, F10]);
-            return e.data;
+            return 1;
         }
+        //right
         private int _corner2(KeyboardMouseHook.MouseEventArgs e)
         {
             if (is_douyin())
@@ -57,6 +58,8 @@ namespace keyupMusic2
             { }
             else if (ProcessName == Common.chrome && ProcessTitle.Contains("照片"))
                 press(Keys.Escape);
+            else if (ProcessName == Common.chrome && !IsFullScreen() && ProcessTitle.Contains("YouTube"))
+            { }
             else if (ProcessName == Common.PowerToysCropAndLock)
             { }
             else if (ProcessName == Common.gcc)
@@ -65,7 +68,7 @@ namespace keyupMusic2
             {
                 HideProcess(devenv);
             }
-            else if (ProcessName == Common.vlc&& IsFullScreen())
+            else if (ProcessName == Common.vlc && IsFullScreen())
             {
                 press(Enter);
             }
@@ -73,18 +76,24 @@ namespace keyupMusic2
             {
                 CloseProcess2(ProcessName);
             }
+            else if (ProcessName == cloudmusic)
+            {
+                HideProcess(ProcessName);
+            }
             //else if (!IsFullScreen())
             //    CloseProcess();
             else if (!IsFullScreen())
                 CloseProcess();
             else
                 press([Keys.F11]);
-            return e.data;
+            return 1;
         }
         private int _corner4(KeyboardMouseHook.MouseEventArgs e)
         {
+            //HideSomething();
+            if (IsDesktopFocused()) return 0;
+            if (ProcessName == Common.keyupMusic2) return 0;
             HideProcess();
-            return 0;
             return 0;
             if (GetPointName() == explorer) press([LWin, D]);
             return e.data;
@@ -96,7 +105,7 @@ namespace keyupMusic2
             //if (ProcessName == Common.chrome && (judge_color(Color.FromArgb(162, 37, 45))))
             //    press($"10;{Position.X + 216},{Position.Y + 42};{Position.X + 216},{Position.Y + 43}");
             //else
-                press([Keys.F11]);
+            press([Keys.F11]);
             return e.data;
         }
 

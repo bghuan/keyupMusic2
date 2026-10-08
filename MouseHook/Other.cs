@@ -19,6 +19,8 @@ namespace keyupMusic2
                 PowerToysCropAndLock(e);
             else if (ProcessName == Common.ShapeofDreams)
                 S_hapeofDreams(e);
+            else if (ProcessName == Common.TrialsSurvivors)
+                TTrialsSurvivors(e);
             else if (ProcessName == Common.mhtab)
                 mhtab(e);
             else if (ProcessName == Common.chrome)
@@ -53,9 +55,27 @@ namespace keyupMusic2
                     change_image(e);
         }
 
+        private void TTrialsSurvivors(KeyboardMouseHook.MouseEventArgs e)
+        {
+            if (e.Msg == MouseMsg.move) return;
+            if (isctrl()) return;
+            //if (e.Msg == MouseMsg.click_r_up)
+            //{
+            //    press(R);
+            //}
+            if (e.Msg == MouseMsg.click_r_up && !is_down_vir(LButton))
+            {
+                down_mouse();
+            }
+            else if (e.Msg == MouseMsg.click_r_up)
+            {
+                up_mouse();
+            }
+        }
+
         private void mhtab(KeyboardMouseHook.MouseEventArgs e)
         {
-            
+
         }
 
         private void S_hapeofDreams(KeyboardMouseHook.MouseEventArgs e)
@@ -210,7 +230,7 @@ namespace keyupMusic2
                 is_PowerToysCropAndLock_down = true;
             else if (e.Msg == MouseMsg.click_up)
             {
-                if (e.X == 0)
+                if (e.X == 0 || e.X == screenWidth1)
                 {
                     hideProcessTitle(Common.PowerToysCropAndLock);
                     MoveProcessWindow2(Common.PowerToysCropAndLock);
@@ -260,8 +280,6 @@ namespace keyupMusic2
                     press(Keys.F, 51);
                 quick_max_chrome(e.Pos);
             }
-            else if (e.Msg == MouseMsg.back_up && (judge_color(26, 94, Color.FromArgb(120, 123, 117))))
-                press([Keys.LControlKey, Keys.W]);
             else if (e.Msg == MouseMsg.click_r_up && e.Y < 200 && (ProcessTitle.Contains("荔枝") && ProcessTitle.Contains("详情")))
             {
                 var pos = Position;

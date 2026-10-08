@@ -20,6 +20,7 @@ namespace keyupMusic2
         public const string keyupMusic2 = "keyupMusic4";
         public const string scrcpy = "scrcpy";
         public const string ShapeofDreams = "Shape of Dreams";
+        public const string TrialsSurvivors = "Trials Survivors";
         public const string kmRead = "Read";
         public const string OpenWith = "OpenWith";
         public const string _哔哩哔哩 = "哔哩哔哩";
@@ -33,12 +34,14 @@ namespace keyupMusic2
         public const string ACPhoenix = "ACPhoenix";
         public const string Dragonest = "DragonestGameLauncher";
         public const string mhtab = "mhtab";
+        public const string mhmain = "mhmain";
         public const string devenv = "devenv";
         public const string devenvexe = "C:\\Program Files\\Microsoft Visual Studio\\2022\\Community\\Common7\\IDE\\devenv.exe";
         public const string WeChat = "Weixin"; //"WeChat";
         public const string douyin = "douyin";
         public const string msedge = "msedge";
         public const string chrome = "chrome";
+        public const string KingOfHill = "KingOfHill";
         public const string Taskmgr = "Taskmgr";
         public const string explorer = "explorer";
         public const string explorerexe = "C:\\Windows\\explorer.exe";
@@ -216,18 +219,14 @@ namespace keyupMusic2
         }
         public static string GetWindowName(IntPtr hwnd)
         {
-            uint processId;
-            string Name = "";
-            Native.GetWindowThreadProcessId(hwnd, out processId);
-            try
+            if (hwnd == IntPtr.Zero) return "";
+            // 优先用 ProcessMap 缓存，同一窗口只查一次进程，避免高频创建 Process 对象
+            if (!ProcessMap.ContainsKey(hwnd))
             {
-                Process process = Process.GetProcessById((int)processId);
-                {
-                    Name = process.ProcessName;
-                }
+                try { ProcessMap[hwnd] = new ProcessWrapper(hwnd); }
+                catch (Exception e) { return ""; }
             }
-            catch (Exception e) { }
-            return Name;
+            return ProcessMap.TryGetValue(hwnd, out var wrapper) ? wrapper?.name ?? "" : "";
         }
         public static bool is_douyin()
         {
@@ -395,11 +394,13 @@ namespace keyupMusic2
             string targetClassName = window;
             IntPtr hWnd = GetProcessID(targetClassName);
             string title = GetWindowTitle(hWnd);
-            if (title == null || title == "") return false;
-            if (title.IndexOf(")") >= 0)
-                title = title.Substring(title.IndexOf(")") + 1, title.Length - title.IndexOf(")") - 1);
-            if (title.IndexOf("主") > 0)
-                title = title.Substring(0, title.IndexOf("主"));
+            //if (title == null || title == "") return false;
+            //if (title.IndexOf(")") >= 0)
+            //    title = title.Substring(title.IndexOf(")") + 1, title.Length - title.IndexOf(")") - 1);
+            //if (title.IndexOf("主") > 0)
+            //    title = title.Substring(0, title.IndexOf("主"));
+            string name = ExtractStreamerName(title);
+            title = name;
             bool result = SetWindowText(hWnd, title);
             return result;
         }

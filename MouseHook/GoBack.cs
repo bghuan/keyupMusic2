@@ -34,6 +34,8 @@ namespace keyupMusic2
                 Douyin(go, back);
             else if (ProcessName == msedge)
                 Msedge(go, back);
+            else if (ProcessName == chrome)
+                chromeasd(go, back);
             else if (ProcessName == vlc)
                 Vlc(go, back);
             else if (ProcessName == Common.mhtab)
@@ -84,12 +86,19 @@ namespace keyupMusic2
         {
             if (go)
             {
-                press([LControlKey, Keys.Tab]);
+                press([LMenu, W]);
+                //press([LControlKey, Keys.Tab]);
+                //press([Keys.Tab]);
+                //press([Keys.F2]);
             }
             if (back)
             {
+                //log(GetPointName());
                 if (Position.Y == 0)
                     press([LMenu, K]);
+                else if (GetPointName() != Common.mhtab && GetPointName() != Common.mhmain)
+                    //press([Keys.Tab]);
+                    press([Keys.Tab]);
                 else if (Position.X == 0)
                     //press([Keys.Tab]);
                     press([Keys.Tab]);
@@ -140,19 +149,21 @@ namespace keyupMusic2
         }
         private void chromeasd(bool go, bool back)
         {
+            if (go && !IsFullScreen() && (judge_color(26, 94, Color.FromArgb(120, 123, 117))) && WindowWidth() >= screenWidth)
+                press([Keys.LControlKey, Keys.W]);
+            ////if (back)
+            ////    if ((judge_color(3876, 95, Color.FromArgb(104, 107, 101)))
+            ////        && judge_color(6437, 147, Color.FromArgb(55, 61, 53)))
+            ////        press([Keys.LControlKey, Keys.W]);
             //if (back)
-            //    if ((judge_color(3876, 95, Color.FromArgb(104, 107, 101)))
-            //        && judge_color(6437, 147, Color.FromArgb(55, 61, 53)))
+            //    if ((judge_color(27, 95, Color.FromArgb(120, 123, 117))
+            //        && judge_color(2496, 121, Color.FromArgb(55, 61, 53))))
             //        press([Keys.LControlKey, Keys.W]);
-            if (back)
-                if ((judge_color(27, 95, Color.FromArgb(120, 123, 117))
-                    && judge_color(2496, 121, Color.FromArgb(55, 61, 53))))
-                    press([Keys.LControlKey, Keys.W]);
-            //else if (is_lizhi)
-            //{
-            //    press([Keys.LControlKey, Keys.W]);
-            //}
-            //if (go) press(Keys.F);
+            ////else if (is_lizhi)
+            ////{
+            ////    press([Keys.LControlKey, Keys.W]);
+            ////}
+            ////if (go) press(Keys.F);
 
         }
         private void Msedge(bool go, bool back)

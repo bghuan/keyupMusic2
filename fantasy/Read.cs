@@ -32,7 +32,7 @@ namespace keyupMusic2.fantasy
         }
         private string url = "https://www.qidian.com/book/1035351824/";
         // 设定你想要的缩放比例
-        private double myZoom = 1.75;
+        private double myZoom = 2.5;
         private async Task InitializeAsync()
         {
             await webView21.EnsureCoreWebView2Async(null);

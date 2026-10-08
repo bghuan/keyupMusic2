@@ -214,6 +214,13 @@ namespace keyupMusic2
             public override string ToString() => base.ToString();
             public bool target(Point testPoint)
             {
+                if (testPoint.X == 2559 && testPoint.Y == 1439)
+                {
+                    if (this.name == "corner4")
+                    {
+                        HideSomething();
+                    }
+                }
                 if (!can) return false;
                 var hit = a.inside(testPoint);
                 if (hit && cAction != null)
@@ -223,7 +230,8 @@ namespace keyupMusic2
                         return false;
                 }
 
-                if (hit) can = false;
+                if (hit) 
+                    can = false;
                 return hit;
             }
             public bool ignore(Point testPoint)

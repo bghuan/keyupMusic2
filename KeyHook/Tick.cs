@@ -120,23 +120,23 @@ namespace keyupMusic2
                 //if (VirtualKeyboardForm.Instance.Visible)
                 //    VirtualKeyboardForm.Instance.Hide();
             }
-            else if (system_sleep_count > 0)
-            {
-                int slow = 1;
-                int end = 3 + slow;
-                if (system_sleep_count > slow)
-                    for (int i = end - system_sleep_count; i > 0; i--)
-                    {
-                        play_sound_di();
-                        Sleep(100);
-                    }
-                if (system_sleep_count > end)
-                {
-                    log("tick system_hard_sleep");
-                    system_hard_sleep();
-                }
-                system_sleep_count++;
-            }
+            //else if (system_sleep_count > 0)
+            //{
+            //    int slow = 1;
+            //    int end = 3 + slow;
+            //    if (system_sleep_count > slow)
+            //        for (int i = end - system_sleep_count; i > 0; i--)
+            //        {
+            //            play_sound_di();
+            //            Sleep(100);
+            //        }
+            //    if (system_sleep_count > end)
+            //    {
+            //        log("tick system_hard_sleep");
+            //        system_hard_sleep();
+            //    }
+            //    system_sleep_count++;
+            //}
             else if (gcc_restart)
             {
                 CloseProcessFoce(gcc);
@@ -147,10 +147,10 @@ namespace keyupMusic2
             //{
             //    press_middle_bottom();
             //}
-            else if (ExistProcess(OpenWith))
-            {
-                CloseProcess(OpenWith);
-            }
+            //else if (ExistProcess(OpenWith))
+            //{
+            //    CloseProcess(OpenWith);
+            //}
             //else if (!VirtualKeyboardForm.Instance.Visible)
             //{
             //    VirtualKeyboardForm.Instance.Show();

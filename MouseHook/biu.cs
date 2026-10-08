@@ -23,8 +23,9 @@ namespace keyupMusic2
             {
                 if (is_lbutton()) return false;
                 if (e.Y == 0) return true;
-                //if (is_douyin() && (e.X == 0 || is_down(LButton))) return true;
+                if (is_douyin()) return true;
                 if (IsFullScreen() && e.Y == screenHeight1) return true;
+                if (GetPointName() == Common.mhmain && ProcessName == Common.mhtab) return true;
                 //if (IsFullVedio()) return true;
                 //var list = new[] { Glass2, vlc, /*Honeyview*/ };
                 //if (list.Contains(Common.ProcessName) && !GetPointTitle().Contains("设置"))
@@ -35,11 +36,20 @@ namespace keyupMusic2
 
         public void MouseHookProc(KeyboardMouseHook.MouseEventArgs e)
         {
-            //if (e.Msg == MouseMsg.move) return;
             //need point hwnd and process name
             var handleddd = judge_handled(e);
             if (handleddd) { e.Handled = true; VirKeyState(e.Msg); }
             if (!handleddd && !huan.Focused) Native.ReleaseCapture();
+
+            // 鼠标移动：走轻量路径，不进 Task.Run。
+            // easy_read 内部已限频(200ms + hwnd 缓存)；Area 保持每帧保证边缘检测精度；Other 保持每帧（PowerToysCropAndLock 拖窗依赖 move）
+            if (e.Msg == MouseMsg.move)
+            {
+                easy_read(e);
+                Area(e);
+                Other(e);
+                return;
+            }
 
             Task.Run(() =>
             {
@@ -52,7 +62,7 @@ namespace keyupMusic2
                 easy_read(e);
 
                 Area(e);
-                BottomLine(e);
+                //BottomLine(e);
                 Other(e);
 
                 Glass(e);
@@ -76,33 +86,50 @@ namespace keyupMusic2
             }
             else if (e.Msg == MouseMsg.wheel)
             {
-                if (e.Y == 0 && e.X == 0)
+                if (ProcessName == Common.mhtab)
+                {
+                    if (GetPointName() == Common.mhtab && e.data > 0)
+                        press([LMenu, K]);
+                    if (GetPointName() == Common.mhtab && e.data < 0)
+                        press(Keys.Tab);
+                    else if (GetPointName() == Common.mhmain && e.data > 0)
+                        press_s(LControlKey, Keys.Tab, 4, 1);
+                    else if (GetPointName() == Common.mhmain && e.data < 0)
+                        press([LControlKey, Keys.Tab]);
+                    else if (e.Y == 0 && e.data > 0)
+                        press([LMenu, K]);
+                }
+                else if (e.Y == 0 && e.X == 0)
                     //press([LMenu, e.data > 0 ? F8 : F7]);
-                    press([LControlKey, e.data > 0 ?Keys.Oemplus : OemMinus]);
+                    press([LControlKey, e.data > 0 ? Keys.Oemplus : OemMinus]);
                 //else if (is_down_vir(LWin))
                 //    press([LControlKey, e.data > 0 ? Left : Right]);
-                else if (e.Y == 0 && e.X > screenWidth)
-                    press([LShiftKey, e.data > 0 ? F8 : F7]);
-                else if (e.X == 0)
-                    press(e.data > 0 ? VolumeUp : VolumeDown);
+                //else if (e.Y == 0 && e.X > screenWidth)
+                //    press([LShiftKey, e.data > 0 ? F8 : F7]);
+                else if (e.Y == 0)
+                    press([e.data > 0 ? F8 : F7]);
                 //else if (e.Y == 0)
                 //    press([LControlKey, e.data > 0 ? F8 : F7]);
-                //else if (is_douyin() && (e.X == 0 || is_down(LButton)))
-                //    press(e.data > 0 ? Left : Right);
+                else if (is_douyin() && (e.X == 0))
+                    press(e.data > 0 ? Left : Right);
+                else if (is_douyin())
+                    press(e.data > 0 ? Keys.Up : Keys.Down);
+                else if (ProcessName == msedge && e.Y == screenHeight1)
+                    press(e.data > 0 ? Keys.PageUp : Keys.PageDown);
                 else if (IsFullVedio() && !GetPointTitle().Contains("设置"))
                     press(e.data > 0 ? Left : Right);
                 //else if (ProcessName == Common.vlc)
                 //    press(e.data > 0 ? Left : Right);
                 else if (ProcessName == Common.ApplicationFrameHost && (ProcessTitle.Contains("png") || GetPointName() == PhotoApps))
                     press(e.data > 0 ? Left : Right);
-                else if (ProcessName == msedge && e.Y == screenHeight1)
-                    press(e.data > 0 ? Keys.PageUp : Keys.PageDown);
                 else if (ProcessTitle == kmRead && e.Y == screenHeight1)
                     press(e.data > 0 ? Keys.PageUp : Keys.PageDown);
-                else if (is_tran_process == ProcessName && e.X == screenWidth1)
-                    SetTransparency(e.data > 0 ? 16 : -16);
                 else if (e.Y == screenHeight1 && IsFullScreen())
                     press(e.data > 0 ? Left : Right);
+                else if (e.X == 0)
+                    press(e.data > 0 ? VolumeUp : VolumeDown);
+                else if (is_tran_process == ProcessName && e.X == screenWidth1)
+                    SetTransparency(e.data > 0 ? 16 : -16);
             }
             else if (e.Msg == MouseMsg.wheel_h)
                 press(e.data > 0 ? VolumeDown : VolumeUp);

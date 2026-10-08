@@ -54,7 +54,7 @@ namespace keyupMusic2
 
                 case Keys.OemPeriod:
                     if (is_down(Keys.RControlKey)) { press_raw(Apps); break; }
-                    if (is_down_vir(Keys.RMenu)) { press(MediaStop); Native.LockWorkStation(); break; }
+                    //if (is_down_vir(Keys.RControlKey)) { press(MediaStop); Native.LockWorkStation(); break; }
                     break;
             }
             //if (Position.Y == 0)

@@ -316,6 +316,15 @@ namespace keyupMusic2
             if (num == Keys.MediaPlayPause) { if (!IsAnyMusicPlayerRunning()) StartNeteaseCloudMusic(); }
             press([num], tick);
         }
+        public static void press_s(Keys a, Keys b, int num, int tick = 0)
+        {
+            down_press(a);
+            for (int i = 0; i < num; i++)
+            {
+                press(b, tick);
+            }
+            up_press(a);
+        }
         public static void press(int num, int tick)
         {
             mouse_move(num, tick, 100);

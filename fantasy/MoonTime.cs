@@ -27,6 +27,8 @@ namespace keyupMusic2
             scalingFactor = Common.GetWindowScalingFactor(this);
             diameter = (int)(360 * scalingFactor);
             Size = new Size(diameter, diameter);
+            Size = new Size(144, 144);
+            //webView21.Size = new Size(936 / 3, 803 / 3);
 
             InitializeAsync();
         }
