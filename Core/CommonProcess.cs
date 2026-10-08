@@ -664,9 +664,9 @@ namespace keyupMusic4
         }
         public static bool is_lizhi => (ProcessTitle.Contains("荔枝") && !ProcessTitle.Contains("分类"));
         public static bool is_tran_powertoy = false;
-        public static int is_tran_alpha = 127;
-        public static bool is_tran_powertoy2 = false;
-        public static string is_tran_process = "";
+        public static int is_tran_alpha { get => AppState.is_tran_alpha; set => AppState.is_tran_alpha = value; }
+        public static bool is_tran_powertoy2 { get => AppState.is_tran_powertoy2; set => AppState.is_tran_powertoy2 = value; }
+        public static string is_tran_process { get => AppState.is_tran_process; set => AppState.is_tran_process = value; }
 
         private const double BytesToMB = 1024 * 1024; // 1MB = 1048576字节
         public static string CounterName;
