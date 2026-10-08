@@ -31,10 +31,10 @@ namespace keyupMusic4
         }
         static int SetDesktopWallpaperAli_count = 0;
         static bool SetDesktopWallpaperAli_flag = false;
-        // 注意：已禁用（基线行为：方法以 return 开头，调用即返回；恢复功能时可从 git 历史取回完整实现）
+        // 开关：默认关闭（基线行为），长按 ESC / 拖到右下角关闭，Super+F6 打开
         public static void SetDesktopWallpaperAli(string filePath, bool di = true)
         {
-            return;
+            if (!WallpaperEnabled) return;
             if (SetDesktopWallpaperAli_flag)
             {
                 Task.Run(() =>

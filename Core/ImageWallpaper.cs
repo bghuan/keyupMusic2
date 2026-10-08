@@ -27,6 +27,9 @@ namespace keyupMusic4
             public CancellationToken Token { get; set; }
             public int RequestId { get; set; }
         }
+        // 壁纸设置开关：默认关闭（保持基线"禁用"行为）；长按 ESC / 拖到右下角 → 关闭；Super+F6 → 打开
+        public static bool WallpaperEnabled = false;
+
         public static void SetDesktopWallpaperFull()
         {
             var currentPath = GetWallpaperFromRegistry();
@@ -43,10 +46,10 @@ namespace keyupMusic4
             SetDesktopWallpaper(filePath, WallpaperStyle.Stretched, true);
         }
         // 优化后的壁纸设置方法（最后触发的请求会使之前的无效）
-        // 注意：已禁用（基线行为：方法以 return 开头，调用即返回；恢复功能时可从 git 历史取回完整实现）
+        // 开关：默认关闭（基线行为），长按 ESC / 拖到右下角关闭，Super+F6 打开
         public static void SetDesktopWallpaper(string filePath, WallpaperStyle style = WallpaperStyle.Fit, bool force = false)
         {
-            return;
+            if (!WallpaperEnabled) return;
             if (!force)
             {
                 var currentPath = GetWallpaperFromRegistry();

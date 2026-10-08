@@ -204,10 +204,12 @@ namespace keyupMusic4
             public override string ToString() => base.ToString();
             public bool target(Point testPoint)
             {
-                if (testPoint.X == 2559 && testPoint.Y == 1439)
+                if (testPoint.X == Common.DesignWidth - 1 && testPoint.Y == Common.DesignHeight - 1)
                 {
                     if (this.name == "corner4")
                     {
+                        // 鼠标拖到右下角：关闭壁纸自动设置开关（配合 Super+F6 重新打开）
+                        WallpaperEnabled = false;
                         HideSomething();
                     }
                 }

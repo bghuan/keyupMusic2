@@ -191,6 +191,8 @@ namespace keyupMusic4
                         break;
                     case Keys.F6:
                         hideProcessTitle(Common.chrome);
+                        // Super+F6：打开壁纸自动设置开关（长按 ESC / 拖到右下角会关闭）
+                        WallpaperEnabled = true;
                         //steam://rungameid/730
                         break;
                     case Keys.F10:

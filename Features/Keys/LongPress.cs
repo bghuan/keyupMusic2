@@ -48,7 +48,11 @@ namespace keyupMusic4
             }
 
             else if (keys == Keys.Escape)
+            {
+                // 长按 ESC：关闭壁纸自动设置开关（配合 Super+F6 重新打开）
+                WallpaperEnabled = false;
                 HideSomething();
+            }
 
             else if (keys == Keys.LButton)
                 long_press_lbutton = true;
