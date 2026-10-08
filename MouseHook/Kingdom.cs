@@ -1,13 +1,13 @@
 ﻿using System.Timers;
-using static keyupMusic2.Common;
+using static keyupMusic4.Common;
 
-namespace keyupMusic2
+namespace keyupMusic4
 {
     partial class biu
     {
         public void Kingdom(KeyboardMouseHook.MouseEventArgs e)
         {
-            if (ProcessName != keyupMusic2.Common.Kingdom) return;
+            if (ProcessName != keyupMusic4.Common.Kingdom) return;
             //MoveStop();
 
             if (e.Msg == MouseMsg.click_r_up)

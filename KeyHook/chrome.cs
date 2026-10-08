@@ -1,7 +1,7 @@
-﻿using static keyupMusic2.Common;
-using KeyEvent = keyupMusic2.KeyboardMouseHook.KeyEventArgs;
+﻿using static keyupMusic4.Common;
+using KeyEvent = keyupMusic4.KeyboardMouseHook.KeyEventArgs;
 
-namespace keyupMusic2
+namespace keyupMusic4
 {
     public class ChromeClass : Default
     {

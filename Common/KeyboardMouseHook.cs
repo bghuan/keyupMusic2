@@ -1,7 +1,7 @@
 ﻿using System.Diagnostics;
 using System.Runtime.InteropServices;
 
-namespace keyupMusic2
+namespace keyupMusic4
 {
     public class KeyboardMouseHook
     {

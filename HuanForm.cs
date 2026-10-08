@@ -1,14 +1,14 @@
-using keyupMusic2.fantasy;
+ï»¿using keyupMusic4.fantasy;
 using Microsoft.Win32;
 using Newtonsoft.Json.Linq;
 using System.Diagnostics;
 using System.Linq;
 using System.Runtime.InteropServices;
-using static keyupMusic2.Common;
-using static keyupMusic2.KeyboardMouseHook;
-using static keyupMusic2.Rawinput;
+using static keyupMusic4.Common;
+using static keyupMusic4.KeyboardMouseHook;
+using static keyupMusic4.Rawinput;
 
-namespace keyupMusic2
+namespace keyupMusic4
 {
     public partial class Huan : Form
     {
@@ -26,7 +26,7 @@ namespace keyupMusic2
         //bool is_init_show = !(Position.Y == 0);
         //bool is_mouse_hook = !(Position.Y == 1439);
         //bool is_mouse_hook = !is_shift();
-        public static bool keyupMusic2_onlisten = false;
+        public static bool keyupMusic4_onlisten = false;
         DateTime super_listen_time = new DateTime();
         static int super_listen_tick = 144 * 14;
         public KeyboardMouseHook _mouseKbdHook;
@@ -105,14 +105,14 @@ namespace keyupMusic2
             if (e.Button == MouseButtons.Left) SetVisibleCore(!Visible);
             if (e.Button == MouseButtons.Right)
             {
-                // ¼ÙÉè¡°Î¢ÁÁ¼üÅÌ(ÏÔÊ¾Òþ²Ø)¡±ÊÇÄãÒªÐÞ¸ÄµÄÏî
+                // å‡è®¾â€œå¾®äº®é”®ç›˜(æ˜¾ç¤ºéšè—)â€æ˜¯ä½ è¦ä¿®æ”¹çš„é¡¹
                 if (VirtualKeyboardForm.Instance != null && MoonTime.Instance != null)
                     foreach (ToolStripItem item in contextMenuStrip1.Items)
                     {
                         if (item is ToolStripMenuItem menuItem && menuItem.Name.Equals("moontimmeshow"))
-                            menuItem.Text = $"ÔÂÁÁ±í({(MoonTime.Instance.Visible ? "ÒÑÏÔÊ¾" : "ÒÑÒþ²Ø")})";
+                            menuItem.Text = $"æœˆäº®è¡¨({(MoonTime.Instance.Visible ? "å·²æ˜¾ç¤º" : "å·²éšè—")})";
                         if (item is ToolStripMenuItem menuItem2 && menuItem2.Name.Equals("keyboardlightshow"))
-                            menuItem2.Text = $"Î¢ÁÁ¼üÅÌ({(VirtualKeyboardForm.Instance.Visible ? "ÒÑÏÔÊ¾" : "ÒÑÒþ²Ø")})";
+                            menuItem2.Text = $"å¾®äº®é”®ç›˜({(VirtualKeyboardForm.Instance.Visible ? "å·²æ˜¾ç¤º" : "å·²éšè—")})";
                     }
                 var mousePos = Control.MousePosition;
                 int menuHeight = contextMenuStrip1.GetPreferredSize(contextMenuStrip1.Size).Height;
@@ -144,7 +144,7 @@ namespace keyupMusic2
         }
         private void label1_Click(object sender, EventArgs e)
         {
-            // ´´½¨²¢ÏÔÊ¾WebView2´°¿Ú
+            // åˆ›å»ºå¹¶æ˜¾ç¤ºWebView2çª—å£
             //MoonTime webViewWindow = new MoonTime();
             //webViewWindow.Show();
         }
@@ -154,7 +154,7 @@ namespace keyupMusic2
             if (Debugger.IsAttached)
             {
                 int currentProcessId = Process.GetCurrentProcess().Id;
-                Process[] processes = Process.GetProcessesByName(Common.keyupMusic2);
+                Process[] processes = Process.GetProcessesByName(Common.AppName);
                 foreach (Process process in processes)
                     if (process.Id != currentProcessId && IsAdministrator())
                         process.Kill();
@@ -234,7 +234,7 @@ namespace keyupMusic2
         //            Common.DeviceName = e.device;
         //        else if (e.key == 0)
         //            Common.DeviceName2 = e.device;
-        //        if (ProcessName == Common.keyupMusic2 && e.key != 0)
+        //        if (ProcessName == Common.AppName && e.key != 0)
         //            await Task.Run(() => KeyBoardHookProc(e));
 
         //        //if (e.key == Menu)

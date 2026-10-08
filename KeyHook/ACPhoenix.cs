@@ -1,7 +1,7 @@
-﻿using static keyupMusic2.Common;
-using static keyupMusic2.KeyboardMouseHook;
+﻿using static keyupMusic4.Common;
+using static keyupMusic4.KeyboardMouseHook;
 
-namespace keyupMusic2
+namespace keyupMusic4
 {
     public class ACPhoenixClass : Default
     {
@@ -128,7 +128,7 @@ namespace keyupMusic2
                 //    break;
                 case Keys.F4:
                     if (is_alt()) break;
-                    if (ProcessName != keyupMusic2.Common.ACPhoenix) { break; }
+                    if (ProcessName != keyupMusic4.Common.ACPhoenix) { break; }
                     press("2478,51;2492,1299;1625.1078", 201);
                     break;
                 case Keys.F5:

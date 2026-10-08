@@ -9,10 +9,10 @@ using System.Security.Principal;
 using System.Text;
 using System.Text.Json;
 using System.Text.RegularExpressions;
-using static keyupMusic2.Native;
+using static keyupMusic4.Native;
 using Point = System.Drawing.Point;
-using RECT = keyupMusic2.Native.RECT;
-namespace keyupMusic2
+using RECT = keyupMusic4.Native.RECT;
+namespace keyupMusic4
 {
     public partial class Common
     {
@@ -975,7 +975,7 @@ namespace keyupMusic2
                 ProcessRun(LosslessScalingexe);
                 play_sound_bongocat(D9);
             }
-            //if (ProcessName == keyupMusic2 && GetPointName() != keyupMusic2 && ProcessTitle != kmRead)
+            //if (ProcessName == keyupMusic4 && GetPointName() != keyupMusic4 && ProcessTitle != kmRead)
             //    mouse_click2();
 
             //var Usage = GetUsage(LosslessScaling);

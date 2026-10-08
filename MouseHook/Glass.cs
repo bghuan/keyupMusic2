@@ -1,11 +1,11 @@
-﻿using keyupMusic2;
+﻿using keyupMusic4;
 using System.Timers;
-using static keyupMusic2.Common;
-using static keyupMusic2.KeyboardMouseHook;
+using static keyupMusic4.Common;
+using static keyupMusic4.KeyboardMouseHook;
 using static System.Windows.Forms.LinkLabel;
 using static System.Windows.Forms.VisualStyles.VisualStyleElement.TrackBar;
 
-namespace keyupMusic2
+namespace keyupMusic4
 {
     partial class biu
     {

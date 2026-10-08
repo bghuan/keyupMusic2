@@ -1,10 +1,10 @@
 ﻿using System;
 using System.Diagnostics;
-using static keyupMusic2.biu;
-using static keyupMusic2.Common;
-using static keyupMusic2.KeyboardMouseHook;
+using static keyupMusic4.biu;
+using static keyupMusic4.Common;
+using static keyupMusic4.KeyboardMouseHook;
 
-namespace keyupMusic2
+namespace keyupMusic4
 {
     public partial class Common
     {

@@ -1,11 +1,11 @@
 ﻿using System.Diagnostics;
 using System.Diagnostics.Metrics;
 using System.IO;
-using static keyupMusic2.Common;
-using static keyupMusic2.KeyboardMouseHook;
+using static keyupMusic4.Common;
+using static keyupMusic4.KeyboardMouseHook;
 using static System.Runtime.InteropServices.JavaScript.JSType;
 
-namespace keyupMusic2
+namespace keyupMusic4
 {
     public class WinClass
     {

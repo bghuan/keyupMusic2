@@ -4,9 +4,9 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Runtime.InteropServices;
 using System.Windows.Forms;
-using static keyupMusic2.Common;
+using static keyupMusic4.Common;
 
-namespace keyupMusic2
+namespace keyupMusic4
 {
     public class Rawinput
     {

@@ -9,10 +9,10 @@ using System.Runtime.InteropServices;
 using System.Security.Principal;
 using System.Text.Json;
 using System.Windows.Forms;
-using static keyupMusic2.Native;
+using static keyupMusic4.Native;
 using Point = System.Drawing.Point;
-using RECT = keyupMusic2.Native.RECT;
-namespace keyupMusic2
+using RECT = keyupMusic4.Native.RECT;
+namespace keyupMusic4
 {
     public partial class Common
     { 

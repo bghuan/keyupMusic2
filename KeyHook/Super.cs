@@ -1,16 +1,16 @@
-﻿using keyupMusic2.fantasy;
+﻿using keyupMusic4.fantasy;
 using Microsoft.VisualBasic.FileIO;
 using Newtonsoft.Json.Linq;
 using System.Collections.Concurrent;
 using System.Diagnostics;
 using System.Drawing.Imaging;
 using System.Windows.Forms;
-using static keyupMusic2.Common;
-using static keyupMusic2.KeyboardMouseHook;
-using static keyupMusic2.Native;
+using static keyupMusic4.Common;
+using static keyupMusic4.KeyboardMouseHook;
+using static keyupMusic4.Native;
 using static System.Runtime.CompilerServices.RuntimeHelpers;
 
-namespace keyupMusic2
+namespace keyupMusic4
 {
     public partial class SuperClass
     {
@@ -19,14 +19,14 @@ namespace keyupMusic2
 
         public static void hook_KeyDown(Keys keys)
         {
-            Huan.keyupMusic2_onlisten = true;
+            Huan.keyupMusic4_onlisten = true;
             var e = new KeyboardMouseHook.KeyEventArgs(KeyType.Down, keys, 0, new Native.keyboardHookStruct());
             new SuperClass().HookEvent(e);
-            Huan.keyupMusic2_onlisten = false;
+            Huan.keyupMusic4_onlisten = false;
         }
         public bool HookEvent(KeyboardMouseHook.KeyEventArgs e)
         {
-            if (!Huan.keyupMusic2_onlisten) return false;
+            if (!Huan.keyupMusic4_onlisten) return false;
             if (e.key == (Keys.LButton | Keys.OemClear)) return false;
 
             bool catched = true;
@@ -117,8 +117,8 @@ namespace keyupMusic2
                     case Keys.D:
                         break;
                     case Keys.F:
-                        var aasad = "C:\\Users\\bu\\source\\repos\\keyupMusic2\\bin\\Debug\\net8.0-windows\\image\\downloaded_images\\33084\\0f4702772dd8fff945d5b066.png";
-                        FindDuplicatewebps(aasad, "C:\\Users\\bu\\source\\repos\\keyupMusic2\\bin\\Debug\\net8.0-windows\\image\\downloaded_images");
+                        var aasad = "C:\\Users\\bu\\source\\repos\\keyupMusic4\\bin\\Debug\\net8.0-windows\\image\\downloaded_images\\33084\\0f4702772dd8fff945d5b066.png";
+                        FindDuplicatewebps(aasad, "C:\\Users\\bu\\source\\repos\\keyupMusic4\\bin\\Debug\\net8.0-windows\\image\\downloaded_images");
                         break;
                     case Keys.G:
                         var keys = new List<Keys>();
@@ -336,7 +336,7 @@ namespace keyupMusic2
 
             if (catched)
             {
-                huan.Invoke2(() => { Huan.keyupMusic2_onlisten = false; huan.BackColor = Color.White; /*huan.label1.Text = e.key.ToString();*/ }, 10);
+                huan.Invoke2(() => { Huan.keyupMusic4_onlisten = false; huan.BackColor = Color.White; /*huan.label1.Text = e.key.ToString();*/ }, 10);
                 //Invoke((() => { label1.Text = label_backup; }));
                 //KeyboardHook.stop_next = true;
             }

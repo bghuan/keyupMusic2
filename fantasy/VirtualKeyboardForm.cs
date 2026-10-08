@@ -1,7 +1,7 @@
-using Microsoft.Web.WebView2.WinForms;
+ï»¿using Microsoft.Web.WebView2.WinForms;
 using System.Text.Json;
 
-namespace keyupMusic2
+namespace keyupMusic4
 {
     public partial class VirtualKeyboardForm : Form
     {
@@ -20,7 +20,7 @@ namespace keyupMusic2
             BackColor = Color.Fuchsia;
             TopMost = true;
             ShowInTaskbar = false;
-            this.Text = "Î¢ÁÁ¼üÅÌ";
+            this.Text = "å¾®äº®é”®ç›˜";
             this.Width = 2560;
             this.Height = 1100;
 
@@ -50,31 +50,31 @@ namespace keyupMusic2
         {
             await webView.EnsureCoreWebView2Async(null);
 
-            // ÏÈ¼ÓÔØ±¾µØÎÄ¼ş
+            // å…ˆåŠ è½½æœ¬åœ°æ–‡ä»¶
             webView.CoreWebView2.Navigate(url2);
             //webView.CoreWebView2.OpenDevToolsWindow();
             webView.KeyDown += (s, e) =>
             {
                 if (e.KeyCode == Keys.F3 || e.KeyCode == Keys.F9)
                 {
-                    e.Handled = true; // ×èÖ¹¼ÌĞø´«µİ
+                    e.Handled = true; // é˜»æ­¢ç»§ç»­ä¼ é€’
                 }
             };
 
-            // ³¢ÊÔ¼ÓÔØÔ¶³Ìurl£¬Ö»ÓĞ³É¹¦²ÅÇĞ»»
+            // å°è¯•åŠ è½½è¿œç¨‹urlï¼Œåªæœ‰æˆåŠŸæ‰åˆ‡æ¢
             webView.CoreWebView2.NavigationCompleted += async (s, args) =>
             {
-                // Ö»ÔÚ±¾µØÒ³Ãæ¼ÓÔØÍê³Éºó³¢ÊÔÔ¶³Ì
+                // åªåœ¨æœ¬åœ°é¡µé¢åŠ è½½å®Œæˆåå°è¯•è¿œç¨‹
                 if (args.IsSuccess && webView.Source.AbsoluteUri == new Uri(url2).AbsoluteUri)
                 {
-                    // ĞÂ¿ªÒ»¸öWebView2»·¾³³¢ÊÔÔ¶³Ì¼ÓÔØ
+                    // æ–°å¼€ä¸€ä¸ªWebView2ç¯å¢ƒå°è¯•è¿œç¨‹åŠ è½½
                     var testWebView = new WebView2();
                     await testWebView.EnsureCoreWebView2Async(null);
                     testWebView.CoreWebView2.NavigationCompleted += (sender2, args2) =>
                     {
                         if (args2.IsSuccess)
                         {
-                            // Ô¶³Ìurl¿ÉÓÃ£¬ÇĞ»»Ö÷webViewÏÔÊ¾
+                            // è¿œç¨‹urlå¯ç”¨ï¼Œåˆ‡æ¢ä¸»webViewæ˜¾ç¤º
                             webView.CoreWebView2.Navigate(url);
                         }
                         testWebView.Dispose();
@@ -121,8 +121,8 @@ namespace keyupMusic2
                 case Keys.LMenu: return "LALT";
                 case Keys.RMenu: return "RALT";
                 case Keys.LWin: return "LWIN";
-                case Keys.RWin: return "FN"; // »ò "RWIN"£¬¸ù¾İÄãµÄ HTML id
-                // ¹¦ÄÜ¼ü F1~F12
+                case Keys.RWin: return "FN"; // æˆ– "RWIN"ï¼Œæ ¹æ®ä½ çš„ HTML id
+                // åŠŸèƒ½é”® F1~F12
                 case Keys.F1: return "F1";
                 case Keys.F2: return "F2";
                 case Keys.F3: return "F3";
@@ -135,7 +135,7 @@ namespace keyupMusic2
                 case Keys.F10: return "F10";
                 case Keys.F11: return "F11";
                 case Keys.F12: return "F12";
-                // Êı×Ö¼ü 0~9
+                // æ•°å­—é”® 0~9
                 case Keys.D0: return "0";
                 case Keys.D1: return "1";
                 case Keys.D2: return "2";
@@ -146,7 +146,7 @@ namespace keyupMusic2
                 case Keys.D7: return "7";
                 case Keys.D8: return "8";
                 case Keys.D9: return "9";
-                // ÆäËü×ÖÄ¸ºÍÊı×Ö
+                // å…¶å®ƒå­—æ¯å’Œæ•°å­—
                 default:
                     return keyCode.ToString().ToUpper();
             }
@@ -186,7 +186,7 @@ namespace keyupMusic2
                 VirtualKeyboardForm_KeyUp(this, args);
             else
                 VirtualKeyboardForm_KeyDown(this, args);
-        }// ÔÚ C# ÖĞµ÷ÓÃ JS µÄ·½·¨
+        }// åœ¨ C# ä¸­è°ƒç”¨ JS çš„æ–¹æ³•
         public void SetInitClean()
         {
             if (webView.CoreWebView2 == null) return;

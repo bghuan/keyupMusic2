@@ -6,14 +6,14 @@
     <Nullable>enable</Nullable>
     <UseWindowsForms>true</UseWindowsForms>
     <ImplicitUsings>enable</ImplicitUsings>
-    <StartupObject>keyupMusic2.Program</StartupObject>
+    <StartupObject>keyupMusic4.Program</StartupObject>
     <ApplicationIcon>Other\b.ico</ApplicationIcon>
     <PackageIcon></PackageIcon>
     <AllowUnsafeBlocks>False</AllowUnsafeBlocks>
     <UseWPF>False</UseWPF>
     <EnableNETAnalyzers>True</EnableNETAnalyzers>
     <SignAssembly>True</SignAssembly>
-    <RootNamespace>$(MSBuildProjectName.Replace(" ", "_").Replace("4", "2"))</RootNamespace>
+    <RootNamespace>keyupMusic4</RootNamespace>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">

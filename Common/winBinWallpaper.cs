@@ -2,7 +2,7 @@
 using System.Runtime.InteropServices;
 using Microsoft.Win32;
 
-namespace keyupMusic2
+namespace keyupMusic4
 {
     public class winBinWallpaper
     {

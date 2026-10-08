@@ -1,11 +1,11 @@
 ﻿//using System.Windows.Forms;
-//using static keyupMusic2.Common;
-//using static keyupMusic2.KeyboardMouseHook;
-//using static keyupMusic2.Native;
-//using static keyupMusic2.Simulate;
+//using static keyupMusic4.Common;
+//using static keyupMusic4.KeyboardMouseHook;
+//using static keyupMusic4.Native;
+//using static keyupMusic4.Simulate;
 //using static System.Windows.Forms.VisualStyles.VisualStyleElement;
 
-//namespace keyupMusic2
+//namespace keyupMusic4
 //{
 //    public partial class biu
 //    {

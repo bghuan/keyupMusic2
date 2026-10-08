@@ -1,6 +1,6 @@
-﻿using KeyEvent = keyupMusic2.KeyboardMouseHook.KeyEventArgs;
+﻿using KeyEvent = keyupMusic4.KeyboardMouseHook.KeyEventArgs;
 
-namespace keyupMusic2
+namespace keyupMusic4
 {
     public class Default
     {

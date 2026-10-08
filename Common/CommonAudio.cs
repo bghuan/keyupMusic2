@@ -3,7 +3,7 @@ using NAudio.CoreAudioApi.Interfaces;
 using NAudio.Wave;
 using static System.Windows.Forms.VisualStyles.VisualStyleElement;
 
-namespace keyupMusic2
+namespace keyupMusic4
 {
     public partial class Common
     {

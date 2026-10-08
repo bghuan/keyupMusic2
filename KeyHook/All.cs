@@ -1,9 +1,9 @@
 ﻿using System.Drawing;
-using static keyupMusic2.Common;
-using static keyupMusic2.KeyboardMouseHook;
+using static keyupMusic4.Common;
+using static keyupMusic4.KeyboardMouseHook;
 using static System.Windows.Forms.VisualStyles.VisualStyleElement.TrackBar;
 
-namespace keyupMusic2
+namespace keyupMusic4
 {
     public class AllClass : Default
     {
@@ -190,7 +190,7 @@ namespace keyupMusic2
                 //press(F12);
                 return;
             }
-            //if (ProcessName == Common.keyupMusic2)
+            //if (ProcessName == Common.AppName)
             //{
             //    press(F12);
             //    return;
@@ -218,7 +218,7 @@ namespace keyupMusic2
             //return;
             string module_name = ProcessName;
             if (is_down(Keys.Delete) || is_ctrl()) return;
-            if (ProcessName == Common.keyupMusic2)
+            if (ProcessName == Common.AppName)
             {
                 //press(F12);
                 return;

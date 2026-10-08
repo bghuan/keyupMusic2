@@ -9,7 +9,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 
-namespace keyupMusic2.fantasy
+namespace keyupMusic4.fantasy
 {
     public partial class Read : Form
     {

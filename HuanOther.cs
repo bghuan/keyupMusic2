@@ -1,10 +1,10 @@
 ﻿using Microsoft.Win32;
 using System.Collections.Concurrent;
 using System.Diagnostics;
-using static keyupMusic2.Common;
-using static keyupMusic2.KeyboardMouseHook;
+using static keyupMusic4.Common;
+using static keyupMusic4.KeyboardMouseHook;
 
-namespace keyupMusic2
+namespace keyupMusic4
 {
     public partial class Huan
     {
@@ -102,7 +102,7 @@ namespace keyupMusic2
 
         private void super_listen_clear(Color color)
         {
-            keyupMusic2_onlisten = false;
+            keyupMusic4_onlisten = false;
             BackColor = color;
         }
 
@@ -208,7 +208,7 @@ namespace keyupMusic2
 
         private void super_listen()
         {
-            keyupMusic2_onlisten = true;
+            keyupMusic4_onlisten = true;
             super_listen_time = DateTime.Now.AddMilliseconds(super_listen_tick);
             Invoke(() =>
             {
@@ -224,7 +224,7 @@ namespace keyupMusic2
         {
             if (Debugger.IsAttached) return false;
             int currentProcessId = Process.GetCurrentProcess().Id;
-            Process[] processes = Process.GetProcessesByName(Common.keyupMusic2);
+            Process[] processes = Process.GetProcessesByName(Common.AppName);
             foreach (Process process in processes)
             {
                 if (process.Id != currentProcessId)

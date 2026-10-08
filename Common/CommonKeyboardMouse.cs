@@ -9,11 +9,11 @@ using System.Runtime.InteropServices;
 using System.Security.Principal;
 using System.Text;
 using System.Windows.Forms;
-using static keyupMusic2.KeyboardMouseHook;
-using static keyupMusic2.Native;
+using static keyupMusic4.KeyboardMouseHook;
+using static keyupMusic4.Native;
 using Point = System.Drawing.Point;
 
-namespace keyupMusic2
+namespace keyupMusic4
 {
     public partial class Common
     {

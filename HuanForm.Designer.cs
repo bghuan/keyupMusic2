@@ -1,6 +1,6 @@
 ﻿using System.Windows.Forms;
 
-namespace keyupMusic2
+namespace keyupMusic4
 {
     partial class Huan
     {

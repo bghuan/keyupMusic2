@@ -7,17 +7,17 @@ using System.Reflection;
 using System.Runtime.InteropServices;
 using System.Security.Principal;
 using System.Text;
-using static keyupMusic2.Native;
+using static keyupMusic4.Native;
 using Point = System.Drawing.Point;
-using RECT = keyupMusic2.Native.RECT;
+using RECT = keyupMusic4.Native.RECT;
 
-namespace keyupMusic2
+namespace keyupMusic4
 {
     public partial class Common
     {
         public const string keyupMusic = "keyupMusic";
-        public const string keyupMusicexe = "C:\\Users\\bu\\source\\repos\\keyupMusic2\\keyupMusic2.sln";
-        public const string keyupMusic2 = "keyupMusic4";
+        public const string keyupMusicexe = "C:\\Users\\bu\\source\\repos\\keyupMusic4\\keyupMusic4.sln";
+        public const string AppName = "keyupMusic4";
         public const string scrcpy = "scrcpy";
         public const string ShapeofDreams = "Shape of Dreams";
         public const string TrialsSurvivors = "Trials Survivors";
@@ -451,7 +451,7 @@ namespace keyupMusic2
             IntPtr hwnd = GetForegroundWindow(); // 获取当前活动窗口的句柄
             var sw = SW.SW_MINIMIZE;
             if (force) sw = SW.SW_HIDE;
-            else if (GetPointName().Contains(keyupMusic2)) sw = SW.SW_HIDE;
+            else if (GetPointName().Contains(Common.AppName)) sw = SW.SW_HIDE;
             Native.ShowWindow(hwnd, sw);
         }
 
@@ -659,7 +659,7 @@ namespace keyupMusic2
             var aa = classNameStr == "Progman" || classNameStr == "WorkerW";
             if ((classNameStr == "Shell_TrayWnd" || classNameStr == "CabinetWClass") && istitle) aa = true;
             aa = aa && istitle;
-            //aa = aa || ProcessName == Common.keyupMusic2;
+            //aa = aa || ProcessName == Common.AppName;
             return aa;
         }
         public static bool is_lizhi => (ProcessTitle.Contains("荔枝") && !ProcessTitle.Contains("分类"));

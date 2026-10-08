@@ -3,10 +3,10 @@ using Microsoft.Win32;
 using Newtonsoft.Json;
 using System.Diagnostics;
 using System.Text;
-using static keyupMusic2.Native;
+using static keyupMusic4.Native;
 using SearchOption = System.IO.SearchOption; // 需要添加引用
 
-namespace keyupMusic2
+namespace keyupMusic4
 {
     public partial class Common
     {

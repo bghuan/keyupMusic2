@@ -6,7 +6,7 @@ using System.Runtime.InteropServices;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace keyupMusic2
+namespace keyupMusic4
 {
     #region 模拟鼠标键盘输入
     public class SendKeyboardMouse

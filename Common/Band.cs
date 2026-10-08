@@ -1,8 +1,8 @@
-﻿using keyupMusic2;
+﻿using keyupMusic4;
 using System.Windows.Forms;
-using static keyupMusic2.Common;
+using static keyupMusic4.Common;
 
-namespace keyupMusic2
+namespace keyupMusic4
 {
     public class Band
     {
@@ -100,7 +100,7 @@ namespace keyupMusic2
                 if (key == Keys.Down)
                     key = Keys.Delete;
             }
-            else if (ProcessName == Common.keyupMusic2)
+            else if (ProcessName == Common.AppName)
             {
                 if (key == Keys.PageDown)
                     key = Keys.Space;
@@ -132,7 +132,7 @@ namespace keyupMusic2
             if (key == Keys.None) return;
 
             //play_sound_di(0.1f);
-            if (key == F3 || is_douyin() || Huan.keyupMusic2_onlisten)
+            if (key == F3 || is_douyin() || Huan.keyupMusic4_onlisten)
                 press_raw(key);
             else
                 press_raw(key);

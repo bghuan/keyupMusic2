@@ -1,14 +1,14 @@
 ﻿using System.Timers;
-using static keyupMusic2.Common;
+using static keyupMusic4.Common;
 
-namespace keyupMusic2
+namespace keyupMusic4
 {
     partial class biu
     {
         bool listen_move = false;
         public void ACPhoenix(KeyboardMouseHook.MouseEventArgs e)
         {
-            if (ProcessName != keyupMusic2.Common.ACPhoenix) return;
+            if (ProcessName != keyupMusic4.Common.ACPhoenix) return;
             MoveStop(e);
 
             if (e.Msg == MouseMsg.click)
@@ -58,7 +58,7 @@ namespace keyupMusic2
             {
                 //var aaa = 1430 * 2160 / 1440;
                 if (!listen_move || (e.Y < screenHeight - 10) || (e.X > screenWidth)) { return; }
-                if (ProcessName == keyupMusic2.Common.ACPhoenix) { press(Keys.S, 0); ; }
+                if (ProcessName == keyupMusic4.Common.ACPhoenix) { press(Keys.S, 0); ; }
                 listen_move = false;
             }
         }

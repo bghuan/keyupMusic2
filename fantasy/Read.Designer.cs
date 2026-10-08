@@ -1,4 +1,4 @@
-﻿namespace keyupMusic2.fantasy
+﻿namespace keyupMusic4.fantasy
 {
     partial class Read
     {

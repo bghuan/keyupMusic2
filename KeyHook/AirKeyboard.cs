@@ -1,10 +1,10 @@
 ﻿using System.Diagnostics;
 using System.Diagnostics.Metrics;
-using static keyupMusic2.Common;
-using static keyupMusic2.KeyboardMouseHook;
+using static keyupMusic4.Common;
+using static keyupMusic4.KeyboardMouseHook;
 using Timer = System.Timers.Timer;
 
-namespace keyupMusic2
+namespace keyupMusic4
 {
     public class AirKeyboardClass
     {
@@ -40,7 +40,7 @@ namespace keyupMusic2
 
         public static bool Hooked(KeyboardMouseHook.KeyEventArgs e)
         {
-            if (Huan.keyupMusic2_onlisten && e.key != super_key) return false;
+            if (Huan.keyupMusic4_onlisten && e.key != super_key) return false;
             if (!handled(e)) return false;
             try
             {

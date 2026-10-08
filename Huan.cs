@@ -2,11 +2,11 @@
 using NAudio.Gui;
 using System;
 using System.Diagnostics;
-using static keyupMusic2.Common;
-using static keyupMusic2.KeyboardMouseHook;
+using static keyupMusic4.Common;
+using static keyupMusic4.KeyboardMouseHook;
 using static System.Runtime.InteropServices.JavaScript.JSType;
 
-namespace keyupMusic2
+namespace keyupMusic4
 {
     public partial class Huan
     {
@@ -26,7 +26,7 @@ namespace keyupMusic2
             if (e.key == Keys.F2 && !ProcessTitle.Contains("tudio") && IsFullScreen() && ProcessName != cs2) return true;
             if (e.key == Keys.F3) return true;
             if (e.key == Keys.F9) return true;
-            if (keyupMusic2_onlisten) { e.Handled = true; }
+            if (keyupMusic4_onlisten) { e.Handled = true; }
 
             if (e.key == Keys.OemPeriod && is_down(Keys.RControlKey)) return true;
             if (e.key == Keys.Escape && is_playing) return true;
@@ -69,12 +69,12 @@ namespace keyupMusic2
                 if (KeyFunc.HookEvent(e)) return;
                 if (ha) { return; }
 
-                keyupMusic2.KeyUp.yo(e);
+                keyupMusic4.KeyUp.yo(e);
 
                 if (e.Type == KeyType.Up) return;
                 //{
                 //if (CoocaaClass.Hooked(e)) return;
-                //keyupMusic2.KeyUp.yo(e);
+                //keyupMusic4.KeyUp.yo(e);
                 //    return;
                 //}
                 Console2.WriteLine($"Hook, {e.key}, {Common.DeviceName}, {e.Type.ToString()} ");
@@ -117,7 +117,7 @@ namespace keyupMusic2
                 //log("start_catch " + ProcessName);
                 //string[] list_f1 = [StartMenuExperienceHost, SearchHost, clashverge,];
                 string[] list_f1 = [clashverge,];
-                //string[] list_nothing = [devenv, Common.keyupMusic2, explorer, cs2];
+                //string[] list_nothing = [devenv, Common.AppName, explorer, cs2];
                 if (ProcessName == Common.mhtab && GetPointName() == Common.mhtab)
                 {
                     LossScale();

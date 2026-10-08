@@ -3,7 +3,7 @@ using System.Drawing;
 using System.Runtime.InteropServices;
 using System.Text;
 
-namespace keyupMusic2
+namespace keyupMusic4
 {
     public static class Native
     {

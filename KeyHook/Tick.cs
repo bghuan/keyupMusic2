@@ -1,9 +1,9 @@
 ﻿using System.Collections.Concurrent;
 using System.Windows.Forms;
-using static keyupMusic2.Common;
+using static keyupMusic4.Common;
 using Timer = System.Timers.Timer;
 
-namespace keyupMusic2
+namespace keyupMusic4
 {
     public class Tick
     {

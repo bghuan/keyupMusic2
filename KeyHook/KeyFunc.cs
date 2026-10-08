@@ -5,12 +5,12 @@ using System.Diagnostics;
 using System.Drawing.Imaging;
 using System.Reflection.Metadata;
 using System.Windows.Forms;
-using static keyupMusic2.Common;
-using static keyupMusic2.KeyboardMouseHook;
-using static keyupMusic2.Native;
+using static keyupMusic4.Common;
+using static keyupMusic4.KeyboardMouseHook;
+using static keyupMusic4.Native;
 using static System.Runtime.CompilerServices.RuntimeHelpers;
 
-namespace keyupMusic2
+namespace keyupMusic4
 {
     public class KeyFunc2
     {

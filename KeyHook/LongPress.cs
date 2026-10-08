@@ -1,8 +1,8 @@
 ﻿using System.Drawing.Imaging;
 using System.Text;
-using static keyupMusic2.Common;
+using static keyupMusic4.Common;
 
-namespace keyupMusic2
+namespace keyupMusic4
 {
     public class LongPressClass
     {

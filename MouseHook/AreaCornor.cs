@@ -1,15 +1,15 @@
 ﻿using System.Diagnostics;
-using static keyupMusic2.Common;
-using static keyupMusic2.KeyboardMouseHook;
+using static keyupMusic4.Common;
+using static keyupMusic4.KeyboardMouseHook;
 using static System.Windows.Forms.VisualStyles.VisualStyleElement.TrackBar;
 
-namespace keyupMusic2
+namespace keyupMusic4
 {
     partial class biu
     {
         private int _corner1(KeyboardMouseHook.MouseEventArgs e)
         {
-            var list = new[] { msedge, Common.chrome, Common.Honeyview, ApplicationFrameHost, Common.keyupMusic2 };
+            var list = new[] { msedge, Common.chrome, Common.Honeyview, ApplicationFrameHost, Common.AppName };
             //var list = new[] { msedge };
 
             if (is_douyin())
@@ -40,10 +40,10 @@ namespace keyupMusic2
             //    play_sound_di2();
             //    FocusPointProcess();
             //}
-            else if (ProcessName == Common.keyupMusic2)
+            else if (ProcessName == Common.AppName)
             {
                 /*HideProcess();*/
-                if (ProcessTitle.Contains("keyupMusic2"))
+                if (ProcessTitle.Contains("keyupMusic4"))
                     HideProcess(true);
             }
             else if (Common.ACPhoenix.Equals(Common.ProcessName))
@@ -92,7 +92,7 @@ namespace keyupMusic2
         {
             //HideSomething();
             if (IsDesktopFocused()) return 0;
-            if (ProcessName == Common.keyupMusic2) return 0;
+            if (ProcessName == Common.AppName) return 0;
             HideProcess();
             return 0;
             if (GetPointName() == explorer) press([LWin, D]);

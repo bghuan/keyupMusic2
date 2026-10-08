@@ -1,16 +1,16 @@
 ﻿using Newtonsoft.Json.Linq;
 using System.Windows.Forms;
-using static keyupMusic2.Common;
-using static keyupMusic2.KeyboardMouseHook;
-using static keyupMusic2.Native;
+using static keyupMusic4.Common;
+using static keyupMusic4.KeyboardMouseHook;
+using static keyupMusic4.Native;
 
-namespace keyupMusic2
+namespace keyupMusic4
 {
     public class OtherClass : Default
     {
         private readonly string[] list;
         private static readonly string[] list_wechat_visualstudio = {
-            Common.WeChat, Common.ACPhoenix, explorer, Common.keyupMusic2, Common.douyin,
+            Common.WeChat, Common.ACPhoenix, explorer, Common.AppName, Common.douyin,
             Common.devenv, Common.QQMusic, Common.SearchHost, Common.ApplicationFrameHost,
             Common.vlc, Common.v2rayN, Common.cs2
         };
@@ -75,7 +75,7 @@ namespace keyupMusic2
                     break;
                 case Common.Taskmgr:
                     if (e.key == Keys.F5)
-                        Simm.KeyPress(Common.keyupMusic2);
+                        Simm.KeyPress(Common.AppName);
                     break;
                 case Common.VSCode:
                     HandleVSCode(e);
@@ -94,7 +94,7 @@ namespace keyupMusic2
                     HandleProgman(e);
                     HandleCS2(e);
                     break;
-                case Common.keyupMusic2:
+                case Common.AppName:
                     if (e.key == S) { ConfigValue(ConfigLocation, huan.Location.X + "," + huan.Location.Y); }
                     break;
                 case Common.scrcpy:

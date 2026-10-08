@@ -1,7 +1,7 @@
-﻿using static keyupMusic2.Common;
-using static keyupMusic2.KeyboardMouseHook;
+﻿using static keyupMusic4.Common;
+using static keyupMusic4.KeyboardMouseHook;
 
-namespace keyupMusic2
+namespace keyupMusic4
 {
     public class DevenvClass : Default
     {
