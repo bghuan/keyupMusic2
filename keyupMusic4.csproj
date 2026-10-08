@@ -7,7 +7,7 @@
     <UseWindowsForms>true</UseWindowsForms>
     <ImplicitUsings>enable</ImplicitUsings>
     <StartupObject>keyupMusic4.Program</StartupObject>
-    <ApplicationIcon>Other\b.ico</ApplicationIcon>
+    <ApplicationIcon>Assets\b.ico</ApplicationIcon>
     <PackageIcon></PackageIcon>
     <AllowUnsafeBlocks>False</AllowUnsafeBlocks>
     <UseWPF>False</UseWPF>
@@ -46,7 +46,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Content Include="Other\b.ico" />
+    <Content Include="Assets\b.ico" />
   </ItemGroup>
 
   <ItemGroup>
