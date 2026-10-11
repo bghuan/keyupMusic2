@@ -36,7 +36,8 @@ namespace keyupMusic4
         public const string mhtab = "mhtab";
         public const string mhmain = "mhmain";
         public const string devenv = "devenv";
-        public static readonly string devenvexe = LoadPath("Path.devenv", "C:\\Program Files\\Microsoft Visual Studio\\2022\\Community\\Common7\\IDE\\devenv.exe");
+        public static readonly string devenvexe3 = LoadPath("Path.devenv", "C:\\Program Files\\Microsoft Visual Studio\\2022\\Community\\Common7\\IDE\\devenv.exe");
+        public static readonly string devenvexe = LoadPath("Path.devenv", "C:\\Program Files\\Microsoft Visual Studio\\18\\Community\\Common7\\IDE\\devenv.exe");
         public const string WeChat = "Weixin"; //"WeChat";
         public const string douyin = "douyin";
         public const string msedge = "msedge";

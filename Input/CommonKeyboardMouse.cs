@@ -98,7 +98,7 @@ namespace keyupMusic4
             if (tick > 0)
             {
                 down_mouse(tick);
-                up_mouse(tick);
+                up_mouse();
                 return;
             }
             mouse_event(MOUSEEVENTF_LEFTDOWN | MOUSEEVENTF_LEFTUP, 0, 0, 0, 0);

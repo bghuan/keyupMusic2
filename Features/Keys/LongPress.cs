@@ -90,11 +90,11 @@ namespace keyupMusic4
                 play_sound_di2();
                 huan._mouseKbdHook.ChangeMouseHooks();
             }
-            if (keys == Keys.F3 && ProcessName == Common.mhtab)
-            {
-                play_sound_di2();
-                CloseProcessFoce(Common.mhtab);
-            }
+            //if (keys == Keys.F3 && ProcessName == Common.mhtab)
+            //{
+            //    play_sound_di2();
+            //    CloseProcessFoce(Common.mhtab);
+            //}
 
 
 
@@ -127,7 +127,8 @@ namespace keyupMusic4
             }
             if (keys == Keys.F9)
             {
-                system_hard_sleep();
+                CloseProcessFoce(Common.mhtab);
+                //system_hard_sleep();
             }
 
             if (keys == LWin) return;

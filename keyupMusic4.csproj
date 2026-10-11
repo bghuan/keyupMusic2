@@ -45,12 +45,12 @@
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="Microsoft.Web.WebView2" Version="1.0.3296.44" />
-    <PackageReference Include="NAudio" Version="2.2.1" />
-    <PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
-    <PackageReference Include="org.k2fsa.sherpa.ncnn" Version="2.1.6" />
-    <PackageReference Include="PortAudioSharp2" Version="1.0.4" />
-    <PackageReference Include="SixLabors.ImageSharp" Version="3.1.11" />
+    <PackageReference Include="Microsoft.Web.WebView2" Version="1.0.4258.31" />
+    <PackageReference Include="NAudio" Version="2.4.0" />
+    <PackageReference Include="Newtonsoft.Json" Version="13.0.4" />
+    <PackageReference Include="org.k2fsa.sherpa.ncnn" Version="2.1.13" />
+    <PackageReference Include="PortAudioSharp2" Version="1.0.6" />
+    <PackageReference Include="SixLabors.ImageSharp" Version="4.1.2" />
   </ItemGroup>
 
   <ItemGroup>
@@ -70,6 +70,11 @@
 
   <Target Name="PreBuild" BeforeTargets="PreBuildEvent">
 	  <Exec Command="taskkill /im keyupmusic4.exe /f" ContinueOnError="true" />
+  </Target>
+
+  <!-- 生成后事件：编译成功后启动程序（工作目录设为输出目录，保证 config.txt/image 路径正确） -->
+  <Target Name="PostBuild" AfterTargets="PostBuildEvent">
+    <Exec Command="start &quot;keyupMusic4&quot; /D &quot;$(TargetDir)&quot; &quot;$(TargetPath)&quot;" ContinueOnError="true" />
   </Target>
 
 </Project>

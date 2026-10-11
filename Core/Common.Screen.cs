@@ -30,6 +30,7 @@ namespace keyupMusic4
             x = deal_size_x_y(x, y, false)[0];
             y = deal_size_x_y(x, y, false)[1];
             var asd = get_mouse_postion_color(new Point(x, y));
+            //log(asd.A + " " + asd.G + " " + asd.B+"--"+color.A + " " + color.G + " " + color.B);
             var flag = AreColorsSimilar(asd, color, similar);
             return flag;
         }

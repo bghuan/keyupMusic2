@@ -29,11 +29,26 @@ namespace keyupMusic4
         {
             if (ProcessName == ShapeofDreams)
             {
-                if (judge_color(1363, 742, Color.FromArgb(254, 254, 254), 1) && judge_color(1414, 742, Color.FromArgb(13, 22, 28), 1))
+                // 鼠标静止 1 秒不动 → 自动点击一下（持续静止则每 1 秒点一次；移动后重新计时）
+                if (DateTime.Now - biu.ShapeLastMove >= TimeSpan.FromSeconds(1)
+                    && DateTime.Now - biu.ShapeLastClick >= TimeSpan.FromSeconds(1))
+                {
+                    biu.ShapeLastClick = DateTime.Now;
+                    mouse_click(1);
+                }
+                if ((judge_color(1238, 747, Color.FromArgb(226, 226, 225), 5)
+                    //|| (judge_color(1238, 747, Color.FromArgb(226, 226, 225), 5))
+                    )
+                    && judge_color(1414, 742, Color.FromArgb(13, 22, 28), 1))
                 {
                     press(1234, 748);
                     mouse_move(2225, 827);
                 }
+                //SS(200).KeyPress(Keys.F, true);
+                //down_press(F);
+                //up_press(F);
+                if (WallpaperEnabled)
+                    press_dump(F, 100);
             }
         }
 

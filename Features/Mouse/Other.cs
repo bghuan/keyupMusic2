@@ -11,6 +11,9 @@ namespace keyupMusic4
 
         Dictionary<MouseMsg, DateTime> MouseMsgTime = new Dictionary<MouseMsg, DateTime>();
         static bool is_PowerToysCropAndLock_down = false;
+        // Shape of Dreams：鼠标最后移动时间 / 上次自动点击时间（静止1秒自动点击）
+        public static DateTime ShapeLastMove = DateTime.Now;
+        public static DateTime ShapeLastClick = DateTime.MinValue;
         public void Other(KeyboardMouseHook.MouseEventArgs e)
         {
 
@@ -69,7 +72,11 @@ namespace keyupMusic4
 
         private void S_hapeofDreams(KeyboardMouseHook.MouseEventArgs e)
         {
-            if (e.Msg == MouseMsg.move) return;
+            if (e.Msg == MouseMsg.move)
+            {
+                ShapeLastMove = DateTime.Now;   // 记录移动时间，用于"静止1秒自动点击"
+                return;
+            }
             if (e.Msg == MouseMsg.click/* && !is_down(RButton)*/)
             {
                 if (is_shift())
