@@ -20,6 +20,7 @@ namespace keyupMusic4
             new KeyFunc(Windblown, Keys.S, Keys.W);
             new KeyFunc(cs2, Keys.Capital, Keys.Tab);
             new KeyFunc(cs2, Keys.Oem3, Keys.Tab);
+            new KeyFunc(ShapeofDreams, Keys.V, Keys.LButton);
 
             new KeyFunc(Keys.RMenu, () =>
             {
@@ -133,6 +134,23 @@ namespace keyupMusic4
 
             if (replaceKey != None)
             {
+                // 鼠标键替换：down_press/up_press 是键盘模拟，对鼠标键（LButton/RButton/MButton）无效，改用鼠标事件
+                if (replaceKey == Keys.LButton || replaceKey == Keys.RButton || replaceKey == Keys.MButton)
+                {
+                    if (replaceKey == Keys.LButton)
+                    {
+                        if (e.Type == KeyType.Down) down_mouse();
+                        else up_mouse();
+                    }
+                    else if (replaceKey == Keys.RButton)
+                    {
+                        if (e.Type == KeyType.Down) mouse_event(MOUSEEVENTF_RIGHTDOWN, 0, 0, 0, 0);
+                        else mouse_event(MOUSEEVENTF_RIGHTUP, 0, 0, 0, 0);
+                    }
+                    else if (e.Type == KeyType.Down)
+                        mouse_middle();
+                    return true;
+                }
                 if (e.Type == KeyType.Down) down_press(replaceKey);
                 else up_press(replaceKey);
                 return true;

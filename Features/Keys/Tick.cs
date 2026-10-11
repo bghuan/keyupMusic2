@@ -15,7 +15,7 @@ namespace keyupMusic4
         public Tick()
         {
             timer100ms.Elapsed += (s, e) => LongPressClass.Every100msHandler();
-            timer100ms.Elapsed += (s, e) => ShapeofDreamsIdleClick();
+            //timer100ms.Elapsed += (s, e) => ShapeofDreamsIdleClick();
             timer100ms.Start();
 
             timer1000ms.Elapsed += (s, e) => Every1000ms();
@@ -34,7 +34,7 @@ namespace keyupMusic4
                 && biu.ShapeLastClick == DateTime.MinValue)
             {
                 biu.ShapeLastClick = DateTime.Now;   // 标记已点击（非 MinValue 即不再点，等待移动重置）
-                mouse_click_right(1);
+                mouse_click(1);
             }
         }
 
@@ -42,13 +42,18 @@ namespace keyupMusic4
         {
             if (ProcessName == ShapeofDreams)
             {
-                if ((judge_color(1238, 747, Color.FromArgb(226, 226, 225), 5)
-                    //|| (judge_color(1238, 747, Color.FromArgb(226, 226, 225), 5))
+                if ((
+                    1 == 1
+                    //judge_color(1238, 747, Color.FromArgb(226, 226, 225), 50)
+                    //|| (judge_color(1238, 747, Color.FromArgb(226, 226, 225), 50))
+                    //|| (judge_color(1354, 763, Color.FromArgb(102, 163, 199), 50))
+                    || (judge_color(1173, 676, Color.FromArgb(153, 184, 195), 11))
+                    || (judge_color(1410, 690, Color.FromArgb(153, 184, 195), 11))
                     )
-                    && judge_color(1414, 742, Color.FromArgb(13, 22, 28), 1))
+                    && judge_color(1414, 742, Color.FromArgb(13, 22, 28), 11))
                 {
                     press(1234, 748);
-                    mouse_move(2225, 827);
+                    mouse_move(1425, 827);
                 }
                 //SS(200).KeyPress(Keys.F, true);
                 //down_press(F);

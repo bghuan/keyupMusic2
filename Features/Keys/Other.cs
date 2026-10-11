@@ -33,6 +33,9 @@ namespace keyupMusic4
 
             switch (module_name)
             {
+                case ShapeofDreams:
+                    HandleShapeofDreams(e.key);
+                    break;
                 case QQLive:
                     HandleQQLive(e.key);
                     break;
@@ -105,6 +108,14 @@ namespace keyupMusic4
                     break;
             }
 
+        }
+
+        private void HandleShapeofDreams(Keys key)
+        {
+            //if (key == Keys.V)
+            //{
+            //    mouse_click();
+            //}
         }
 
         private void Handle_哔哩哔哩(KeyboardMouseHook.KeyEventArgs e)
