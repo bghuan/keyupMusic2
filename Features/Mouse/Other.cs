@@ -74,7 +74,8 @@ namespace keyupMusic4
         {
             if (e.Msg == MouseMsg.move)
             {
-                ShapeLastMove = DateTime.Now;   // 记录移动时间，用于"静止1秒自动点击"
+                ShapeLastMove = DateTime.Now;              // 记录移动时间
+                ShapeLastClick = DateTime.MinValue;        // 动了才重置：允许下一次静止时再点一下
                 return;
             }
             if (e.Msg == MouseMsg.click/* && !is_down(RButton)*/)

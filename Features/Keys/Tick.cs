@@ -26,16 +26,15 @@ namespace keyupMusic4
 
         }
 
-        // Shape of Dreams：鼠标静止 100ms 不动 → 自动点击（持续静止则每 100ms 点一次；移动后重新计时）
-        // 挂在 100ms 定时器上，保证 100ms 阈值真实生效（200ms 定时器粒度不够）
+        // Shape of Dreams：鼠标静止满 100ms → 右键点击一下；已点过则不再点，直到鼠标再次移动才重置（可再次点击）
         private void ShapeofDreamsIdleClick()
         {
             if (ProcessName != ShapeofDreams) return;
             if (DateTime.Now - biu.ShapeLastMove >= TimeSpan.FromMilliseconds(100)
-                && DateTime.Now - biu.ShapeLastClick >= TimeSpan.FromMilliseconds(100))
+                && biu.ShapeLastClick == DateTime.MinValue)
             {
-                biu.ShapeLastClick = DateTime.Now;
-                mouse_click(1);
+                biu.ShapeLastClick = DateTime.Now;   // 标记已点击（非 MinValue 即不再点，等待移动重置）
+                mouse_click_right(1);
             }
         }
 
