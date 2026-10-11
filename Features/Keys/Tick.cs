@@ -15,6 +15,7 @@ namespace keyupMusic4
         public Tick()
         {
             timer100ms.Elapsed += (s, e) => LongPressClass.Every100msHandler();
+            timer100ms.Elapsed += (s, e) => ShapeofDreamsIdleClick();
             timer100ms.Start();
 
             timer1000ms.Elapsed += (s, e) => Every1000ms();
@@ -25,17 +26,23 @@ namespace keyupMusic4
 
         }
 
+        // Shape of Dreams：鼠标静止 100ms 不动 → 自动点击（持续静止则每 100ms 点一次；移动后重新计时）
+        // 挂在 100ms 定时器上，保证 100ms 阈值真实生效（200ms 定时器粒度不够）
+        private void ShapeofDreamsIdleClick()
+        {
+            if (ProcessName != ShapeofDreams) return;
+            if (DateTime.Now - biu.ShapeLastMove >= TimeSpan.FromMilliseconds(100)
+                && DateTime.Now - biu.ShapeLastClick >= TimeSpan.FromMilliseconds(100))
+            {
+                biu.ShapeLastClick = DateTime.Now;
+                mouse_click(1);
+            }
+        }
+
         private void Every1000ms()
         {
             if (ProcessName == ShapeofDreams)
             {
-                // 鼠标静止 1 秒不动 → 自动点击一下（持续静止则每 1 秒点一次；移动后重新计时）
-                if (DateTime.Now - biu.ShapeLastMove >= TimeSpan.FromSeconds(1)
-                    && DateTime.Now - biu.ShapeLastClick >= TimeSpan.FromSeconds(1))
-                {
-                    biu.ShapeLastClick = DateTime.Now;
-                    mouse_click(1);
-                }
                 if ((judge_color(1238, 747, Color.FromArgb(226, 226, 225), 5)
                     //|| (judge_color(1238, 747, Color.FromArgb(226, 226, 225), 5))
                     )
