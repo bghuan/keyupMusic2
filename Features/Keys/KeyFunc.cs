@@ -144,8 +144,8 @@ namespace keyupMusic4
                     }
                     else if (replaceKey == Keys.RButton)
                     {
-                        if (e.Type == KeyType.Down) mouse_event(MOUSEEVENTF_RIGHTDOWN, 0, 0, 0, 0);
-                        else mouse_event(MOUSEEVENTF_RIGHTUP, 0, 0, 0, 0);
+                        if (e.Type == KeyType.Down) Common.mouse_event(MOUSEEVENTF_RIGHTDOWN, 0, 0, 0, 0);
+                        else Common.mouse_event(MOUSEEVENTF_RIGHTUP, 0, 0, 0, 0);
                     }
                     else if (e.Type == KeyType.Down)
                         mouse_middle();
