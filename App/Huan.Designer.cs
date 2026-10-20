@@ -1,4 +1,8 @@
-﻿using System.Windows.Forms;
+﻿using keyupMusic4;
+using System.Drawing.Printing;
+using System.Windows.Forms;
+using System.Xml.Linq;
+using static System.Net.Mime.MediaTypeNames;
 
 namespace keyupMusic4
 {
@@ -12,6 +16,15 @@ namespace keyupMusic4
         /// <summary>
         ///  Clean up any resources being used.
         /// </summary>
+        /// <param name="disposing">true if managed resources should be disposed; otherwise, false.</param>
+        //protected override void Dispose(bool disposing)
+        //{
+        //    if (disposing && (components != null))
+        //    {
+        //        components.Dispose();
+        //    }
+        //    base.Dispose(disposing);
+        //}
 
         #region Windows Form Designer generated code
 
@@ -30,7 +43,9 @@ namespace keyupMusic4
             label2 = new Label();
             contextMenuStrip1.SuspendLayout();
             SuspendLayout();
+            // 
             // label1
+            // 
             label1.AutoSize = true;
             label1.Location = new Point(7, 0);
             label1.Margin = new Padding(4, 0, 4, 0);
@@ -39,14 +54,18 @@ namespace keyupMusic4
             label1.TabIndex = 1;
             label1.Text = "label1";
             label1.Click += label1_Click;
+            // 
             // notifyIcon1
+            // 
             notifyIcon1.ContextMenuStrip = contextMenuStrip1;
             notifyIcon1.Icon = (Icon)resources.GetObject("notifyIcon1.Icon");
             notifyIcon1.Text = "幻";
             notifyIcon1.Visible = true;
             notifyIcon1.DoubleClick += notifyIcon1_DoubleClick;
             notifyIcon1.MouseClick += notifyIcon1_MouseClick;
+            // 
             // contextMenuStrip1
+            // 
             contextMenuStrip1.ImageScalingSize = new Size(24, 24);
             string[] menuKeys = new string[]
             {
@@ -76,7 +95,7 @@ namespace keyupMusic4
 
             var vkMenuItem1 = new ToolStripMenuItem("月亮表(显示隐藏)");
             vkMenuItem1.Click += MoonTime.vkMenuItem_Click;
-            vkMenuItem1.Name ="moontimmeshow";
+            vkMenuItem1.Name = "moontimmeshow";
             var vkMenuItem2 = new ToolStripMenuItem("月亮表(重启)");
             vkMenuItem2.Click += MoonTime.vkMenuItem_DoubleClick;
             var vkMenuItem3 = new ToolStripMenuItem("微亮键盘(显示隐藏)");
@@ -85,16 +104,20 @@ namespace keyupMusic4
             var vkMenuItem4 = new ToolStripMenuItem("微亮键盘(重启)");
             vkMenuItem4.Click += VirtualKeyboardForm.vkMenuItem_DoubleClick;
 
-            letterMenuItems2= new ToolStripMenuItem[] { vkMenuItem1 , vkMenuItem2 , vkMenuItem3 , vkMenuItem4 };
+            letterMenuItems2 = new ToolStripMenuItem[] { vkMenuItem1, vkMenuItem2, vkMenuItem3, vkMenuItem4 };
             contextMenuStrip1.Items.AddRange(letterMenuItems2);
+            // 
             // label2
+            // 
             label2.AutoSize = true;
             label2.Location = new Point(180, 0);
             label2.Name = "label2";
             label2.Size = new Size(63, 24);
             label2.TabIndex = 2;
             label2.Text = "label2";
+            // 
             // Huan
+            // 
             AutoScaleDimensions = new SizeF(11F, 24F);
             AutoScaleMode = AutoScaleMode.Font;
             BackColor = SystemColors.Window;

@@ -20,7 +20,7 @@ namespace keyupMusic4
             new KeyFunc(Windblown, Keys.S, Keys.W);
             new KeyFunc(cs2, Keys.Capital, Keys.Tab);
             new KeyFunc(cs2, Keys.Oem3, Keys.Tab);
-            new KeyFunc(ShapeofDreams, Keys.V, Keys.LButton);
+            new KeyFunc(ShapeofDreams, Keys.B, Keys.LButton);
 
             new KeyFunc(Keys.RMenu, () =>
             {

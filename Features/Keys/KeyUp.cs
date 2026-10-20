@@ -83,7 +83,7 @@ namespace keyupMusic4
             {
                 case Keys.Home:
                 case Keys.End:
-                    try { bmpScreenshot.Dispose(); } catch (NullReferenceException) { }
+                    //try { bmpScreenshot.Dispose(); } catch (NullReferenceException) { }
                     break;
             }
 

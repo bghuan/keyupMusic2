@@ -7,8 +7,11 @@ namespace keyupMusic4
 {
     partial class biu
     {
+        //下
         private int _line2(KeyboardMouseHook.MouseEventArgs e)
         {
+            if (IsFullScreen() && e.X == screenWidth1) 
+                return _corner4(e);
             if (ProcessName == Common.chrome && ProcessTitle.Contains("YouTube"))
             {
 

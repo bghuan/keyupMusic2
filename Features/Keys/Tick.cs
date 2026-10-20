@@ -42,17 +42,13 @@ namespace keyupMusic4
         {
             if (ProcessName == ShapeofDreams)
             {
-                if ((
-                    1 == 1
-                    //judge_color(1238, 747, Color.FromArgb(226, 226, 225), 50)
-                    //|| (judge_color(1238, 747, Color.FromArgb(226, 226, 225), 50))
-                    //|| (judge_color(1354, 763, Color.FromArgb(102, 163, 199), 50))
-                    || (judge_color(1173, 676, Color.FromArgb(153, 184, 195), 11))
-                    || (judge_color(1410, 690, Color.FromArgb(153, 184, 195), 11))
+                if (
+                    ((judge_color(1173, 676, Color.FromArgb(153, 184, 195), 4) && (judge_color(1410, 690, Color.FromArgb(153, 184, 195), 4)))
+                    || (judge_color(1219, 666, Color.FromArgb(144, 172, 185), 4) && (judge_color(1334, 707, Color.FromArgb(153, 184, 195), 4))))
+                    && (judge_color(1414, 742, Color.FromArgb(13, 22, 28), 4) && judge_color(1168, 754, Color.FromArgb(13, 21, 28), 4))
                     )
-                    && judge_color(1414, 742, Color.FromArgb(13, 22, 28), 11))
                 {
-                    press(1234, 748);
+                    press("1234, 748",111);
                     mouse_move(1425, 827);
                 }
                 //SS(200).KeyPress(Keys.F, true);
