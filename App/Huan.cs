@@ -179,7 +179,8 @@ namespace keyupMusic4
             _instance = this;
             InitializeComponent();
 
-            try_restart_in_admin();
+            // 不再自动提权：UAC 提权进程无法注册托盘图标（Windows UIPI 限制），导致托盘不显示；
+            // 改为普通权限运行，托盘正常显示且开机自启不再弹 UAC。
             release_all_key();
             startListen();
 
@@ -460,17 +461,6 @@ namespace keyupMusic4
             if (_mouseKbdHook != null)
             {
                 _mouseKbdHook.Uninstall();
-            }
-        }
-        private void try_restart_in_admin()
-        {
-            if (!Debugger.IsAttached && !IsAdministrator())
-            {
-                ProcessStartInfo startInfo = new ProcessStartInfo(Application.ExecutablePath);
-                startInfo.UseShellExecute = true;
-                startInfo.Verb = "runas";
-                Process.Start(startInfo);
-                Environment.Exit(0);
             }
         }
         private void timerMove_Tick(object sender, EventArgs e)
