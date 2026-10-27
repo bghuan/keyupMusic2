@@ -72,9 +72,12 @@
 	  <Exec Command="taskkill /im keyupmusic4.exe /f" ContinueOnError="true" />
   </Target>
 
-  <!-- 生成后事件：编译成功后启动程序（工作目录设为输出目录，保证 config.txt/image 路径正确） -->
-  <Target Name="PostBuild" AfterTargets="PostBuildEvent">
-    <Exec Command="start &quot;keyupMusic4&quot; /D &quot;$(TargetDir)&quot; &quot;$(TargetPath)&quot;" ContinueOnError="true" />
+  <!-- 生成后事件：编译成功后启动程序（工作目录设为输出目录，保证 config.txt/image 路径正确）
+       注意1：start 的第一个引号参数必须是空标题 ""，非空标题会被 cmd 解析为窗口匹配导致不启动；
+       注意2：$(TargetPath) 是 DLL，必须用 $(TargetDir)$(TargetName).exe 指向 AppHost 可执行文件；
+       注意3：用 Start-Process 启动并立即退出，避免 MSBuild 因常驻程序继承句柄而挂起等待 -->
+  <Target Name="PostBuild" AfterTargets="Build">
+    <Exec Command="powershell.exe -NoProfile -NonInteractive -WindowStyle Hidden -Command &quot;Start-Process -FilePath '$(TargetDir)$(TargetName).exe' -WorkingDirectory '$(TargetDir)'&quot;" ContinueOnError="true" />
   </Target>
 
 </Project>
