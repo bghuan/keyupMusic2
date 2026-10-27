@@ -12,6 +12,7 @@
         public static string ConfigCurrentFile = "CurrentFile";
         public static string ConfigFormShow = "FormShow";
         public static string ConfigLocation = "Location";
+        public static string ConfigWallpaperEnabled = "WallpaperEnabled";
 
         public static string ConfigValue(string key, string value = "ddddddd")
         {

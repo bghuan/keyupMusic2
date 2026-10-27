@@ -28,7 +28,12 @@ namespace keyupMusic4
             public int RequestId { get; set; }
         }
         // 壁纸设置开关：默认关闭（保持基线"禁用"行为）；长按 ESC / 拖到右下角 → 关闭；Super+F6 → 打开
-        public static bool WallpaperEnabled = false;
+        // 持久化到 config.txt（WallpaperEnabled = 1/0），重启后保持上次状态
+        public static bool WallpaperEnabled
+        {
+            get => ConfigValue(ConfigWallpaperEnabled) == "1";
+            set => ConfigValue(ConfigWallpaperEnabled, value ? "1" : "0");
+        }
 
         public static void SetDesktopWallpaperFull()
         {
