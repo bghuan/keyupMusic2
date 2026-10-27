@@ -35,15 +35,8 @@ namespace keyupMusic4
             var currentPath = GetWallpaperFromRegistry();
             if (!currentPath.Contains(Common.keyupMusic)) return;
 
-            var directory = wallpapersPath + "/1";
-            string[] imageExtensions = { ".jpg", ".jpeg", ".png", ".bmp", ".gif", ".webp" };
-            var s = Directory.GetFiles(directory)
-                   .Where(f => imageExtensions.Contains(Path.GetExtension(f).ToLower()))
-                   .OrderBy(f => f)
-                   .ToList();
-            int index = new Random().Next(s.Count);
-            var filePath = s[index];
-            SetDesktopWallpaper(filePath, WallpaperStyle.Stretched, true);
+            // 只从 "1" 文件夹顺序换（不再随机）
+            SetDesktopWallpaper(GetNextWallpaper(), WallpaperStyle.Stretched, true);
         }
         // 优化后的壁纸设置方法（最后触发的请求会使之前的无效）
         // 开关：默认关闭（基线行为），长按 ESC / 拖到右下角关闭，Super+F6 打开
@@ -313,9 +306,10 @@ Directory.GetCurrentDirectory(), "image", "downloaded_images", "2");
             try
             {
                 // 获取所有ID目录（按名称排序）
+                // 用户要求：只从 "1" 文件夹轮换壁纸（其他 id 文件夹不再参与换壁纸）
                 allIds = Directory.GetDirectories(wallpapersPath)
                         .Select(d => new { FullPath = d, FolderName = Path.GetFileName(d) })
-                        .Where(x => !x.FolderName.Contains("small") && x.FolderName != "0" && x.FolderName != "no" && x.FolderName != "id")
+                        .Where(x => x.FolderName == "1")
                         .Select(x => x.FolderName)
                         .OrderBy(name => name)
                         .ToList();
