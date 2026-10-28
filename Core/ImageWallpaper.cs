@@ -351,11 +351,13 @@ Directory.GetCurrentDirectory(), "image", "downloaded_images", "2");
             }
 
             // 尝试获取当前ID中的下一个文件
+            // 注意：不再判断"注册表当前壁纸必须是程序设置才前进"——
+            // ESC 短按 SetDesktopToBlack 清空壁纸后注册表不再是 keyupMusic 路径，
+            // 若保留判断会导致下次开启时卡住不前（表现为进度丢失）。
+            // 进度（CurrentId/CurrentFile）由 SaveState 持久化，清空不影响，直接前进即可。
             if (currentFileIndex < idToFilesMap[allIds[currentIdIndex]].Count - 1)
             {
-                var currentPath = GetWallpaperFromRegistry();
-                if (currentPath.Contains(Common.keyupMusic))
-                    currentFileIndex++;
+                currentFileIndex++;
             }
             else
             {
