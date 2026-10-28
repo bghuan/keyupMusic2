@@ -195,11 +195,13 @@ namespace keyupMusic4
                     SetDesktopWallpaper(nextWallpaper2, WallpaperStyle.Fit, true);
                     break;
                 case Keys.Left:
-                    string nextWallpaper3 = GetPreviousIdFolder();
+                    // 向前跳 20 张
+                    string nextWallpaper3 = GetNextWallpaper(-20);
                     SetDesktopWallpaper(nextWallpaper3, WallpaperStyle.Fit, true);
                     break;
                 case Keys.Right:
-                    string nextWallpaper4 = GetNextIdFolder();
+                    // 向后跳 20 张
+                    string nextWallpaper4 = GetNextWallpaper(20);
                     SetDesktopWallpaper(nextWallpaper4, WallpaperStyle.Fit, true);
                     break;
                 case Keys.Z:
@@ -315,7 +317,7 @@ namespace keyupMusic4
                     press("1301,48;100;1274,178;2260,1374");
                     break;
                 case Keys.F6:
-                    press("Escape;1643,179;100;1466,818;1556,806;1700;1301,48;100;1274,178;2260,1374");
+                    press("Escape;1843,179;100;1466,818;1556,806;1700;1481,48;100;1274,178;2260,1374");
                     break;
                 case Keys.OemPeriod:
                     var sfa = Position;

@@ -378,6 +378,29 @@ Directory.GetCurrentDirectory(), "image", "downloaded_images", "2");
             return GetCurrentWallpaperPath();
         }
 
+        // 从当前进度跳转 N 张（O(1) 时间复杂度）
+        // step > 0 向后跳 N 张；step < 0 向前跳 |N| 张；超出范围在当前 ID 文件夹内循环
+        public static string GetNextWallpaper(int step)
+        {
+            if (allIds.Count == 0) return null;
+
+            // 如果是首次调用，初始化当前位置
+            if (currentIdIndex == -1 || currentFileIndex == -1)
+            {
+                ResetToFirstFile();
+                return GetCurrentWallpaperPath();
+            }
+
+            var files = idToFilesMap[allIds[currentIdIndex]];
+            if (files.Count == 0) return null;
+
+            currentFileIndex = (currentFileIndex + step) % files.Count;
+            if (currentFileIndex < 0) currentFileIndex += files.Count;
+
+            SaveState();
+            return GetCurrentWallpaperPath();
+        }
+
         // 获取上一张壁纸（O(1) 时间复杂度）
         public static string GetPreviousWallpaper()
         {
