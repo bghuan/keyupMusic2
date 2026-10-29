@@ -10,6 +10,8 @@
         public static string ConfigMoonTimeSize = "MoonTimeSize";
         public static string ConfigCurrentId = "CurrentId";
         public static string ConfigCurrentFile = "CurrentFile";
+        public static string ConfigCurrentFile1 = "CurrentFile1";
+        public static string ConfigCurrentFile11 = "CurrentFile11";
         public static string ConfigFormShow = "FormShow";
         public static string ConfigLocation = "Location";
         public static string ConfigWallpaperEnabled = "WallpaperEnabled";

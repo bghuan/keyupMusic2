@@ -195,13 +195,13 @@ namespace keyupMusic4
                     SetDesktopWallpaper(nextWallpaper2, WallpaperStyle.Fit, true);
                     break;
                 case Keys.Left:
-                    // 向前跳 20 张
-                    string nextWallpaper3 = GetNextWallpaper(-20);
+                    // 在 1 与 11 文件夹之间切换（恢复各自记忆的进度）
+                    string nextWallpaper3 = SwitchWallpaperFolder();
                     SetDesktopWallpaper(nextWallpaper3, WallpaperStyle.Fit, true);
                     break;
                 case Keys.Right:
-                    // 向后跳 20 张
-                    string nextWallpaper4 = GetNextWallpaper(20);
+                    // 在 1 与 11 文件夹之间切换（恢复各自记忆的进度）
+                    string nextWallpaper4 = SwitchWallpaperFolder();
                     SetDesktopWallpaper(nextWallpaper4, WallpaperStyle.Fit, true);
                     break;
                 case Keys.Z:

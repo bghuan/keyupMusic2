@@ -311,10 +311,10 @@ Directory.GetCurrentDirectory(), "image", "downloaded_images", "2");
             try
             {
                 // 获取所有ID目录（按名称排序）
-                // 用户要求：只从 "1" 文件夹轮换壁纸（其他 id 文件夹不再参与换壁纸）
+                // 用户要求：只在 "1" 与 "11" 两个文件夹间切换（左右键切换，各自保留进度记忆）
                 allIds = Directory.GetDirectories(wallpapersPath)
                         .Select(d => new { FullPath = d, FolderName = Path.GetFileName(d) })
-                        .Where(x => x.FolderName == "1")
+                        .Where(x => x.FolderName == "1" || x.FolderName == "11")
                         .Select(x => x.FolderName)
                         .OrderBy(name => name)
                         .ToList();
@@ -355,24 +355,14 @@ Directory.GetCurrentDirectory(), "image", "downloaded_images", "2");
             // ESC 短按 SetDesktopToBlack 清空壁纸后注册表不再是 keyupMusic 路径，
             // 若保留判断会导致下次开启时卡住不前（表现为进度丢失）。
             // 进度（CurrentId/CurrentFile）由 SaveState 持久化，清空不影响，直接前进即可。
-            if (currentFileIndex < idToFilesMap[allIds[currentIdIndex]].Count - 1)
-            {
+            var files = idToFilesMap[allIds[currentIdIndex]];
+            if (files.Count == 0) return null;
+
+            // 只在当前文件夹内循环（1 / 11 各自独立，不跨文件夹）
+            if (currentFileIndex < files.Count - 1)
                 currentFileIndex++;
-            }
             else
-            {
-                // 当前ID中的文件已处理完，移动到下一个ID
-                if (currentIdIndex < allIds.Count - 1)
-                {
-                    currentIdIndex++;
-                    currentFileIndex = 0;
-                }
-                else
-                {
-                    // 所有ID已处理完，回到第一个
-                    ResetToFirstFile();
-                }
-            }
+                currentFileIndex = 0;
 
             SaveState();
             return GetCurrentWallpaperPath();
@@ -414,24 +404,14 @@ Directory.GetCurrentDirectory(), "image", "downloaded_images", "2");
             }
 
             // 尝试获取当前ID中的上一个文件
+            // 只在当前文件夹内循环（1 / 11 各自独立，不跨文件夹）
+            var files = idToFilesMap[allIds[currentIdIndex]];
+            if (files.Count == 0) return null;
+
             if (currentFileIndex > 0)
-            {
                 currentFileIndex--;
-            }
             else
-            {
-                // 当前ID中的第一个文件，移动到上一个ID的最后一个文件
-                if (currentIdIndex > 0)
-                {
-                    currentIdIndex--;
-                    currentFileIndex = idToFilesMap[allIds[currentIdIndex]].Count - 1;
-                }
-                else
-                {
-                    // 已经是第一个文件，移动到最后一个文件
-                    GoToLastFile();
-                }
-            }
+                currentFileIndex = files.Count - 1; // 回本文件夹最后一张
 
             SaveState();
             return GetCurrentWallpaperPath();
@@ -465,6 +445,9 @@ Directory.GetCurrentDirectory(), "image", "downloaded_images", "2");
             return GetCurrentWallpaperPath();
         }
         static int lastId = 0;
+
+        // 各文件夹独立进度记忆（id -> 文件索引），左右键切换时恢复
+        static Dictionary<string, int> folderFileIndex = new Dictionary<string, int>();
 
         // 获取上一个ID文件夹的最后一张壁纸（O(1) 时间复杂度）
         public static string GetPreviousIdFolder()
@@ -582,11 +565,50 @@ Directory.GetCurrentDirectory(), "image", "downloaded_images", "2");
 
                 ConfigValue(ConfigCurrentId, CurrentId);
                 ConfigValue(ConfigCurrentFile, CurrentFile);
+
+                // 同步当前文件夹的独立进度记忆（1 / 11 各自保留，左右切换时恢复）
+                if (CurrentId == "1") ConfigValue(ConfigCurrentFile1, CurrentFile);
+                else if (CurrentId == "11") ConfigValue(ConfigCurrentFile11, CurrentFile);
+                if (CurrentId != null && currentFileIndex >= 0)
+                    folderFileIndex[CurrentId] = currentFileIndex;
             }
             catch (Exception ex)
             {
                 Console2.WriteLine($"保存状态时出错: {ex.Message}");
             }
+        }
+
+        // 在 "1" 与 "11" 两个文件夹之间切换，恢复各自记忆的进度（左右键调用）
+        public static string SwitchWallpaperFolder()
+        {
+            if (allIds.Count < 2) return GetCurrentWallpaperPath();
+
+            // 保存当前文件夹进度（SaveState 已持久化 + 内存字典）
+
+            // 切到另一个文件夹（allIds 按名称排序固定为 ["1","11"]）
+            currentIdIndex = currentIdIndex == 0 ? 1 : 0;
+
+            // 恢复目标文件夹记忆的进度（优先 config 持久化，其次内存字典）
+            var newId = allIds[currentIdIndex];
+            string cfgFile = newId == "1" ? ConfigValue(ConfigCurrentFile1)
+                          : newId == "11" ? ConfigValue(ConfigCurrentFile11) : "";
+            var files = idToFilesMap[newId];
+            if (files != null && files.Count > 0)
+            {
+                if (cfgFile != "" && files.Contains(cfgFile))
+                    currentFileIndex = files.IndexOf(cfgFile);
+                else if (folderFileIndex.ContainsKey(newId))
+                    currentFileIndex = folderFileIndex[newId];
+                else
+                    currentFileIndex = 0;
+            }
+            else
+            {
+                currentFileIndex = 0;
+            }
+
+            SaveState();
+            return GetCurrentWallpaperPath();
         }
 
         private static void ValidateCurrentState()
