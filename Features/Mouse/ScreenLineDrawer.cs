@@ -145,7 +145,23 @@ namespace keyupMusic4
         private void OnRightUp(Point p)
         {
             _drawing = false;
+
+            // 手势分析（在清空点集前）：判断上下左右方向 / 是否闭环圆圈，显示到状态栏
+            string gestureText = "";
+            try
+            {
+                var dir = LineGestureAnalyzer.GetDirection(_points);
+                bool circle = LineGestureAnalyzer.IsClosedCircle(_points);
+                if (circle) gestureText = "手势：闭环圆圈";
+                else if (dir != LineGestureAnalyzer.Direction.None)
+                    gestureText = "手势：" + LineGestureAnalyzer.DirectionText(dir);
+            }
+            catch { }
+
             _points.Clear();
+
+            if (gestureText != "")
+                huan?.Invoke2(() => huan.label1.Text = gestureText);
 
             // 清空画布
             var g = _canvas.BeginDraw();
