@@ -61,7 +61,7 @@ namespace keyupMusic4
         public ScreenLineDrawer()
         {
             LineColor = Color.FromArgb(255, 50, 200, 100);
-            LineWidth = 3f;
+            LineWidth = 1.5f;
             MinMoveToStart = 4;
 
             _linePen = new Pen(LineColor, LineWidth)
@@ -71,7 +71,7 @@ namespace keyupMusic4
                 LineJoin = LineJoin.Round
             };
             // 白色描边，对应 WGestures 的 _borderPen，增强对比度
-            _borderPen = new Pen(Color.White, LineWidth + 4f)
+            _borderPen = new Pen(Color.White, LineWidth + 2.5f)
             {
                 StartCap = LineCap.Round,
                 EndCap = LineCap.Round,
