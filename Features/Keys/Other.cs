@@ -204,23 +204,23 @@ namespace keyupMusic4
                     string nextWallpaper4 = SwitchWallpaperFolder();
                     SetDesktopWallpaper(nextWallpaper4, WallpaperStyle.Fit, true);
                     break;
-                case Keys.Z:
-                    if (ProcessName == cs2) break;
-                    GoodDesktopWallpaper();
-                    break;
-                case Keys.PageUp:
-                    SetDesktopWallpaperAli(GetCurrentWallpaperPath());
-                    break;
-                case Keys.PageDown:
-                    if (ProcessName == cs2) break;
-                    SetDesktopWallpaperAli(GetNextWallpaper());
-                    break;
-                case Keys.RShiftKey:
-                    DeleteCurrentWallpaper();
-                    break;
-                case Keys.Escape:
-                    SetDesktopToBlack();
-                    break;
+                //case Keys.Z:
+                //    if (ProcessName == cs2) break;
+                //    GoodDesktopWallpaper();
+                //    break;
+                //case Keys.PageUp:
+                //    SetDesktopWallpaperAli(GetCurrentWallpaperPath());
+                //    break;
+                //case Keys.PageDown:
+                //    if (ProcessName == cs2) break;
+                //    SetDesktopWallpaperAli(GetNextWallpaper());
+                //    break;
+                //case Keys.RShiftKey:
+                //    DeleteCurrentWallpaper();
+                //    break;
+                //case Keys.Escape:
+                //    SetDesktopToBlack();
+                //    break;
             }
         }
 

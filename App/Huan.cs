@@ -94,8 +94,7 @@ namespace keyupMusic4
                     {
                         press([LControlKey, LShiftKey, B]);
                     }
-                    else
-                        ProcessRun(clashvergeexe);
+
                 }
                 else if (Position.X == screenWidth1 && Position.Y == screenHeight1)
                 {
@@ -105,12 +104,9 @@ namespace keyupMusic4
                 }
                 else if (Position.X == 0)
                 {
-
-                    {
-                        string executablePath = Process.GetCurrentProcess().MainModule.FileName;
-                        Process.Start(executablePath);
-                        Environment.Exit(0);
-                    }
+                    string executablePath = Process.GetCurrentProcess().MainModule.FileName;
+                    Process.Start(executablePath);
+                    Environment.Exit(0);
                 }
                 else if (Position.Y == 0)
                 {
@@ -121,9 +117,13 @@ namespace keyupMusic4
                     if (ProcessName != explorer)
                         SetTransparency();
                 }
-                else if (Position.Y == screenHeight1)
+                else if (Position.Y == screenHeight1 && Position.X < 200)
                 {
                     changeClash();
+                }
+                else if (Position.Y == screenHeight1)
+                {
+                    ProcessRun(clashvergeexe);
                 }
                 else
                 {
@@ -453,6 +453,11 @@ namespace keyupMusic4
                 var b = new biu();
                 _mouseKbdHook.MouseEvent += b.MouseHookProc;
             }
+
+            // 右键按住移动画线（ScreenLineDrawer 单例，复用现有 MouseEvent 钩子，不新增钩子）
+            _mouseKbdHook.MouseEvent += ScreenLineDrawer.Instance.MouseHookProc;
+            ScreenLineDrawer.Instance.Start();
+
             _mouseKbdHook.Install();
             play_sound_di();
         }

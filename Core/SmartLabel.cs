@@ -36,5 +36,18 @@ namespace keyupMusic4
                 LabelTicking = false;
             }
         }
+
+        public new string Text2
+        {
+            get => base.Text;
+            set
+            {
+                base.Text = value;
+                Task.Run(() =>
+                {
+                    Thread.Sleep(1000);
+                });
+            }
+        }
     }
 }

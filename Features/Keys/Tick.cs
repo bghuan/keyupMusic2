@@ -40,6 +40,12 @@ namespace keyupMusic4
 
         private void Every1000ms()
         {
+            //if (ProcessName == ShapeofDreams)
+            //    if (WallpaperEnabled)
+            //    {
+            //        press(W, 200);
+            //        //mouse_click(200);
+            //    }
             if (ProcessName == ShapeofDreams)
             {
                 if (
@@ -48,14 +54,14 @@ namespace keyupMusic4
                     && (judge_color(1414, 742, Color.FromArgb(13, 22, 28), 4) && judge_color(1168, 754, Color.FromArgb(13, 21, 28), 4))
                     )
                 {
-                    press("1234, 748",111);
+                    press("1234, 748", 111);
                     mouse_move(1425, 827);
                 }
                 //SS(200).KeyPress(Keys.F, true);
                 //down_press(F);
                 //up_press(F);
-                if (WallpaperEnabled)
-                    press_dump(F, 100);
+                //if (WallpaperEnabled)
+                //    press_dump(F, 100);
             }
         }
 
@@ -97,7 +103,6 @@ namespace keyupMusic4
 
         private void Every8000ms()
         {
-
             if (ProcessName == cs2)
             {
                 if (ExistProcess(wemeetapp, true)) return;

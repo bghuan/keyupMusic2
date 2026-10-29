@@ -22,16 +22,16 @@ namespace keyupMusic4
                     quick_gamg_alttab(e, module_name); break;
 
                 case Keys.Delete:
-                    clean(); DeleteCurrentWallpaper(); break;
+                    clean(); /*DeleteCurrentWallpaper();*/ break;
                 case Keys.Escape:
                     clean(); break;
 
                 case Keys.Up:
                     if (is_tran_process == ProcessName) { SetTransparency(16); break; }
-                    quick_next_image(); break;
+                    /*quick_next_image();*/ break;
                 case Keys.Down:
                     if (is_tran_process == ProcessName) { SetTransparency(-16); break; }
-                    quick_prix_image(); break;
+                    /*quick_prix_image(); */break;
 
                 case Keys.OemPeriod:
                     if (is_down(Keys.RControlKey)) { press_raw(Apps); break; }
@@ -193,12 +193,13 @@ namespace keyupMusic4
 
         public static void clean()
         {
+            Common.no_move = false;
             DaleyRun_stop = true;
-            player.Stop();
-            CleanMouseState();
             ready_to_sleep = false;
             system_sleep_count = 0;
-            Common.no_move = false;
+            player.Stop();
+            CleanMouseState();
+            SetDesktopToBlack();
         }
 
         private static void quick_go_back(KeyboardMouseHook.KeyEventArgs e)

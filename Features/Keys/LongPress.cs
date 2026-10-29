@@ -49,8 +49,6 @@ namespace keyupMusic4
 
             else if (keys == Keys.Escape)
             {
-                // 长按 ESC：关闭壁纸自动设置开关（配合 Super+F6 重新打开）
-                WallpaperEnabled = false;
                 HideSomething();
             }
 
@@ -82,19 +80,27 @@ namespace keyupMusic4
                 if (is_steam_game()) return;
                 if (ProcessName == Common.mhtab) return;
                 play_sound_di2();
-                Common.no_move = true;
+                //Common.no_move = true;
             }
 
             if (keys == Keys.Escape)
             {
                 play_sound_di2();
                 huan._mouseKbdHook.ChangeMouseHooks();
+                // 长按 ESC：关闭壁纸自动设置开关（配合 Super+F6 重新打开）
+                WallpaperEnabled = false;
             }
             //if (keys == Keys.F3 && ProcessName == Common.mhtab)
             //{
             //    play_sound_di2();
             //    CloseProcessFoce(Common.mhtab);
             //}
+            if (keys == Keys.F9)
+            {
+                //CloseProcessFoce(Common.mhtab);
+                //system_hard_sleep();
+                huan.system_sleep();
+            }
 
 
 
@@ -124,11 +130,6 @@ namespace keyupMusic4
             {
                 play_sound_di2();
                 Environment.Exit(0);
-            }
-            if (keys == Keys.F9)
-            {
-                CloseProcessFoce(Common.mhtab);
-                //system_hard_sleep();
             }
 
             if (keys == LWin) return;

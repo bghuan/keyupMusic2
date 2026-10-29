@@ -209,7 +209,7 @@ namespace keyupMusic4
                     if (this.name == "corner4")
                     {
                         // 鼠标拖到右下角：关闭壁纸自动设置开关（配合 Super+F6 重新打开）
-                        WallpaperEnabled = false;
+                        //WallpaperEnabled = false;
                         HideSomething();
                     }
                 }

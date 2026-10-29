@@ -133,7 +133,7 @@ namespace keyupMusic4
                 using (var path = new GraphicsPath())
                 {
                     path.AddLines(_points.ToArray());
-                    g.DrawPath(_borderPen, path);
+                    //g.DrawPath(_borderPen, path);
                     g.DrawPath(_linePen, path);
                 }
             }
@@ -160,6 +160,8 @@ namespace keyupMusic4
 
             _points.Clear();
 
+            Common.LabelTick = 1;
+            Common.LabelTicking = true;
             if (gestureText != "")
                 huan?.Invoke2(() => huan.label1.Text = gestureText);
 

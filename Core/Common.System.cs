@@ -119,7 +119,9 @@ namespace keyupMusic4
 
         public static void HideSomething()
         {
+            SetDesktopToBlack();
             HideProcess(PowerToysCropAndLock);
+            HideProcess(chrome);
         }
     }
 }

@@ -94,6 +94,8 @@ namespace keyupMusic4
                 }
                 else if (e.Y == 0 && e.X == 0)
                     press([LControlKey, e.data > 0 ? Keys.Oemplus : OemMinus]);
+                else if (e.Y == 0 && e.X < 200)
+                    press([LControlKey, e.data > 0 ? F8 : F7]);
                 else if (e.Y == 0)
                     press([e.data > 0 ? F8 : F7]);
                 else if (is_douyin() && (e.X == 0))
@@ -114,6 +116,10 @@ namespace keyupMusic4
                     press(e.data > 0 ? VolumeUp : VolumeDown);
                 else if (is_tran_process == ProcessName && e.X == screenWidth1)
                     SetTransparency(e.data > 0 ? 16 : -16);
+                else if (IsDesktopFocused() && e.X == 0)
+                    SetDesktopWallpaper(e.data > 0 ? SwitchWallpaperFolder() : SwitchWallpaperFolder(), WallpaperStyle.Fit, true);
+                else if (IsDesktopFocused())
+                    SetDesktopWallpaper(e.data > 0 ? GetPreviousWallpaper() : GetNextWallpaper(), WallpaperStyle.Fit, true);
             }
             else if (e.Msg == MouseMsg.wheel_h)
                 press(e.data > 0 ? VolumeDown : VolumeUp);
