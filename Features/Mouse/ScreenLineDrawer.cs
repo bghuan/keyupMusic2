@@ -210,7 +210,7 @@ namespace keyupMusic4
             {
                 if (!_drawing) return;
                 _drawing = false;
-                AnalyzeAndShow();
+                AnalyzeAndShow(false);   // 观察模式：只识别不执行，避免正常右键拖拽被误触发
                 return;
             }
 
@@ -228,8 +228,8 @@ namespace keyupMusic4
 
             if (gesture)
             {
-                // 手势成立：不补发点击（右键菜单不弹出），只做方向/闭环分析并清画布
-                AnalyzeAndShow();
+                // 手势成立：不补发点击（右键菜单不弹出），执行方向动作并清画布
+                AnalyzeAndShow(true);
             }
             else
             {
@@ -274,14 +274,16 @@ namespace keyupMusic4
             _points.Clear();
         }
 
-        /// <summary>手势分析（清空点集前）+ 状态栏提示 + 清画布。</summary>
-        private void AnalyzeAndShow()
+        /// <summary>手势分析（清空点集前）+ 状态栏提示 + 清画布；executeAction=true 时按方向执行对应动作。</summary>
+        private void AnalyzeAndShow(bool executeAction)
         {
             string gestureText = "";
+            LineGestureAnalyzer.Direction dir = LineGestureAnalyzer.Direction.None;
+            bool circle = false;
             try
             {
-                var dir = LineGestureAnalyzer.GetDirection(_points);
-                bool circle = LineGestureAnalyzer.IsClosedCircle(_points);
+                dir = LineGestureAnalyzer.GetDirection(_points);
+                circle = LineGestureAnalyzer.IsClosedCircle(_points);
                 if (circle) gestureText = "手势：闭环圆圈";
                 else if (dir != LineGestureAnalyzer.Direction.None)
                     gestureText = "手势：" + LineGestureAnalyzer.DirectionText(dir);
@@ -296,6 +298,40 @@ namespace keyupMusic4
                 huan?.Invoke2(() => huan.label1.Text = gestureText);
 
             TryClearCanvas();
+
+            // 只在接管模式下、方向明确且不是闭环圆圈时执行动作（观察模式/圆圈一律不动作，防误触）
+            if (executeAction && !circle && dir != LineGestureAnalyzer.Direction.None)
+                ExecuteGestureAction(dir);
+        }
+
+        /// <summary>
+        /// 画线方向动作：右=Alt+Tab、左=Shift+Alt+Tab、下=Win+D、上=F11。
+        /// 放到工作线程执行：按键模拟内部有 Sleep，低级钩子回调里长时间阻塞会被系统摘钩子。
+        /// </summary>
+        private void ExecuteGestureAction(LineGestureAnalyzer.Direction dir)
+        {
+            Task.Run(() =>
+            {
+                try
+                {
+                    switch (dir)
+                    {
+                        case LineGestureAnalyzer.Direction.Right:
+                            altab();                    // Alt+Tab：切换下一个窗口
+                            break;
+                        case LineGestureAnalyzer.Direction.Left:
+                            altshiftab();               // Shift+Alt+Tab：切换上一个窗口
+                            break;
+                        case LineGestureAnalyzer.Direction.Down:
+                            press([LWin, Keys.D]);      // Win+D：显示/恢复桌面
+                            break;
+                        case LineGestureAnalyzer.Direction.Up:
+                            press(Keys.F11);            // F11：全屏切换
+                            break;
+                    }
+                }
+                catch { }
+            });
         }
 
         /// <summary>整条路径重绘（原有实现，抽出来给观察态与接管态共用）。</summary>
