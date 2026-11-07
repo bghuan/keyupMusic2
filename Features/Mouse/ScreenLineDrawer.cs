@@ -14,7 +14,9 @@ using System.Drawing;
 using System.Drawing.Drawing2D;
 using System.Runtime.InteropServices;
 using System.Threading;
+using System.Threading.Tasks;
 using static keyupMusic4.Common;
+using static keyupMusic4.Simulate;
 
 namespace keyupMusic4
 {
@@ -28,6 +30,25 @@ namespace keyupMusic4
         private Pen _borderPen;
         private Point _downPoint;
         private bool _drawing;
+
+        // ---- 右键接管状态机（账本式，保证“吞掉的按下一定有对应的释放”） ----
+        // 只有本进程真正吞掉了右键 DOWN（_captured=true）才需要结算；系统与目标程序从未
+        // 收到这个 DOWN，因此任何异常/退出路径都不会把系统留在“按下”状态。
+        private bool _captured;      // 已吞下右键 DOWN，等待 UP 结算
+        private bool _gesture;       // 已越过起始阈值，画线手势成立
+
+        /// <summary>
+        /// 是否接管右键：true=吞掉右键按下/抬起（画线时不弹右键菜单、不拖拽、不选中）；
+        /// false=只观察不拦截（右键菜单与拖拽保持原样，画线同时显示）。
+        /// 配置项 Mouse.rightGestureCapture，默认 1。
+        /// </summary>
+        public bool CaptureRight { get; set; } = true;
+
+        /// <summary>
+        /// 不接管右键的进程名单（逗号分隔，进程名不含 .exe），用于游戏“按住右键瞄准”
+        /// 或需要右键拖拽的程序。配置项 Mouse.rightGestureExclude，默认空。
+        /// </summary>
+        public string ExcludeProcesses { get; set; } = "";
 
         private static ScreenLineDrawer _instance;
         private static readonly object _lock = new object();
@@ -79,74 +100,173 @@ namespace keyupMusic4
             };
         }
 
-        /// <summary>创建透明置顶画布（幂等）。</summary>
+        /// <summary>创建透明置顶画布（幂等），并刷新接管配置。</summary>
         public void Start()
         {
+            CaptureRight = LoadCfgInt("Mouse.rightGestureCapture", 1) == 1;
+            ExcludeProcesses = LoadCfgStr("Mouse.rightGestureExclude", "");
             if (!_canvas.Started) _canvas.Start();
         }
 
-        /// <summary>销毁画布（幂等）。</summary>
+        /// <summary>销毁画布（幂等）。卸载/停止时无条件结算捕获账本，绝不残留按下态。</summary>
         public void Stop()
         {
+            ReleaseCapture();
             if (_canvas.Started) _canvas.Stop();
+        }
+
+        /// <summary>无条件释放捕获状态（Stop/Pause/钩子卸载/异常兜底调用）。</summary>
+        public void ReleaseCapture()
+        {
+            ResetCapture();
+            TryClearCanvas();
         }
 
         /// <summary>键盘鼠标钩子分发入口（注册到 KeyboardMouseHook.MouseEvent）。</summary>
         public void MouseHookProc(KeyboardMouseHook.MouseEventArgs e)
         {
             var p = new Point(e.X, e.Y);
-            switch (e.Msg)
+            try
             {
-                case MouseMsg.click_r: OnRightDown(p); break;
-                case MouseMsg.move: OnMouseMove(p); break;
-                case MouseMsg.click_r_up: OnRightUp(p); break;
+                switch (e.Msg)
+                {
+                    case MouseMsg.click_r: OnRightDown(p, e); break;
+                    case MouseMsg.move: OnMouseMove(p, e); break;
+                    case MouseMsg.click_r_up: OnRightUp(p, e); break;
+                }
+            }
+            catch
+            {
+                // fail-open：任何异常一律放行并复位账本，绝不让系统或目标程序停在按下态
+                e.Handled = false;
+                ResetCapture();
+                TryClearCanvas();
             }
         }
 
         // ---- 事件处理（都在钩子线程上串行触发，无需加锁） ----
 
-        private void OnRightDown(Point p)
+        private void OnRightDown(Point p, KeyboardMouseHook.MouseEventArgs e)
         {
-            _drawing = true;
+            // 新的 DOWN 到来若仍处于捕获态：说明上一个 UP 丢失（极少见）→ 先复位再接管新的，
+            // 状态机因此不可能永久卡死。这里不补发 UP：被吞的 DOWN 从未放行，系统本就不认为键已按下。
+            if (_captured) ResetCapture();
+
+            _drawing = false;
+            _gesture = false;
             _downPoint = p;
             _points.Clear();
             _points.Add(p);
+
+            if (!CaptureRight || IsExcludedProcess()) return; // 不接管：保持旧“只观察”行为
+
+            // 接管：吞掉右键按下。目标程序收不到 DOWN，既不会弹菜单、也不会进入拖拽/选中态。
+            e.Handled = true;
+            _captured = true;
         }
 
-        private void OnMouseMove(Point p)
+        private void OnMouseMove(Point p, KeyboardMouseHook.MouseEventArgs e)
         {
-            if (!_drawing) return;
+            // ---- 接管态：只画线，move 一律放行 ----
+            // 目标程序因为没收到 DOWN，不会把这次移动识别为拖拽/选中，放行没有副作用；
+            // 放行还能保证系统光标照常移动、其它基于 move 的功能不受影响。
+            if (_captured)
+            {
+                if (!_gesture)
+                {
+                    if (Distance(_downPoint, p) < MinMoveToStart) return; // 未过阈值：不算手势
+                    _gesture = true; // 手势成立（首段从按下点画起，视觉连续）
+                }
+                else
+                {
+                    var lastG = _points[_points.Count - 1];
+                    if (lastG == p) return;
+                }
 
-            // 未越过起始阈值前不画（避免轻微抖动就出线）
+                _points.Add(p);
+                Redraw();
+                return;
+            }
+
+            // ---- 观察态（CaptureRight=false 或排除进程）：旧逻辑，不拦截 ----
+            if (!_drawing) return;
             if (_points.Count == 1 && Distance(_downPoint, p) < MinMoveToStart) return;
 
             var last = _points[_points.Count - 1];
             if (last == p) return; // 同一点跳过
 
             _points.Add(p);
-
-            // 简化版：每次重绘整条路径（原版为性能做了 dirty-rect 局部刷新，本项目可忽略）
-            var g = _canvas.BeginDraw();
-            g.Clear(Color.Transparent);
-            if (_points.Count >= 2)
-            {
-                using (var path = new GraphicsPath())
-                {
-                    path.AddLines(_points.ToArray());
-                    //g.DrawPath(_borderPen, path);
-                    g.DrawPath(_linePen, path);
-                }
-            }
-            g.Flush();
-            _canvas.EndDraw();
-            _canvas.Present();
+            Redraw();
         }
 
-        private void OnRightUp(Point p)
+        private void OnRightUp(Point p, KeyboardMouseHook.MouseEventArgs e)
         {
-            _drawing = false;
+            // ---- 观察态：事件放行，沿用旧行为 ----
+            if (!_captured)
+            {
+                if (!_drawing) return;
+                _drawing = false;
+                AnalyzeAndShow();
+                return;
+            }
 
-            // 手势分析（在清空点集前）：判断上下左右方向 / 是否闭环圆圈，显示到状态栏
+            // ---- 接管态：吞掉抬起，目标程序不会收到“无 DOWN 配对的孤立 UP” ----
+            e.Handled = true;
+
+            bool gesture = _gesture;
+
+            // 把手势最后一个点补上松开时的坐标，让路径完整
+            if (gesture && _points.Count > 0 && _points[_points.Count - 1] != p)
+                _points.Add(p);
+
+            if (gesture)
+            {
+                // 手势成立：不补发点击（右键菜单不弹出），只做方向/闭环分析并清画布
+                AnalyzeAndShow();
+            }
+            else
+            {
+                // 未构成手势 = 用户只是普通右键点击 → 补发一次完整 DOWN+UP，还原原右键点击/菜单
+                ReplayRightClick();
+                TryClearCanvas();
+            }
+
+            ResetCapture();
+        }
+
+        /// <summary>
+        /// 安全补发一次完整右键点击：DOWN/UP 成对，try/finally 保证 UP 必发，
+        /// 即使补发过程中出现异常也不会把系统留在按下状态。
+        /// 补发事件带 isVir 标记（mouse_event 内部自动写入），钩子回调会过滤，不会自触发。
+        /// </summary>
+        private void ReplayRightClick()
+        {
+            Task.Run(() =>
+            {
+                try
+                {
+                    mouse_event(Native.MOUSEEVENTF_RIGHTDOWN, 0, 0, 0, 0);
+                    Thread.Sleep(15);
+                }
+                finally
+                {
+                    mouse_event(Native.MOUSEEVENTF_RIGHTUP, 0, 0, 0, 0);
+                }
+            });
+        }
+
+        /// <summary>无条件复位捕获账本（Stop/Dispose/异常/新 DOWN / 钩子卸载时调用）。</summary>
+        private void ResetCapture()
+        {
+            _captured = false;
+            _gesture = false;
+            _drawing = false;
+            _points.Clear();
+        }
+
+        /// <summary>手势分析（清空点集前）+ 状态栏提示 + 清画布。</summary>
+        private void AnalyzeAndShow()
+        {
             string gestureText = "";
             try
             {
@@ -165,12 +285,87 @@ namespace keyupMusic4
             if (gestureText != "")
                 huan?.Invoke2(() => huan.label1.Text = gestureText);
 
-            // 清空画布
-            var g = _canvas.BeginDraw();
-            g.Clear(Color.Transparent);
-            g.Flush();
-            _canvas.EndDraw();
-            _canvas.Present();
+            TryClearCanvas();
+        }
+
+        /// <summary>整条路径重绘（原有实现，抽出来给观察态与接管态共用）。</summary>
+        private void Redraw()
+        {
+            try
+            {
+                if (_points.Count == 0 || !_canvas.Started) return;
+                var g = _canvas.BeginDraw();
+                g.Clear(Color.Transparent);
+                if (_points.Count >= 2)
+                {
+                    using (var path = new GraphicsPath())
+                    {
+                        path.AddLines(_points.ToArray());
+                        //g.DrawPath(_borderPen, path);
+                        g.DrawPath(_linePen, path);
+                    }
+                }
+                g.Flush();
+                _canvas.EndDraw();
+                _canvas.Present();
+            }
+            catch { }
+        }
+
+        /// <summary>清空画布（失败不影响状态机）。</summary>
+        private void TryClearCanvas()
+        {
+            try
+            {
+                if (!_canvas.Started) return;
+                var g = _canvas.BeginDraw();
+                g.Clear(Color.Transparent);
+                g.Flush();
+                _canvas.EndDraw();
+                _canvas.Present();
+            }
+            catch { }
+        }
+
+        /// <summary>当前进程是否在排除名单内（这些程序不接管右键，保留右键按住/拖拽语义）。</summary>
+        private bool IsExcludedProcess()
+        {
+            try
+            {
+                if (string.IsNullOrWhiteSpace(ExcludeProcesses)) return false;
+                var pn = Common.ProcessName;
+                if (string.IsNullOrEmpty(pn)) return false;
+                foreach (var s in ExcludeProcesses.Split(','))
+                {
+                    if (s.Length == 0) continue;
+                    if (pn.Equals(s.Trim(), StringComparison.OrdinalIgnoreCase)) return true;
+                }
+            }
+            catch { }
+            return false;
+        }
+
+        /// <summary>读整型配置（本类内用，避免依赖 Common 的 private 辅助方法）。</summary>
+        private static int LoadCfgInt(string key, int def)
+        {
+            try
+            {
+                var v = GetConfigValue(key);
+                if (string.IsNullOrWhiteSpace(v)) return def;
+                return int.TryParse(v.Trim(), out var r) ? r : def;
+            }
+            catch { return def; }
+        }
+
+        /// <summary>读字符串配置。</summary>
+        private static string LoadCfgStr(string key, string def)
+        {
+            try
+            {
+                var v = GetConfigValue(key);
+                return string.IsNullOrWhiteSpace(v) ? def : v.Trim();
+            }
+            catch { return def; }
         }
 
         private static float Distance(Point a, Point b)
