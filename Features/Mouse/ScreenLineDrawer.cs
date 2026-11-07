@@ -163,6 +163,10 @@ namespace keyupMusic4
             // 接管：吞掉右键按下。目标程序收不到 DOWN，既不会弹菜单、也不会进入拖拽/选中态。
             e.Handled = true;
             _captured = true;
+
+            // 真实按键状态不会再置位（DOWN 被拦在输入队列之前），必须同步登记虚拟键状态，
+            // 否则所有依赖 is_down_vir(Keys.RButton) 的功能（如 VS 里“右键按住+左键=F12”）会失效。
+            VirKeyState(MouseMsg.click_r);
         }
 
         private void OnMouseMove(Point p, KeyboardMouseHook.MouseEventArgs e)
@@ -213,6 +217,9 @@ namespace keyupMusic4
             // ---- 接管态：吞掉抬起，目标程序不会收到“无 DOWN 配对的孤立 UP” ----
             e.Handled = true;
 
+            // 注销虚拟右键状态（与 DOWN 时的 VirKeyState(click_r) 成对）
+            VirKeyState(MouseMsg.click_r_up);
+
             bool gesture = _gesture;
 
             // 把手势最后一个点补上松开时的坐标，让路径完整
@@ -258,6 +265,9 @@ namespace keyupMusic4
         /// <summary>无条件复位捕获账本（Stop/Dispose/异常/新 DOWN / 钩子卸载时调用）。</summary>
         private void ResetCapture()
         {
+            // 虚拟右键状态一并清掉：吞掉的 DOWN 若没有 UP 结算，不能把“已按下”留在记录里
+            if (_captured) VirKeyState(MouseMsg.click_r_up);
+
             _captured = false;
             _gesture = false;
             _drawing = false;
