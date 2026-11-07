@@ -152,7 +152,7 @@ namespace keyupMusic4
             // 状态机因此不可能永久卡死。这里不补发 UP：被吞的 DOWN 从未放行，系统本就不认为键已按下。
             if (_captured) ResetCapture();
 
-            _drawing = false;
+            _drawing = true;   // 观察态沿用旧逻辑；接管态改用 _gesture/_captured 判定
             _gesture = false;
             _downPoint = p;
             _points.Clear();
